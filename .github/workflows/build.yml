@@ -1,5 +1,7 @@
 name: Build APK
-on: [push]
+on:
+  push:
+    branches: [ main ]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -11,14 +13,15 @@ jobs:
           java-version: '17'
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.0'
+          flutter-version: '3.22.2'
           channel: 'stable'
-      - run: |
+      - name: Create project
+        run: |
           rm -rf android
-          flutter create. --project-name pay_quick_pay --org com.example --platforms android
-          rm lib/main.dart
-          mkdir -p lib
-          cat > lib/main.dart << 'EOF'
+          flutter create . --project-name pay_quick_pay --org com.payquickpay.app --platforms android
+      - name: Write app
+        run: |
+          cat > lib/main.dart << 'DART'
           import 'package:flutter/material.dart';
           void main() { runApp(const PayQuickPayApp()); }
           class PayQuickPayApp extends StatelessWidget {
@@ -29,17 +32,17 @@ jobs:
                 title: 'PayQuickPay',
                 debugShowCheckedModeBanner: false,
                 home: Scaffold(
-                  appBar: AppBar(title: const Text('PayQuickPay'), backgroundColor: Colors.blue),
-                  body: const Center(child: Text('Welcome to PayQuickPay!', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold))),
+                  appBar: AppBar(title: const Text('PayQuickPay')),
+                  body: const Center(child: Text('Welcome to PayQuickPay!', style: TextStyle(fontSize: 24))),
                 ),
               );
             }
           }
-          EOF
-          sed -i 's/android:label="[^"]*"/android:label="PayQuickPay"/' android/app/src/main/AndroidManifest.xml
+          DART
+      - run: sed -i 's/android:label="[^"]*"/android:label="PayQuickPay"/' android/app/src/main/AndroidManifest.xml
       - run: flutter pub get
       - run: flutter build apk --release
       - uses: actions/upload-artifact@v4
         with:
-          name: PayQuickPay-apk
+          name: PayQuickPay-APK
           path: build/app/outputs/flutter-apk/app-release.apk
