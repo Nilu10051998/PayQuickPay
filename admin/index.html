@@ -1,0 +1,40 @@
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>PayQuickPay Admin</title><style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}body{background:#f4f6fb;display:flex}
+.sidebar{width:220px;background:#0D47A1;color:white;min-height:100vh;padding:15px;position:fixed}
+.sidebar h2{margin-bottom:20px;text-align:center}.menu div{padding:12px;border-radius:8px;cursor:pointer;margin:5px 0}.menu div:hover,.active{background:#1565C0}
+.main{margin-left:220px;padding:20px;width:100%}.card{background:white;padding:18px;border-radius:12px;box-shadow:0 2px 8px #0001;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px}
+.stat{color:white;padding:18px;border-radius:12px;text-align:center}.c1{background:linear-gradient(135deg,#0D47A1,#42A5F5)}.c2{background:linear-gradient(135deg,#2E7D32,#66BB6A)}.c3{background:linear-gradient(135deg,#E65100,#FF9800)}.c4{background:linear-gradient(135deg,#6A1B9A,#AB47BC)}
+input,select,button{width:100%;padding:10px;margin:6px 0;border-radius:7px;border:1px solid #ccc}button{background:#0D47A1;color:white;border:none;font-weight:bold;cursor:pointer}
+table{width:100%;border-collapse:collapse}th,td{border:1px solid #ddd;padding:8px;font-size:13px}th{background:#0D47A1;color:white}
+.hide{display:none}
+@media(max-width:700px){.sidebar{width:100%;position:relative;min-height:auto}.main{margin-left:0}}
+</style></head><body>
+<div class="sidebar"><h2>PAY ADMIN</h2><div class="menu">
+<div class="active" onclick="show('dash',this)">📊 Dashboard</div>
+<div onclick="show('user',this)">👥 Retailer/Distributor</div>
+<div onclick="show('wallet',this)">💰 Wallet</div>
+<div onclick="show('comm',this)">⚙️ Commission</div>
+<div onclick="show('txn',this)">📑 Transactions</div>
+<div onclick="show('service',this)">🔧 Services</div>
+</div></div>
+
+<div class="main">
+<div id="dash"><div class="grid">
+<div class="stat c1"><h3 id="tRet">0</h3><p>Total Retailer</p></div>
+<div class="stat c2"><h3 id="tBal">₹0</h3><p>Total Business</p></div>
+<div class="stat c3"><h3 id="tTxn">0</h3><p>Total Txn</p></div>
+<div class="stat c4"><h3>₹<span id="tComm">0</span></h3><p>Commission Paid</p></div>
+</div>
+<div class="card"><h3>Recent Retailer</h3><table><thead><tr><th>ID</th><th>Name</th><th>Balance</th><th>Status</th></tr></thead><tbody id="dashList"></tbody></table></div></div>
+
+<div id="user" class="hide"><div class="card"><h3>Add User</h3>
+<select id="uType"><option>Retailer</option><option>Distributor</option></select>
+<input id="uId" placeholder="ID - RET123"><input id="uName" placeholder="Name"><input id="uMob" placeholder="Mobile">
+<button onclick="addUser()">ADD USER</button></div>
+<div class="card"><h3>All Users</h3><table><thead><tr><th>ID</th><th>Type</th><th>Name</th><th>Balance</th><th>Action</th></tr></thead><tbody id="userList"></tbody></table></div></div>
+
+<div id="wallet" class="hide"><div class="card"><h3>Wallet Add / Cut</h3>
+<input id="wId" placeholder="Retailer ID - RET123"><input id="wAmt" type="number" placeholder="Amount - 1000">
+<div style="display:flex;gap:10px"><button onclick="walletAdd(1)" style="background:green">ADD BALANCE</button><button onclick="walletAdd(-1)" style="background:red">CUT BALANCE</button></div></div>
+<div class="card"><h3>Low Balance (
