@@ -15,11 +15,11 @@ jobs:
         with:
           flutter-version: '3.22.2'
           channel: 'stable'
-      - name: Create project
+      - name: Create project files
         run: |
-          rm -rf android
+          rm -rf android ios web windows macos linux test
           flutter create . --project-name pay_quick_pay --org com.payquickpay.app --platforms android
-      - name: Write app
+      - name: Write main.dart
         run: |
           cat > lib/main.dart << 'DART'
           import 'package:flutter/material.dart';
@@ -31,15 +31,28 @@ jobs:
               return MaterialApp(
                 title: 'PayQuickPay',
                 debugShowCheckedModeBanner: false,
+                theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
                 home: Scaffold(
-                  appBar: AppBar(title: const Text('PayQuickPay')),
-                  body: const Center(child: Text('Welcome to PayQuickPay!', style: TextStyle(fontSize: 24))),
+                  appBar: AppBar(title: const Text('PayQuickPay'), centerTitle: true, backgroundColor: Colors.blue, foregroundColor: Colors.white),
+                  body: const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.payments, size: 80, color: Colors.blue),
+                        SizedBox(height: 20),
+                        Text('PayQuickPay', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                        SizedBox(height: 10),
+                        Text('Fast & Secure Payments', style: TextStyle(color: Colors.grey)),
+                      ],
+                    ),
+                  ),
                 ),
               );
             }
           }
           DART
-      - run: sed -i 's/android:label="[^"]*"/android:label="PayQuickPay"/' android/app/src/main/AndroidManifest.xml
+      - name: Fix name
+        run: sed -i 's/android:label="[^"]*"/android:label="PayQuickPay"/' android/app/src/main/AndroidManifest.xml
       - run: flutter pub get
       - run: flutter build apk --release
       - uses: actions/upload-artifact@v4
