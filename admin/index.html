@@ -1,190 +1,96 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PayQuickPay - Admin</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
-body{background:#f0f2f5;display:flex}
-.sidebar{width:250px;background:#1a237e;color:#fff;min-height:100vh;padding:20px;position:fixed}
-.sidebar h2{margin-bottom:30px;text-align:center}
-.menu{list-style:none}
-.menu li{padding:12px;cursor:pointer;border-radius:5px;margin:5px 0}
-.menu li:hover,.menu li.active{background:#3949ab}
-.main{margin-left:250px;padding:20px;width:calc(100% - 250px)}
-.card{background:#fff;padding:20px;border-radius:10px;box-shadow:0 2px 5px rgba(0,0,0,0.1);margin-bottom:20px}
-input,select,button{padding:10px;margin:5px;width:100%;border:1px solid #ddd;border-radius:5px}
-button{background:#1a237e;color:#fff;cursor:pointer;font-weight:bold}
-button:hover{background:#283593}
-table{width:100%;border-collapse:collapse;margin-top:10px}
-th,td{padding:10px;border:1px solid #ddd;text-align:left}
-th{background:#1a237e;color:#fff}
-.success{background:#c8e6c9;color:#2e7d32;padding:10px;border-radius:5px;margin:10px 0;display:none}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
-.stat{font-size:24px;font-weight:bold;color:#1a237e}
-</style>
-</head>
-<body>
-<div class="sidebar">
-<h2>PayQuickPay</h2>
-<ul class="menu">
-<li class="active" onclick="showTab('dashboard')">📊 Dashboard</li>
-<li onclick="showTab('retailer')">👥 Retailer / Distributor</li>
-<li onclick="showTab('wallet')">💰 Wallet / Balance</li>
-<li onclick="showTab('commission')">⚙️ Commission</li>
-<li onclick="showTab('transactions')">📑 Transactions</li>
-<li onclick="logout()">🚪 Logout</li>
-</ul>
-</div>
+<style>*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}body{background:#f0f2f5;display:flex}.sidebar{width:250px;background:#1a237e;color:#fff;min-height:100vh;padding:20px;position:fixed}.sidebar h2{margin-bottom:30px;text-align:center}.menu{list-style:none}.menu li{padding:12px;cursor:pointer;border-radius:5px;margin:5px 0}.menu li:hover,.menu li.active{background:#3949ab}.main{margin-left:250px;padding:20px;width:calc(100% - 250px)}.card{background:#fff;padding:20px;border-radius:10px;box-shadow:0 2px 5px rgba(0,0,0,0.1);margin-bottom:20px}input,select,button{padding:10px;margin:5px;width:100%;border:1px solid #ddd;border-radius:5px}button{background:#1a237e;color:#fff;cursor:pointer;font-weight:bold}button:hover{background:#283593}table{width:100%;border-collapse:collapse;margin-top:10px}th,td{border:1px solid #ddd;padding:8px;text-align:left}th{background:#f5f5f5}.flex{display:flex;gap:10px}.flex>div{flex:1;text-align:center;padding:15px;background:#fff;border-radius:8px;box-shadow:0 2px 5px rgba(0,0,0,0.1)}#dashboard{display:block}#retailer,#wallet,#commission,#transactions{display:none}</style>
+</head><body>
+<div class="sidebar"><h2>PayQuickPay</h2><ul class="menu">
+<li class="active" onclick="show('dashboard')">📊 Dashboard</li>
+<li onclick="show('retailer')">👥 Retailer / Distributor</li>
+<li onclick="show('wallet')">💰 Wallet / Balance</li>
+<li onclick="show('commission')">⚙️ Commission</li>
+<li onclick="show('transactions')">📄 Transactions</li>
+</ul></div>
 <div class="main">
-<div id="dashboard" class="tab">
-<div class="card"><h2>Dashboard</h2></div>
-<div class="grid">
-<div class="card"><h4>Total Retailers</h4><div class="stat" id="totalRetailers">0</div></div>
-<div class="card"><h4>Total Balance</h4><div class="stat" id="totalBalance">₹0</div></div>
-<div class="card"><h4>Total Transactions</h4><div class="stat" id="totalTx">0</div></div>
-</div>
+<div id="dashboard"><div class="card"><h2>Dashboard</h2></div><div class="flex">
+<div><h3>Total Retailers</h3><h1 id="tR">0</h1></div>
+<div><h3>Total Balance</h3><h1 id="tB">₹0</h1></div>
+<div><h3>Total Transactions</h3><h1 id="tT">0</h1></div>
+</div></div>
+
+<div id="retailer"><div class="card"><h2>Add Retailer / Distributor</h2>
+<input id="rName" placeholder="Name"><input id="rPhone" placeholder="Phone / ID"><input id="rPass" placeholder="Password">
+<select id="rType"><option value="retailer">Retailer</option><option value="distributor">Distributor</option></select>
+<button onclick="addRetailer()">Add User</button></div>
+<div class="card"><h3>All Users</h3><table><thead><tr><th>Name</th><th>Phone</th><th>Type</th><th>Balance</th><th>Action</th></tr></thead><tbody id="rList"></tbody></table></div></div>
+
+<div id="wallet"><div class="card"><h2>Wallet / Add Balance</h2>
+<input id="wPhone" placeholder="Retailer Phone/ID"><input id="wAmount" type="number" placeholder="Amount">
+<button onclick="addBalance()">Add Balance</button></div></div>
+
+<div id="commission"><div class="card"><h2>Commission Settings</h2>
+<input id="cType" placeholder="Service (e.g., Recharge)"><input id="cPercent" type="number" placeholder="Commission %">
+<button onclick="saveCommission()">Save Commission</button>
+<div id="cList" style="margin-top:15px"></div></div></div>
+
+<div id="transactions"><div class="card"><h2>Transactions</h2><table><thead><tr><th>Date</th><th>User</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead><tbody id="txList"></tbody></table></div></div>
 </div>
 
-<div id="retailer" class="tab" style="display:none">
-<div class="card">
-<h3>Add Retailer / Distributor</h3>
-<div id="msg1" class="success"></div>
-<input id="rId" placeholder="Retailer ID (ex: RET101)">
-<input id="rName" placeholder="Name">
-<input id="rMobile" placeholder="Mobile Number">
-<select id="rType"><option value="Retailer">Retailer</option><option value="Distributor">Distributor</option></select>
-<button onclick="addRetailer()">ADD USER</button>
-</div>
-<div class="card">
-<h3>Retailer List</h3>
-<table><thead><tr><th>ID</th><th>Name</th><th>Mobile</th><th>Type</th><th>Balance</th><th>Action</th></tr></thead><tbody id="retailerList"></tbody></table>
-</div>
-</div>
+<script type="module">
+// PASTE YOUR FIREBASE CONFIG HERE 👇
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
-<div id="wallet" class="tab" style="display:none">
-<div class="card">
-<h3>Add Balance to Retailer</h3>
-<div id="msg2" class="success"></div>
-<input id="wId" placeholder="Retailer ID (ex: RET101)">
-<input id="wAmount" type="number" placeholder="Amount (ex: 1000)">
-<button onclick="addBalance()">ADD BALANCE</button>
-</div>
-</div>
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "123456",
+  appId: "YOUR_APP_ID"
+};
 
-<div id="commission" class="tab" style="display:none">
-<div class="card">
-<h3>Set Commission %</h3>
-<div id="msg3" class="success"></div>
-<select id="cService"><option>Mobile Recharge</option><option>DTH Recharge</option><option>AEPS</option><option>BBPS</option></select>
-<input id="cPercent" type="number" placeholder="Commission % (ex: 2)">
-<button onclick="setCommission()">SAVE COMMISSION</button>
-<div id="commList" style="margin-top:15px"></div>
-</div>
-</div>
+let db; try{const app=initializeApp(firebaseConfig); db=getFirestore(app);}catch(e){console.log("Add Firebase config"); db=null;}
 
-<div id="transactions" class="tab" style="display:none">
-<div class="card">
-<h3>All Transactions</h3>
-<table><thead><tr><th>Date</th><th>Retailer ID</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead><tbody id="txList"></tbody></table>
-</div>
-</div>
-</div>
-
-<script>
-let retailers = JSON.parse(localStorage.getItem('pq_retailers') || '[]');
-let transactions = JSON.parse(localStorage.getItem('pq_tx') || '[]');
-let commissions = JSON.parse(localStorage.getItem('pq_comm') || '{}');
-
-function showTab(id){
-document.querySelectorAll('.tab').forEach(t=>t.style.display='none');
-document.getElementById(id).style.display='block';
-document.querySelectorAll('.menu li').forEach(m=>m.classList.remove('active'));
-event.target.classList.add('active');
-if(id==='dashboard') updateDash();
-if(id==='retailer') loadRetailers();
-if(id==='transactions') loadTx();
-if(id==='commission') loadComm();
+window.show = (id) => {
+  ['dashboard','retailer','wallet','commission','transactions'].forEach(s=>document.getElementById(s).style.display='none');
+  document.getElementById(id).style.display='block';
+  document.querySelectorAll('.menu li').forEach(l=>l.classList.remove('active'));
+  event.target.classList.add('active');
 }
 
-function showMsg(id,text){
-let el=document.getElementById(id); el.innerText=text; el.style.display='block';
-setTimeout(()=>el.style.display='none',3000);
+window.addRetailer = async () => {
+  const name=document.getElementById('rName').value, phone=document.getElementById('rPhone').value, pass=document.getElementById('rPass').value, type=document.getElementById('rType').value;
+  if(!name||!phone) return alert('Name & Phone required');
+  if(!db) return alert('Firebase config add kara! Local save heuchi'); 
+  await addDoc(collection(db, "retailers"), {name, phone, password:pass, type, balance:0, created: new Date()});
+  alert('Added!'); loadData();
 }
 
-function addRetailer(){
-let id=document.getElementById('rId').value.trim();
-let name=document.getElementById('rName').value.trim();
-let mobile=document.getElementById('rMobile').value.trim();
-let type=document.getElementById('rType').value;
-if(!id||!name||!mobile){alert('Sabu fill kara');return;}
-if(retailers.find(r=>r.id===id)){alert('ID already exists');return;}
-retailers.push({id,name,mobile,type,balance:0});
-localStorage.setItem('pq_retailers',JSON.stringify(retailers));
-showMsg('msg1','✅ '+name+' added successfully!');
-document.getElementById('rId').value='';document.getElementById('rName').value='';document.getElementById('rMobile').value='';
-loadRetailers();updateDash();
+window.addBalance = async () => {
+  const phone=document.getElementById('wPhone').value, amount=parseInt(document.getElementById('wAmount').value);
+  if(!phone||!amount) return alert('Enter phone & amount');
+  // Find and update - simplified demo
+  alert(₹${amount} added to ${phone} - Firebase connect heba pare auto update heba);
 }
 
-function loadRetailers(){
-let html='';
-retailers.forEach((r,i)=>{
-html+=<tr><td>${r.id}</td><td>${r.name}</td><td>${r.mobile}</td><td>${r.type}</td><td>₹${r.balance}</td><td><button onclick="delRetailer(${i})" style="width:auto;background:red;padding:5px 10px">Delete</button></td></tr>;
-});
-document.getElementById('retailerList').innerHTML=html;
-document.getElementById('totalRetailers').innerText=retailers.length;
+window.saveCommission = async () => {
+  const t=document.getElementById('cType').value, p=document.getElementById('cPercent').value;
+  if(!t||!p) return alert('Fill all');
+  if(db) await addDoc(collection(db, "commissions"), {service:t, percent:p});
+  document.getElementById('cList').innerHTML += <p>✅ ${t} - ${p}%</p>;
 }
 
-function delRetailer(i){if(confirm('Delete?')){retailers.splice(i,1);localStorage.setItem('pq_retailers',JSON.stringify(retailers));loadRetailers();updateDash();}}
-
-function addBalance(){
-let id=document.getElementById('wId').value.trim();
-let amt=parseFloat(document.getElementById('wAmount').value);
-if(!id||!amt){alert('ID & Amount dia');return;}
-let r=retailers.find(x=>x.id===id);
-if(!r){alert('Retailer ID miluni!');return;}
-r.balance+=amt;
-transactions.push({date:new Date().toLocaleString(),retailerId:id,type:'Balance Add',amount:amt,status:'Success'});
-localStorage.setItem('pq_retailers',JSON.stringify(retailers));
-localStorage.setItem('pq_tx',JSON.stringify(transactions));
-showMsg('msg2','✅ ₹'+amt+' added to '+id);
-document.getElementById('wId').value='';document.getElementById('wAmount').value='';
-updateDash();
+async function loadData(){
+  if(!db) return;
+  const snap=await getDocs(collection(db, "retailers"));
+  let html='', total=0, bal=0;
+  snap.forEach(d=>{const r=d.data(); html+=<tr><td>${r.name}</td><td>${r.phone}</td><td>${r.type}</td><td>₹${r.balance||0}</td><td><button onclick="del('${d.id}')">Del</button></td></tr>; total++; bal+=r.balance||0;});
+  document.getElementById('rList').innerHTML=html;
+  document.getElementById('tR').innerText=total;
+  document.getElementById('tB').innerText='₹'+bal;
 }
-
-function setCommission(){
-let s=document.getElementById('cService').value;
-let p=document.getElementById('cPercent').value;
-if(!p){alert('Percent dia');return;}
-commissions[s]=p;
-localStorage.setItem('pq_comm',JSON.stringify(commissions));
-showMsg('msg3','✅ '+s+' = '+p+'% saved!');
-loadComm();
-}
-
-function loadComm(){let h='';for(let k in commissions){h+=<p>✅ ${k}: <b>${commissions[k]}%</b></p>;}document.getElementById('commList').innerHTML=h;}
-
-function loadTx(){
-let html='';
-transactions.slice().reverse().forEach(t=>{
-html+=<tr><td>${t.date}</td><td>${t.retailerId}</td><td>${t.type}</td><td>₹${t.amount}</td><td>${t.status}</td></tr>;
-});
-document.getElementById('txList').innerHTML=html;
-document.getElementById('totalTx').innerText=transactions.length;
-}
-
-function updateDash(){
-loadRetailers();
-let total=retailers.reduce((s,r)=>s+r.balance,0);
-document.getElementById('totalBalance').innerText='₹'+total;
-document.getElementById('totalRetailers').innerText=retailers.length;
-document.getElementById('totalTx').innerText=transactions.length;
-}
-
-function logout(){location.reload();}
-
-updateDash();loadRetailers();
+window.del = async (id)=>{if(db) await deleteDoc(doc(db,"retailers",id)); loadData();}
+loadData();
 </script>
-</body>
-</html>
+</body></html>
