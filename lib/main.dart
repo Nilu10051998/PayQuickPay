@@ -1,108 +1,37 @@
 import 'package:flutter/material.dart';
-void main() => runApp(const PayQuickPayApp());
+void main(){ runApp(MaterialApp(debugShowCheckedModeBanner:false, home: Splash())); }
 
-class PayQuickPayApp extends StatelessWidget {
-  const PayQuickPayApp({super.key});
+class Splash extends StatefulWidget{ const Splash({super.key}); @override State<Splash> createState()=> _S();}
+class _S extends State<Splash>{
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, title: 'PayQuickPay', home: const SplashScreen());
-  }
+  void initState(){ super.initState(); Future.delayed(Duration(seconds:2), (){ if(mounted) Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=>Login())); }); }
+  @override
+  Widget build(BuildContext context){ return Scaffold(backgroundColor:Colors.white, body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [ Icon(Icons.wallet, size:80, color:Color(0xFF2196F3)), SizedBox(height:20), Text('PayQuickPay', style:TextStyle(fontSize:28, fontWeight:FontWeight.bold)), Text('Fast & Secure Payments', style:TextStyle(color:Colors.grey)), SizedBox(height:30), CircularProgressIndicator() ]))); }
 }
 
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+class Login extends StatelessWidget{
+  Login({super.key});
+  final id = TextEditingController();
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(const Duration(seconds: 2), () {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
-    });
-  }
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(children: [
-        Container(width: double.infinity, height: 60, color: const Color(0xFF2196F3), child: const Center(child: Text('PayQuickPay', style: TextStyle(color: Colors.white, fontSize: 20)))),
-        const Spacer(),
-        Center(child: Column(children: [
-          Container(padding: const EdgeInsets.all(16), decoration: BoxDecoration(color: const Color(0xFF2196F3), borderRadius: BorderRadius.circular(12)), child: const Icon(Icons.wallet, color: Colors.white, size: 40)),
-          const SizedBox(height: 20),
-          const Text('PayQuickPay', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-          const Text('Fast & Secure Payments', style: TextStyle(color: Colors.grey)),
-          const SizedBox(height: 30),
-          const CircularProgressIndicator(),
-        ])),
-        const Spacer(),
-      ]),
-    );
+  Widget build(BuildContext context){
+    return Scaffold(body: Container(width:double.infinity, height:double.infinity, decoration: BoxDecoration(gradient: LinearGradient(colors:[Color(0xFF0D47A1), Color(0xFF42A5F5)], begin:Alignment.topCenter, end:Alignment.bottomCenter)), child: Center(child: Padding(padding: EdgeInsets.all(24), child: Column(mainAxisSize:MainAxisSize.min, children: [
+      Icon(Icons.flash_on, size:60, color:Colors.white), Text('PayQuickPay', style:TextStyle(color:Colors.white, fontSize:28, fontWeight:FontWeight.bold)),
+      SizedBox(height:20),
+      Container(padding:EdgeInsets.all(20), decoration:BoxDecoration(color:Colors.white, borderRadius:BorderRadius.circular(16)), child: Column(children: [
+        TextField(controller:id, decoration:InputDecoration(labelText:'Retailer ID - RET123', border:OutlineInputBorder())),
+        SizedBox(height:10),
+        TextField(decoration:InputDecoration(labelText:'Password - 123', border:OutlineInputBorder()), obscureText:true),
+        SizedBox(height:20),
+        SizedBox(width:double.infinity, height:50, child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor:Color(0xFF0D47A1)), onPressed:(){ Navigator.pushReplacement(context, MaterialPageRoute(builder:(_)=>Home(userId:id.text.isEmpty?'RET123':id.text))); }, child:Text('LOGIN', style:TextStyle(color:Colors.white, fontSize:18))))
+      ]))
+    ])))));
   }
 }
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class Home extends StatelessWidget{
+  final String userId; const Home({super.key, required this.userId});
   @override
-  Widget build(BuildContext context) {
-    final idCtrl = TextEditingController();
-    return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(gradient: LinearGradient(colors: [Color(0xFF0D47A1), Color(0xFF1976D2)], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
-        child: Center(child: SingleChildScrollView(padding: const EdgeInsets.all(24), child: Column(children: [
-          Container(padding: const EdgeInsets.all(20), decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle), child: const Icon(Icons.flash_on, size: 50, color: Color(0xFF0D47A1))),
-          const SizedBox(height: 12),
-          const Text('PayQuickPay', style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 25),
-          Container(padding: const EdgeInsets.all(20), decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)), child: Column(children: [
-            TextField(controller: idCtrl, decoration: InputDecoration(labelText: 'Retailer / Distributor ID', prefixIcon: const Icon(Icons.person), border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)))),
-            const SizedBox(height: 12),
-            TextField(obscureText: true, decoration: InputDecoration(labelText: 'Password', prefixIcon: const Icon(Icons.lock), border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)))),
-            const SizedBox(height: 20),
-            SizedBox(width: double.infinity, child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D47A1), padding: const EdgeInsets.all(15)), onPressed: () {
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen(userId: idCtrl.text.isEmpty ? 'RET123' : idCtrl.text)));
-            }, child: const Text('LOGIN', style: TextStyle(color: Colors.white)))),
-          ])),
-        ]))),
-      ),
-    );
-  }
-}
-
-class HomeScreen extends StatelessWidget {
-  final String userId;
-  const HomeScreen({super.key, required this.userId});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FB),
-      appBar: AppBar(backgroundColor: const Color(0xFF0D47A1), foregroundColor: Colors.white, title: Text('PayQuickPay - $userId')),
-      body: SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(width: double.infinity, padding: const EdgeInsets.all(20), decoration: BoxDecoration(gradient: const LinearGradient(colors: [Color(0xFF0D47A1), Color(0xFF42A5F5)]), borderRadius: BorderRadius.circular(16)), child: const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Wallet Balance', style: TextStyle(color: Colors.white70)), Text('₹ 1,250.00', style: TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.bold))])),
-        const SizedBox(height: 16),
-        GridView.count(crossAxisCount: 4, shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), children: const [
-          _Service(icon: Icons.phone_android, name: 'Mobile'),
-          _Service(icon: Icons.tv, name: 'DTH'),
-          _Service(icon: Icons.lightbulb, name: 'Electricity'),
-          _Service(icon: Icons.directions_car, name: 'FASTag'),
-        ]),
-        const SizedBox(height: 16),
-        Container(padding: const EdgeInsets.all(16), decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)), child: Column(children: [
-          TextField(decoration: InputDecoration(hintText: 'Mobile Number', border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)))),
-          SizedBox(height: 10),
-          SizedBox(width: double.infinity, child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF0D47A1)), onPressed: null, child: Text('PROCEED TO RECHARGE', style: TextStyle(color: Colors.white)))),
-        ])),
-      ])),
-    );
-  }
-}
-class _Service extends StatelessWidget {
-  final IconData icon; final String name;
-  const _Service({required this.icon, required this.name});
-  @override
-  Widget build(BuildContext context) {
-    return Column(children: [Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: Colors.blue.withOpacity(0.1), borderRadius: BorderRadius.circular(12)), child: Icon(icon, color: Colors.blue)), const SizedBox(height: 5), Text(name, style: const TextStyle(fontSize: 11))]);
+  Widget build(BuildContext context){
+    return Scaffold(appBar: AppBar(title:Text('Hi $userId'), backgroundColor:Color(0xFF0D47A1), foregroundColor:Colors.white), body: Center(child: Column(mainAxisAlignment:MainAxisAlignment.center, children: [Text('Wallet: ₹1250.00', style:TextStyle(fontSize:24, fontWeight:FontWeight.bold)), SizedBox(height:20), Text('Login Success! Home Clear Dekhagala', style:TextStyle(color:Colors.green)) ])));
   }
 }
