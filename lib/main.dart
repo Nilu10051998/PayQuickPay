@@ -1,159 +1,90 @@
 import 'package:flutter/material.dart';
-
 void main() => runApp(const PayQuickPayApp());
-
 class PayQuickPayApp extends StatelessWidget {
   const PayQuickPayApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'PayQuickPay Business',
-      theme: ThemeData(useMaterial3: true, primarySwatch: Colors.blue),
-      home: const LoginScreen(),
-    );
+    return MaterialApp(debugShowCheckedModeBanner: false, title: 'PayQuickPay', theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Roboto'), home: const LoginScreen());
   }
 }
-
-// 1. LOGIN SCREEN - RETAILER ID
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
   @override
   Widget build(BuildContext context) {
+    final id = TextEditingController();
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.account_balance_wallet, size: 80, color: Colors.blue),
-            const SizedBox(height: 20),
-            const Text('PayQuickPay Business', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            const Text('Retailer / Distributor Login', style: TextStyle(color: Colors.grey)),
-            const SizedBox(height: 30),
-            const TextField(decoration: InputDecoration(labelText: 'Retailer ID / Mobile', border: OutlineInputBorder(), prefixIcon: Icon(Icons.person))),
+      body: Container(
+        decoration: const BoxDecoration(gradient: LinearGradient(colors: [Color(0xFF0D47A1), Color(0xFF1976D2)], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+        child: Center(
+          child: SingleChildScrollView(padding: const EdgeInsets.all(24), child: Column(children: [
+            Container(padding: const EdgeInsets.all(20), decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(100)), child: const Icon(Icons.flash_on, size: 60, color: Color(0xFF0D47A1))),
             const SizedBox(height: 15),
-            const TextField(obscureText: true, decoration: InputDecoration(labelText: 'Password', border: OutlineInputBorder(), prefixIcon: Icon(Icons.lock))),
-            const SizedBox(height: 20),
-            SizedBox(width: double.infinity, child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, foregroundColor: Colors.white, padding: const EdgeInsets.all(15)), onPressed: () { Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const BusinessHome())); }, child: const Text('LOGIN'))),
-            const SizedBox(height: 10),
-            const Text('Support: 91XXXXXXXX | Refund in 2 Hours if Failed', style: TextStyle(fontSize: 11, color: Colors.grey), textAlign: TextAlign.center),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// 2. BUSINESS HOME
-class BusinessHome extends StatefulWidget {
-  const BusinessHome({super.key});
-  @override
-  State<BusinessHome> createState() => _BusinessHomeState();
-}
-
-class _BusinessHomeState extends State<BusinessHome> {
-  double wallet = 1250.0;
-  final List<Map<String, dynamic>> history = [
-    {'no': '9178XXXX01', 'amt': 299, 'op': 'Jio', 'status': 'Success', 'id': 'TXN12345'},
-    {'no': 'DTH 12345', 'amt': 350, 'op': 'TataPlay', 'status': 'Failed', 'id': 'TXN12344'},
-  ];
-
-  void _recharge(String number, int amt, String op) {
-    setState(() {
-      if (wallet >= amt) {
-        wallet -= amt;
-        history.insert(0, {'no': number, 'amt': amt, 'op': op, 'status': 'Success', 'id': 'TXN${DateTime.now().millisecondsSinceEpoch}'});
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('PayQuickPay'),
-          backgroundColor: Colors.blue,
-          foregroundColor: Colors.white,
-          bottom: const TabBar(tabs: [Tab(text: 'Recharge'), Tab(text: 'History'), Tab(text: 'Support')]),
-        ),
-        body: TabBarView(children: [
-          // TAB 1 - RECHARGE
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(children: [
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(color: Colors.blue, borderRadius: BorderRadius.circular(12)),
-                child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Wallet Balance', style: TextStyle(color: Colors.white70)), Text('₹ ${wallet.toStringAsFixed(2)}', style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold))]),
-                  ElevatedButton(onPressed: () { setState(() => wallet += 1000); }, child: const Text('Add ₹1000')),
-                ]),
-              ),
+            const Text('PayQuickPay', style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold, letterSpacing: 1)),
+            const Text('Retailer Business App', style: TextStyle(color: Colors.white70, fontSize: 14)),
+            const SizedBox(height: 30),
+            Container(padding: const EdgeInsets.all(20), decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)), child: Column(children: [
+              TextField(controller: id, decoration: InputDecoration(labelText: 'Retailer / Distributor ID', prefixIcon: const Icon(Icons.person), border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)))),
+              const SizedBox(height: 12),
+              TextField(obscureText: true, decoration: InputDecoration(labelText: 'Password', prefixIcon: const Icon(Icons.lock), border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)))),
               const SizedBox(height: 20),
-              const RechargeForm(),
-            ]),
-          ),
-          // TAB 2 - HISTORY - SAFE
-          ListView.builder(
-            itemCount: history.length,
-            itemBuilder: (_, i) {
-              var h = history[i];
-              return Card(
-                child: ListTile(
-                  title: Text('${h['no']} - ₹${h['amt']}'),
-                  subtitle: Text('${h['op']} | ID: ${h['id']} | ${h['status'] == 'Success'? 'Commission: ₹${(h['amt']*0.02).toStringAsFixed(2)}' : 'Refund: Will credit in 2Hrs'}'),
-                  trailing: Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: h['status'] == 'Success'? Colors.green : Colors.red, borderRadius: BorderRadius.circular(4)), child: Text(h['status'], style: const TextStyle(color: Colors.white, fontSize: 12))),
-                ),
-              );
-            },
-          ),
-          // TAB 3 - SUPPORT - NO COMPLAINT RISK
-          const Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Safe Business Policy', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-              SizedBox(height: 10),
-              Text('1. Recharge fail hele 2 ghanta bhitare wallet re paisa feriba.\n\n2. Har transaction re Transaction ID miliba - Proof.\n\n3. Bill Fetch heba pare hi pay kariba - Bhul amount haba nahi.\n\n4. Customer ku receipt share karipariba.\n\n5. Support: Raise Complaint -> Admin dekhba.'),
-              SizedBox(height: 20),
-              Card(child: ListTile(leading: Icon(Icons.support_agent), title: Text('Raise Complaint'), subtitle: Text('TXN ID deiki complaint karantu'))),
-              Card(child: ListTile(leading: Icon(Icons.receipt), title: Text('Refund Policy'), subtitle: Text('100% Safe - Auto Refund'))),
-            ]),
-          ),
-        ]),
+              SizedBox(width: double.infinity, child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D47A1), foregroundColor: Colors.white, padding: const EdgeInsets.all(15), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))), onPressed: () {
+                if(id.text.toUpperCase() == 'ADMIN'){ ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Admin login alaga website re!'))); return; }
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen(userId: id.text.isEmpty ? 'RET123' : id.text)));
+              }, child: const Text('LOGIN SECURELY', style: TextStyle(fontWeight: FontWeight.bold)))),
+            ])),
+            const SizedBox(height: 20),
+            const Text('Demo ID: RET123 / DIST123\nPass: 123', style: TextStyle(color: Colors.white70, fontSize: 11), textAlign: TextAlign.center),
+          ])),
+        ),
       ),
     );
   }
 }
-
-class RechargeForm extends StatefulWidget {
-  const RechargeForm({super.key});
-  @override
-  State<RechargeForm> createState() => _RechargeFormState();
-}
-
-class _RechargeFormState extends State<RechargeForm> {
-  final _num = TextEditingController();
-  String _op = 'Jio';
-  int _amt = 299;
+class HomeScreen extends StatelessWidget {
+  final String userId;
+  const HomeScreen({super.key, required this.userId});
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 5)]),
-      child: Column(children: [
-        TextField(controller: _num, keyboardType: TextInputType.phone, decoration: const InputDecoration(labelText: 'Mobile / DTH No / Consumer No', border: OutlineInputBorder())),
-        const SizedBox(height: 10),
-        DropdownButtonFormField(value: _op, items: ['Jio', 'Airtel', 'Vi', 'BSNL', 'TataPlay', 'Electricity - TPCODL'].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(), onChanged: (v) => setState(() => _op = v!), decoration: const InputDecoration(labelText: 'Operator / Biller', border: OutlineInputBorder())),
-        const SizedBox(height: 10),
-        Wrap(spacing: 8, children: [19, 149, 199, 299, 399, 719].map((p) => ChoiceChip(label: Text('₹$p'), selected: amt == p, onSelected: () => setState(() => _amt = p))).toList()),
-        const SizedBox(height: 15),
-        SizedBox(width: double.infinity, child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, foregroundColor: Colors.white, padding: const EdgeInsets.all(15)), onPressed: () { if (_num.text.length > 5) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Recharge Initiated - ID: TXN${DateTime.now().millisecond} - Checking with BBPS...'))); } }, child: Text('Pay ₹$_amt - Safe & Secure'))),
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F7FB),
+      appBar: AppBar(elevation: 0, backgroundColor: const Color(0xFF0D47A1), foregroundColor: Colors.white, title: Row(children: [Container(padding: const EdgeInsets.all(6), decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)), child: const Icon(Icons.flash_on, color: Color(0xFF0D47A1), size: 20)), const SizedBox(width: 8), const Text('PayQuickPay', style: TextStyle(fontWeight: FontWeight.bold))]), actions: [IconButton(icon: const Icon(Icons.notifications), onPressed: () {})]),
+      body: SingleChildScrollView(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Container(width: double.infinity, padding: const EdgeInsets.all(20), decoration: BoxDecoration(gradient: const LinearGradient(colors: [Color(0xFF0D47A1), Color(0xFF42A5F5)]), borderRadius: BorderRadius.circular(16)), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Welcome, $userId', style: const TextStyle(color: Colors.white70, fontSize: 12)), const SizedBox(height: 4), const Text('Wallet Balance', style: TextStyle(color: Colors.white70, fontSize: 13)), const SizedBox(height: 4), const Text('₹ 1,250.00', style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold)), const SizedBox(height: 12), Row(children: [ElevatedButton.icon(icon: const Icon(Icons.add, size: 16), label: const Text('Add Money'), style: ElevatedButton.styleFrom(backgroundColor: Colors.white, foregroundColor: const Color(0xFF0D47A1)), onPressed: () {}), const SizedBox(width: 10), OutlinedButton.icon(icon: const Icon(Icons.history, size: 16, color: Colors.white), label: const Text('History', style: TextStyle(color: Colors.white)), onPressed: () {}, style: OutlinedButton.styleFrom(side: const BorderSide(color: Colors.white)) )])])),
+        const SizedBox(height: 20),
+        const Text('Recharge & Bill Pay', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        const SizedBox(height: 12),
+        GridView.count(crossAxisCount: 4, shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), children: [
+          _service(Icons.phone_android, 'Mobile', '2% Comm', Colors.blue),
+          _service(Icons.tv, 'DTH', '2.5%', Colors.orange),
+          _service(Icons.lightbulb, 'Electricity', '0.5%', Colors.green),
+          _service(Icons.directions_car, 'FASTag', '1%', Colors.purple),
+          _service(Icons.water_drop, 'Water', '0.5%', Colors.cyan),
+          _service(Icons.phone, 'Postpaid', '1.5%', Colors.indigo),
+          _service(Icons.credit_card, 'Credit Card', '0.2%', Colors.red),
+          _service(Icons.more_horiz, 'More', '', Colors.grey),
+        ]),
+        const SizedBox(height: 20),
+        const Text('Quick Recharge', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        const SizedBox(height: 12),
+        Container(padding: const EdgeInsets.all(16), decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)]), child: Column(children: [
+          TextField(decoration: InputDecoration(hintText: 'Mobile Number / DTH No / Consumer No', border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)), prefixIcon: const Icon(Icons.search))),
+          const SizedBox(height: 12),
+          DropdownButtonFormField(decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)), prefixIcon: const Icon(Icons.cell_tower)), hint: const Text('Select Operator'), items: const [DropdownMenuItem(value: 'jio', child: Text('Jio - 2% Commission')), DropdownMenuItem(value: 'airtel', child: Text('Airtel - 1.5%')), DropdownMenuItem(value: 'vi', child: Text('Vi - 1.8%')), DropdownMenuItem(value: 'tataplay', child: Text('TataPlay - 2.5%'))], onChanged: (v) {}),
+          const SizedBox(height: 12),
+          TextField(decoration: InputDecoration(hintText: 'Amount ₹', border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)), prefixIcon: const Icon(Icons.currency_rupee))),
+          const SizedBox(height: 15),
+          SizedBox(width: double.infinity, child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D47A1), foregroundColor: Colors.white, padding: const EdgeInsets.all(16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))), onPressed: () {}, child: const Text('PROCEED TO RECHARGE - SAFE BBPS', style: TextStyle(fontWeight: FontWeight.bold)))),
+        ])),
+        const SizedBox(height: 20),
+        const Text('Recent Transactions', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         const SizedBox(height: 8),
-        const Text('✓ BBPS Verified | ✓ Instant Refund if Failed | ✓ Receipt will Generate', style: TextStyle(fontSize: 10, color: Colors.green)),
-      ]),
+        _txnTile('9178xxxxxx', 'Jio ₹299', 'Success - Comm ₹5.98', true),
+        _txnTile('TataPlay', 'DTH ₹350', 'Success - Comm ₹8.75', true),
+        _txnTile('TPCODL', 'Elec ₹1250', 'Failed - Refunded', false),
+      ])),
+      bottomNavigationBar: BottomNavigationBar(type: BottomNavigationBarType.fixed, selectedItemColor: const Color(0xFF0D47A1), items: const [BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'), BottomNavigationBarItem(icon: Icon(Icons.receipt_long), label: 'History'), BottomNavigationBarItem(icon: Icon(Icons.wallet), label: 'Wallet'), BottomNavigationBarItem(icon: Icon(Icons.support_agent), label: 'Support')]),
     );
   }
+  Widget _service(IconData i, String t, String c, Color col) => Column(children: [Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: col.withOpacity(0.1), borderRadius: BorderRadius.circular(12)), child: Icon(i, color: col)), const SizedBox(height: 6), Text(t, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500)), if(c.isNotEmpty) Text(c, style: TextStyle(fontSize: 9, color: Colors.green.shade700, fontWeight: FontWeight.bold))]);
+  Widget _txnTile(String a, String b, String c, bool ok) => Card(margin: const EdgeInsets.only(bottom: 8), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), child: ListTile(leading: CircleAvatar(backgroundColor: ok? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1), child: Icon(ok? Icons.check : Icons.close, color: ok? Colors.green : Colors.red, size: 18)), title: Text('$a - $b', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)), subtitle: Text(c, style: const TextStyle(fontSize: 11)), trailing: const Icon(Icons.arrow_forward_ios, size: 12)));
 }
