@@ -1,45 +1,94 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PayQuick Admin FINAL</title>
-<style>*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}body{background:#f1f5f9;padding:10px}.header{background:#4f46e5;color:#fff;padding:15px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-top:12px}.card{background:#fff;padding:15px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.08)}.card h3{color:#4f46e5;font-size:13px;border-bottom:2px solid #e5e7eb;padding-bottom:6px;margin-bottom:10px}.btn{padding:6px 12px;border:0;border-radius:5px;color:#fff;cursor:pointer;margin:2px}.green{background:#22c55e}.red{background:#ef4444}.blue{background:#3b82f6}.item{background:#f8fafc;padding:8px;border-radius:6px;margin:5px 0;display:flex;justify-content:space-between;align-items:center}</style></head><body>
-<div class="header"><b>PayQuick SUPER ADMIN ✅ LIVE</b><div><button onclick="location.reload()" class="btn blue">Refresh</button><button onclick="localStorage.clear();location.href='index.html'" class="btn red">Logout</button></div></div>
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Panel - PayQuickPay</title>
+<script>
+// ===== ADMIN LOGIN CHECK =====
+if(localStorage.getItem("payquick_admin") !== "logged_in"){
+  let p = prompt("🔐 ADMIN PASSWORD:");
+  if(p !== "Admin@123"){
+    alert("❌ Wrong Password! Redirecting...");
+    window.location.href = "/";
+  } else {
+    localStorage.setItem("payquick_admin","logged_in");
+  }
+}
+</script>
+<style>
+body{background:#0f172a;color:white;font-family:sans-serif;margin:0;padding:15px}
+.header{background:#1e293b;padding:15px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+h2{margin:0;color:#38bdf8}
+.logout{background:#ef4444;color:white;border:none;padding:8px 15px;border-radius:8px;cursor:pointer;font-weight:bold}
+.card{background:#1e293b;padding:20px;border-radius:12px;margin:10px 0}
+.btn{padding:12px 20px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;margin:5px}
+.blue{background:#38bdf8}.yellow{background:#fbbf24}.green{background:#34d399}
+input{padding:10px;border-radius:8px;border:none;width:100%;margin:5px 0;box-sizing:border-box}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{padding:10px;text-align:left;border-bottom:1px solid #334155}
+th{color:#38bdf8}
+</style>
+</head>
+<body>
 
-<div class="grid">
-<div class="card"><h3>1️⃣ Pending Retailers (<span id="pcount">0</span>)</h3><div id="pending">No Pending Retailers ✅<br><small>Ready for approval</small></div></div>
-<div class="card"><h3>2️⃣ All Retailers (<span id="acount">0</span>)</h3><div id="all">No Retailers Yet ✅</div></div>
-<div class="card"><h3>3️⃣ Transactions</h3><div id="tx">No Transactions Yet ✅</div></div>
-<div class="card"><h3>4️⃣ Wallet Recharge</h3><div>No Requests Yet ✅</div></div>
-<div class="card"><h3>5️⃣ Commission Setup</h3>AEPS % <input id="aeps" value="0.5" style="width:60px;padding:5px;border:1px solid #ddd;border-radius:4px"><br><br>DMT Rs <input id="dmt" value="10" style="width:60px;padding:5px;border:1px solid #ddd;border-radius:4px"><br><br><button class="btn blue" onclick="alert('Commission Saved ✅')">Save</button></div>
-<div class="card"><h3>6️⃣ Services</h3>✅ AEPS<br>✅ DMT<br>✅ Recharge<br>✅ BBPS<br>✅ PAN</div>
-<div class="card"><h3>7️⃣ Reports</h3>Total Retailers: <b id="total">0</b><br>Status: <span style="color:green;font-weight:bold">LIVE ✅</span><br><br><a href="https://nilu10051998.github.io/PayQuickPay/" target="_blank">View Retailer App ↗️</a></div>
-<div class="card"><h3>8️⃣ Notification</h3><input id="ntitle" placeholder="Title" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:5px;margin:3px 0"><input id="nmsg" placeholder="Message" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:5px;margin:3px 0"><button class="btn green" style="width:100%" onclick="alert('Notification Sent to All Retailers ✅')">Send to All</button></div>
-<div class="card"><h3>9️⃣ Settings</h3>Project: payquickpay-487ef<br>Firebase: Connected ✅<br>GitHub: Live ✅</div>
+<div class="header">
+<h2>🔐 ADMIN PANEL</h2>
+<button class="logout" onclick="localStorage.removeItem('payquick_admin');location.href='/'">Logout</button>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<script>
-const firebaseConfig={apiKey:"AIzaSyC2CNTl1jpj-IIxDUCEHoAQPJFR2Zd7OOI",authDomain:"payquickpay-487ef.firebaseapp.com",projectId:"payquickpay-487ef"};
-firebase.initializeApp(firebaseConfig);
-const db=firebase.firestore();
+<div class="card">
+<h3>📊 Dashboard Overview</h3>
+<p>Total Distributors: <b id="distCount">0</b> | Total Retailers: <b id="retCount">0</b></p>
+<button class="btn blue" onclick="location.href='/'">🏠 Home</button>
+<button class="btn yellow" onclick="location.href='/distributor/'">Distributor View</button>
+<button class="btn green" onclick="location.href='/retailer/'">Retailer View</button>
+</div>
 
-async function loadRetailers(){
- try{
-  const snap=await db.collection('retailers').get();
-  let pendHTML=''; let allHTML=''; let p=0; let a=0;
-  snap.forEach(doc=>{
-   const d=doc.data(); a++;
-   allHTML+=<div class="item"><span>${d.shopName||'Shop'} - ${d.mobile||''} - <b style="color:${d.status=='approved'?'green':'orange'}">${d.status}</b></span><span><button class="btn green" onclick="approve('${doc.id}')">✓</button><button class="btn red" onclick="reject('${doc.id}')">✕</button></span></div>;
-   if((d.status||'pending')=='pending'){ p++; pendHTML+=<div class="item"><span><b>${d.shopName}</b><br><small>${d.mobile} - ${d.ownerName||''}</small></span><span><button class="btn green" onclick="approve('${doc.id}')">Approve</button><button class="btn red" onclick="reject('${doc.id}')">Reject</button></span></div>; }
+<div class="card">
+<h3>➕ Add Distributor / Retailer</h3>
+<input id="name" placeholder="Name">
+<input id="mobile" placeholder="Mobile Number">
+<input id="type" placeholder="Type: distributor / retailer">
+<button class="btn blue" onclick="addUser()">Add User</button>
+</div>
+
+<div class="card">
+<h3>👥 All Users</h3>
+<table>
+<thead><tr><th>Name</th><th>Mobile</th><th>Type</th><th>Action</th></tr></thead>
+<tbody id="userTable"></tbody>
+</table>
+</div>
+
+<script>
+function loadUsers(){
+  let users = JSON.parse(localStorage.getItem("payquick_users") || "[]");
+  document.getElementById("distCount").innerText = users.filter(u=>u.type=="distributor").length;
+  document.getElementById("retCount").innerText = users.filter(u=>u.type=="retailer").length;
+  let html="";
+  users.forEach((u,i)=>{
+    html+=<tr><td>${u.name}</td><td>${u.mobile}</td><td>${u.type}</td><td><button onclick="delUser(${i})" style="background:red;color:white;border:none;padding:5px 10px;border-radius:5px">Delete</button></td></tr>;
   });
-  document.getElementById('pcount').textContent=p;
-  document.getElementById('acount').textContent=a;
-  document.getElementById('total').textContent=a;
-  if(p>0) document.getElementById('pending').innerHTML=pendHTML;
-  if(a>0) document.getElementById('all').innerHTML=allHTML;
- }catch(e){ console.log('Load error',e); }
+  document.getElementById("userTable").innerHTML = html || "<tr><td colspan=4>No users yet</td></tr>";
 }
-function approve(id){ db.collection('retailers').doc(id).update({status:'approved'}).then(()=>{ alert('Approved ✅'); loadRetailers(); }); }
-function reject(id){ if(confirm('Reject?')) db.collection('retailers').doc(id).update({status:'rejected'}).then(()=>{ alert('Rejected'); loadRetailers(); }); }
-loadRetailers();
-setInterval(loadRetailers,5000);
+function addUser(){
+  let n=document.getElementById("name").value;
+  let m=document.getElementById("mobile").value;
+  let t=document.getElementById("type").value.toLowerCase();
+  if(!n||!m||!t){alert("Fill all fields");return;}
+  let users = JSON.parse(localStorage.getItem("payquick_users") || "[]");
+  users.push({name:n,mobile:m,type:t});
+  localStorage.setItem("payquick_users",JSON.stringify(users));
+  alert("Added!");loadUsers();
+}
+function delUser(i){
+  let users = JSON.parse(localStorage.getItem("payquick_users") || "[]");
+  users.splice(i,1);
+  localStorage.setItem("payquick_users",JSON.stringify(users));
+  loadUsers();
+}
+loadUsers();
 </script>
-</body></html>
+
+</body>
+</html>
