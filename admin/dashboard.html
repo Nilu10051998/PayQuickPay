@@ -1,94 +1,93 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Admin Panel - PayQuickPay</title>
 <script>
-// ===== ADMIN LOGIN CHECK =====
-if(localStorage.getItem("payquick_admin") !== "logged_in"){
-  let p = prompt("🔐 ADMIN PASSWORD:");
-  if(p !== "Admin@123"){
-    alert("❌ Wrong Password! Redirecting...");
-    window.location.href = "/";
-  } else {
-    localStorage.setItem("payquick_admin","logged_in");
-  }
+if(localStorage.getItem("payquick_admin")!=="logged_in"){
+ let p=prompt("🔐 ADMIN PASSWORD:");
+ if(p!=="Admin@123"){alert("Wrong!");location.href="/";}
+ else localStorage.setItem("payquick_admin","logged_in");
 }
 </script>
 <style>
-body{background:#0f172a;color:white;font-family:sans-serif;margin:0;padding:15px}
-.header{background:#1e293b;padding:15px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-h2{margin:0;color:#38bdf8}
-.logout{background:#ef4444;color:white;border:none;padding:8px 15px;border-radius:8px;cursor:pointer;font-weight:bold}
-.card{background:#1e293b;padding:20px;border-radius:12px;margin:10px 0}
-.btn{padding:12px 20px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;margin:5px}
-.blue{background:#38bdf8}.yellow{background:#fbbf24}.green{background:#34d399}
-input{padding:10px;border-radius:8px;border:none;width:100%;margin:5px 0;box-sizing:border-box}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+body{background:#0b1220;color:#fff}
+.nav{background:#101c36;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
+.nav h2{color:#38bdf8}
+.nav span{font-size:12px;color:#94a3b8}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;padding:15px}
+.card{background:linear-gradient(135deg,#1e293b,#0f172a);padding:18px;border-radius:16px;border:1px solid #1e293b}
+.card h4{color:#94a3b8;font-size:13px}
+.card h1{margin:8px 0;font-size:28px}
+.card p{font-size:12px}
+.c1{border-left:4px solid #38bdf8}.c2{border-left:4px solid #fbbf24}.c3{border-left:4px solid #34d399}.c4{border-left:4px solid #f43f5e}
+.menu{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 15px}
+.mbtn{background:#1e293b;padding:18px;border-radius:14px;text-align:center;text-decoration:none;color:#fff;border:1px solid #334155}
+.mbtn b{display:block;margin-top:6px}
+.table-box{margin:15px;background:#121d33;border-radius:16px;padding:15px}
+input,select{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;background:#0f172a;color:#fff;border:1px solid #334155}
+.btn{width:100%;padding:13px;border:none;border-radius:10px;font-weight:bold;cursor:pointer;margin-top:8px}
+.btn-blue{background:#38bdf8;color:#000}.btn-red{background:#ef4444;color:#fff}
 table{width:100%;border-collapse:collapse;margin-top:10px}
-th,td{padding:10px;text-align:left;border-bottom:1px solid #334155}
-th{color:#38bdf8}
+th{color:#38bdf8;text-align:left;padding:10px;font-size:13px}td{padding:10px;border-bottom:1px solid #1e293b;font-size:14px}
+.logout{background:#ef4444;color:#fff;border:none;padding:8px 14px;border-radius:8px}
 </style>
 </head>
 <body>
-
-<div class="header">
-<h2>🔐 ADMIN PANEL</h2>
+<div class="nav">
+<div><h2>PayQuickPay</h2><span>ADMIN PANEL • Odisha</span></div>
 <button class="logout" onclick="localStorage.removeItem('payquick_admin');location.href='/'">Logout</button>
 </div>
 
-<div class="card">
-<h3>📊 Dashboard Overview</h3>
-<p>Total Distributors: <b id="distCount">0</b> | Total Retailers: <b id="retCount">0</b></p>
-<button class="btn blue" onclick="location.href='/'">🏠 Home</button>
-<button class="btn yellow" onclick="location.href='/distributor/'">Distributor View</button>
-<button class="btn green" onclick="location.href='/retailer/'">Retailer View</button>
+<div class="grid">
+<div class="card c1"><h4>💰 TODAY SALE</h4><h1 id="sale">₹0</h1><p>+12% from yesterday</p></div>
+<div class="card c2"><h4>🏢 DISTRIBUTORS</h4><h1 id="dCount">0</h1><p>Active partners</p></div>
+<div class="card c3"><h4>🏪 RETAILERS</h4><h1 id="rCount">0</h1><p>Total shops</p></div>
+<div class="card c4"><h4>📈 COMMISSION</h4><h1>₹0</h1><p>Your profit</p></div>
 </div>
 
-<div class="card">
-<h3>➕ Add Distributor / Retailer</h3>
-<input id="name" placeholder="Name">
-<input id="mobile" placeholder="Mobile Number">
-<input id="type" placeholder="Type: distributor / retailer">
-<button class="btn blue" onclick="addUser()">Add User</button>
+<div class="menu">
+<a class="mbtn" href="/">🏠<b>HOME</b></a>
+<a class="mbtn" href="/distributor/">🏢<b>DISTRIBUTOR</b></a>
+<a class="mbtn" href="/retailer/">🏪<b>RETAILER</b></a>
+<a class="mbtn" href="#" onclick="clearData()">🗑️<b>CLEAR ALL</b></a>
 </div>
 
-<div class="card">
-<h3>👥 All Users</h3>
-<table>
-<thead><tr><th>Name</th><th>Mobile</th><th>Type</th><th>Action</th></tr></thead>
-<tbody id="userTable"></tbody>
-</table>
+<div class="table-box">
+<h3>➕ Add New Member</h3>
+<input id="name" placeholder="Full Name">
+<input id="mobile" placeholder="Mobile No">
+<select id="type"><option value="distributor">Distributor</option><option value="retailer">Retailer</option></select>
+<input id="pass" placeholder="Set Password">
+<button class="btn btn-blue" onclick="addUser()">ADD NOW</button>
+</div>
+
+<div class="table-box">
+<h3>👥 All Members List</h3>
+<table><thead><tr><th>Name</th><th>Mobile</th><th>Type</th><th>Action</th></tr></thead><tbody id="tbody"></tbody></table>
 </div>
 
 <script>
-function loadUsers(){
-  let users = JSON.parse(localStorage.getItem("payquick_users") || "[]");
-  document.getElementById("distCount").innerText = users.filter(u=>u.type=="distributor").length;
-  document.getElementById("retCount").innerText = users.filter(u=>u.type=="retailer").length;
-  let html="";
-  users.forEach((u,i)=>{
-    html+=<tr><td>${u.name}</td><td>${u.mobile}</td><td>${u.type}</td><td><button onclick="delUser(${i})" style="background:red;color:white;border:none;padding:5px 10px;border-radius:5px">Delete</button></td></tr>;
-  });
-  document.getElementById("userTable").innerHTML = html || "<tr><td colspan=4>No users yet</td></tr>";
+function load(){
+ let u=JSON.parse(localStorage.getItem("payquick_users")||"[]");
+ document.getElementById("dCount").innerText=u.filter(x=>x.type=="distributor").length;
+ document.getElementById("rCount").innerText=u.filter(x=>x.type=="retailer").length;
+ let h="";
+ u.forEach((x,i)=>{h+=<tr><td>${x.name}</td><td>${x.mobile}</td><td>${x.type}</td><td><button onclick="del(${i})" style="background:red;color:white;border:none;padding:4px 8px;border-radius:6px">X</button></td></tr>});
+ document.getElementById("tbody").innerHTML=h||"<tr><td colspan=4>No data</td></tr>";
 }
 function addUser(){
-  let n=document.getElementById("name").value;
-  let m=document.getElementById("mobile").value;
-  let t=document.getElementById("type").value.toLowerCase();
-  if(!n||!m||!t){alert("Fill all fields");return;}
-  let users = JSON.parse(localStorage.getItem("payquick_users") || "[]");
-  users.push({name:n,mobile:m,type:t});
-  localStorage.setItem("payquick_users",JSON.stringify(users));
-  alert("Added!");loadUsers();
+ let n=name.value,m=mobile.value,t=type.value,pp=pass.value;
+ if(!n||!m){alert("Fill");return}
+ let u=JSON.parse(localStorage.getItem("payquick_users")||"[]");
+ u.push({name:n,mobile:m,type:t,password:pp});
+ localStorage.setItem("payquick_users",JSON.stringify(u));
+ alert("Added");load();
 }
-function delUser(i){
-  let users = JSON.parse(localStorage.getItem("payquick_users") || "[]");
-  users.splice(i,1);
-  localStorage.setItem("payquick_users",JSON.stringify(users));
-  loadUsers();
-}
-loadUsers();
+function del(i){if(confirm("Delete?")){let u=JSON.parse(localStorage.getItem("payquick_users")||"[]");u.splice(i,1);localStorage.setItem("payquick_users",JSON.stringify(u));load();}}
+function clearData(){if(confirm("All data delete?")){localStorage.removeItem("payquick_users");load();}}
+load();
 </script>
-
 </body>
 </html>
