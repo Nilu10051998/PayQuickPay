@@ -1,164 +1,87 @@
 <!DOCTYPE html>
-<html lang="or">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PayQuick REAL ADMIN - ALL ACTIVE</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PayQuick REAL ADMIN - LIVE</title>
 <script type="importmap">{"imports":{"firebase/app":"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js","firebase/firestore":"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"}}</script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-body{background:#060a19;color:#fff}
-.top{background:#0f1c36;padding:12px;display:flex;justify-content:space-between;border-bottom:2px solid #1e40af;position:sticky;top:0;z-index:100}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}body{background:#060a19;color:#fff;padding-bottom:20px}
+.top{background:#0f1c36;padding:12px;display:flex;justify-content:space-between;border-bottom:2px solid #00ff88;position:sticky;top:0;z-index:99}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
-.card{background:linear-gradient(135deg,#14244e,#111d3d);border:1px solid #1e3a8a;border-radius:14px;padding:16px;text-align:center;cursor:pointer}
-.tab{display:none;margin:10px;background:#0f1c36;border:1px solid #1e3a8a;border-radius:14px;padding:14px}
-.tab.active{display:block}
+.card{background:#14244e;border:1px solid #1e3a8a;border-radius:12px;padding:16px;text-align:center;cursor:pointer}
+.tab{display:none;margin:10px;background:#0f1c36;border:1px solid #1e3a8a;border-radius:12px;padding:14px}.tab.active{display:block}
 input,select,textarea{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:1px solid #24335e;background:#070d22;color:#fff}
-.btn{width:100%;padding:13px;border:none;border-radius:10px;font-weight:800;margin-top:8px;cursor:pointer;font-size:15px}
-.b-blue{background:#38bdf8;color:#000}.b-green{background:#22c55e;color:#000}.b-red{background:#ef4444;color:#fff}.b-yellow{background:#fbbf24;color:#000}
+.btn{width:100%;padding:12px;border:none;border-radius:10px;font-weight:800;margin-top:8px;cursor:pointer}.b-blue{background:#38bdf8;color:#000}.b-green{background:#22c55e;color:#000}.b-red{background:#ef4444;color:#fff}
 table{width:100%;border-collapse:collapse;margin-top:10px}th{color:#60a5fa;text-align:left;padding:8px 4px;font-size:11px;border-bottom:1px solid #1e3a8a}td{padding:10px 4px;border-bottom:1px solid #16244a;font-size:13px}
-.badge{padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700}.ok{background:#22c55e;color:#000}.wait{background:#f59e0b;color:#000}
 </style>
 </head>
 <body>
-<div class="top">
-<div><b style="color:#38bdf8">PayQuick REAL ADMIN <span style="color:#00ff89">● LIVE FIREBASE</span></b><div style="font-size:10px;color:#93c5fd" id="conn">Connecting to payquickpay-487ef...</div></div>
-<button onclick="localStorage.removeItem('pq_admin_login');location.href='/'" style="background:#ef4444;color:#fff;border:none;padding:7px 12px;border-radius:8px;font-weight:700">Logout</button>
-</div>
-
+<div class="top"><div><b style="color:#38bdf8">PayQuick REAL ADMIN <span style="color:#00ff88">● LIVE payquickpay-487ef</span></b><div style="font-size:10px;color:#00ff88" id="sts">Connecting...</div></div><button onclick="localStorage.removeItem('pq_admin_login');location.href='/'" style="background:#ef4444;color:#fff;border:none;padding:7px 12px;border-radius:8px">Logout</button></div>
 <div class="grid">
-<div class="card" onclick="openTab('pending')"><div>⏳</div><h2 id="cPending">0</h2><p>Pending Approval</p></div>
-<div class="card" onclick="openTab('retailers')"><div>👥</div><h2 id="cRetail">0</h2><p>All Retailers</p></div>
-<div class="card" onclick="openTab('trans')"><div>💸</div><h2 id="cTrans">0</h2><p>Transactions</p></div>
-<div class="card" onclick="openTab('wallet')"><div>💰</div><h2 id="cWallet">0</h2><p>Wallet Request</p></div>
-<div class="card" onclick="openTab('comm')"><div>📈</div><h2>SET</h2><p>AEPS / DMT Commission</p></div>
-<div class="card" onclick="openTab('service')"><div>⚙️</div><h2>ON/OFF</h2><p>Services Control</p></div>
-<div class="card" onclick="openTab('noti')"><div>🔔</div><h2>SEND</h2><p>Send Notification</p></div>
-<div class="card" onclick="openTab('add')"><div>➕</div><h2>+</h2><p>Add Member</p></div>
+<div class="card" onclick="openTab('pending')"><div>⏳</div><h2 id="cPending">0</h2><small>Pending</small></div>
+<div class="card" onclick="openTab('retailers')"><div>👥</div><h2 id="cRetail">0</h2><small>Retailers REAL</small></div>
+<div class="card" onclick="openTab('trans')"><div>💸</div><h2 id="cTrans">0</h2><small>Transactions</small></div>
+<div class="card" onclick="openTab('wallet')"><div>💰</div><h2 id="cWallet">0</h2><small>Wallet Req</small></div>
+<div class="card" onclick="openTab('comm')"><div>📈</div><h2>SET</h2><small>Commission</small></div>
+<div class="card" onclick="openTab('service')"><div>⚙️</div><h2>ON/OFF</h2><small>Services</small></div>
+<div class="card" onclick="openTab('noti')"><div>🔔</div><h2>SEND</h2><small>Noti</small></div>
+<div class="card" onclick="openTab('add')"><div>➕</div><h2>+</h2><small>Add Member</small></div>
 </div>
-
-<div id="pending" class="tab active"><h3>⏳ Pending Retailers - REAL FIREBASE</h3><table><tr><th>Name</th><th>Mobile</th><th>Shop</th><th>Action</th></tr><tbody id="tPending"><tr><td colspan=4>Loading...</td></tr></tbody></table></div>
-<div id="retailers" class="tab"><h3>👥 All Retailers - REAL</h3><table><tr><th>Name</th><th>Mobile</th><th>Balance</th><th>Status</th></tr><tbody id="tRetail"></tbody></table></div>
-<div id="trans" class="tab"><h3>💸 Transactions - REAL</h3><table><tr><th>Date</th><th>Mobile</th><th>Type</th><th>Amt / Status</th></tr><tbody id="tTrans"></tbody></table></div>
+<div id="pending" class="tab active"><h3>⏳ Pending - REAL FIREBASE</h3><table><tr><th>Name</th><th>Mobile</th><th>Shop</th><th>Action</th></tr><tbody id="tPending">Loading...</tbody></table></div>
+<div id="retailers" class="tab"><h3>👥 All Retailers - REAL</h3><table><tr><th>Name</th><th>Mobile</th><th>Bal</th><th>Status</th></tr><tbody id="tRetail"></tbody></table></div>
+<div id="trans" class="tab"><h3>💸 Transactions - REAL</h3><table><tr><th>Date</th><th>Mobile</th><th>Type</th><th>Amt</th></tr><tbody id="tTrans"></tbody></table></div>
 <div id="wallet" class="tab"><h3>💰 Wallet Requests - REAL</h3><table><tr><th>Name</th><th>Amt</th><th>UTR</th><th>Action</th></tr><tbody id="tWallet"></tbody></table></div>
-<div id="comm" class="tab"><h3>📈 Commission Settings - REAL SAVE TO FIREBASE</h3><label>AEPS %</label><input id="inAeps" type="number" step="0.01" value="0.30"><label>DMT Commission Rs</label><input id="inDmt" type="number" value="10"><label>Recharge %</label><input id="inRech" type="number" step="0.01" value="2"><button class="btn b-blue" onclick="saveComm()">SAVE TO FIREBASE ✅</button><div id="commShow" style="margin-top:10px;font-size:12px;color:#93c5fd"></div></div>
-<div id="service" class="tab"><h3>⚙️ Services ON/OFF - REAL</h3><label>AEPS</label><select id="sAeps"><option value="ON">ON</option><option value="OFF">OFF</option></select><label>DMT</label><select id="sDmt"><option value="ON">ON</option><option value="OFF">OFF</option></select><label>Recharge</label><select id="sRech"><option value="ON">ON</option><option value="OFF">OFF</option></select><button class="btn b-green" onclick="saveService()">UPDATE SERVICES ✅</button></div>
-<div id="noti" class="tab"><h3>🔔 Send Notification - REAL TO ALL USERS</h3><input id="nTitle" placeholder="Title"><textarea id="nMsg" placeholder="Message"></textarea><button class="btn b-yellow" onclick="sendNoti()">SEND TO ALL 🔔</button></div>
-<div id="add" class="tab"><h3>➕ Add Member - REAL FIREBASE</h3><input id="aName" placeholder="Name - nilu"><input id="aMobile" placeholder="Mobile - 7908824917"><input id="aShop" placeholder="Shop - csc"><select id="aType"><option value="retailer">Retailer</option><option value="distributor">Distributor</option></select><input id="aPass" placeholder="Password - nilu"><input id="aBal" type="number" placeholder="Opening Balance 1000"><button class="btn b-blue" onclick="addMemberReal()" style="background:#00e5ff;color:#000">ADD TO FIREBASE ✅</button></div>
-
+<div id="comm" class="tab"><h3>📈 Commission - REAL SAVE</h3><input id="inAeps" placeholder="AEPS % 0.30" value="0.30"><input id="inDmt" placeholder="DMT Rs 10" value="10"><input id="inRech" placeholder="Recharge % 2" value="2"><button class="btn b-blue" onclick="saveComm()">SAVE TO FIREBASE ✅</button><div id="commShow" style="margin-top:8px;color:#7dd3fc;font-size:12px"></div></div>
+<div id="service" class="tab"><h3>⚙️ Services - REAL</h3><label>AEPS</label><select id="sAeps"><option>ON</option><option>OFF</option></select><label>DMT</label><select id="sDmt"><option>ON</option><option>OFF</option></select><label>Recharge</label><select id="sRech"><option>ON</option><option>OFF</option></select><button class="btn b-green" onclick="saveService()">UPDATE ✅</button></div>
+<div id="noti" class="tab"><h3>🔔 Send Notification - REAL</h3><input id="nTitle" placeholder="Title"><textarea id="nMsg" placeholder="Message"></textarea><button class="btn b-blue" onclick="sendNoti()">SEND TO ALL 🔔</button></div>
+<div id="add" class="tab"><h3>➕ Add Member - REAL FIREBASE</h3><input id="aName" placeholder="Name - nilu"><input id="aMobile" placeholder="Mobile - 7908824917"><input id="aShop" placeholder="Shop - csc"><select id="aType"><option value="retailer">Retailer</option><option value="distributor">Distributor</option></select><input id="aPass" placeholder="Password"><input id="aBal" type="number" placeholder="Balance 1000"><button class="btn b-blue" style="background:#00e5ff" onclick="addMemberReal()">ADD TO FIREBASE ✅</button></div>
 <script type="module">
 import {initializeApp} from "firebase/app";
-import {getFirestore, collection, getDocs, addDoc, doc, setDoc, deleteDoc, updateDoc, onSnapshot, query, orderBy, serverTimestamp, getDoc} from "firebase/firestore";
-
-// --- TUMA FIREBASE CONFIG - PAYQUICKPAY-487EF ---
+import {getFirestore, collection, getDocs, doc, setDoc, deleteDoc, getDoc, updateDoc, addDoc, serverTimestamp, query, orderBy} from "firebase/firestore";
 const firebaseConfig = {
-  apiKey: "AIzaSyAgky1DFWJ5EVBvE0l2Vi6O8K7pHFY4yC4",
+  apiKey: "AIzaSyCZNT1ljpj-IIxDUCEH6AQPJFR22d7OOI",
   authDomain: "payquickpay-487ef.firebaseapp.com",
   projectId: "payquickpay-487ef",
-  storageBucket: "payquickpay-487ef.appspot.com",
-  messagingSenderId: "1234567890",
-  appId: "1:1234567890:web:abcd1234"
+  storageBucket: "payquickpay-487ef.firebasestorage.app",
+  messagingSenderId: "368108778411",
+  appId: "1:368108778411:web:03dcbc47e46568d51b58ee",
+  measurementId: "G-9SLWLCMK8P"
 };
-// Jodi Config bhul thiba - Firebase Console > Project Settings > Config copy kari paste kara
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-document.getElementById("conn").innerHTML="✅ Connected to Firebase: payquickpay-487ef | REAL MODE";
-
-window.openTab = function(id){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById(id).classList.add('active'); if(id=='pending')loadPending(); if(id=='retailers')loadRetailers(); if(id=='wallet')loadWallet(); if(id=='trans')loadTrans();}
-
+document.getElementById("sts").innerText="✅ LIVE Connected - All Options REAL ACTIVE!";
+window.openTab = (id)=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById(id).classList.add('active'); if(id=='pending')loadPending(); if(id=='retailers')loadRetailers(); if(id=='wallet')loadWallet(); if(id=='trans')loadTrans();};
 async function loadPending(){
- try{
-  const snap = await getDocs(collection(db, "pendingUsers"));
-  document.getElementById("cPending").innerText=snap.size;
-  let h=""; if(snap.empty) h="<tr><td colspan=4 style='color:#64748b'>No Pending - Sabu Approved ✅</td></tr>";
-  snap.forEach(d=>{let u=d.data(); h+=<tr><td>${u.name||''}</td><td>${u.mobile||''}</td><td>${u.shop||''}</td><td><button onclick="approveReal('${d.id}')" style="background:#22c55e;border:none;padding:6px 10px;border-radius:6px;font-weight:700">Approve</button> <button onclick="rejectReal('${d.id}')" style="background:#ef4444;color:#fff;border:none;padding:6px 8px;border-radius:6px">X</button></td></tr>;});
-  document.getElementById("tPending").innerHTML=h;
- }catch(e){document.getElementById("tPending").innerHTML="<tr><td colspan=4>Local Mode - Firebase rule check kara</td></tr>"; loadPendingLocal();}
+ try{ const snap = await getDocs(collection(db, "pendingUsers")); document.getElementById("cPending").innerText=snap.size; let h=""; if(snap.empty) h="<tr><td colspan=4 style='color:#64748b'>No Pending ✅</td></tr>"; snap.forEach(d=>{let u=d.data(); h+=<tr><td>${u.name||''}</td><td>${u.mobile||''}</td><td>${u.shop||''}</td><td><button onclick="approveReal('${d.id}')" style="background:#22c55e;border:none;padding:6px 10px;border-radius:6px;font-weight:700">Approve</button> <button onclick="rejectReal('${d.id}')" style="background:#ef4444;color:#fff;border:none;padding:5px 8px;border-radius:6px">X</button></td></tr>;}); document.getElementById("tPending").innerHTML=h;
+ }catch(e){document.getElementById("tPending").innerHTML=<tr><td colspan=4>Error: ${e.message}<br><small>Firestore Rule Open Kara</small></td></tr>;}
 }
-function loadPendingLocal(){
- let p=JSON.parse(localStorage.getItem("pq_pending")||"[]"); document.getElementById("cPending").innerText=p.length; let h=""; p.forEach((u,i)=>{h+=<tr><td>${u.name}</td><td>${u.mobile}</td><td>${u.shop}</td><td><button onclick="approveLocal(${i})" style="background:#22c55e;padding:5px 10px;border:none;border-radius:6px">Approve</button></td></tr>;}); if(h) document.getElementById("tPending").innerHTML=h;
-}
-window.loadPending=loadPending;
-
 async function loadRetailers(){
- try{
-  const snap = await getDocs(collection(db, "users"));
-  document.getElementById("cRetail").innerText=snap.size;
-  let h=""; snap.forEach(d=>{let u=d.data(); h+=<tr><td>${u.name||''}</td><td>${u.mobile||d.id}</td><td>₹${u.balance||0}</td><td><span class="badge ok">${u.status||'active'}</span></td></tr>;});
-  document.getElementById("tRetail").innerHTML=h||"<tr><td colspan=4>No Retailers</td></tr>";
- }catch(e){ let u=JSON.parse(localStorage.getItem("pq_all_users")||"[]"); document.getElementById("cRetail").innerText=u.length; let h=""; u.forEach(x=>{h+=<tr><td>${x.name}</td><td>${x.mobile}</td><td>₹${x.balance||0}</td><td>active</td></tr>;}); document.getElementById("tRetail").innerHTML=h||"<tr><td colspan=4>No Retailers</td></tr>";}
+ try{ const snap = await getDocs(collection(db, "users")); document.getElementById("cRetail").innerText=snap.size; let h=""; snap.forEach(d=>{let u=d.data(); h+=<tr><td>${u.name||''}</td><td>${u.mobile||d.id}</td><td>₹${u.balance||0}</td><td style="color:#22c55e">${u.status||'active'}</td></tr>;}); document.getElementById("tRetail").innerHTML=h||"<tr><td colspan=4>No Users</td></tr>";
+ }catch(e){document.getElementById("tRetail").innerHTML=<tr><td colspan=4>Error: ${e.message}</td></tr>;}
 }
-window.loadRetailers=loadRetailers;
-
 async function loadWallet(){
- try{
-  const snap = await getDocs(collection(db, "walletRequests"));
-  document.getElementById("cWallet").innerText=snap.size;
-  let h=""; if(snap.empty) h="<tr><td colspan=4>No Requests</td></tr>";
-  snap.forEach(d=>{let w=d.data(); h+=<tr><td>${w.name||w.mobile}</td><td>₹${w.amount}</td><td>${w.utr||''}</td><td><button onclick="approveWallet('${d.id}')" style="background:#22c55e;border:none;padding:5px 10px;border-radius:6px">Approve</button></td></tr>;});
-  document.getElementById("tWallet").innerHTML=h;
- }catch(e){document.getElementById("tWallet").innerHTML="<tr><td colspan=4>Local Mode</td></tr>";}
+ try{ const snap = await getDocs(collection(db, "walletRequests")); document.getElementById("cWallet").innerText=snap.size; let h=""; if(snap.empty) h="<tr><td colspan=4>No Requests</td></tr>"; snap.forEach(d=>{let w=d.data(); h+=<tr><td>${w.name||w.mobile}</td><td>₹${w.amount}</td><td>${w.utr||''}</td><td><button onclick="approveWallet('${d.id}')" style="background:#22c55e;border:none;padding:5px 10px;border-radius:6px">Approve</button></td></tr>;}); document.getElementById("tWallet").innerHTML=h;
+ }catch(e){document.getElementById("tWallet").innerHTML="<tr><td colspan=4>No Requests</td></tr>";}
 }
-window.loadWallet=loadWallet;
 async function loadTrans(){
- try{
-  const snap = await getDocs(query(collection(db, "transactions"), orderBy("timestamp","desc")));
-  document.getElementById("cTrans").innerText=snap.size;
-  let h=""; snap.forEach(d=>{let t=d.data(); h+=<tr><td>${(t.date||'').toString().slice(0,10)}</td><td>${t.mobile||''}</td><td>${t.type||''}</td><td>₹${t.amount||0} - ${t.status||'success'}</td></tr>;});
-  document.getElementById("tTrans").innerHTML=h||"<tr><td colspan=4>No Transactions</td></tr>";
- }catch(e){document.getElementById("tTrans").innerHTML="<tr><td colspan=4>No Transactions Yet</td></tr>";}
+ try{ const snap = await getDocs(query(collection(db, "transactions"), orderBy("timestamp","desc"))); document.getElementById("cTrans").innerText=snap.size; let h=""; snap.forEach(d=>{let t=d.data(); h+=<tr><td>${new Date(t.timestamp?.seconds*1000||Date.now()).toLocaleDateString()}</td><td>${t.mobile||''}</td><td>${t.type||''}</td><td>₹${t.amount||0}</td></tr>;}); document.getElementById("tTrans").innerHTML=h||"<tr><td colspan=4>No Trans</td></tr>";
+ }catch(e){document.getElementById("tTrans").innerHTML="<tr><td colspan=4>No Trans Yet</td></tr>";}
 }
-window.loadTrans=loadTrans;
-
-window.addMemberReal = async function(){
+window.addMemberReal = async()=>{
  const name=document.getElementById('aName').value.trim(); const mob=document.getElementById('aMobile').value.trim(); const shop=document.getElementById('aShop').value.trim(); const type=document.getElementById('aType').value; const pass=document.getElementById('aPass').value.trim(); const bal=parseInt(document.getElementById('aBal').value||0);
  if(!name||!mob){alert("Name & Mobile darkar");return;}
- try{
-  await setDoc(doc(db, "users", mob), {name,mobile:mob,shop,type,password:pass||"1234",balance:bal,status:"active",createdAt:serverTimestamp()});
-  alert("✅ REAL FIREBASE RE ADDED! "+name+" - "+mob);
-  document.getElementById('aName').value="";document.getElementById('aMobile').value="";document.getElementById('aShop').value="";document.getElementById('aBal').value="";
-  loadRetailers(); openTab('retailers');
- }catch(e){
-  // fallback local
-  let u=JSON.parse(localStorage.getItem("pq_all_users")||"[]"); u.push({name,mobile:mob,shop,type,password:pass,balance:bal}); localStorage.setItem("pq_all_users",JSON.stringify(u));
-  alert("✅ LOCAL ADDED (Firebase Rule Check Kara) - "+name); loadRetailers(); openTab('retailers');
- }
-}
-
-window.approveReal = async function(id){
- try{
-  const dRef = doc(db, "pendingUsers", id); const snap = await getDoc(dRef); const data=snap.data();
-  await setDoc(doc(db, "users", data.mobile), {...data, status:"active", balance:0, approvedAt:serverTimestamp()});
-  await deleteDoc(dRef);
-  alert("✅ Approved Real: "+data.name); loadPending(); loadRetailers();
- }catch(e){alert("Error: "+e.message);}
-}
-window.rejectReal = async function(id){ if(!confirm("Reject?")) return; await deleteDoc(doc(db, "pendingUsers", id)); loadPending();}
-
-window.approveWallet = async function(id){
- try{
-  const wRef = doc(db, "walletRequests", id); const snap = await getDoc(wRef); const w=snap.data();
-  const uRef = doc(db, "users", w.mobile); const uSnap = await getDoc(uRef);
-  if(uSnap.exists()){ await updateDoc(uRef, {balance: (uSnap.data().balance||0)+parseInt(w.amount)}); } else { await setDoc(uRef, {mobile:w.mobile,name:w.name||w.mobile,balance:parseInt(w.amount),status:"active"});}
-  await deleteDoc(wRef); alert("✅ Wallet Approved ₹"+w.amount); loadWallet(); loadRetailers();
- }catch(e){alert(e.message);}
-}
-
-window.saveComm = async function(){
- const aeps=document.getElementById('inAeps').value; const dmt=document.getElementById('inDmt').value; const rech=document.getElementById('inRech').value;
- try{ await setDoc(doc(db, "settings", "commission"), {aeps,dmt,rech,updatedAt:serverTimestamp()}); document.getElementById("commShow").innerText="✅ Saved Real Firebase: AEPS "+aeps+"% | DMT Rs."+dmt; alert("Commission Saved Real ✅"); }catch(e){ localStorage.setItem("pq_comm",JSON.stringify({aeps,dmt,rech})); alert("Saved Local ✅ - Firebase Rule Open Kara");}
-}
-window.saveService = async function(){
- const aeps=document.getElementById('sAeps').value; const dmt=document.getElementById('sDmt').value; const rech=document.getElementById('sRech').value;
- try{ await setDoc(doc(db, "settings", "services"), {aeps,dmt,rech,updatedAt:serverTimestamp()}); alert("✅ Services Updated Real: "+aeps+"/"+dmt+"/"+rech);}catch(e){alert("Saved Local - Firebase Check");}
-}
-window.sendNoti = async function(){
- const title=document.getElementById('nTitle').value; const msg=document.getElementById('nMsg').value; if(!title) return alert("Title lekha");
- try{ await addDoc(collection(db, "notifications"), {title,msg,timestamp:serverTimestamp()}); alert("🔔 Real Notification Sent to All Users ✅"); }catch(e){alert("Error: "+e.message);}
-}
-
-// Auto Load
+ try{ await setDoc(doc(db, "users", mob), {name,mobile:mob,shop,type,password:pass||"1234",balance:bal,status:"active",createdAt:serverTimestamp()}); alert("✅ REAL ADDED FIREBASE: "+name+" - ₹"+bal); document.getElementById('aName').value="";document.getElementById('aMobile').value="";document.getElementById('aShop').value="";document.getElementById('aBal').value=""; loadRetailers(); openTab('retailers'); }catch(e){alert("Error: "+e.message+"\nFirestore Rule -> Allow Read Write kariba pain padiba");}
+};
+window.approveReal = async(id)=>{
+ try{ const ref=doc(db,"pendingUsers",id); const snap=await getDoc(ref); const data=snap.data(); await setDoc(doc(db,"users",data.mobile), {...data,status:"active",balance:0,approvedAt:serverTimestamp()}); await deleteDoc(ref); alert("Approved: "+data.name); loadPending(); loadRetailers(); }catch(e){alert(e.message);}
+};
+window.rejectReal = async(id)=>{ if(!confirm("Reject?")) return; await deleteDoc(doc(db,"pendingUsers",id)); loadPending();};
+window.approveWallet = async(id)=>{
+ try{ const wRef=doc(db,"walletRequests",id); const snap=await getDoc(wRef); const w=snap.data(); const uRef=doc(db,"users",w.mobile); const uSnap=await getDoc(uRef); if(uSnap.exists()){ await updateDoc(uRef, {balance:(uSnap.data().balance||0)+parseInt(w.amount)}); } await deleteDoc(wRef); alert("Wallet Approved ₹"+w.amount); loadWallet(); loadRetailers(); }catch(e){alert(e.message);}
+};
+window.saveComm = async()=>{ try{ await setDoc(doc(db,"settings","commission"), {aeps:document.getElementById('inAeps').value,dmt:document.getElementById('inDmt').value,rech:document.getElementById('inRech').value,updatedAt:serverTimestamp()}); document.getElementById("commShow").innerText="✅ REAL SAVED FIREBASE!"; alert("Commission Saved Real ✅"); }catch(e){alert(e.message);} };
+window.saveService = async()=>{ try{ await setDoc(doc(db,"settings","services"), {aeps:document.getElementById('sAeps').value,dmt:document.getElementById('sDmt').value,rech:document.getElementById('sRech').value,updatedAt:serverTimestamp()}); alert("Services Updated Real ✅"); }catch(e){alert(e.message);} };
+window.sendNoti = async()=>{ const title=document.getElementById('nTitle').value; const msg=document.getElementById('nMsg').value; if(!title) return alert("Title"); try{ await addDoc(collection(db,"notifications"), {title,msg,timestamp:serverTimestamp()}); alert("🔔 Sent Real to All ✅"); }catch(e){alert(e.message);} };
 loadPending(); loadRetailers(); loadWallet(); loadTrans();
 </script>
 </body>
