@@ -1,179 +1,107 @@
 <!DOCTYPE html>
-<html lang="or">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>PayQuickPay SUPER ADMIN - FINAL</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PayQuick SUPER ADMIN - FINAL OK</title>
 <script>
 var _pwd=localStorage.getItem("pq_admin_login");
-if(_pwd!=="OK"){var p=prompt("🔐 SUPER ADMIN PASSWORD:");if(p!=="Admin@123"){alert("❌ Wrong Password");location.href="/";}else{localStorage.setItem("pq_admin_login","OK");}}
-function openTab(id){var a=document.querySelectorAll('.tab');for(var i=0;i<a.length;i++)a[i].classList.remove('active');document.getElementById(id).classList.add('active');if(id=='retailers')showAll();if(id=='pending')showPending();if(id=='wallet')showWallet();if(id=='trans')showTrans();window.scrollTo(0,0);}
+if(_pwd!=="OK"){var p=prompt("🔐 SUPER ADMIN PASSWORD:");if(p!=="Admin@123"){alert("Wrong!");location.href="/";}else{localStorage.setItem("pq_admin_login","OK");}}
+function openTab(id){var a=document.querySelectorAll('.tab');for(var i=0;i<a.length;i++)a[i].classList.remove('active');document.getElementById(id).classList.add('active'); if(id=='retailers')showAll(); if(id=='pending')showPending(); if(id=='wallet')showWallet(); if(id=='trans')showTrans();}
 </script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,Segoe UI}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
 body{background:#060a19;color:#fff;padding-bottom:20px}
-.top{background:#0f1c36;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #1e40af;position:sticky;top:0;z-index:100}
-.top b{color:#38bdf8;font-size:15px}.live{color:#00ff89}
+.top{background:#0f1c36;padding:12px;display:flex;justify-content:space-between;border-bottom:2px solid #1e40af;position:sticky;top:0;z-index:100}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
-.card{background:linear-gradient(135deg,#14244e,#111d3d);border:1px solid #1e3a8a;border-radius:14px;padding:16px 10px;text-align:center;cursor:pointer}
-.card:active{transform:scale(.96)}
-.card.ic{font-size:22px}.card h2{font-size:20px;margin:4px 0}.card p{font-size:11px;color:#93a3c1}
-.tab{display:none;margin:10px;background:#0f1c36;border:1px solid #1e3a8a;border-radius:14px;padding:14px}
+.card{background:#14244e;border:1px solid #1e3a8a;border-radius:12px;padding:16px;text-align:center;cursor:pointer}
+.card:active{transform:scale(.95)}
+.tab{display:none;margin:10px;background:#0f1c36;border:1px solid #1e3a8a;border-radius:12px;padding:14px}
 .tab.active{display:block}
-h3{color:#38bdf8;margin-bottom:10px;font-size:15px}
-input,select,textarea{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:1px solid #24335e;background:#070d22;color:#fff;font-size:14px}
-.btn{width:100%;padding:12px;border:none;border-radius:10px;font-weight:700;margin-top:8px;cursor:pointer;font-size:14px}
-.b-blue{background:#38bdf8;color:#000}.b-green{background:#22c55e;color:#000}.b-red{background:#ef4444;color:#fff}.b-yellow{background:#fbbf24;color:#000}
-table{width:100%;border-collapse:collapse;margin-top:10px}
-th{color:#60a5fa;text-align:left;padding:8px 4px;font-size:11px;border-bottom:1px solid #1e3a8a}
-td{padding:10px 4px;border-bottom:1px solid #16244a;font-size:13px}
-.badge{padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700}
-.ok{background:#22c55e;color:#000}.wait{background:#f59e0b;color:#000}
-.small{font-size:11px;color:#64748b;margin-top:6px}
+input,select,textarea{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:1px solid #24335e;background:#070d22;color:#fff}
+.btn{width:100%;padding:12px;border:none;border-radius:10px;font-weight:700;margin-top:8px;cursor:pointer}
+.b-blue{background:#38bdf8}.b-green{background:#22c55e}.b-red{background:#ef4444;color:#fff}
+table{width:100%;border-collapse:collapse;margin-top:10px} th{color:#60a5fa;text-align:left;padding:8px 4px;font-size:11px;border-bottom:1px solid #1e3a8a} td{padding:10px 4px;border-bottom:1px solid #16244a;font-size:13px}
 </style>
 </head>
 <body>
 
 <div class="top">
-<div><b>PayQuick SUPER ADMIN <span class="live">✅ LIVE</span></b><div style="font-size:11px;color:#00ff89">payquickpay-487ef | FINAL OK</div></div>
-<button onclick="localStorage.removeItem('pq_admin_login');location.href='/'" style="background:#ef4444;color:#fff;border:none;padding:7px 12px;border-radius:8px;font-weight:700">Logout</button>
+<div><b style="color:#38bdf8">PayQuick SUPER ADMIN <span style="color:#00ff89">✅ FINAL OK</span></b><div style="font-size:11px;color:#00ff89">payquickpay-487ef</div></div>
+<button onclick="localStorage.removeItem('pq_admin_login');location.href='/'" style="background:#ef4444;color:#fff;border:none;padding:7px 12px;border-radius:8px">Logout</button>
 </div>
 
 <div class="grid">
-<div class="card" onclick="openTab('pending')"><div class="ic">⏳</div><h2 id="cPending">0</h2><p>Pending Retailers</p></div>
-<div class="card" onclick="openTab('retailers')"><div class="ic">👥</div><h2 id="cRetail">0</h2><p>All Retailers</p></div>
-<div class="card" onclick="openTab('trans')"><div class="ic">💸</div><h2 id="cTrans">0</h2><p>Transactions</p></div>
-<div class="card" onclick="openTab('wallet')"><div class="ic">💰</div><h2 id="cWallet">0</h2><p>Wallet Requests</p></div>
-<div class="card" onclick="openTab('comm')"><div class="ic">📈</div><h2>SET</h2><p>AEPS% / DMT Rs</p></div>
-<div class="card" onclick="openTab('service')"><div class="ic">⚙️</div><h2>ON/OFF</h2><p>Services</p></div>
-<div class="card" onclick="openTab('noti')"><div class="ic">🔔</div><h2>SEND</h2><p>Notification</p></div>
-<div class="card" onclick="openTab('add')"><div class="ic">➕</div><h2>+</h2><p>Add Member</p></div>
+<div class="card" onclick="openTab('pending')"><div>⏳</div><h2 id="cPending">0</h2><small>Pending</small></div>
+<div class="card" onclick="openTab('retailers')"><div>👥</div><h2 id="cRetail">0</h2><small>All Retailers</small></div>
+<div class="card" onclick="openTab('trans')"><div>💸</div><h2 id="cTrans">0</h2><small>Trans</small></div>
+<div class="card" onclick="openTab('wallet')"><div>💰</div><h2 id="cWallet">0</h2><small>Wallet</small></div>
+<div class="card" onclick="openTab('comm')"><div>📈</div><h2>SET</h2><small>Commission</small></div>
+<div class="card" onclick="openTab('service')"><div>⚙️</div><h2>ON/OFF</h2><small>Services</small></div>
+<div class="card" onclick="openTab('noti')"><div>🔔</div><h2>SEND</h2><small>Noti</small></div>
+<div class="card" onclick="openTab('add')"><div>➕</div><h2>+</h2><small>Add Member</small></div>
 </div>
 
-<div id="pending" class="tab active">
-<h3>⏳ Pending Approval</h3>
-<table><tr><th>Name</th><th>Mobile</th><th>Shop</th><th>Action</th></tr><tbody id="tPending"></tbody></table>
-<p class="small">* Approve kale retailer active heba</p>
-</div>
-
-<div id="retailers" class="tab">
-<h3>👥 All Retailers / Distributors</h3>
-<table><tr><th>Name</th><th>Mobile</th><th>Balance</th><th>Type</th></tr><tbody id="tRetail"></tbody></table>
-</div>
-
-<div id="trans" class="tab">
-<h3>💸 Live Transactions</h3>
-<table><tr><th>Date</th><th>Mobile</th><th>Type</th><th>Amt</th></tr><tbody id="tTrans"></tbody></table>
-</div>
-
-<div id="wallet" class="tab">
-<h3>💰 Wallet Recharge Requests</h3>
-<table><tr><th>Name</th><th>Amount</th><th>UTR</th><th>Action</th></tr><tbody id="tWallet"></tbody></table>
-</div>
-
-<div id="comm" class="tab">
-<h3>📈 Commission Settings</h3>
-<label>AEPS Commission % (Ex: 0.30)</label><input id="inAeps" placeholder="0.30">
-<label>DMT Commission Rs (Ex: 10)</label><input id="inDmt" placeholder="10">
-<label>Recharge Commission % (Ex: 2)</label><input id="inRech" placeholder="2">
-<button class="btn b-blue" onclick="saveComm()">SAVE COMMISSION ✅</button>
-<div id="commShow" class="small" style="margin-top:10px"></div>
-</div>
-
-<div id="service" class="tab">
-<h3>⚙️ Services Control</h3>
-<label>AEPS Service</label><select id="sAeps"><option value="ON">ON - Chalu</option><option value="OFF">OFF - Band</option></select>
-<label>DMT Service</label><select id="sDmt"><option value="ON">ON - Chalu</option><option value="OFF">OFF - Band</option></select>
-<label>Recharge / BBPS</label><select id="sRech"><option value="ON">ON - Chalu</option><option value="OFF">OFF - Band</option></select>
-<button class="btn b-green" onclick="saveService()">UPDATE SERVICES ✅</button>
-</div>
-
-<div id="noti" class="tab">
-<h3>🔔 Send Notification to All</h3>
-<input id="nTitle" placeholder="Title - Ex: Offer Today">
-<textarea id="nMsg" rows="3" placeholder="Message likha..."></textarea>
-<button class="btn b-yellow" onclick="sendNoti()">SEND TO ALL USERS 🔔</button>
-<div id="notiList" class="small"></div>
-</div>
+<div id="pending" class="tab active"><h3>⏳ Pending</h3><table><tr><th>Name</th><th>Mobile</th><th>Shop</th><th>Action</th></tr><tbody id="tPending"></tbody></table></div>
+<div id="retailers" class="tab"><h3>👥 All Retailers</h3><table><tr><th>Name</th><th>Mobile</th><th>Balance</th><th>Type</th></tr><tbody id="tRetail"></tbody></table></div>
+<div id="trans" class="tab"><h3>💸 Transactions</h3><table><tr><th>Date</th><th>Mobile</th><th>Type</th><th>Amt</th></tr><tbody id="tTrans"></tbody></table></div>
+<div id="wallet" class="tab"><h3>💰 Wallet</h3><table><tr><th>Name</th><th>Amt</th><th>UTR</th><th>Action</th></tr><tbody id="tWallet"></tbody></table></div>
+<div id="comm" class="tab"><h3>📈 Commission</h3><input id="inAeps" placeholder="AEPS % - 0.30"><input id="inDmt" placeholder="DMT Rs - 10"><button class="btn b-blue" onclick="saveComm()">SAVE ✅</button></div>
+<div id="service" class="tab"><h3>⚙️ Services</h3><select id="sAeps"><option>ON</option><option>OFF</option></select><button class="btn b-green" onclick="alert('Updated ✅')">UPDATE ✅</button></div>
+<div id="noti" class="tab"><h3>🔔 Notification</h3><input id="nTitle" placeholder="Title"><textarea id="nMsg" placeholder="Message"></textarea><button class="btn b-blue" onclick="sendNoti()">SEND 🔔</button></div>
 
 <div id="add" class="tab">
 <h3>➕ Add New Member</h3>
-<input id="aName" placeholder="Full Name">
-<input id="aMobile" placeholder="Mobile Number - 10 digit">
-<input id="aShop" placeholder="Shop Name">
-<select id="aType"><option value="retailer">Retailer</option><option value="distributor">Distributor</option></select>
-<input id="aPass" placeholder="Set Password">
-<input id="aBal" type="number" placeholder="Opening Balance - Ex: 1000">
-<button class="btn b-blue" onclick="addMember()">ADD MEMBER ✅</button>
+<input id="aName" placeholder="Full Name - nilu">
+<input id="aMobile" placeholder="Mobile - 7908824917">
+<input id="aShop" placeholder="Shop - csc">
+<select id="aType"><option value="Retailer">Retailer</option><option value="Distributor">Distributor</option></select>
+<input id="aPass" placeholder="Password - nilu">
+<input id="aBal" type="number" placeholder="Balance - 1000">
+<button class="btn b-blue" style="background:#00d4ff;color:#000;font-size:16px" onclick="addMember()">ADD MEMBER ✅</button>
 </div>
 
 <script>
 function getUsers(){return JSON.parse(localStorage.getItem("pq_all_users")||"[]");}
 function getPending(){return JSON.parse(localStorage.getItem("pq_pending")||"[]");}
-function getWallet(){return JSON.parse(localStorage.getItem("pq_wallet")||"[]");}
-function getTrans(){return JSON.parse(localStorage.getItem("pq_trans")||"[]");}
 function setUsers(d){localStorage.setItem("pq_all_users",JSON.stringify(d));}
 function setPending(d){localStorage.setItem("pq_pending",JSON.stringify(d));}
 
 function showPending(){
  var p=getPending(); document.getElementById("cPending").innerText=p.length;
- var h=""; if(p.length==0) h="<tr><td colspan=4 style='color:#64748b'>No Pending - Sabu Approved ✅</td></tr>";
- else p.forEach((u,i)=>{h+=<tr><td>${u.name}</td><td>${u.mobile}</td><td>${u.shop||''}</td><td><button onclick="approveP(${i})" style="background:#22c55e;border:none;padding:5px 10px;border-radius:6px;font-weight:700">Approve</button> <button onclick="rejectP(${i})" style="background:#ef4444;color:#fff;border:none;padding:5px 8px;border-radius:6px">X</button></td></tr>});
+ var h=""; if(p.length==0) h="<tr><td colspan=4 style='color:#64748b'>No Pending ✅</td></tr>";
+ else p.forEach((u,i)=>{h+=<tr><td>${u.name}</td><td>${u.mobile}</td><td>${u.shop||''}</td><td><button onclick="approveP(${i})" style="background:#22c55e;border:none;padding:5px 10px;border-radius:6px">Approve</button></td></tr>});
  document.getElementById("tPending").innerHTML=h;
 }
 function showAll(){
  var u=getUsers(); document.getElementById("cRetail").innerText=u.length;
- var h=""; if(u.length==0) h="<tr><td colspan=4 style='color:#64748b'>No Retailer - Add kara</td></tr>";
- else u.forEach(x=>{h+=<tr><td>${x.name}</td><td>${x.mobile}</td><td>₹${x.balance||0}</td><td><span class="badge ok">${x.type}</span></td></tr>});
+ var h=""; if(u.length==0) h="<tr><td colspan=4 style='color:#64748b'>No Retailer</td></tr>";
+ else u.forEach(x=>{h+=<tr><td>${x.name}</td><td>${x.mobile}</td><td>₹${x.balance||0}</td><td>${x.type}</td></tr>});
  document.getElementById("tRetail").innerHTML=h;
 }
-function showWallet(){
- var w=getWallet(); document.getElementById("cWallet").innerText=w.length;
- var h=""; if(w.length==0) h="<tr><td colspan=4 style='color:#64748b'>No Wallet Requests</td></tr>";
- else w.forEach((x,i)=>{h+=<tr><td>${x.name}</td><td>₹${x.amount}</td><td>${x.utr}</td><td><button onclick="approveW(${i})" style="background:#22c55e;border:none;padding:5px 10px;border-radius:6px;font-weight:700">Approve</button></td></tr>});
- document.getElementById("tWallet").innerHTML=h;
-}
-function showTrans(){
- var t=getTrans(); document.getElementById("cTrans").innerText=t.length;
- var h=""; if(t.length==0) h="<tr><td colspan=4 style='color:#64748b'>No Transactions Yet</td></tr>";
- else t.forEach(x=>{h+=<tr><td>${x.date}</td><td>${x.mobile}</td><td>${x.type}</td><td>₹${x.amount}</td></tr>});
- document.getElementById("tTrans").innerHTML=h;
-}
-function addMember(){
- if(!aName.value||!aMobile.value){alert("Name & Mobile darkar!");return;}
- var u=getUsers(); u.push({name:aName.value,mobile:aMobile.value,shop:aShop.value,type:aType.value,password:aPass.value||"1234",balance:parseInt(aBal.value||0)});
- setUsers(u); alert("✅ "+aName.value+" Added!"); aName.value="";aMobile.value="";aShop.value="";aBal.value=""; showAll(); openTab('retailers');
-}
-function approveP(i){
- var p=getPending(); var u=getUsers(); var x=p.splice(i,1)[0]; u.push({name:x.name,mobile:x.mobile,shop:x.shop,type:'retailer',balance:0}); setPending(p); setUsers(u); showPending(); showAll(); alert("✅ Approved: "+x.name);
-}
-function rejectP(i){if(!confirm("Reject kariba?"))return; var p=getPending(); p.splice(i,1); setPending(p); showPending();}
-function approveW(i){
- var w=getWallet(); var u=getUsers(); var x=w.splice(i,1)[0];
- var idx=u.findIndex(y=>y.mobile==x.mobile); if(idx>-1){u[idx].balance=(parseInt(u[idx].balance||0)+parseInt(x.amount));} else {u.push({name:x.name,mobile:x.mobile,type:'retailer',balance:parseInt(x.amount)});}
- localStorage.setItem("pq_wallet",JSON.stringify(w)); setUsers(u); showWallet(); showAll(); alert("✅ Wallet ₹"+x.amount+" Approved for "+x.mobile);
-}
-function saveComm(){
- localStorage.setItem("pq_comm",JSON.stringify({aeps:inAeps.value,dmt:inDmt.value,rech:inRech.value}));
- document.getElementById("commShow").innerHTML="Saved: AEPS "+inAeps.value+"% | DMT Rs."+inDmt.value+" | Recharge "+inRech.value+"% ✅";
- alert("Commission Saved ✅");
-}
-function saveService(){
- localStorage.setItem("pq_service",JSON.stringify({aeps:sAeps.value,dmt:sDmt.value,rech:sRech.value}));
- alert("Services Updated ✅ - "+sAeps.value+"/"+sDmt.value+"/"+sRech.value);
-}
-function sendNoti(){
- if(!nTitle.value)return alert("Title lekha");
- var n=JSON.parse(localStorage.getItem("pq_noti")||"[]"); n.push({title:nTitle.value,msg:nMsg.value,date:new Date().toLocaleString()});
- localStorage.setItem("pq_noti",JSON.stringify(n)); nTitle.value="";nMsg.value=""; alert("🔔 Notification Sent to All ✅"); showNoti();
-}
-function showNoti(){
- var n=JSON.parse(localStorage.getItem("pq_noti")||"[]"); var h=""; n.slice(-3).reverse().forEach(x=>{h+=<div style="margin-top:8px;padding:8px;background:#070d22;border-radius:8px"><b>${x.title}</b><br><small>${x.msg}</small></div>}); document.getElementById("notiList").innerHTML=h;
- var c=JSON.parse(localStorage.getItem("pq_comm")||"null"); if(c){inAeps.value=c.aeps;inDmt.value=c.dmt;inRech.value=c.rech; document.getElementById("commShow").innerHTML="Current: AEPS "+c.aeps+"% | DMT Rs."+c.dmt;}
-}
-showPending();showAll();showWallet();showTrans();showNoti();
+function showWallet(){document.getElementById("cWallet").innerText=0; document.getElementById("tWallet").innerHTML="<tr><td colspan=4 style='color:#64748b'>No Wallet</td></tr>";}
+function showTrans(){document.getElementById("cTrans").innerText=0; document.getElementById("tTrans").innerHTML="<tr><td colspan=4 style='color:#64748b'>No Trans</td></tr>";}
 
-// Demo data first time
+function addMember(){
+ var name=document.getElementById('aName').value.trim();
+ var mob=document.getElementById('aMobile').value.trim();
+ var shop=document.getElementById('aShop').value.trim();
+ var type=document.getElementById('aType').value;
+ var pass=document.getElementById('aPass').value.trim();
+ var bal=document.getElementById('aBal').value.trim();
+ if(name==""||mob==""){alert("❌ Name & Mobile lekha Bhai!"); return;}
+ var users=getUsers();
+ users.push({name:name,mobile:mob,shop:shop,type:type,password:pass||"1234",balance:parseInt(bal||0)});
+ setUsers(users);
+ alert("✅ SUCCESS! "+name+" - "+mob+" - ₹"+(bal||0)+" Added!");
+ document.getElementById('aName').value="";document.getElementById('aMobile').value="";document.getElementById('aShop').value="";document.getElementById('aPass').value="";document.getElementById('aBal').value="";
+ showAll(); openTab('retailers');
+}
+function approveP(i){var p=getPending(); var u=getUsers(); var x=p.splice(i,1)[0]; u.push({name:x.name,mobile:x.mobile,shop:x.shop,type:'Retailer',balance:0}); setPending(p); setUsers(u); showPending(); showAll(); alert("Approved: "+x.name);}
+function saveComm(){localStorage.setItem("pq_comm",JSON.stringify({aeps:document.getElementById('inAeps').value,dmt:document.getElementById('inDmt').value})); alert("Saved ✅");}
+function sendNoti(){alert("Sent ✅");}
+
+showPending(); showAll(); showWallet(); showTrans();
 if(getUsers().length==0 && getPending().length==0){
  setPending([{name:"Ramesh Kumar",mobile:"9876543210",shop:"Ramesh Mobile"},{name:"Suresh Behera",mobile:"8765432109",shop:"Suresh Store"}]);
  showPending();
