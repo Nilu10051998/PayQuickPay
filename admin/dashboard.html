@@ -2,9 +2,9 @@
 <html>
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PayQuick REAL ADMIN - LIVE FIXED</title>
-<script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js"></script>
-<script type="importmap">{"imports":{"firebase/app":"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js","firebase/firestore":"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"}}</script>
+<title>PayQuick REAL ADMIN LIVE</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial}body{background:#060a19;color:#fff;padding-bottom:20px}
 .top{background:#0f1c36;padding:12px;display:flex;justify-content:space-between;border-bottom:2px solid #00ff88;position:sticky;top:0;z-index:99}
@@ -12,7 +12,7 @@
 .card{background:#14244e;border:1px solid #1e3a8a;border-radius:12px;padding:16px;text-align:center;cursor:pointer}
 .tab{display:none;margin:10px;background:#0f1c36;border:1px solid #1e3a8a;border-radius:12px;padding:14px}.tab.active{display:block}
 input,select,textarea{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:1px solid #24335e;background:#070d22;color:#fff}
-.btn{width:100%;padding:12px;border:none;border-radius:10px;font-weight:800;margin-top:8px;cursor:pointer}.b-blue{background:#38bdf8;color:#000}
+.btn{width:100%;padding:12px;border:none;border-radius:10px;font-weight:800;margin-top:8px;cursor:pointer;background:#38bdf8;color:#000}
 table{width:100%;border-collapse:collapse;margin-top:10px}th{color:#60a5fa;text-align:left;padding:8px 4px;font-size:11px;border-bottom:1px solid #1e3a8a}td{padding:10px 4px;border-bottom:1px solid #16244a;font-size:13px}
 </style>
 </head>
@@ -28,63 +28,51 @@ table{width:100%;border-collapse:collapse;margin-top:10px}th{color:#60a5fa;text-
 <div class="card" onclick="openTab('noti')"><div>🔔</div><h2>SEND</h2><small>Noti</small></div>
 <div class="card" onclick="openTab('add')"><div>➕</div><h2>+</h2><small>Add Member</small></div>
 </div>
-<div id="pending" class="tab active"><h3>⏳ Pending - REAL FIREBASE</h3><div id="debug" style="font-size:10px;color:#fbbf24;margin:5px 0"></div><table><tr><th>Name</th><th>Mobile</th><th>Shop</th><th>Action</th></tr><tbody id="tPending">Loading Firebase...</tbody></table></div>
+<div id="pending" class="tab active"><h3>⏳ Pending - REAL</h3><div id="debug" style="font-size:10px;color:#fbbf24;margin:5px 0"></div><table><tr><th>Name</th><th>Mobile</th><th>Shop</th><th>Action</th></tr><tbody id="tPending">Loading...</tbody></table></div>
 <div id="retailers" class="tab"><h3>👥 All Retailers - REAL</h3><table><tr><th>Name</th><th>Mobile</th><th>Bal</th><th>Status</th></tr><tbody id="tRetail"></tbody></table></div>
-<div id="trans" class="tab"><h3>💸 Transactions - REAL</h3><table><tr><th>Date</th><th>Mobile</th><th>Type</th><th>Amt</th></tr><tbody id="tTrans"></tbody></table></div>
-<div id="wallet" class="tab"><h3>💰 Wallet Requests - REAL</h3><table><tr><th>Name</th><th>Amt</th><th>UTR</th><th>Action</th></tr><tbody id="tWallet"></tbody></table></div>
-<div id="comm" class="tab"><h3>📈 Commission - REAL</h3><input id="inAeps" value="0.30"><input id="inDmt" value="10"><input id="inRech" value="2"><button class="btn b-blue" onclick="saveComm()">SAVE ✅</button><div id="commShow" style="margin-top:8px;color:#7dd3fc;font-size:12px"></div></div>
-<div id="service" class="tab"><h3>⚙️ Services</h3><select id="sAeps"><option>ON</option><option>OFF</option></select><select id="sDmt"><option>ON</option><option>OFF</option></select><select id="sRech"><option>ON</option><option>OFF</option></select><button class="btn b-blue" onclick="saveService()">UPDATE ✅</button></div>
-<div id="noti" class="tab"><h3>🔔 Notification</h3><input id="nTitle" placeholder="Title"><textarea id="nMsg" placeholder="Msg"></textarea><button class="btn b-blue" onclick="sendNoti()">SEND 🔔</button></div>
-<div id="add" class="tab"><h3>➕ Add Member - REAL FIREBASE</h3><input id="aName" placeholder="Name - nilu"><input id="aMobile" placeholder="Mobile - 7908824917"><input id="aShop" placeholder="Shop - csc"><select id="aType"><option value="retailer">Retailer</option><option value="distributor">Distributor</option></select><input id="aPass" placeholder="Password"><input id="aBal" type="number" placeholder="Balance 1000"><button class="btn b-blue" style="background:#00e5ff" onclick="addMemberReal()">ADD TO FIREBASE ✅</button><div id="addDebug" style="margin-top:8px;font-size:11px;color:#fbbf24"></div></div>
-<script type="module">
-import {initializeApp} from "firebase/app";
-import {getFirestore, collection, getDocs, doc, setDoc, deleteDoc, getDoc, updateDoc, addDoc, serverTimestamp, query, orderBy} from "firebase/firestore";
-const firebaseConfig = {
-  apiKey: "AIzaSyCZNT1ljpj-IIxDUCEH6AQPJFR22d7OOI",
-  authDomain: "payquickpay-487ef.firebaseapp.com",
-  projectId: "payquickpay-487ef",
-  storageBucket: "payquickpay-487ef.firebasestorage.app",
-  messagingSenderId: "368108778411",
-  appId: "1:368108778411:web:03dcbc47e46568d51b58ee"
-};
-try{
- const app = initializeApp(firebaseConfig);
- const db = getFirestore(app);
- document.getElementById("sts").innerText="✅ LIVE Connected - payquickpay-487ef";
- document.getElementById("debug").innerText="Firebase OK - Loading Data...";
- window.db=db; window.fs={collection,getDocs,doc,setDoc,deleteDoc,getDoc,updateDoc,addDoc,serverTimestamp,query,orderBy};
-}catch(e){document.getElementById("sts").innerText="❌ Firebase Error: "+e.message; document.getElementById("debug").innerText=e.message;}
+<div id="trans" class="tab"><h3>💸 Transactions</h3><table><tr><th>Date</th><th>Mobile</th><th>Type</th><th>Amt</th></tr><tbody id="tTrans"></tbody></table></div>
+<div id="wallet" class="tab"><h3>💰 Wallet Requests</h3><table><tr><th>Name</th><th>Amt</th><th>UTR</th><th>Action</th></tr><tbody id="tWallet"></tbody></table></div>
+<div id="comm" class="tab"><h3>📈 Commission</h3><input id="inAeps" value="0.30"><input id="inDmt" value="10"><input id="inRech" value="2"><button class="btn" onclick="saveComm()">SAVE ✅</button><div id="commShow"></div></div>
+<div id="service" class="tab"><h3>⚙️ Services</h3><select id="sAeps"><option>ON</option><option>OFF</option></select><select id="sDmt"><option>ON</option><option>OFF</option></select><select id="sRech"><option>ON</option><option>OFF</option></select><button class="btn" onclick="saveService()">UPDATE ✅</button></div>
+<div id="noti" class="tab"><h3>🔔 Notification</h3><input id="nTitle" placeholder="Title"><textarea id="nMsg" placeholder="Msg"></textarea><button class="btn" onclick="sendNoti()">SEND 🔔</button></div>
+<div id="add" class="tab"><h3>➕ Add Member - REAL</h3><input id="aName" placeholder="Name - nilu"><input id="aMobile" placeholder="Mobile - 7908824917"><input id="aShop" placeholder="Shop - csc"><select id="aType"><option value="retailer">Retailer</option><option value="distributor">Distributor</option></select><input id="aPass" placeholder="Password"><input id="aBal" type="number" placeholder="Balance 1000"><button class="btn" style="background:#00e5ff" onclick="addMemberReal()">ADD TO FIREBASE ✅</button><div id="addDebug" style="margin-top:8px;font-size:11px;color:#fbbf24"></div></div>
+<script>
+const firebaseConfig = { apiKey: "AIzaSyCZNT1ljpj-IIxDUCEH6AQPJFR22d7OOI", authDomain: "payquickpay-487ef.firebaseapp.com", projectId: "payquickpay-487ef", storageBucket: "payquickpay-487ef.firebasestorage.app", messagingSenderId: "368108778411", appId: "1:368108778411:web:03dcbc47e46568d51b58ee" };
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+document.getElementById("sts").innerText="✅ LIVE Connected - Ready!";
+document.getElementById("debug").innerText="Firebase Compat OK";
 
-window.openTab = (id)=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById(id).classList.add('active'); if(id=='pending')loadPending(); if(id=='retailers')loadRetailers(); if(id=='wallet')loadWallet(); if(id=='trans')loadTrans();};
+function openTab(id){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById(id).classList.add('active'); if(id=='pending')loadPending(); if(id=='retailers')loadRetailers(); if(id=='wallet')loadWallet(); if(id=='trans')loadTrans();}
 
 async function loadPending(){
- try{ const snap = await getDocs(collection(db, "pendingUsers")); document.getElementById("cPending").innerText=snap.size; let h=""; if(snap.empty) h="<tr><td colspan=4 style='color:#64748b'>No Pending - Sabu Approved ✅</td></tr>"; snap.forEach(d=>{let u=d.data(); h+=<tr><td>${u.name||''}</td><td>${u.mobile||''}</td><td>${u.shop||''}</td><td><button onclick="approveReal('${d.id}')" style="background:#22c55e;border:none;padding:6px 10px;border-radius:6px;font-weight:700">Approve</button></td></tr>;}); document.getElementById("tPending").innerHTML=h; document.getElementById("debug").innerText="✅ Pending Loaded: "+snap.size;
- }catch(e){document.getElementById("tPending").innerHTML=<tr><td colspan=4 style="color:#fbbf24">Firestore Database Create Kara Paain Padiba!<br>${e.message}<br><br><b>Firebase Console → Firestore Database → Create Database → Start in Test Mode → Next</b></td></tr>; document.getElementById("debug").innerText="❌ "+e.message;}
+ try{ const snap = await db.collection("pendingUsers").get(); document.getElementById("cPending").innerText=snap.size; let h=""; if(snap.empty) h="<tr><td colspan=4 style='color:#64748b'>No Pending - Sabu Approved ✅</td></tr>"; snap.forEach(d=>{let u=d.data(); h+=<tr><td>${u.name||''}</td><td>${u.mobile||''}</td><td>${u.shop||''}</td><td><button onclick="approveReal('${d.id}')" style="background:#22c55e;border:none;padding:6px 10px;border-radius:6px;font-weight:700">Approve</button></td></tr>;}); document.getElementById("tPending").innerHTML=h; document.getElementById("debug").innerText="✅ Loaded Pending: "+snap.size;
+ }catch(e){document.getElementById("tPending").innerHTML=<tr><td colspan=4 style="color:#fbbf24">Error: ${e.message}</td></tr>; document.getElementById("debug").innerText="❌ "+e.message;}
 }
 async function loadRetailers(){
- try{ const snap = await getDocs(collection(db, "users")); document.getElementById("cRetail").innerText=snap.size; let h=""; snap.forEach(d=>{let u=d.data(); h+=<tr><td>${u.name||''}</td><td>${u.mobile||d.id}</td><td>₹${u.balance||0}</td><td style="color:#22c55e">${u.status||'active'}</td></tr>;}); document.getElementById("tRetail").innerHTML=h||"<tr><td colspan=4>No Retailers Yet - Add Member ru Add Kara</td></tr>";
+ try{ const snap = await db.collection("users").get(); document.getElementById("cRetail").innerText=snap.size; let h=""; snap.forEach(d=>{let u=d.data(); h+=<tr><td>${u.name||''}</td><td>${u.mobile||d.id}</td><td>₹${u.balance||0}</td><td style="color:#22c55e">${u.status||'active'}</td></tr>;}); document.getElementById("tRetail").innerHTML=h||"<tr><td colspan=4>No Retailers - Add Member ru Add Kara</td></tr>";
  }catch(e){document.getElementById("tRetail").innerHTML=<tr><td colspan=4>${e.message}</td></tr>;}
 }
 async function loadWallet(){
- try{ const snap = await getDocs(collection(db, "walletRequests")); document.getElementById("cWallet").innerText=snap.size; let h=""; if(snap.empty) h="<tr><td colspan=4>No Requests</td></tr>"; snap.forEach(d=>{let w=d.data(); h+=<tr><td>${w.name||w.mobile}</td><td>₹${w.amount}</td><td>${w.utr||''}</td><td><button onclick="approveWallet('${d.id}')" style="background:#22c55e;border:none;padding:5px 10px;border-radius:6px">Approve</button></td></tr>;}); document.getElementById("tWallet").innerHTML=h;
+ try{ const snap = await db.collection("walletRequests").get(); document.getElementById("cWallet").innerText=snap.size; let h=""; if(snap.empty) h="<tr><td colspan=4>No Requests</td></tr>"; snap.forEach(d=>{let w=d.data(); h+=<tr><td>${w.name||w.mobile}</td><td>₹${w.amount}</td><td>${w.utr||''}</td><td><button onclick="approveWallet('${d.id}')" style="background:#22c55e;border:none;padding:5px 10px;border-radius:6px">Approve</button></td></tr>;}); document.getElementById("tWallet").innerHTML=h;
  }catch(e){document.getElementById("tWallet").innerHTML="<tr><td colspan=4>No Requests</td></tr>";}
 }
 async function loadTrans(){
- try{ const snap = await getDocs(query(collection(db, "transactions"), orderBy("timestamp","desc"))); document.getElementById("cTrans").innerText=snap.size; let h=""; snap.forEach(d=>{let t=d.data(); h+=<tr><td>${new Date(t.timestamp?.seconds*1000||Date.now()).toLocaleDateString()}</td><td>${t.mobile||''}</td><td>${t.type||''}</td><td>₹${t.amount||0}</td></tr>;}); document.getElementById("tTrans").innerHTML=h||"<tr><td colspan=4>No Trans</td></tr>";
+ try{ const snap = await db.collection("transactions").orderBy("timestamp","desc").get(); document.getElementById("cTrans").innerText=snap.size; let h=""; snap.forEach(d=>{let t=d.data(); let dt=t.timestamp? new Date(t.timestamp.seconds*1000).toLocaleDateString() : 'now'; h+=<tr><td>${dt}</td><td>${t.mobile||''}</td><td>${t.type||''}</td><td>₹${t.amount||0}</td></tr>;}); document.getElementById("tTrans").innerHTML=h||"<tr><td colspan=4>No Trans</td></tr>";
  }catch(e){document.getElementById("tTrans").innerHTML="<tr><td colspan=4>No Trans Yet</td></tr>";}
 }
-window.addMemberReal = async()=>{
+async function addMemberReal(){
  const name=document.getElementById('aName').value.trim(); const mob=document.getElementById('aMobile').value.trim(); const shop=document.getElementById('aShop').value.trim(); const type=document.getElementById('aType').value; const pass=document.getElementById('aPass').value.trim(); const bal=parseInt(document.getElementById('aBal').value||0);
  if(!name||!mob){alert("Name & Mobile darkar");return;}
  document.getElementById("addDebug").innerText="Adding "+name+"...";
- try{ await setDoc(doc(db, "users", mob), {name,mobile:mob,shop,type,password:pass||"1234",balance:bal,status:"active",createdAt:serverTimestamp()}); document.getElementById("addDebug").innerText="✅ SUCCESS REAL FIREBASE: "+name; alert("✅ REAL ADDED: "+name+" - ₹"+bal); document.getElementById('aName').value="";document.getElementById('aMobile').value="";document.getElementById('aShop').value="";document.getElementById('aBal').value=""; loadRetailers(); openTab('retailers'); }catch(e){document.getElementById("addDebug").innerText="❌ Error: "+e.message; alert("Error: "+e.message);}
-};
-window.approveReal = async(id)=>{ try{ const ref=doc(db,"pendingUsers",id); const snap=await getDoc(ref); const data=snap.data(); await setDoc(doc(db,"users",data.mobile), {...data,status:"active",balance:0,approvedAt:serverTimestamp()}); await deleteDoc(ref); alert("Approved: "+data.name); loadPending(); loadRetailers(); }catch(e){alert(e.message);} };
-window.approveWallet = async(id)=>{ try{ const wRef=doc(db,"walletRequests",id); const snap=await getDoc(wRef); const w=snap.data(); const uRef=doc(db,"users",w.mobile); const uSnap=await getDoc(uRef); if(uSnap.exists()){ await updateDoc(uRef, {balance:(uSnap.data().balance||0)+parseInt(w.amount)}); } await deleteDoc(wRef); alert("Approved ₹"+w.amount); loadWallet(); loadRetailers(); }catch(e){alert(e.message);} };
-window.saveComm = async()=>{ try{ await setDoc(doc(db,"settings","commission"), {aeps:document.getElementById('inAeps').value,dmt:document.getElementById('inDmt').value,rech:document.getElementById('inRech').value,updatedAt:serverTimestamp()}); document.getElementById("commShow").innerText="✅ SAVED REAL!"; alert("Saved Real ✅"); }catch(e){alert(e.message);} };
-window.saveService = async()=>{ try{ await setDoc(doc(db,"settings","services"), {aeps:document.getElementById('sAeps').value,dmt:document.getElementById('sDmt').value,rech:document.getElementById('sRech').value,updatedAt:serverTimestamp()}); alert("Updated Real ✅"); }catch(e){alert(e.message);} };
-window.sendNoti = async()=>{ const title=document.getElementById('nTitle').value; const msg=document.getElementById('nMsg').value; if(!title) return alert("Title"); try{ await addDoc(collection(db,"notifications"), {title,msg,timestamp:serverTimestamp()}); alert("🔔 Sent Real ✅"); }catch(e){alert(e.message);} };
-window.loadPending=loadPending; window.loadRetailers=loadRetailers; window.loadWallet=loadWallet; window.loadTrans=loadTrans;
+ try{ await db.collection("users").doc(mob).set({name,mobile:mob,shop,type,password:pass||"1234",balance:bal,status:"active",createdAt: firebase.firestore.FieldValue.serverTimestamp()}); document.getElementById("addDebug").innerText="✅ SUCCESS: "+name+" Added!"; alert("✅ REAL ADDED: "+name+" - ₹"+bal); loadRetailers(); openTab('retailers'); }catch(e){document.getElementById("addDebug").innerText="❌ Error: "+e.message; alert("Error: "+e.message);}
+}
+async function approveReal(id){ try{ const docSnap=await db.collection("pendingUsers").doc(id).get(); const data=docSnap.data(); await db.collection("users").doc(data.mobile).set({...data,status:"active",balance:0,approvedAt: firebase.firestore.FieldValue.serverTimestamp()}); await db.collection("pendingUsers").doc(id).delete(); alert("Approved: "+data.name); loadPending(); loadRetailers(); }catch(e){alert(e.message);} }
+async function approveWallet(id){ try{ const wSnap=await db.collection("walletRequests").doc(id).get(); const w=wSnap.data(); const uSnap=await db.collection("users").doc(w.mobile).get(); if(uSnap.exists){ await db.collection("users").doc(w.mobile).update({balance:(uSnap.data().balance||0)+parseInt(w.amount)}); } await db.collection("walletRequests").doc(id).delete(); alert("Approved ₹"+w.amount); loadWallet(); loadRetailers(); }catch(e){alert(e.message);} }
+async function saveComm(){ try{ await db.collection("settings").doc("commission").set({aeps:document.getElementById('inAeps').value,dmt:document.getElementById('inDmt').value,rech:document.getElementById('inRech').value,updatedAt: firebase.firestore.FieldValue.serverTimestamp()}); alert("Saved Real ✅"); }catch(e){alert(e.message);} }
+async function saveService(){ try{ await db.collection("settings").doc("services").set({aeps:document.getElementById('sAeps').value,dmt:document.getElementById('sDmt').value,rech:document.getElementById('sRech').value,updatedAt: firebase.firestore.FieldValue.serverTimestamp()}); alert("Updated Real ✅"); }catch(e){alert(e.message);} }
+async function sendNoti(){ const title=document.getElementById('nTitle').value; const msg=document.getElementById('nMsg').value; if(!title) return alert("Title"); try{ await db.collection("notifications").add({title,msg,timestamp: firebase.firestore.FieldValue.serverTimestamp()}); alert("🔔 Sent Real ✅"); }catch(e){alert(e.message);} }
+
 loadPending(); loadRetailers(); loadWallet(); loadTrans();
 </script>
 </body>
