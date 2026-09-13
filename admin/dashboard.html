@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dashboard</title></head>
+<body style="font-family:sans-serif;padding:20px">
+<h2>Admin Panel Opened ✅</h2>
+<p>Welcome bhai!</p>
+<a href="https://console.firebase.google.com/project/payquickpay-487ef/firestore/data" target="_blank" style="background:orange;color:white;padding:10px 20px;text-decoration:none;border-radius:5px">Firebase Data Dekha</a>
+<br><br>
+<a href="https://nilu10051998.github.io/PayQuickPay/" style="background:green;color:white;padding:10px 20px;text-decoration:none;border-radius:5px">Retailer App Dekha</a>
+<br><br>
+<button onclick="localStorage.clear();location.href='index.html'" style="padding:10px;background:red;color:white;border:0;border-radius:5px">Logout</button>
+<script>
+if(localStorage.getItem('ad')!='1'){ location.href='index.html'; }
+</script>
+</body>
+</html>
