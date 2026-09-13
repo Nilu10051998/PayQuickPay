@@ -1,21 +1,70 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayQuickPay Admin</title>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+<style>
+body{font-family:Arial;background:#f2f2f2;padding:20px}
+.card{background:#fff;padding:20px;border-radius:10px;max-width:500px;margin:auto;box-shadow:0 2px 10px #ccc}
+input{width:100%;padding:10px;margin:8px 0;border:1px solid #ccc;border-radius:5px;box-sizing:border-box}
+button{width:100%;padding:12px;background:#0d6efd;color:#fff;border:none;border-radius:5px;font-size:16px;cursor:pointer}
+.list{margin-top:20px}
+.item{background:#eef;padding:10px;margin:5px 0;border-radius:5px;display:flex;justify-content:space-between}
+</style>
+</head>
+<body>
+<div class="card">
+<h2>PayQuickPay - Admin Panel</h2>
+<input id="name" placeholder="Retailer Name">
+<input id="mobile" placeholder="Mobile Number (10 digit)">
+<input id="password" placeholder="Password">
+<button onclick="addRetailer()">Add Retailer</button>
+<div id="msg"></div>
+<h3>Retailers List</h3>
+<div id="list" class="list">Loading...</div>
+</div>
+<script>
 const firebaseConfig = {
-  apiKey: "AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",
+  apiKey: "AIzaSyC2CNTlljpj-IIxDUCEHoAQPJfR22d700I",
   authDomain: "payquickpay-487ef.firebaseapp.com",
   projectId: "payquickpay-487ef",
   storageBucket: "payquickpay-487ef.firebasestorage.app",
   messagingSenderId: "368108778411",
-  appId: "1:368108778411:web:03dcbc47e46568d51b58ee",
-  measurementId: "G-9SLWLCMK8P"
+  appId: "1:368108778411:web:83dcbc47e46568d51b58ee",
+  measurementId: "G-95LWLCNK8P"
 };
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+function addRetailer(){
+  const name=document.getElementById('name').value;
+  const mobile=document.getElementById('mobile').value;
+  const password=document.getElementById('password').value;
+  if(!name||!mobile||!password){alert('Sabu fill kara');return}
+  db.collection('retailers').doc(mobile).set({
+    name:name,mobile:mobile,password:password,createdAt:new Date()
+  }).then(()=>{
+    document.getElementById('msg').innerHTML='<p style=color:green>Retailer Added!</p>';
+    document.getElementById('name').value='';document.getElementById('mobile').value='';document.getElementById('password').value='';
+    loadRetailers();
+  })
+}
+
+function loadRetailers(){
+  db.collection('retailers').onSnapshot(snap=>{
+    let html='';
+    snap.forEach(doc=>{
+      const d=doc.data();
+      html+=<div class=item><span>${d.name} - ${d.mobile}</span><button onclick="del('${doc.id}')" style="width:auto;padding:3px 10px;background:red">Del</button></div>;
+    });
+    document.getElementById('list').innerHTML=html||'No retailers';
+  })
+}
+function del(id){if(confirm('Delete?')) db.collection('retailers').doc(id).delete()}
+loadRetailers();
+</script>
+</body>
+</html>
