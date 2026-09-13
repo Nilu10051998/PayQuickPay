@@ -1,7 +1,28 @@
-<!DOCTYPE html><html><body style="font-family:sans-serif">
-<div id="L" style="max-width:400px;margin:100px auto;background:#fff;padding:20px;box-shadow:0 0 10px #ccc;border-radius:10px">
-<h2>Admin Login</h2>
-<input id="u" value="admin" style="width:100%;padding:10px;margin:5px 0"><br>
-<input id="p" value="admin123" type="password" style="width:100%;padding:10px;margin:5px 0"><br>
-<button onclick="if(u.value=='admin'&&p.value=='admin123'){localStorage.setItem('ad','1');location.href='dashboard.html'}else{alert('Wrong')}" style="width:100%;padding:10px;background:#4f46e5;color:#fff;border:0">LOGIN</button>
-</div></body></html>
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PayQuickPay - Select Portal</title>
+<style>
+body{background:#0f172a;color:white;font-family:sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}
+.box{text-align:center;padding:30px;background:#1e293b;border-radius:20px;width:90%;max-width:400px;box-shadow:0 10px 30px rgba(0,0,0,0.5)}
+h1{color:#38bdf8;margin-bottom:5px}
+p{color:#94a3b8;margin-bottom:25px}
+.btn{display:block;width:100%;padding:15px;margin:12px 0;border:none;border-radius:12px;font-size:18px;font-weight:bold;cursor:pointer;text-decoration:none}
+.admin{background:#38bdf8;color:#000}
+.dist{background:#fbbf24;color:#000}
+.retail{background:#34d399;color:#000}
+.btn:hover{transform:scale(1.03)}
+</style>
+</head>
+<body>
+<div class="box">
+<h1>PayQuickPay</h1>
+<p>Select Your Portal</p>
+<a class="btn admin" href="/admin/dashboard.html">🔐 ADMIN LOGIN</a>
+<a class="btn dist" href="/distributor/login.html">🏢 DISTRIBUTOR LOGIN</a>
+<a class="btn retail" href="/retailer/login.html">🏪 RETAILER LOGIN</a>
+<p style="margin-top:20px;font-size:12px">www.payquickpay.in</p>
+</div>
+</body>
+</html>
