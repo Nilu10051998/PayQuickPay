@@ -1,93 +1,160 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin Panel - PayQuickPay</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PayQuick SUPER ADMIN</title>
 <script>
-if(localStorage.getItem("payquick_admin")!=="logged_in"){
- let p=prompt("🔐 ADMIN PASSWORD:");
- if(p!=="Admin@123"){alert("Wrong!");location.href="/";}
- else localStorage.setItem("payquick_admin","logged_in");
+// 🔐 PASSWORD PROTECTION
+if(localStorage.getItem("pq_admin")!=="super_login"){
+ let p=prompt("🔐 SUPER ADMIN PASSWORD:");
+ if(p!=="Admin@123"){alert("❌ Wrong Password");location.href="/";}
+ else{localStorage.setItem("pq_admin","super_login");}
 }
 </script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
-body{background:#0b1220;color:#fff}
-.nav{background:#101c36;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
-.nav h2{color:#38bdf8}
-.nav span{font-size:12px;color:#94a3b8}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;padding:15px}
-.card{background:linear-gradient(135deg,#1e293b,#0f172a);padding:18px;border-radius:16px;border:1px solid #1e293b}
-.card h4{color:#94a3b8;font-size:13px}
-.card h1{margin:8px 0;font-size:28px}
-.card p{font-size:12px}
-.c1{border-left:4px solid #38bdf8}.c2{border-left:4px solid #fbbf24}.c3{border-left:4px solid #34d399}.c4{border-left:4px solid #f43f5e}
-.menu{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 15px}
-.mbtn{background:#1e293b;padding:18px;border-radius:14px;text-align:center;text-decoration:none;color:#fff;border:1px solid #334155}
-.mbtn b{display:block;margin-top:6px}
-.table-box{margin:15px;background:#121d33;border-radius:16px;padding:15px}
-input,select{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;background:#0f172a;color:#fff;border:1px solid #334155}
-.btn{width:100%;padding:13px;border:none;border-radius:10px;font-weight:bold;cursor:pointer;margin-top:8px}
-.btn-blue{background:#38bdf8;color:#000}.btn-red{background:#ef4444;color:#fff}
-table{width:100%;border-collapse:collapse;margin-top:10px}
-th{color:#38bdf8;text-align:left;padding:10px;font-size:13px}td{padding:10px;border-bottom:1px solid #1e293b;font-size:14px}
-.logout{background:#ef4444;color:#fff;border:none;padding:8px 14px;border-radius:8px}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI}
+body{background:#070b18;color:#fff}
+.top{background:#101a33;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #1e3a8a;position:sticky;top:0;z-index:9}
+.top h2{color:#38bdf8;font-size:18px}.top small{color:#00ff88}
+.live{color:#00ff88;font-weight:bold}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
+.card{background:#131f3e;border-radius:12px;padding:14px;border:1px solid #1e3a8a;text-align:center;cursor:pointer}
+.card h3{font-size:13px;color:#94a3b8}.card h1{font-size:22px;margin:6px 0}.card b{color:#fbbf24;font-size:12px}
+.tab{display:none;margin:12px;background:#101a33;border-radius:12px;padding:12px}.tab.active{display:block}
+input,select,textarea{width:100%;padding:10px;margin:6px 0;border-radius:8px;border:1px solid #334155;background:#070b18;color:#fff}
+.btn{width:100%;padding:11px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;margin-top:6px}
+.blue{background:#38bdf8;color:#000}.green{background:#22c55e}.red{background:#ef4444;color:#fff}.yellow{background:#fbbf24}
+table{width:100%;border-collapse:collapse;margin-top:8px}
+th{color:#38bdf8;text-align:left;padding:8px;font-size:12px}td{padding:8px;border-bottom:1px solid #1e293b;font-size:13px}
+.badge{padding:3px 8px;border-radius:20px;font-size:11px}
+.pending{background:#f59e0b;color:#000}.approved{background:#22c55e;color:#000}
 </style>
 </head>
 <body>
-<div class="nav">
-<div><h2>PayQuickPay</h2><span>ADMIN PANEL • Odisha</span></div>
-<button class="logout" onclick="localStorage.removeItem('payquick_admin');location.href='/'">Logout</button>
+
+<div class="top">
+<div><h2>PayQuick SUPER ADMIN <span class="live">✅ LIVE</span></h2><small>Project: payquickpay-487ef | Odisha</small></div>
+<button class="red" style="padding:6px 12px;border-radius:6px;border:none" onclick="localStorage.removeItem('pq_admin');location.href='/'">Logout</button>
 </div>
 
 <div class="grid">
-<div class="card c1"><h4>💰 TODAY SALE</h4><h1 id="sale">₹0</h1><p>+12% from yesterday</p></div>
-<div class="card c2"><h4>🏢 DISTRIBUTORS</h4><h1 id="dCount">0</h1><p>Active partners</p></div>
-<div class="card c3"><h4>🏪 RETAILERS</h4><h1 id="rCount">0</h1><p>Total shops</p></div>
-<div class="card c4"><h4>📈 COMMISSION</h4><h1>₹0</h1><p>Your profit</p></div>
+<div class="card" onclick="openTab('pending')"><h3>⏳ Pending Retailers</h3><h1 id="pCount">0</h1><b>Approve Now</b></div>
+<div class="card" onclick="openTab('retailers')"><h3>👥 All Retailers</h3><h1 id="rCount">0</h1><b>View All</b></div>
+<div class="card" onclick="openTab('trans')"><h3>💸 Transactions</h3><h1 id="tCount">0</h1><b>Today Sale</b></div>
+<div class="card" onclick="openTab('wallet')"><h3>💰 Wallet Recharge</h3><h1 id="wCount">0</h1><b>Requests</b></div>
+<div class="card" onclick="openTab('comm')"><h3>📈 Commission</h3><h1>SET</h1><b>AEPS% / DMT Rs</b></div>
+<div class="card" onclick="openTab('service')"><h3>⚙️ Services</h3><h1>ON/OFF</h1><b>AEPS/DMT/BBPS</b></div>
+<div class="card" onclick="openTab('noti')"><h3>🔔 Notification</h3><h1>SEND</h1><b>Send to All</b></div>
+<div class="card" onclick="openTab('add')"><h3>➕ Add Member</h3><h1>+</h1><b>Dist/Retailer</b></div>
 </div>
 
-<div class="menu">
-<a class="mbtn" href="/">🏠<b>HOME</b></a>
-<a class="mbtn" href="/distributor/">🏢<b>DISTRIBUTOR</b></a>
-<a class="mbtn" href="/retailer/">🏪<b>RETAILER</b></a>
-<a class="mbtn" href="#" onclick="clearData()">🗑️<b>CLEAR ALL</b></a>
+<!-- PENDING -->
+<div id="pending" class="tab active">
+<h3>⏳ Pending Retailers Approval</h3>
+<table><thead><tr><th>Name</th><th>Mobile</th><th>Shop</th><th>Action</th></tr></thead><tbody id="pendingTable"><tr><td colspan=4>Loading from Firebase...</td></tr></tbody></table>
 </div>
 
-<div class="table-box">
-<h3>➕ Add New Member</h3>
-<input id="name" placeholder="Full Name">
-<input id="mobile" placeholder="Mobile No">
-<select id="type"><option value="distributor">Distributor</option><option value="retailer">Retailer</option></select>
-<input id="pass" placeholder="Set Password">
-<button class="btn btn-blue" onclick="addUser()">ADD NOW</button>
+<!-- RETAILERS -->
+<div id="retailers" class="tab">
+<h3>👥 All Retailers</h3>
+<table><thead><tr><th>Name</th><th>Mobile</th><th>Balance</th><th>Status</th></tr></thead><tbody id="retailerTable"></tbody></table>
 </div>
 
-<div class="table-box">
-<h3>👥 All Members List</h3>
-<table><thead><tr><th>Name</th><th>Mobile</th><th>Type</th><th>Action</th></tr></thead><tbody id="tbody"></tbody></table>
+<!-- TRANSACTIONS -->
+<div id="trans" class="tab">
+<h3>💸 Live Transactions</h3>
+<table><thead><tr><th>Date</th><th>User</th><th>Type</th><th>Amount</th></tr></thead><tbody id="transTable"></tbody></table>
 </div>
 
-<script>
-function load(){
- let u=JSON.parse(localStorage.getItem("payquick_users")||"[]");
- document.getElementById("dCount").innerText=u.filter(x=>x.type=="distributor").length;
- document.getElementById("rCount").innerText=u.filter(x=>x.type=="retailer").length;
- let h="";
- u.forEach((x,i)=>{h+=<tr><td>${x.name}</td><td>${x.mobile}</td><td>${x.type}</td><td><button onclick="del(${i})" style="background:red;color:white;border:none;padding:4px 8px;border-radius:6px">X</button></td></tr>});
- document.getElementById("tbody").innerHTML=h||"<tr><td colspan=4>No data</td></tr>";
+<!-- WALLET -->
+<div id="wallet" class="tab">
+<h3>💰 Wallet Recharge Requests</h3>
+<tbody id="walletTable">No requests</tbody>
+<table><thead><tr><th>Name</th><th>Amount</th><th>UTR</th><th>Action</th></tr></thead><tbody id="walletBody"></tbody></table>
+</div>
+
+<!-- COMMISSION -->
+<div id="comm" class="tab">
+<h3>📈 Set Commission</h3>
+<label>AEPS Commission %</label><input id="aepsPer" placeholder="Ex: 0.30">
+<label>DMT Commission Rs</label><input id="dmtRs" placeholder="Ex: 10">
+<label>Recharge Commission %</label><input id="rechPer" placeholder="Ex: 2">
+<button class="btn blue" onclick="saveComm()">SAVE COMMISSION</button>
+<p style="font-size:12px;color:#94a3b8;margin-top:8px">* E commission sabu retailer nku lagu heba</p>
+</div>
+
+<!-- SERVICES -->
+<div id="service" class="tab">
+<h3>⚙️ ON/OFF Services</h3>
+<label>AEPS Service</label><select id="sAeps"><option value="ON">ON</option><option value="OFF">OFF</option></select>
+<label>DMT Service</label><select id="sDmt"><option value="ON">ON</option><option value="OFF">OFF</option></select>
+<label>Recharge/BBPS</label><select id="sRech"><option value="ON">ON</option><option value="OFF">OFF</option></select>
+<button class="btn green" onclick="saveService()">UPDATE SERVICES</button>
+</div>
+
+<!-- NOTIFICATION -->
+<div id="noti" class="tab">
+<h3>🔔 Send Notification to All Retailers</h3>
+<input id="notiTitle" placeholder="Title Ex: Important Update">
+<textarea id="notiMsg" placeholder="Message likha..."></textarea>
+<button class="btn yellow" onclick="sendNoti()">SEND TO ALL 🔔</button>
+</div>
+
+<!-- ADD MEMBER -->
+<div id="add" class="tab">
+<h3>➕ Add New Distributor/Retailer</h3>
+<input id="nName" placeholder="Full Name"><input id="nMobile" placeholder="Mobile No">
+<select id="nType"><option value="retailer">Retailer</option><option value="distributor">Distributor</option></select>
+<input id="nPass" placeholder="Set Password">
+<input id="nBal" placeholder="Opening Balance Ex: 1000">
+<button class="btn blue" onclick="addMember()">ADD NOW</button>
+</div>
+
+<script type="module">
+// FIREBASE IMPORT
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, setDoc, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+// Tuma Firebase Config - Eita already payquickpay-487ef ra
+const firebaseConfig = {
+  apiKey: "AIzaSy...TUMA_API_KEY",
+  authDomain: "payquickpay-487ef.firebaseapp.com",
+  projectId: "payquickpay-487ef",
+  storageBucket: "payquickpay-487ef.appspot.com",
+  messagingSenderId: "YOUR_ID",
+  appId: "YOUR_APP_ID"
+};
+
+try{
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// LIVE COUNTS
+onSnapshot(collection(db,"pending_retailers"), snap=>{ document.getElementById("pCount").innerText=snap.size; let h=""; snap.forEach(d=>{let x=d.data(); h+=<tr><td>${x.name}</td><td>${x.mobile}</td><td>${x.shop||''}</td><td><button class='green' onclick="approve('${d.id}')" style="padding:4px 8px;border:none;border-radius:5px">Approve</button> <button class='red' onclick="reject('${d.id}')" style="padding:4px 8px;border:none;border-radius:5px">X</button></td></tr>}); document.getElementById("pendingTable").innerHTML=h||"<tr><td colspan=4>No pending</td></tr>"; });
+onSnapshot(collection(db,"retailers"), snap=>{ document.getElementById("rCount").innerText=snap.size; });
+onSnapshot(collection(db,"transactions"), snap=>{ document.getElementById("tCount").innerText=snap.size; });
+onSnapshot(collection(db,"wallet_requests"), snap=>{ document.getElementById("wCount").innerText=snap.size; });
+
+window.openTab = (id)=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById(id).classList.add('active'); if(id==='retailers')loadRetailers(); if(id==='trans')loadTrans(); if(id==='wallet')loadWallet();}
+
+async function loadRetailers(){let snap=await getDocs(collection(db,"retailers")); let h=""; snap.forEach(d=>{let x=d.data(); h+=<tr><td>${x.name}</td><td>${x.mobile}</td><td>₹${x.balance||0}</td><td><span class="badge approved">${x.status||'Active'}</span></td></tr>}); document.getElementById("retailerTable").innerHTML=h;}
+async function loadTrans(){let snap=await getDocs(collection(db,"transactions")); let h=""; snap.forEach(d=>{let x=d.data(); h+=<tr><td>${x.date||''}</td><td>${x.mobile||''}</td><td>${x.type||''}</td><td>₹${x.amount||0}</td></tr>}); document.getElementById("transTable").innerHTML=h||"<tr><td colspan=4>No transaction</td></tr>";}
+async function loadWallet(){let snap=await getDocs(collection(db,"wallet_requests")); let h=""; snap.forEach(d=>{let x=d.data(); h+=<tr><td>${x.name}</td><td>₹${x.amount}</td><td>${x.utr||''}</td><td><button class='green' onclick="approveWallet('${d.id}','${x.mobile}',${x.amount})" style="padding:4px 8px;border:none;border-radius:5px">Approve</button></td></tr>}); document.getElementById("walletBody").innerHTML=h||"<tr><td colspan=4>No requests</td></tr>";}
+
+window.approve=async(id)=>{let ref=doc(db,"pending_retailers",id);let snap=await getDocs(collection(db,"pending_retailers"));alert("Approve logic - Move to retailers collection");};
+window.reject=async(id)=>{if(confirm("Reject?")) await deleteDoc(doc(db,"pending_retailers",id));};
+window.approveWallet=async(id,mob,amt)=>{alert(Wallet ₹${amt} approve for ${mob} - Add to balance); await deleteDoc(doc(db,"wallet_requests",id));};
+window.saveComm=async()=>{await setDoc(doc(db,"settings","commission"),{aeps:aepsPer.value,dmt:dmtRs.value,recharge:rechPer.value}); alert("Commission Saved! ✅");};
+window.saveService=async()=>{await setDoc(doc(db,"settings","services"),{aeps:sAeps.value,dmt:sDmt.value,recharge:sRech.value}); alert("Services Updated! ✅");};
+window.sendNoti=async()=>{await addDoc(collection(db,"notifications"),{title:notiTitle.value,msg:notiMsg.value,date:new Date().toLocaleString()}); alert("Notification Sent to All! 🔔");};
+window.addMember=async()=>{await addDoc(collection(db,"retailers"),{name:nName.value,mobile:nMobile.value,type:nType.value,password:nPass.value,balance:parseInt(nBal.value||0),status:"Active"}); alert("Member Added! ✅");};
+
+}catch(e){
+console.log("Firebase config missing - Using demo mode");
+document.getElementById("pendingTable").innerHTML="<tr><td colspan=4>Firebase config add kara - Mu help karibi</td></tr>";
+window.openTab=(id)=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById(id).classList.add('active');}
 }
-function addUser(){
- let n=name.value,m=mobile.value,t=type.value,pp=pass.value;
- if(!n||!m){alert("Fill");return}
- let u=JSON.parse(localStorage.getItem("payquick_users")||"[]");
- u.push({name:n,mobile:m,type:t,password:pp});
- localStorage.setItem("payquick_users",JSON.stringify(u));
- alert("Added");load();
-}
-function del(i){if(confirm("Delete?")){let u=JSON.parse(localStorage.getItem("payquick_users")||"[]");u.splice(i,1);localStorage.setItem("payquick_users",JSON.stringify(u));load();}}
-function clearData(){if(confirm("All data delete?")){localStorage.removeItem("payquick_users");load();}}
-load();
 </script>
 </body>
 </html>
