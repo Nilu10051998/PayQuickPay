@@ -1,58 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PayQuick REAL ADMIN LIVE</title>
-<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-app-compat.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-firestore-compat.js"></script>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
-body{background:#060a19;color:#fff;padding-bottom:20px}
-.top{background:#0f1c36;padding:12px;display:flex;justify-content:space-between;border-bottom:2px solid #00ff88;position:sticky;top:0;z-index:99}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
-.card{background:#14244e;border:1px solid #1e3a8a;border-radius:12px;padding:16px;text-align:center;cursor:pointer}
-.tab{display:none;margin:10px;background:#0f1c36;border:1px solid #1e3a8a;border-radius:12px;padding:14px}
-.tab.active{display:block}
-input{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:1px solid #24335e;background:#070d22;color:#fff}
-.btn{width:100%;padding:12px;border:none;border-radius:10px;font-weight:800;margin-top:8px;cursor:pointer;background:#38bdf8;color:#000}
-table{width:100%;border-collapse:collapse;margin-top:10px}
-th{color:#60a5fa;text-align:left;padding:8px 4px;font-size:11px;border-bottom:1px solid #1e3a8a}
-td{padding:10px 4px;border-bottom:1px solid #16244a;font-size:13px}
-</style>
-</head>
-<body>
-<div class="top">
-<div><b style="color:#38bdf8">PayQuick REAL ADMIN <span style="color:#00ff88">● LIVE</span></b>
-<div style="font-size:11px;color:#00ff88" id="sts">Connecting Firebase...</div>
-</div>
-<button onclick="localStorage.clear();location.href='/'" style="background:#ef4444;color:#fff;border:none;padding:7px 12px;border-radius:8px">Logout</button>
-</div>
-<div class="grid">
-<div class="card" onclick="openTab('pending')"><h2 id="cPending">0</h2><small>Pending</small></div>
-<div class="card" onclick="openTab('retailers')"><h2 id="cRetail">0</h2><small>Retailers</small></div>
-<div class="card" onclick="openTab('wallet')"><h2 id="cWallet">0</h2><small>Wallet</small></div>
-<div class="card" onclick="openTab('add')"><h2>+</h2><small>Add Member</small></div>
-</div><div id="pending" class="tab active"><h3>Pending REAL</h3><div id="debug" style="font-size:10px;color:#fbbf24"></div><table><tr><th>Name</th><th>Mobile</th><th>Action</th></tr><tbody id="tPending">Loading...</tbody></table></div>
-<div id="retailers" class="tab"><h3>Retailers REAL</h3><table><tr><th>Name</th><th>Mobile</th><th>Bal</th></tr><tbody id="tRetail"></tbody></table></div>
-<div id="wallet" class="tab"><h3>Wallet</h3><table><tr><th>Name</th><th>Amt</th><th>Action</th></tr><tbody id="tWallet"></tbody></table></div>
-<div id="add" class="tab"><h3>➕ Add Member REAL</h3><input id="aName" placeholder="Name - ex: nilu"><input id="aMobile" placeholder="Mobile - 7908824917"><input id="aShop" placeholder="Shop - csc"><input id="aBal" type="number" placeholder="Balance - 1000"><button class="btn" style="background:#00e5ff" onclick="addMemberReal()">ADD TO FIREBASE ✅</button><div id="addDebug" style="margin-top:8px;font-size:11px;color:#fbbf24"></div></div>
-<script>
-const firebaseConfig={apiKey:"AIzaSyCZNT1ljpj-IIxDUCEH6AQPJFR22d7OOI",authDomain:"payquickpay-487ef.firebaseapp.com",projectId:"payquickpay-487ef",storageBucket:"payquickpay-487ef.firebasestorage.app",messagingSenderId:"368108778411",appId:"1:368108778411:web:03dcbc47e46568d51b58ee"};
-try{
-firebase.initializeApp(firebaseConfig);
-var db=firebase.firestore();
-document.getElementById("sts").innerText="✅ LIVE Connected - Ready!";
-document.getElementById("debug").innerText="Firebase OK - jsDelivr CDN";
-}catch(e){document.getElementById("sts").innerText="❌ "+e.message;document.getElementById("debug").innerText=e.message;}
-function openTab(id){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById(id).classList.add('active');if(id=='pending')loadPending();if(id=='retailers')loadRetailers();if(id=='wallet')loadWallet();}
-async function loadPending(){try{const snap=await db.collection("pendingUsers").get();document.getElementById("cPending").innerText=snap.size;let h="";if(snap.empty)h="<tr><td colspan=3>No Pending ✅</td></tr>";snap.forEach(d=>{let u=d.data();h+=<tr><td>${u.name||''}</td><td>${u.mobile||''}</td><td><button onclick="approveReal('${d.id}')" style="background:#22c55e;border:none;padding:6px 10px;border-radius:6px">Approve</button></td></tr>;});document.getElementById("tPending").innerHTML=h;}catch(e){document.getElementById("debug").innerText="Error: "+e.message;}}
-async function loadRetailers(){try{const snap=await db.collection("users").get();document.getElementById("cRetail").innerText=snap.size;let h="";snap.forEach(d=>{let u=d.data();h+=<tr><td>${u.name||''}</td><td>${u.mobile||d.id}</td><td>₹${u.balance||0}</td></tr>;});document.getElementById("tRetail").innerHTML=h||"<tr><td colspan=3>No Data</td></tr>";}catch(e){}}
-async function loadWallet(){try{const snap=await db.collection("walletRequests").get();document.getElementById("cWallet").innerText=snap.size;let h="";snap.forEach(d=>{let w=d.data();h+=<tr><td>${w.mobile}</td><td>₹${w.amount}</td><td><button onclick="approveWallet('${d.id}')" style="background:#22c55e;border:none;padding:5px 10px;border-radius:6px">Approve</button></td></tr>;});document.getElementById("tWallet").innerHTML=h||"<tr><td colspan=3>No Req</td></tr>";}catch(e){}}
-async function addMemberReal(){const name=document.getElementById('aName').value.trim();const mob=document.getElementById('aMobile').value.trim();const shop=document.getElementById('aShop').value.trim();const bal=parseInt(document.getElementById('aBal').value||0);if(!name||!mob){alert("Name Mobile darkar");return;}document.getElementById("addDebug").innerText="Adding...";try{await db.collection("users").doc(mob).set({name,mobile:mob,shop,password:"1234",balance:bal,status:"active",createdAt:firebase.firestore.FieldValue.serverTimestamp()});document.getElementById("addDebug").innerText="✅ SUCCESS: "+name;alert("✅ ADDED "+name);loadRetailers();openTab('retailers');}catch(e){document.getElementById("addDebug").innerText="❌ "+e.message;}}
-async function approveReal(id){try{const s=await db.collection("pendingUsers").doc(id).get();const d=s.data();await db.collection("users").doc(d.mobile).set({...d,status:"active",balance:0});await db.collection("pendingUsers").doc(id).delete();alert("Approved");loadPending();}catch(e){alert(e.message);}}
-async function approveWallet(id){try{const w=await db.collection("walletRequests").doc(id).get();const wd=w.data();const u=await db.collection("users").doc(wd.mobile).get();if(u.exists){await db.collection("users").doc(wd.mobile).update({balance:(u.data().balance||0)+parseInt(wd.amount)});}await db.collection("walletRequests").doc(id).delete();alert("Approved");loadWallet();}catch(e){alert(e.message);}}
-loadPending();loadRetailers();loadWallet();
-</script>
-</body>
-</html>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PayQuick FINAL</title><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script><style>body{background:#060a19;color:#fff;font-family:Arial;padding:20px}input{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:1px solid #333;background:#111;color:#fff}.btn{width:100%;padding:12px;background:#00ff88;color:#000;font-weight:800;border:none;border-radius:10px}</style></head><body><h2 style="color:#00ff88">PayQuick REAL ADMIN ● LIVE</h2><div id="sts" style="color:#fbbf24">Connecting...</div><div id="err" style="color:red;font-size:12px;margin:10px 0"></div><input id="aName" placeholder="Name"><input id="aMobile" placeholder="Mobile"><input id="aBal" placeholder="Balance" type="number"><button class="btn" onclick="add()">ADD TO FIREBASE</button><div id="list"></div><script>
+var cfg={apiKey:"AIzaSyCZNT1ljpj-IIxDUCEH6AQPJFR22d7OOI",authDomain:"payquickpay-487ef.firebaseapp.com",projectId:"payquickpay-487ef"};
+window.onerror=function(m){document.getElementById('err').innerText=m;document.getElementById('sts').innerText='❌ '+m}
+try{if(typeof firebase=='undefined')throw new Error('Firebase script NOT loaded - Check Internet/AdBlock');firebase.initializeApp(cfg);var db=firebase.firestore();document.getElementById('sts').innerText='✅ LIVE Connected - Ready!';}catch(e){document.getElementById('err').innerText=e.message;document.getElementById('sts').innerText='❌ '+e.message}
+async function add(){var n=document.getElementById('aName').value,m=document.getElementById('aMobile').value,b=parseInt(document.getElementById('aBal').value||0);if(!n||!m){alert('Name Mobile darkar');return}try{await db.collection('users').doc(m).set({name:n,mobile:m,balance:b,status:'active',createdAt:firebase.firestore.FieldValue.serverTimestamp()});alert('✅ ADDED '+n);document.getElementById('list').innerHTML+='<div>✅ '+n+'-'+m+'-₹'+b+'</div>'}catch(e){alert(e.message);document.getElementById('err').innerText=e.message}}
+</script></body></html>
