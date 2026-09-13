@@ -1,16 +1,50 @@
 <!DOCTYPE html>
 <html>
-<head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dashboard</title></head>
-<body style="font-family:sans-serif;padding:20px">
-<h2>Admin Panel Opened ✅</h2>
-<p>Welcome bhai!</p>
-<a href="https://console.firebase.google.com/project/payquickpay-487ef/firestore/data" target="_blank" style="background:orange;color:white;padding:10px 20px;text-decoration:none;border-radius:5px">Firebase Data Dekha</a>
-<br><br>
-<a href="https://nilu10051998.github.io/PayQuickPay/" style="background:green;color:white;padding:10px 20px;text-decoration:none;border-radius:5px">Retailer App Dekha</a>
-<br><br>
-<button onclick="localStorage.clear();location.href='index.html'" style="padding:10px;background:red;color:white;border:0;border-radius:5px">Logout</button>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PayQuick Admin</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body style="font-family:sans-serif;padding:15px;background:#f8fafc">
+<h2>PayQuick Admin Panel ✅</h2>
+<button onclick="loadRetailers()" style="padding:8px 15px;background:blue;color:white;border:0;border-radius:5px">🔄 Refresh</button>
+<button onclick="localStorage.clear();location.href='index.html'" style="padding:8px 15px;background:red;color:white;border:0;border-radius:5px">Logout</button>
+<hr>
+<h3>Pending Retailers</h3>
+<div id="list">Loading...</div>
+
 <script>
 if(localStorage.getItem('ad')!='1'){ location.href='index.html'; }
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC2hV3Q4W3O6l8X3y9z1A2B3C4D5E6F7G8",
+  authDomain: "payquickpay-487ef.firebaseapp.com",
+  projectId: "payquickpay-487ef"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+async function loadRetailers(){
+ document.getElementById('list').innerHTML='Loading...';
+ const snap = await db.collection('retailers').get();
+ let html='';
+ snap.forEach(doc=>{
+   let d=doc.data();
+   html+=`<div style="background:white;padding:10px;margin:8px 0;border-radius:8px;box-shadow:0 1px 3px #ccc">
+   <b>${d.shopName||'No Name'}</b><br>
+   ${d.mobile||''} | ${d.status||'pending'}<br>
+   <button onclick="approve('${doc.id}')" style="background:green;color:white;border:0;padding:5px 10px;margin-top:5px">Approve</button>
+   <button onclick="reject('${doc.id}')" style="background:red;color:white;border:0;padding:5px 10px">Reject</button>
+   </div>`;
+ });
+ if(!html) html='No Retailers Found';
+ document.getElementById('list').innerHTML=html;
+}
+async function approve(id){ await db.collection('retailers').doc(id).update({status:'approved'}); alert('Approved!'); loadRetailers(); }
+async function reject(id){ await db.collection('retailers').doc(id).update({status:'rejected'}); alert('Rejected!'); loadRetailers(); }
+
+loadRetailers();
 </script>
 </body>
 </html>
