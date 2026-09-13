@@ -5,118 +5,60 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PayQuick SUPER ADMIN</title>
 <script>
-// PASSWORD
-if(localStorage.getItem("pq_admin")!=="super_login"){
- let p=prompt("🔐 SUPER ADMIN PASSWORD:");
- if(p!=="Admin@123"){alert("Wrong!");location.href="/";}
- else localStorage.setItem("pq_admin","super_login");
-}
-// TAB FUNCTION - Eita sabu bele kaam kariba
 function openTab(id){
- document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
- document.getElementById(id).classList.add('active');
- window.scrollTo(0,0);
- if(id==='retailers') loadRetailersLocal();
- if(id==='trans') loadTransLocal();
- if(id==='wallet') loadWalletLocal();
+ var tabs=document.getElementsByClassName('tab');
+ for(var i=0;i<tabs.length;i++){tabs[i].style.display='none';}
+ document.getElementById(id).style.display='block';
 }
-function loadRetailersLocal(){
- let u=JSON.parse(localStorage.getItem("payquick_users")||"[]");
- let h=""; u.forEach(x=>{h+=<tr><td>${x.name}</td><td>${x.mobile}</td><td>₹${x.balance||0}</td><td><span style='background:#22c55e;color:#000;padding:3px 8px;border-radius:12px;font-size:11px'>Active</span></td></tr>});
- document.getElementById("retailerTable").innerHTML=h||"<tr><td colspan=4>No Retailer Yet - Add kara</td></tr>";
- document.getElementById("rCount").innerText=u.filter(x=>x.type=='retailer').length;
-}
-function loadTransLocal(){
- document.getElementById("transTable").innerHTML="<tr><td colspan=4>Firebase connect hela pare transaction show kariba</td></tr>";
-}
-function loadWalletLocal(){
- document.getElementById("walletBody").innerHTML="<tr><td colspan=4>No wallet request</td></tr>";
+function checkPass(){
+ if(localStorage.getItem("pq_admin")!=="super_login"){
+  var p=prompt("🔐 SUPER ADMIN PASSWORD:");
+  if(p!="Admin@123"){alert("Wrong Password!");location.href="/"; return false;}
+  localStorage.setItem("pq_admin","super_login");
+ }
+ return true;
 }
 </script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
 body{background:#070b18;color:#fff}
-.top{background:#101a33;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #1e3a8a;position:sticky;top:0;z-index:9}
-.top h2{color:#38bdf8;font-size:16px}.live{color:#00ff88;font-weight:bold}
+.top{background:#101a33;padding:14px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #1e3a8a}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
-.card{background:#131f3e;border-radius:12px;padding:16px;border:1px solid #1e3a8a;text-align:center;cursor:pointer;transition:0.2s}
-.card:active{transform:scale(0.95);background:#1a2a52}
-.card h3{font-size:12px;color:#94a3b8}.card h1{font-size:22px;margin:6px 0}.card b{color:#fbbf24;font-size:11px}
-.tab{display:none;margin:12px;background:#101a33;border-radius:12px;padding:14px;border:1px solid #1e3a8a}.tab.active{display:block}
+.card{background:#131f3e;border-radius:12px;padding:18px;border:1px solid #1e3a8a;text-align:center;cursor:pointer}
+.card:active{background:#1e3a8a}
+.tab{display:none;margin:12px;background:#101a33;border-radius:12px;padding:14px;border:1px solid #1e3a8a}
+#pending{display:block}
 input,select,textarea{width:100%;padding:11px;margin:6px 0;border-radius:8px;border:1px solid #334155;background:#070b18;color:#fff}
-.btn{width:100%;padding:11px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;margin-top:8px}
-.blue{background:#38bdf8;color:#000}.green{background:#22c55e}.red{background:#ef4444;color:#fff}.yellow{background:#fbbf24;color:#000}
-table{width:100%;border-collapse:collapse;margin-top:8px}
-th{color:#38bdf8;text-align:left;padding:8px;font-size:11px}td{padding:8px;border-bottom:1px solid #1e293b;font-size:13px}
+.btn{width:100%;padding:12px;border:none;border-radius:8px;font-weight:bold;margin-top:8px}
+.blue{background:#38bdf8}.green{background:#22c55e}.red{background:#ef4444;color:#fff}.yellow{background:#fbbf24}
 </style>
 </head>
-<body>
+<body onload="checkPass()">
 
 <div class="top">
-<div><h2>PayQuick SUPER ADMIN <span class="live">✅ LIVE</span></h2><small style="color:#94a3b8">Project: payquickpay-487ef | Odisha</small></div>
-<button style="background:#ef4444;color:#fff;border:none;padding:6px 12px;border-radius:6px" onclick="localStorage.removeItem('pq_admin');location.href='/'">Logout</button>
+<div><b style="color:#38bdf8">PayQuick SUPER ADMIN <span style="color:#00ff88">✅ LIVE</span></b><br><small style="color:#94a3b8">payquickpay-487ef</small></div>
+<button onclick="localStorage.removeItem('pq_admin');location.href='/'" style="background:#ef4444;color:#fff;border:none;padding:6px 12px;border-radius:6px">Logout</button>
 </div>
 
 <div class="grid">
-<div class="card" onclick="openTab('pending')"><h3>⏳ Pending Retailers</h3><h1 id="pCount">0</h1><b>Approve Now</b></div>
-<div class="card" onclick="openTab('retailers')"><h3>👥 All Retailers</h3><h1 id="rCount">0</h1><b>View All</b></div>
-<div class="card" onclick="openTab('trans')"><h3>💸 Transactions</h3><h1 id="tCount">0</h1><b>Today Sale</b></div>
-<div class="card" onclick="openTab('wallet')"><h3>💰 Wallet Recharge</h3><h1 id="wCount">0</h1><b>Requests</b></div>
-<div class="card" onclick="openTab('comm')"><h3>📈 Commission</h3><h1>SET</h1><b>AEPS% / DMT Rs</b></div>
-<div class="card" onclick="openTab('service')"><h3>⚙️ Services</h3><h1>ON/OFF</h1><b>AEPS/DMT/BBPS</b></div>
-<div class="card" onclick="openTab('noti')"><h3>🔔 Notification</h3><h1>SEND</h1><b>Send to All</b></div>
-<div class="card" onclick="openTab('add')"><h3>➕ Add Member</h3><h1>+</h1><b>Dist/Retailer</b></div>
+<div class="card" onclick="openTab('pending')"><div>⏳</div><h2 id="pCount">0</h2><small>Pending Retailers</small></div>
+<div class="card" onclick="openTab('retailers')"><div>👥</div><h2>0</h2><small>All Retailers</small></div>
+<div class="card" onclick="openTab('trans')"><div>💸</div><h2>0</h2><small>Transactions</small></div>
+<div class="card" onclick="openTab('wallet')"><div>💰</div><h2>0</h2><small>Wallet Recharge</small></div>
+<div class="card" onclick="openTab('comm')"><div>📈</div><h2>SET</h2><small>Commission</small></div>
+<div class="card" onclick="openTab('service')"><div>⚙️</div><h2>ON/OFF</h2><small>Services</small></div>
+<div class="card" onclick="openTab('noti')"><div>🔔</div><h2>SEND</h2><small>Notification</small></div>
+<div class="card" onclick="openTab('add')"><div>➕</div><h2>+</h2><small>Add Member</small></div>
 </div>
 
-<div id="pending" class="tab active">
-<h3>⏳ Pending Retailers Approval</h3>
-<table><thead><tr><th>Name</th><th>Mobile</th><th>Shop</th><th>Action</th></tr></thead><tbody id="pendingTable"><tr><td colspan=4>Firebase connect kariba pare pending list asiba. Ebe Local data re kichi pending nahi.</td></tr></tbody></table>
-</div>
+<div id="pending" class="tab"><h3>⏳ Pending Retailers</h3><p style="margin-top:10px;color:#94a3b8">No pending - Firebase connect hela pare asiba</p></div>
+<div id="retailers" class="tab"><h3>👥 All Retailers</h3><p style="margin-top:10px;color:#94a3b8">Retailer list - Firebase pare</p><div id="retailerList"></div></div>
+<div id="trans" class="tab"><h3>💸 Transactions</h3><p>Transactions Firebase pare</p></div>
+<div id="wallet" class="tab"><h3>💰 Wallet Requests</h3><p>No requests</p></div>
+<div id="comm" class="tab"><h3>📈 Commission Setting</h3><input placeholder="AEPS %"><input placeholder="DMT Rs"><button class="btn blue" onclick="alert('Saved ✅')">SAVE</button></div>
+<div id="service" class="tab"><h3>⚙️ Services ON/OFF</h3><select><option>AEPS ON</option><option>OFF</option></select><button class="btn green" onclick="alert('Updated ✅')">UPDATE</button></div>
+<div id="noti" class="tab"><h3>🔔 Notification</h3><input placeholder="Title"><textarea placeholder="Message"></textarea><button class="btn yellow" onclick="alert('Sent ✅')">SEND</button></div>
+<div id="add" class="tab"><h3>➕ Add Member</h3><input id="aName" placeholder="Name"><input id="aMob" placeholder="Mobile"><select><option>Retailer</option><option>Distributor</option></select><input placeholder="Password"><button class="btn blue" onclick="alert('Added ✅ - '+aName.value)">ADD NOW</button></div>
 
-<div id="retailers" class="tab"><h3>👥 All Retailers</h3><table><thead><tr><th>Name</th><th>Mobile</th><th>Balance</th><th>Status</th></tr></thead><tbody id="retailerTable"></tbody></table></div>
-
-<div id="trans" class="tab"><h3>💸 Live Transactions</h3><table><thead><tr><th>Date</th><th>User</th><th>Type</th><th>Amount</th></tr></thead><tbody id="transTable"></tbody></table></div>
-
-<div id="wallet" class="tab"><h3>💰 Wallet Recharge Requests</h3><table><thead><tr><th>Name</th><th>Amount</th><th>UTR</th><th>Action</th></tr></thead><tbody id="walletBody"></tbody></table></div>
-
-<div id="comm" class="tab">
-<h3>📈 Set Commission</h3>
-<label>AEPS %</label><input id="aepsPer" placeholder="0.30">
-<label>DMT Rs</label><input id="dmtRs" placeholder="10">
-<label>Recharge %</label><input id="rechPer" placeholder="2">
-<button class="btn blue" onclick="localStorage.setItem('comm',JSON.stringify({aeps:aepsPer.value,dmt:dmtRs.value,rech:rechPer.value}));alert('Commission Saved Local ✅')">SAVE COMMISSION</button>
-</div>
-
-<div id="service" class="tab">
-<h3>⚙️ ON/OFF Services</h3>
-<label>AEPS</label><select id="sAeps"><option>ON</option><option>OFF</option></select>
-<label>DMT</label><select id="sDmt"><option>ON</option><option>OFF</option></select>
-<label>Recharge</label><select id="sRech"><option>ON</option><option>OFF</option></select>
-<button class="btn green" onclick="alert('Services Updated ✅')">UPDATE SERVICES</button>
-</div>
-
-<div id="noti" class="tab">
-<h3>🔔 Send Notification</h3>
-<input id="notiTitle" placeholder="Title"><textarea id="notiMsg" placeholder="Message"></textarea>
-<button class="btn yellow" onclick="alert('Notification Sent ✅ (Firebase pare sabu nku jiba)')">SEND TO ALL 🔔</button>
-</div>
-
-<div id="add" class="tab">
-<h3>➕ Add New Member</h3>
-<input id="nName" placeholder="Full Name"><input id="nMobile" placeholder="Mobile">
-<select id="nType"><option value="retailer">Retailer</option><option value="distributor">Distributor</option></select>
-<input id="nPass" placeholder="Password"><input id="nBal" placeholder="Balance Ex: 1000">
-<button class="btn blue" onclick="addMemberLocal()">ADD NOW</button>
-</div>
-
-<script>
-function addMemberLocal(){
- let u=JSON.parse(localStorage.getItem("payquick_users")||"[]");
- u.push({name:nName.value,mobile:nMobile.value,type:nType.value,password:nPass.value,balance:nBal.value});
- localStorage.setItem("payquick_users",JSON.stringify(u));
- alert("Added ✅"); loadRetailersLocal(); openTab('retailers');
-}
-loadRetailersLocal();
-</script>
 </body>
 </html>
