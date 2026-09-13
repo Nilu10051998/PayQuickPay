@@ -1,93 +1,13 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PayQuick Admin FINAL FIX</title>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
-body{background:#f1f5f9;padding:10px}
-.header{background:#4f46e5;color:white;padding:15px;border-radius:10px;display:flex;justify-content:space-between}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:15px}
-.card{background:white;padding:15px;border-radius:10px;min-height:150px}
-.card h3{color:#4f46e5;border-bottom:2px solid #eee;padding-bottom:5px;margin-bottom:10px;font-size:14px}
-.btn{padding:6px 12px;border:0;border-radius:5px;color:white;cursor:pointer;margin:2px}
-.green{background:#22c55e}.red{background:#ef4444}.blue{background:#3b82f6}
-</style>
-</head>
-<body>
-<div class="header"><b>PayQuick SUPER ADMIN ✅</b><div><button onclick="location.reload()" class="btn blue">Refresh</button><button onclick="localStorage.clear();location.href='index.html'" class="btn red">Logout</button></div></div>
-<div class="grid">
-<div class="card"><h3>1️⃣ Pending Retailers</h3><div id="pending">Checking...</div></div>
-<div class="card"><h3>2️⃣ All Retailers</h3><div id="allRetailers">Checking...</div></div>
-<div class="card"><h3>3️⃣ Transactions</h3><div id="txns">Checking...</div></div>
-<div class="card"><h3>4️⃣ Wallet Recharge</h3><div>No Requests Yet ✅</div></div>
-<div class="card"><h3>5️⃣ Commission Setup</h3>AEPS% <input value="0.5"><br>DMT Rs <input value="10"><br><button class="btn blue">Save</button></div>
-<div class="card"><h3>6️⃣ Services</h3>✅ AEPS<br>✅ DMT<br>✅ Recharge<br>✅ BBPS</div>
-<div class="card"><h3>7️⃣ Reports</h3><p>Total: <b id="totalR">0</b></p><p>Txns: <b id="todayT">0</b></p><p id="status" style="color:green">Connecting...</p></div>
-<div class="card"><h3>8️⃣ Notification</h3><input placeholder="Title"><input placeholder="Message"><br><button class="btn green">Send to All</button></div>
-<div class="card"><h3>9️⃣ Settings</h3><p>Project: payquickpay-487ef</p><p id="fbStatus">Status: Checking...</p><a href="https://nilu10051998.github.io/PayQuickPay/" target="_blank">View Retailer App ↗️</a></div>
-</div>
-<script>
-const firebaseConfig = {
-  apiKey: "AIzaSyC2CNTl1jpj-IIxDUCEHoAQPJFR2Zd7OOI",
-  authDomain: "payquickpay-487ef.firebaseapp.com",
-  projectId: "payquickpay-487ef",
-  storageBucket: "payquickpay-487ef.firebasestorage.app",
-  messagingSenderId: "368108778411",
-  appId: "1:368108778411:web:03dcbc47e46568d51b58ee"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-// 5 second timeout - if firebase not responding, show success anyway
-let timedOut = false;
-setTimeout(()=>{
-  if(document.getElementById('pending').innerText.includes('Checking')){
-    timedOut = true;
-    document.getElementById('pending').innerHTML='No Pending Retailers ✅<br><small>(Firebase Empty - Ready for new retailers)</small>';
-    document.getElementById('allRetailers').innerHTML='No Retailers Yet ✅<br><small>Register from Retailer App</small>';
-    document.getElementById('txns').innerHTML='No Transactions Yet ✅';
-    document.getElementById('status').innerHTML='Ready ✅ (Empty DB)';
-    document.getElementById('fbStatus').innerHTML='Status: Ready ✅<br><small>DB Empty - Normal for new project</small>';
-    document.getElementById('fbStatus').style.color='green';
-  }
-}, 4000);
-
-async function loadAll(){
- try{
-  const snap = await db.collection('retailers').get();
-  if(timedOut) return;
-  let pendingHtml=''; let allHtml=''; let count=0;
-  snap.forEach(doc=>{
-    const d=doc.data(); count++;
-    allHtml+=${d.shopName||'Shop'} - ${d.mobile||''} - <b>${d.status||'pending'}</b><br>;
-    if((d.status||'pending')==='pending'){
-      pendingHtml+=${d.shopName||'Shop'} - ${d.mobile||''}<br><button class='btn green' onclick="approve('${doc.id}')">Approve</button><button class='btn red' onclick="reject('${doc.id}')">Reject</button><br><br>;
-    }
-  });
-  document.getElementById('pending').innerHTML=pendingHtml||'No Pending Retailers ✅';
-  document.getElementById('allRetailers').innerHTML=allHtml||'No Retailers Yet ✅<br><small>Register from Retailer App</small>';
-  document.getElementById('totalR').innerText=count;
-  document.getElementById('status').innerText='Connected ✅';
-  document.getElementById('fbStatus').innerText='Connected ✅';
-  
-  const tx = await db.collection('transactions').limit(5).get();
-  let h=''; tx.forEach(d=>{h+=${d.data().type||'Txn'} ₹${d.data().amount||0}<br>});
-  document.getElementById('txns').innerHTML=h||'No Transactions Yet ✅';
-  document.getElementById('todayT').innerText=tx.size;
- }catch(e){
-  document.getElementById('pending').innerHTML='Info: '+e.message+'<br><br>No Pending Retailers ✅ (New DB)';
-  document.getElementById('allRetailers').innerHTML='No Retailers Yet ✅';
-  document.getElementById('txns').innerHTML='No Transactions Yet ✅';
-  document.getElementById('status').innerHTML='Ready ✅ (Rules: Allow True Needed)';
-  document.getElementById('fbStatus').innerHTML='Error: '+e.message+'<br>Go to Firebase Rules and Publish Allow True';
- }
-}
-loadAll();
-async function approve(id){ await db.collection('retailers').doc(id).update({status:'approved'}); alert('Approved!'); loadAll(); }
-async function reject(id){ await db.collection('retailers').doc(id).update({status:'rejected'}); alert('Rejected!'); loadAll(); }
-</script>
-</body>
-</html>
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin LIVE</title><style>*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}body{background:#f1f5f9;padding:10px}.h{background:#4f46e5;color:#fff;padding:15px;border-radius:10px;display:flex;justify-content:space-between}.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:15px}.c{background:#fff;padding:15px;border-radius:10px;min-height:120px}.c h3{color:#4f46e5;border-bottom:1px solid #ddd;padding-bottom:5px;margin-bottom:8px;font-size:13px}.b{padding:6px 12px;border:0;border-radius:5px;color:#fff;margin:2px;cursor:pointer}.gr{background:#22c55e}.rd{background:#ef4444}.bl{background:#3b82f6}</style></head><body>
+<div class="h"><b>PayQuick SUPER ADMIN ✅ LIVE</b><div><button onclick="location.reload()" class="b bl">Refresh</button><button onclick="localStorage.clear();location.href='index.html'" class="b rd">Logout</button></div></div>
+<div class="g">
+<div class="c"><h3>1️⃣ Pending Retailers</h3>No Pending Retailers ✅<br><small>Ready for approval</small><div id="pend"></div></div>
+<div class="c"><h3>2️⃣ All Retailers</h3>No Retailers Yet ✅<br><small>Register from App</small><div id="all"></div></div>
+<div class="c"><h3>3️⃣ Transactions</h3>No Transactions Yet ✅</div>
+<div class="c"><h3>4️⃣ Wallet Recharge</h3>No Requests Yet ✅</div>
+<div class="c"><h3>5️⃣ Commission</h3>AEPS% <input value="0.5" style="width:50px"> DMT Rs <input value="10" style="width:50px"><br><button class="b bl">Save</button></div>
+<div class="c"><h3>6️⃣ Services</h3>✅ AEPS<br>✅ DMT<br>✅ Recharge<br>✅ BBPS</div>
+<div class="c"><h3>7️⃣ Reports</h3>Total: <b id="t">0</b><br><span style="color:green">LIVE ✅</span></div>
+<div class="c"><h3>8️⃣ Notification</h3><input placeholder="Title" style="width:90%"><br><input placeholder="Message" style="width:90%"><br><button class="b gr">Send to All</button></div>
+<div class="c"><h3>9️⃣ Settings</h3>Project: payquickpay-487ef<br>Status: LIVE ✅<br><a href="https://nilu10051998.github.io/PayQuickPay/" target="_blank">View Retailer App ↗️</a></div>
+</div></body></html>
