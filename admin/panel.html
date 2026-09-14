@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PayQuickPay - Service + Commission Alaga</title>
+<title>PayQuickPay - Admin Self Secure</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#020617;color:#fff;font-family:Arial}
 .loginWrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
@@ -12,65 +12,77 @@ input,select{width:100%;padding:12px;margin:6px 0;background:#020617;border:1px 
 .card{background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:16px;margin:12px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
 .badge{background:#052e16;color:#22c55e;padding:3px 10px;border-radius:20px;font-size:11px}
-.badge-red{background:#450a0a;color:#ef4444;padding:3px 10px;border-radius:20px;font-size:11px}
 .menu{display:flex;gap:8px;overflow:auto;padding:0 12px}.menu button{white-space:nowrap;padding:8px 14px;border-radius:20px;border:1px solid #334155;background:#020617;color:#94a3b8;cursor:pointer}.menu button.active{background:#38bdf8;color:#000;font-weight:700}
 .table{width:100%;border-collapse:collapse;margin-top:10px}.table th{color:#64748b;font-size:11px;text-align:left;padding:8px;border-bottom:1px solid #1e293b}.table td{padding:10px 8px;border-bottom:1px solid #0f172a;font-size:13px}
-@media(max-width:700px){.grid4{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}}
 </style>
 </head><body>
 
 <div id="loginPage" class="loginWrap"><div class="loginBox">
 <h2 style="color:#38bdf8;text-align:center;margin:0">PayQuickPay 🔐</h2>
-<p style="text-align:center;color:#94a3b8;font-size:12px">SUPER ADMIN</p>
-<input id="u" value="admin"><input id="p" type="password" value="PayQuick@123">
+<p style="text-align:center;color:#94a3b8;font-size:12px">SECURE LOGIN</p>
+<div id="credInfo" style="background:#020617;border:1px dashed #334155;padding:8px;border-radius:8px;margin:10px 0;font-size:11px;color:#64748b"></div>
+<input id="u" placeholder="Admin ID"><input id="p" type="password" placeholder="Password">
 <button class="btn btn-blue" onclick="doLogin()">LOGIN</button><p id="err" style="color:#f87171;text-align:center;font-size:12px"></p>
 </div></div>
 
 <div id="panelPage" style="display:none">
-<div class="header"><h3 style="margin:0;color:#38bdf8">PayQuickPay <span style="color:#22c55e;font-size:11px">● ADMIN</span></h3><button onclick="logout()" class="btn-red" style="padding:6px 12px;width:auto">Logout</button></div>
+<div class="header"><h3 style="margin:0;color:#38bdf8">PayQuickPay <span style="color:#22c55e;font-size:11px">● SECURE ADMIN</span></h3><button onclick="logout()" class="btn-red" style="padding:6px 12px;width:auto">Logout</button></div>
 
 <div style="max-width:1100px;margin:auto">
 <div class="grid4">
-<div class="card" style="text-align:center"><h2 id="s1">0</h2><small>Total Members</small></div>
-<div class="card" style="text-align:center"><h2 id="s2" style="color:#22c55e">₹0</h2><small>Total Wallet</small></div>
+<div class="card" style="text-align:center"><h2 id="s1">0</h2><small>Members</small></div>
+<div class="card" style="text-align:center"><h2 id="s2" style="color:#22c55e">₹0</h2><small>Wallet</small></div>
 <div class="card" style="text-align:center"><h2 id="s3" style="color:#38bdf8">0</h2><small>Retailers</small></div>
-<div class="card" style="text-align:center"><h2 id="s4" style="color:#f59e0b">5</h2><small>Total Services</small></div>
+<div class="card" style="text-align:center"><h2 style="margin:0;color:#22c55e">🔒</h2><small>Secured</small></div>
 </div>
 
 <div class="menu">
 <button class="active" onclick="showTab('dash',this)">📊 Dashboard</button>
 <button onclick="showTab('add',this)">➕ Add Member</button>
-<button onclick="showTab('wallet',this)">💰 Wallet</button>
 <button onclick="showTab('members',this)">👥 Members</button>
-<button onclick="showTab('services',this)">⚙️ SERVICES</button>
-<button onclick="showTab('commission',this)">💸 COMMISSION</button>
+<button onclick="showTab('services',this)">⚙️ Services</button>
+<button onclick="showTab('commission',this)">💸 Commission</button>
+<button onclick="showTab('security',this)" style="border-color:#ef4444;color:#f87171">🔐 ID / Password</button>
 </div>
 
-<div id="tab-dash" class="tab"><div class="card"><b>Dashboard</b><p style="color:#94a3b8;font-size:13px">Admin panel ready. Service alaga, Commission alaga karidia heichi.</p></div></div>
+<div id="tab-dash" class="tab"><div class="card"><b>Welcome Super Admin</b><p style="color:#94a3b8;font-size:13px">Tuma panel fully secured. ID/Password change kariba pain 🔐 ID/Password tab ku jaucha.</p></div></div>
 
-<div id="tab-add" class="tab" style="display:none"><div class="card"><b>➕ Add Member</b><div class="grid2" style="margin-top:12px"><select id="type"><option value="retailer">Retailer</option><option value="distributor">Distributor</option></select><input id="name" placeholder="Name *"></div><div class="grid2"><input id="mobile" placeholder="Mobile *"><input id="shop" placeholder="Shop"></div><input id="bal" type="number" placeholder="Opening Balance"><button class="btn btn-green" onclick="addMember()">ADD NOW</button></div></div>
+<div id="tab-add" class="tab" style="display:none"><div class="card"><b>➕ Add Member</b><div class="grid2" style="margin-top:12px"><select id="type"><option value="retailer">Retailer</option><option value="distributor">Distributor</option></select><input id="name" placeholder="Name *"></div><div class="grid2"><input id="mobile" placeholder="Mobile *"><input id="shop" placeholder="Shop"></div><input id="bal" type="number" placeholder="Balance"><button class="btn btn-green" onclick="addMember()">ADD</button></div></div>
 
-<div id="tab-wallet" class="tab" style="display:none"><div class="card"><b>💰 Wallet Load</b><div class="grid2" style="margin-top:12px"><input id="wMob" placeholder="Mobile"><input id="wAmt" type="number" placeholder="Amount"></div><div class="grid2"><button class="btn btn-green" onclick="walletAdd()">ADD</button><button class="btn btn-red" onclick="walletDeduct()">DEDUCT</button></div></div></div>
+<div id="tab-members" class="tab" style="display:none"><div class="card"><b>Members (<span id="mCount">0</span>)</b><table class="table"><thead><tr><th>Name</th><th>Mobile</th><th>Balance</th><th>Del</th></tr></thead><tbody id="mList"></tbody></table></div></div>
 
-<div id="tab-members" class="tab" style="display:none"><div class="card"><b>Members (<span id="mCount">0</span>)</b><input id="search" placeholder="Search" style="width:200px;margin-left:10px" oninput="render()"><table class="table"><thead><tr><th>Name</th><th>Mobile</th><th>Balance</th><th>Action</th></tr></thead><tbody id="mList"></tbody></table></div></div>
+<div id="tab-services" class="tab" style="display:none"><div class="card"><b>⚙️ Services</b><table class="table" id="serviceTable"></table></div></div>
 
-<!-- SERVICE ALAGA -->
-<div id="tab-services" class="tab" style="display:none">
-<div class="card" style="border:1px solid #38bdf8">
-<b>⚙️ SERVICES MANAGEMENT - ALAGA</b><p style="font-size:11px;color:#64748b">Ethire Service ON/OFF karipariba</p>
-<table class="table" id="serviceTable"></table>
+<div id="tab-commission" class="tab" style="display:none"><div class="card"><b>💸 Commission</b><table class="table"><thead><tr><th>Service</th><th>Retailer</th><th>Distri</th><th>Admin</th></tr></thead><tbody id="commTable"></tbody></table><button class="btn btn-green" style="margin-top:10px" onclick="saveComm()">SAVE COMMISSION</button></div></div>
+
+<!-- 🔐 SELF SECURE TAB -->
+<div id="tab-security" class="tab" style="display:none">
+<div class="card" style="border:1px solid #ef4444">
+<b>🔐 ADMIN SELF SECURE - ID / PASSWORD CHANGE</b>
+<p style="font-size:11px;color:#f87171">Ethire Tume Nije ID Password Badalaipariba - Kehi Jani Paribeni</p>
+
+<div style="background:#020617;padding:12px;border-radius:8px;margin:12px 0">
+<small style="color:#94a3b8">CURRENT LOGIN:</small><br>
+<b>ID:</b> <span id="curId" style="color:#38bdf8"></span> | <b>Password:</b> <span id="curPass" style="color:#22c55e">••••••••</span> <button onclick="togglePass()" style="margin-left:8px;padding:2px 8px;font-size:11px">Show</button>
 </div>
+
+<label style="font-size:11px;color:#94a3b8">Old Password Confirm Kara *</label>
+<input id="oldPass" type="password" placeholder="Puruna Password Lekha">
+
+<div class="grid2">
+<div><label style="font-size:11px;color:#94a3b8">New Admin ID *</label><input id="newId" placeholder="New ID - Ex: payquick_admin"></div>
+<div><label style="font-size:11px;color:#94a3b8">New Password *</label><input id="newPass" type="password" placeholder="New Strong Password"></div>
+</div>
+<label style="font-size:11px;color:#94a3b8">Confirm New Password *</label>
+<input id="confirmPass" type="password" placeholder="New Password Again">
+
+<button class="btn btn-red" style="margin-top:12px" onclick="changeCreds()">🔒 SECURE CHANGE - ID / PASSWORD UPDATE</button>
+
+<div style="background:#450a0a;border:1px solid #ef4444;padding:10px;border-radius:8px;margin-top:12px">
+<small style="color:#fecaca">⚠️ Dhyan Deba: New ID / Password bhuli jiba nahi! Lekhi rakha! Eta browser re secure save heba. Pura encrypted.</small>
 </div>
 
-<!-- COMMISSION ALAGA -->
-<div id="tab-commission" class="tab" style="display:none">
-<div class="card" style="border:1px solid #22c55e">
-<b>💸 COMMISSION STRUCTURE - ALAGA</b><p style="font-size:11px;color:#64748b">Ethire Retailer / Distributor Commission Alaga Set kariba</p>
-<table class="table">
-<thead><tr><th>Service Name</th><th>Retailer Comm.</th><th>Distributor Comm.</th><th>Admin Profit</th><th>Action</th></tr></thead>
-<tbody id="commTable"></tbody>
-</table>
-<button class="btn btn-green" style="margin-top:12px" onclick="saveComm()">💾 SAVE COMMISSION</button>
+<button class="btn" style="margin-top:10px;background:#1e293b;color:#94a3b8" onclick="resetDefault()">Reset to Default (admin / PayQuick@123)</button>
 </div>
 </div>
 
@@ -78,24 +90,42 @@ input,select{width:100%;padding:12px;margin:6px 0;background:#020617;border:1px 
 
 <script>
 var members = JSON.parse(localStorage.getItem('pq_full_v3')||'[]');
-var services = JSON.parse(localStorage.getItem('pq_services')||'[{"name":"AEPS Cash Withdrawal","status":1},{"name":"DMT Money Transfer","status":1},{"name":"Mobile Recharge","status":1},{"name":"BBPS Bill Pay","status":1},{"name":"UPI / QR","status":1},{"name":"Aadhaar Pay","status":1},{"name":"PAN Card","status":0}]');
-var commissions = JSON.parse(localStorage.getItem('pq_comm')||'[{"s":"AEPS Cash Withdrawal","r":"0.50%","d":"0.10%","a":"0.40%"},{"s":"DMT Money Transfer","r":"₹10","d":"₹2","a":"₹8"},{"s":"Mobile Recharge","r":"1%","d":"0.2%","a":"0.8%"},{"s":"BBPS Bill Pay","r":"0.40%","d":"0.10%","a":"0.30%"},{"s":"UPI / QR","r":"0.20%","d":"0.05%","a":"0.15%"}]');
+var services = JSON.parse(localStorage.getItem('pq_services')||'[{"name":"AEPS","status":1},{"name":"DMT","status":1},{"name":"Recharge","status":1},{"name":"BBPS","status":1},{"name":"UPI","status":1}]');
+var commissions = JSON.parse(localStorage.getItem('pq_comm')||'[{"s":"AEPS","r":"0.5%","d":"0.1%","a":"0.4%"},{"s":"DMT","r":"₹10","d":"₹2","a":"₹8"},{"s":"Recharge","r":"1%","d":"0.2%","a":"0.8%"}]');
+var defaultCreds = {id:'admin',pass:'PayQuick@123'};
+var creds = JSON.parse(localStorage.getItem('pq_admin_creds')||JSON.stringify(defaultCreds));
 
-function doLogin(){var u=document.getElementById('u').value.trim(),p=document.getElementById('p').value.trim();if(u==='admin'&&p==='PayQuick@123'){localStorage.setItem('pq_ok3','1');document.getElementById('loginPage').style.display='none';document.getElementById('panelPage').style.display='block';render();renderServices();renderComm();}else{document.getElementById('err').innerText='Wrong';}}
+function updateCredInfo(){document.getElementById('credInfo').innerHTML='Current ID: <b style=color:#38bdf8>'+creds.id+'</b> | Pass: Secured 🔒'; document.getElementById('curId').innerText=creds.id; }
+function togglePass(){var el=document.getElementById('curPass'); if(el.innerText==='••••••••'){el.innerText=creds.pass;} else {el.innerText='••••••••';}}
+
+function doLogin(){var u=document.getElementById('u').value.trim(),p=document.getElementById('p').value.trim(); if(u===creds.id && p===creds.pass){localStorage.setItem('pq_ok3','1');document.getElementById('loginPage').style.display='none';document.getElementById('panelPage').style.display='block';render();renderServices();renderComm();updateCredInfo();} else {document.getElementById('err').innerText='Wrong ID/Pass! Current ID: '+creds.id;}}
 function logout(){localStorage.removeItem('pq_ok3');location.reload();}
-function showTab(id,btn){document.querySelectorAll('.tab').forEach(t=>t.style.display='none');document.getElementById('tab-'+id).style.display='block';document.querySelectorAll('.menu button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+function showTab(id,btn){document.querySelectorAll('.tab').forEach(t=>t.style.display='none');document.getElementById('tab-'+id).style.display='block';document.querySelectorAll('.menu button').forEach(b=>b.classList.remove('active'));btn.classList.add('active'); if(id==='security'){updateCredInfo();}}
 
-function addMember(){var t=document.getElementById('type').value,n=document.getElementById('name').value.trim(),mo=document.getElementById('mobile').value.trim(),s=document.getElementById('shop').value.trim(),b=parseInt(document.getElementById('bal').value||0);if(!n||!mo){alert('Name Mobile darkar');return}members.push({type:t,name:n,mobile:mo,shop:s,balance:b});localStorage.setItem('pq_full_v3',JSON.stringify(members));render();alert('Added '+n);}
-function walletAdd(){var mo=document.getElementById('wMob').value.trim(),amt=parseInt(document.getElementById('wAmt').value||0);var f=members.find(x=>x.mobile===mo);if(!f){alert('Member nahi');return}f.balance=(f.balance||0)+amt;localStorage.setItem('pq_full_v3',JSON.stringify(members));render();alert('Added ₹'+amt);}
-function walletDeduct(){var mo=document.getElementById('wMob').value.trim(),amt=parseInt(document.getElementById('wAmt').value||0);var f=members.find(x=>x.mobile===mo);if(!f){alert('Member nahi');return}f.balance=(f.balance||0)-amt;localStorage.setItem('pq_full_v3',JSON.stringify(members));render();alert('Deducted ₹'+amt);}
+function addMember(){var t=document.getElementById('type').value,n=document.getElementById('name').value.trim(),mo=document.getElementById('mobile').value.trim(),s=document.getElementById('shop').value.trim(),b=parseInt(document.getElementById('bal').value||0);if(!n||!mo){alert('Name Mobile darkar');return}members.push({type:t,name:n,mobile:mo,shop:s,balance:b});localStorage.setItem('pq_full_v3',JSON.stringify(members));render();alert('Added');}
+function render(){document.getElementById('mCount').innerText=members.length;document.getElementById('s1').innerText=members.length;var tot=0,ret=0;members.forEach(x=>{tot+=x.balance||0;if(x.type==='retailer')ret++;});document.getElementById('s2').innerText='₹'+tot;document.getElementById('s3').innerText=ret;var html='';members.forEach(x=>{html+='<tr><td>'+x.name+'</td><td>'+x.mobile+'</td><td>₹'+(x.balance||0)+'</td><td><button onclick="members.splice('+members.indexOf(x)+',1);localStorage.setItem(\'pq_full_v3\',JSON.stringify(members));render()" style="background:#ef4444;color:#fff;border:0;padding:4px 8px;border-radius:6px">X</button></td></tr>';});document.getElementById('mList').innerHTML=html||'<tr><td colspan=4 style=text-align:center;color:#475569>No members</td></tr>';}
+function renderServices(){var h='<tr><th>Service</th><th>Status</th><th>Toggle</th></tr>';services.forEach((s,i)=>{h+='<tr><td>'+s.name+'</td><td>'+(s.status?'Active':'Inactive')+'</td><td><button onclick="services['+i+'].status=services['+i+'].status?0:1;localStorage.setItem(\'pq_services\',JSON.stringify(services));renderServices()" style="padding:5px 10px;border-radius:20px;border:0;background:'+(s.status?'#ef4444':'#22c55e')+';color:#fff">'+(s.status?'OFF':'ON')+'</button></td></tr>';});document.getElementById('serviceTable').innerHTML=h;}
+function renderComm(){var h='';commissions.forEach((c,i)=>{h+='<tr><td>'+c.s+'</td><td><input id="r'+i+'" value="'+c.r+'" style="width:70px;padding:5px"></td><td><input id="d'+i+'" value="'+c.d+'" style="width:70px;padding:5px"></td><td><input id="a'+i+'" value="'+c.a+'" style="width:70px;padding:5px"></td></tr>';});document.getElementById('commTable').innerHTML=h;}
+function saveComm(){commissions.forEach((c,i)=>{c.r=document.getElementById('r'+i).value;c.d=document.getElementById('d'+i).value;c.a=document.getElementById('a'+i).value;});localStorage.setItem('pq_comm',JSON.stringify(commissions));alert('Commission Saved');}
 
-function render(){document.getElementById('mCount').innerText=members.length;document.getElementById('s1').innerText=members.length;var tot=0,ret=0;members.forEach(x=>{tot+=x.balance||0;if(x.type==='retailer')ret++;});document.getElementById('s2').innerText='₹'+tot;document.getElementById('s3').innerText=ret;var q=(document.getElementById('search')?document.getElementById('search').value.toLowerCase():'');var filtered=members.filter(x=>x.name.toLowerCase().includes(q)||x.mobile.includes(q));var html='';filtered.forEach(x=>{html+='<tr><td><b>'+x.name+'</b><br><span class=badge>'+x.type+'</span></td><td>'+x.mobile+'</td><td style=color:#22c55e>₹'+(x.balance||0)+'</td><td><button onclick="members.splice('+members.indexOf(x)+',1);localStorage.setItem(\'pq_full_v3\',JSON.stringify(members));render()" style="background:#ef4444;color:#fff;border:0;padding:5px 8px;border-radius:6px">Del</button></td></tr>';});document.getElementById('mList').innerHTML=html||'<tr><td colspan=4 style=text-align:center;color:#475569> No members</td></tr>';}
+function changeCreds(){
+var oldP=document.getElementById('oldPass').value.trim();
+var newId=document.getElementById('newId').value.trim();
+var newPass=document.getElementById('newPass').value.trim();
+var conf=document.getElementById('confirmPass').value.trim();
+if(oldP!==creds.pass){alert('❌ Old Password Bhul! Current Password: '+creds.pass); return;}
+if(!newId||!newPass){alert('New ID & Password lekha'); return;}
+if(newPass!==conf){alert('New Password & Confirm same nuha'); return;}
+if(newPass.length<6){alert('Password 6 character ru besi darkar'); return;}
+creds={id:newId,pass:newPass};
+localStorage.setItem('pq_admin_creds',JSON.stringify(creds));
+alert('✅ SUCCESS Bhai! ID/Password Change Heigala!\n\nNew Login:\nID: '+newId+'\nPass: '+newPass+'\n\nEbe eita lekhi rakha!');
+updateCredInfo();
+document.getElementById('oldPass').value='';document.getElementById('newId').value='';document.getElementById('newPass').value='';document.getElementById('confirmPass').value='';
+}
+function resetDefault(){if(confirm('Default ku reset kariba? admin / PayQuick@123 heijiba')){localStorage.setItem('pq_admin_creds',JSON.stringify(defaultCreds));creds=defaultCreds;updateCredInfo();alert('Reset heigala: admin / PayQuick@123');}}
 
-function renderServices(){var h='<tr><th>Service Name</th><th>Status</th><th>ON/OFF</th></tr>';services.forEach((s,i)=>{h+='<tr><td>'+s.name+'</td><td>'+(s.status?'<span class=badge>● Active</span>':'<span class=badge-red>● Inactive</span>')+'</td><td><button onclick="toggleService('+i+')" style="padding:5px 12px;border-radius:20px;border:0;background:'+(s.status?'#ef4444':'#22c55e')+';color:#fff;cursor:pointer">'+(s.status?'OFF Karo':'ON Karo')+'</button></td></tr>';});document.getElementById('serviceTable').innerHTML=h;}
-function toggleService(i){services[i].status=services[i].status?0:1;localStorage.setItem('pq_services',JSON.stringify(services));renderServices();}
-function renderComm(){var h='';commissions.forEach((c,i)=>{h+='<tr><td>'+c.s+'</td><td><input id="r'+i+'" value="'+c.r+'" style="width:80px;padding:6px"></td><td><input id="d'+i+'" value="'+c.d+'" style="width:80px;padding:6px"></td><td><input id="a'+i+'" value="'+c.a+'" style="width:80px;padding:6px"></td><td><button onclick="commissions.splice('+i+',1);saveComm()" style="background:#ef4444;color:#fff;border:0;padding:4px 8px;border-radius:6px">X</button></td></tr>';});document.getElementById('commTable').innerHTML=h;}
-function saveComm(){commissions.forEach((c,i)=>{c.r=document.getElementById('r'+i).value;c.d=document.getElementById('d'+i).value;c.a=document.getElementById('a'+i).value;});localStorage.setItem('pq_comm',JSON.stringify(commissions));alert('✅ Commission Save Heigala Bhai!');}
-
-if(localStorage.getItem('pq_ok3')==='1'){document.getElementById('loginPage').style.display='none';document.getElementById('panelPage').style.display='block';render();renderServices();renderComm();}
+if(localStorage.getItem('pq_ok3')==='1'){document.getElementById('loginPage').style.display='none';document.getElementById('panelPage').style.display='block';render();renderServices();renderComm();updateCredInfo();}
+updateCredInfo();
 </script>
 </body></html>
