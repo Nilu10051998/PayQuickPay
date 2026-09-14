@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PayQuickPay - FIXED FINAL</title>
+<style>
+body{margin:0;background:#020617;color:#fff;font-family:Arial;display:flex;align-items:center;justify-content:center;min-height:100vh}
+.box{background:#0f172a;border:1px solid #334155;border-radius:16px;padding:24px;width:360px}
+input{width:100%;padding:12px;margin:8px 0;background:#020617;color:#fff;border:1px solid #334155;border-radius:8px}
+.btn{width:100%;padding:12px;background:#38bdf8;color:#000;font-weight:800;border:0;border-radius:8px;cursor:pointer}
+.card{background:#020617;padding:12px;border-radius:8px;margin-top:8px}
+</style>
+</head><body>
+
+<div id="login" class="box">
+<h2 style="color:#38bdf8;text-align:center;margin:0">PayQuickPay 🔐</h2>
+<p style="text-align:center;color:#94a3b8;font-size:12px">Super Admin - FIXED</p>
+<input id="u" value="admin" placeholder="User">
+<input id="p" type="password" value="PayQuick@123" placeholder="Pass">
+<button class="btn" onclick="loginNow()">LOGIN NOW</button>
+<p id="err" style="color:#f87171;font-size:12px;text-align:center"></p>
+</div>
+
+<div id="panel" class="box" style="display:none;width:90%;max-width:500px">
+<h3 style="color:#22c55e;text-align:center">✅ LOGIN SUCCESS - REAL PANEL</h3>
+<input id="n" placeholder="Member Name">
+<input id="m" placeholder="Mobile">
+<button class="btn" style="background:#22c55e;color:#fff" onclick="add()">ADD MEMBER</button>
+<div id="list"></div>
+<button onclick="logout()" style="width:100%;margin-top:12px;background:#ef4444;color:#fff;border:0;padding:10px;border-radius:8px">Logout</button>
+</div>
+
+<script>
+var members = [];
+function loginNow(){
+var user = document.getElementById('u').value.trim();
+var pass = document.getElementById('p').value.trim();
+if(user === 'admin' && pass === 'PayQuick@123'){
+document.getElementById('login').style.display='none';
+document.getElementById('panel').style.display='block';
+localStorage.setItem('pq_ok','1');
+} else {
+document.getElementById('err').innerText = 'Wrong! Use admin / PayQuick@123';
+}
+}
+function add(){
+var name = document.getElementById('n').value;
+var mob = document.getElementById('m').value;
+if(!name ||!mob){ alert('Name Mobile darkar'); return; }
+members.push({name:name,mobile:mob});
+var html = '';
+for(var i=0;i<members.length;i++){
+html = html + '<div class=card>' + members[i].name + ' - ' + members[i].mobile + '</div>';
+}
+document.getElementById('list').innerHTML = html;
+document.getElementById('n').value='';
+document.getElementById('m').value='';
+alert('Added '+name);
+}
+function logout(){
+localStorage.removeItem('pq_ok');
+location.reload();
+}
+if(localStorage.getItem('pq_ok') === '1'){
+document.getElementById('login').style.display='none';
+document.getElementById('panel').style.display='block';
+}
+</script>
+</body></html>
