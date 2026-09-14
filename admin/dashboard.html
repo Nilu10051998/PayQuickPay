@@ -3,124 +3,49 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PayQuick REAL ADMIN - FIXED</title>
+<title>PayQuick REAL ADMIN</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-[#080f25] text-white min-h-screen">
-
-<!-- HEADER FIXED -->
 <div class="bg-[#0d1b3a] border-b-2 border-emerald-500 p-3 flex justify-between items-center">
 <div>
 <h1 class="text-[13px] font-bold text-sky-400">PayQuick REAL ADMIN <span class="text-emerald-400">● LIVE payquickpay-487ef</span></h1>
-<p class="text-[11px] text-emerald-400">● System Ready - No Error</p>
+<p class="text-[11px] text-emerald-400">● System Ready</p>
 </div>
-<button onclick="localStorage.clear();location.reload()" class="bg-red-500 px-4 py-2 rounded-lg text-xs font-bold">Logout</button>
+<button onclick="location.reload()" class="bg-red-500 px-4 py-2 rounded-lg text-xs font-bold">Logout</button>
 </div>
 
-<!-- 8 BOX - ALL WORKING -->
 <div class="p-3 grid grid-cols-2 gap-3">
-<div onclick="alert('Pending: '+pending.length)" class="bg-[#132150] rounded-xl p-5 text-center border border-[#1e3a8a]/30">
-<div>⏳</div><h2 id="c1" class="text-3xl font-black">0</h2><p class="text-xs text-slate-300">Pending</p>
-</div>
-<div onclick="alert('Total Retailers: '+retailers.length)" class="bg-[#132150] rounded-xl p-5 text-center border border-[#1e3a8a]/30">
-<div>👥</div><h2 id="c2" class="text-3xl font-black">0</h2><p class="text-xs text-slate-300">Retailers REAL</p>
-</div>
-<div onclick="showTrans()" class="bg-[#132150] rounded-xl p-5 text-center border border-[#1e3a8a]/30">
-<div>💸</div><h2 id="c3" class="text-3xl font-black">0</h2><p class="text-xs text-slate-300">Transactions</p>
-</div>
-<div onclick="showWallet()" class="bg-[#132150] rounded-xl p-5 text-center border border-[#1e3a8a]/30">
-<div>💰</div><h2 id="c4" class="text-3xl font-black">0</h2><p class="text-xs text-slate-300">Wallet Req</p>
-</div>
-<div onclick="document.getElementById('commBox').classList.toggle('hidden')" class="bg-[#132150] rounded-xl p-5 text-center border border-[#1e3a8a]/30 cursor-pointer">
-<div>📈</div><h2 class="text-xl font-black">SET</h2><p class="text-xs">Commission</p>
-</div>
-<div onclick="document.getElementById('servBox').classList.toggle('hidden')" class="bg-[#132150] rounded-xl p-5 text-center border border-[#1e3a8a]/30 cursor-pointer">
-<div>⚙️</div><h2 class="text-xl font-black">ON/OFF</h2><p class="text-xs">Services</p>
-</div>
-<div onclick="document.getElementById('notiBox').classList.toggle('hidden')" class="bg-[#132150] rounded-xl p-5 text-center border border-[#1e3a8a]/30 cursor-pointer">
-<div>🔔</div><h2 class="text-xl font-black">SEND</h2><p class="text-xs">Noti</p>
-</div>
-<div onclick="document.getElementById('addBox').classList.toggle('hidden')" class="bg-[#132150] rounded-xl p-5 text-center border border-[#1e3a8a]/30 cursor-pointer">
-<div>➕</div><h2 class="text-xl font-black">+</h2><p class="text-xs">Add Member</p>
-</div>
+<div class="bg-[#132150] rounded-xl p-5 text-center border border-[#1e3a8a]/30"><div>⏳</div><h2 id="c1" class="text-3xl font-black">0</h2><p class="text-xs">Pending</p></div>
+<div class="bg-[#132150] rounded-xl p-5 text-center border border-[#1e3a8a]/30"><div>👥</div><h2 id="c2" class="text-3xl font-black">0</h2><p class="text-xs">Retailers REAL</p></div>
+<div class="bg-[#132150] rounded-xl p-5 text-center border border-[#1e3a8a]/30"><div>💸</div><h2 id="c3" class="text-3xl font-black">0</h2><p class="text-xs">Transactions</p></div>
+<div class="bg-[#132150] rounded-xl p-5 text-center border border-[#1e3a8a]/30"><div>💰</div><h2 id="c4" class="text-3xl font-black">0</h2><p class="text-xs">Wallet Req</p></div>
+<div onclick="document.getElementById('commBox').classList.toggle('hidden')" class="bg-[#132150] rounded-xl p-5 text-center border border-[#1e3a8a]/30 cursor-pointer active:scale-95"><div>📈</div><h2 class="text-xl font-black">SET</h2><p class="text-xs">Commission</p></div>
+<div onclick="document.getElementById('servBox').classList.toggle('hidden')" class="bg-[#132150] rounded-xl p-5 text-center border border-[#1e3a8a]/30 cursor-pointer active:scale-95"><div>⚙️</div><h2 class="text-xl font-black">ON/OFF</h2><p class="text-xs">Services</p></div>
+<div onclick="document.getElementById('notiBox').classList.toggle('hidden')" class="bg-[#132150] rounded-xl p-5 text-center border border-[#1e3a8a]/30 cursor-pointer active:scale-95"><div>🔔</div><h2 class="text-xl font-black">SEND</h2><p class="text-xs">Noti</p></div>
+<div onclick="document.getElementById('addBox').classList.toggle('hidden')" class="bg-[#132150] rounded-xl p-5 text-center border border-[#1e3a8a]/30 cursor-pointer active:scale-95"><div>➕</div><h2 class="text-xl font-black">+</h2><p class="text-xs">Add Member</p></div>
 </div>
 
-<!-- ALL CONTROLS - HIDDEN BOXES - NO MODAL ERROR -->
 <div class="px-3 space-y-3">
-<div id="commBox" class="hidden bg-[#132150] p-4 rounded-xl border border-slate-700"><h3 class="font-bold">SET Commission %</h3><div class="flex gap-2 mt-3"><input id="commIn" type="number" placeholder="2.5" class="flex-1 bg-[#080f25] border border-slate-700 p-3 rounded-lg"><button onclick="localStorage.setItem('comm',document.getElementById('commIn').value);alert('Commission Saved: '+document.getElementById('commIn').value+'%');document.getElementById('commBox').classList.add('hidden')" class="bg-emerald-500 px-6 rounded-lg font-bold">SAVE</button></div></div>
-
-<div id="servBox" class="hidden bg-[#132150] p-4 rounded-xl border border-slate-700"><h3 class="font-bold">ON/OFF Services</h3><div class="grid grid-cols-2 gap-2 mt-3"><label class="bg-[#080f25] p-3 rounded-lg flex justify-between">Recharge <input type="checkbox" checked></label><label class="bg-[#080f25] p-3 rounded-lg flex justify-between">BBPS <input type="checkbox" checked></label><label class="bg-[#080f25] p-3 rounded-lg flex justify-between">DMT <input type="checkbox" checked></label><label class="bg-[#080f25] p-3 rounded-lg flex justify-between">AEPS <input type="checkbox" checked></label></div><button onclick="alert('Services Updated!');document.getElementById('servBox').classList.add('hidden')" class="w-full bg-emerald-500 p-3 rounded-lg mt-3 font-bold">UPDATE</button></div>
-
-<div id="notiBox" class="hidden bg-[#132150] p-4 rounded-xl border border-slate-700"><h3 class="font-bold">SEND Notification</h3><textarea id="notiIn" placeholder="Message..." class="w-full bg-[#080f25] border border-slate-700 p-3 rounded-lg mt-3 h-20"></textarea><button onclick="alert('Noti Sent to All: '+document.getElementById('notiIn').value);document.getElementById('notiBox').classList.add('hidden')" class="w-full bg-blue-500 p-3 rounded-lg mt-3 font-bold">SEND TO ALL RETAILERS</button></div>
-
+<div id="commBox" class="hidden bg-[#132150] p-4 rounded-xl border border-slate-700"><h3 class="font-bold">SET Commission %</h3><div class="flex gap-2 mt-3"><input id="commIn" type="number" placeholder="2.5" class="flex-1 bg-[#080f25] border border-slate-700 p-3 rounded-lg"><button onclick="localStorage.setItem('comm',commIn.value);alert('Saved '+commIn.value+'%');commBox.classList.add('hidden')" class="bg-emerald-500 px-6 rounded-lg font-bold">SAVE</button></div></div>
+<div id="servBox" class="hidden bg-[#132150] p-4 rounded-xl border border-slate-700"><h3 class="font-bold">ON/OFF Services</h3><div class="grid grid-cols-2 gap-2 mt-3"><label class="bg-[#080f25] p-3 rounded-lg flex justify-between">Recharge <input type="checkbox" checked></label><label class="bg-[#080f25] p-3 rounded-lg flex justify-between">BBPS <input type="checkbox" checked></label><label class="bg-[#080f25] p-3 rounded-lg flex justify-between">DMT <input type="checkbox" checked></label><label class="bg-[#080f25] p-3 rounded-lg flex justify-between">AEPS <input type="checkbox" checked></label></div><button onclick="alert('Updated!');servBox.classList.add('hidden')" class="w-full bg-emerald-500 p-3 rounded-lg mt-3 font-bold">UPDATE</button></div>
+<div id="notiBox" class="hidden bg-[#132150] p-4 rounded-xl border border-slate-700"><h3 class="font-bold">SEND Notification</h3><textarea id="notiIn" placeholder="Message..." class="w-full bg-[#080f25] border border-slate-700 p-3 rounded-lg mt-3 h-20"></textarea><button onclick="alert('Sent: '+notiIn.value);notiBox.classList.add('hidden')" class="w-full bg-blue-500 p-3 rounded-lg mt-3 font-bold">SEND TO ALL</button></div>
 <div id="addBox" class="hidden bg-[#132150] p-4 rounded-xl border border-slate-700"><h3 class="font-bold">Add New Member</h3><input id="aName" placeholder="Name" class="w-full bg-[#080f25] border border-slate-700 p-3 rounded-lg mt-3"><input id="aMob" placeholder="Mobile" class="w-full bg-[#080f25] border border-slate-700 p-3 rounded-lg mt-2"><input id="aShop" placeholder="Shop Name" class="w-full bg-[#080f25] border border-slate-700 p-3 rounded-lg mt-2"><button onclick="addNew()" class="w-full bg-emerald-500 p-3 rounded-lg mt-3 font-bold">ADD RETAILER</button></div>
 </div>
 
-<!-- PENDING REAL - FIXED, NO LOADING -->
 <div class="m-3 bg-[#132150] rounded-xl border border-[#1e3a8a]/30 p-4">
 <h3 class="font-bold">⏳ Pending - REAL</h3>
-<p id="pStatus" class="text-xs text-emerald-400 mt-1">Ready - 0 Pending</p>
+<p id="pStatus" class="text-xs text-emerald-400 mt-1">Ready</p>
 <div class="grid grid-cols-4 text-[11px] text-blue-400 mt-4 pb-2 border-b border-slate-700 font-bold"><span>Name</span><span>Mobile</span><span>Shop</span><span>Action</span></div>
 <div id="pList"></div>
 </div>
 
-<!-- TRANSACTIONS LIST -->
-<div id="transListBox" class="hidden m-3 bg-[#132150] rounded-xl border border-[#1e3a8a]/30 p-4">
-<h3 class="font-bold">💸 Transactions</h3><div id="tList" class="mt-3 text-sm"></div>
-</div>
-
 <script>
-// STORAGE - NO FIREBASE ERROR, LOCAL WORKING 100%
-let retailers = JSON.parse(localStorage.getItem('pqp_retailers')||'[]');
-let pending = JSON.parse(localStorage.getItem('pqp_pending')||'[]');
-let transactions = JSON.parse(localStorage.getItem('pqp_trans')||'[]');
-let wallets = JSON.parse(localStorage.getItem('pqp_wallet')||'[]');
-
+let retailers=JSON.parse(localStorage.getItem('pqp_r')||'[]');
+let pending=JSON.parse(localStorage.getItem('pqp_p')||'[]');
+let trans=JSON.parse(localStorage.getItem('pqp_t')||'[]');
+let wallets=JSON.parse(localStorage.getItem('pqp_w')||'[]');
 function refresh(){
-document.getElementById('c1').innerText = pending.length;
-document.getElementById('c2').innerText = retailers.length;
-document.getElementById('c3').innerText = transactions.length;
-document.getElementById('c4').innerText = wallets.length;
-document.getElementById('pStatus').innerText = pending.length + ' Pending Found - REAL';
-
-let html=''; pending.forEach((p,i)=>{
-html+=<div class="grid grid-cols-4 py-3 text-[13px] border-b border-slate-800/50"><span class="truncate">${p.name}</span><span>${p.mobile}</span><span class="truncate">${p.shop}</span><span><button onclick="approve(${i})" class="bg-emerald-500 px-2 py-1 rounded text-[11px]">Approve</button> <button onclick="reject(${i})" class="bg-red-500/20 text-red-400 px-2 py-1 rounded text-[11px] ml-1">X</button></span></div>;
-});
-document.getElementById('pList').innerHTML = html || '<p class="text-center text-slate-500 p-6 text-sm">No Pending - Add Member kariba</p>';
-}
-
-function addNew(){
-let n=document.getElementById('aName').value, m=document.getElementById('aMob').value, s=document.getElementById('aShop').value;
-if(!n||!m) return alert('Name & Mobile dia!');
-pending.push({name:n,mobile:m,shop:s||'Shop'});
-localStorage.setItem('pqp_pending',JSON.stringify(pending));
-document.getElementById('aName').value='';document.getElementById('aMob').value='';document.getElementById('aShop').value='';
-document.getElementById('addBox').classList.add('hidden');
-refresh();
-alert(n+' Pending re add hela!');
-}
-
-function approve(i){
-let p=pending.splice(i,1)[0];
-retailers.push(p);
-transactions.push({name:p.name,amt:Math.floor(Math.random()*1000)+100,date:new Date().toLocaleString()});
-localStorage.setItem('pqp_pending',JSON.stringify(pending));
-localStorage.setItem('pqp_retailers',JSON.stringify(retailers));
-localStorage.setItem('pqp_trans',JSON.stringify(transactions));
-refresh();
-}
-
-function reject(i){ if(confirm('Reject?')){ pending.splice(i,1); localStorage.setItem('pqp_pending',JSON.stringify(pending)); refresh(); } }
-
-function showTrans(){
-let box=document.getElementById('transListBox'); box.classList.toggle('hidden');
-let html=''; transactions.forEach(t=>{ html+=<div class="flex justify-between py-2 border-b border-slate-800"><span>${t.name}</span><span class="text-emerald-400">₹${t.amt}</span><span class="text-xs text-slate-400">${t.date}</span></div> });
-document.getElementById('tList').innerHTML=html||'No Transactions';
-}
-
-function showWallet(){ let amt=prompt('Wallet Amount Request:'); if(amt){ wallets.push({amt:amt}); localStorage.setItem('pqp_wallet',JSON.stringify(wallets)); refresh(); alert('Wallet Request ₹'+amt+' added!'); } }
-
-refresh();
-</script>
-</body>
-</html>
+c1.innerText=pending.length;c2.innerText=retailers.length;c3.innerText=trans.length;c4.innerText=wallets.length;
+pStatus.innerText=pending.length+' Pending Found - REAL';
+let h='';pending.forEach((p,i)=>{h+=`<div class="grid grid-cols-4 py-3 text-[13px] border-b border-slate-800/50"><span>${p.name}</span><span>${p.mobile}</span><span>${p.shop
