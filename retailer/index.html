@@ -1,19 +1,29 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Retailer - PayQuickPay</title>
-<style>*{font-family:sans-serif;box-sizing:border-box}body{margin:0;background:#020617;color:#fff;min-height:100vh;display:flex;justify-content:center;align-items:center}
-.box{background:#0f172a;border:1px solid #38bdf8;padding:30px;border-radius:20px;width:92%;max-width:380px;text-align:center}
-input{width:100%;padding:12px;margin:8px 0;border-radius:10px;border:1px solid #334155;background:#020617;color:#fff}
-button{width:100%;padding:12px;background:#38bdf8;border:0;border-radius:10px;font-weight:800;cursor:pointer}
-</style></head><body><div class="box">
-<h2 style="color:#38bdf8">PayQuickPay Retailer</h2>
-<p style="color:#94a3b8;font-size:13px">Dina ku ₹1000-2000 Income</p>
-<input id="m" placeholder="Mobile / User ID">
-<input id="p" type="password" placeholder="Password">
-<button onclick="login()">LOGIN</button>
-<a href="/" style="display:block;margin-top:15px;color:#94a3b8;font-size:12px;text-decoration:none">← Back to Home</a>
-</div><script>
-function login(){
-let u=document.getElementById('m').value;
-if(u.length<5){alert('ID dia Bhai');return;}
-document.body.innerHTML='<div style="display:flex;justify-content:center;align-items:center;min-height:100vh;background:#020617;color:#fff;flex-direction:column"><h2 style="color:#38bdf8">Welcome '+u+' Bhai! 🎉</h2><p>Retailer Dashboard Loading...</p><p style="color:#94a3b8">Balance: ₹2,540 | Today Commission: ₹340</p><a href="/" style="color:#38bdf8;margin-top:20px">Home</a></div>';
-}
-</script></body></html>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Retailer Dashboard - PayQuickPay</title>
+<style>*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
+body{background:#020617;color:#fff}
+.top{background:#0f172a;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #1e293b}
+.balance{background:#1e293b;padding:8px 14px;border-radius:20px;border:1px solid #38bdf8;color:#38bdf8;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;padding:20px;max-width:1000px;margin:auto}
+.s{background:#0f172a;border:1px solid #1e293b;border-radius:16px;padding:18px;text-align:center;cursor:pointer}
+.s:hover{border-color:#38bdf8}
+.s .ic{font-size:28px} .s h4{margin:8px 0 4px;font-size:14px} .s p{color:#94a3b8;font-size:11px}
+.header{padding:20px;text-align:center}
+.btn{padding:8px 18px;background:#020617;border:1px solid #334155;color:#94a3b8;border-radius:20px;text-decoration:none;font-size:12px}
+</style></head><body>
+<div class="top"><b style="color:#38bdf8">PayQuickPay Retailer</b><div class="balance">💰 ₹2,540 | ID: 8018146505</div></div>
+<div class="header"><h3>Welcome 8018146505 Bhai! 🙏</h3><p style="color:#94a3b8;font-size:13px;margin:6px 0">Sabu service ethi achi - Click kara</p><a class="btn" href="/">← Home</a></div>
+<div class="grid">
+<div class="s" onclick="alert('Recharge Page Opening... API connect kariba Bhai')"><div class="ic">📱</div><h4>Mobile Recharge</h4><p>4% Commission</p></div>
+<div class="s"><div class="ic">📡</div><h4>DTH Recharge</h4><p>3% Commission</p></div>
+<div class="s"><div class="ic">💡</div><h4>Electricity Bill</h4><p>BBPS - ₹5</p></div>
+<div class="s"><div class="ic">💧</div><h4>Water Bill</h4><p>BBPS</p></div>
+<div class="s"><div class="ic">🏦</div><h4>AEPS</h4><p>Aadhaar Withdraw</p></div>
+<div class="s"><div class="ic">💸</div><h4>DMT</h4><p>Money Transfer</p></div>
+<div class="s"><div class="ic">💳</div><h4>PAN Card</h4><p>₹20 Commission</p></div>
+<div class="s"><div class="ic">🛡️</div><h4>Insurance</h4><p>Bike/Car</p></div>
+<div class="s"><div class="ic">📊</div><h4>Report</h4><p>Today ₹340</p></div>
+<div class="s"><div class="ic">👛</div><h4>Wallet</h4><p>Add Money</p></div>
+<div class="s"><div class="ic">🎫</div><h4>Ticket</h4><p>Support</p></div>
+<div class="s"><div class="ic">⚙️</div><h4>Profile</h4><p>ID: 8018146505</p></div>
+</div>
+</body></html>
