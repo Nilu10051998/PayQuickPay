@@ -1,116 +1,110 @@
-<!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PayQuickPay - Retailer Full Service Panel</title>
-<style>
-*{box-sizing:border-box}body{margin:0;background:#020617;color:#fff;font-family:Arial}
-.loginWrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:radial-gradient(at 30% 20%,#052e16,#020617)}
-.loginBox{background:#0f172a;border:1px solid #22c55e;border-radius:16px;padding:28px;width:380px}
-input,select{width:100%;padding:12px;margin:6px 0;background:#020617;border:1px solid #334155;border-radius:8px;color:#fff}
-.btn{width:100%;padding:12px;border:0;border-radius:8px;font-weight:800;cursor:pointer}
-.btn-blue{background:#38bdf8;color:#000}.btn-green{background:#22c55e;color:#fff}.btn-red{background:#ef4444;color:#fff}
-.header{background:#0f172a;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #1e293b;position:sticky;top:0;z-index:99}
-.card{background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:16px;margin:12px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-.badge{background:#052e16;color:#22c55e;padding:3px 10px;border-radius:20px;font-size:11px}
-.menu{display:flex;gap:8px;overflow:auto;padding:0 12px}.menu button{white-space:nowrap;padding:8px 14px;border-radius:20px;border:1px solid #334155;background:#020617;color:#94a3b8;cursor:pointer}.menu button.active{background:#22c55e;color:#000;font-weight:700}
-.service{padding:14px;text-align:center;border:1px solid #1e293b;border-radius:12px;background:#020617;cursor:pointer}.service:hover{border-color:#22c55e}
-.table{width:100%;border-collapse:collapse}.table th{color:#64748b;font-size:11px;text-align:left;padding:8px;border-bottom:1px solid #1e293b}.table td{padding:8px;border-bottom:1px solid #0f172a;font-size:12px}
-@media(max-width:700px){.grid3{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}}
-</style>
-</head><body>
-
-<div id="loginPage" class="loginWrap"><div class="loginBox">
-<h2 style="color:#22c55e;text-align:center;margin:0">PayQuickPay</h2>
-<p style="text-align:center;color:#22c55e;font-weight:800">RETAILER PANEL</p>
-<input id="mob" placeholder="Mobile"><input id="pass" type="password" placeholder="Password / Last 4">
-<button class="btn btn-green" onclick="retailerLogin()">LOGIN →</button><p id="err" style="color:#f87171;text-align:center;font-size:12px"></p>
-</div></div>
-
-<div id="panelPage" style="display:none">
-<div class="header"><h3 style="margin:0;color:#22c55e">Retailer <span style="font-size:11px;color:#94a3b8" id="rName"></span></h3><div><b id="rBal" style="color:#22c55e">₹0</b> <button onclick="logout()" style="background:#ef4444;color:#fff;border:0;padding:5px 10px;border-radius:6px;margin-left:8px">Logout</button></div></div>
-
-<div style="max-width:1000px;margin:auto">
-<div class="grid2" style="margin:12px">
-<div class="card" style="text-align:center;border-color:#22c55e"><small>WALLET</small><h1 id="bal2" style="color:#22c55e;margin:5px 0">₹0</h1><span class="badge">● Live</span></div>
-<div class="card" style="text-align:center"><small>EARNING TODAY</small><h1 style="color:#f59e0b;margin:5px 0" id="earn">₹0</h1><small style="color:#64748b">Commission</small></div>
-</div>
-
-<div class="menu">
-<button class="active" onclick="showTab('home',this)">🏠 Home</button>
-<button onclick="showTab('aeps',this)">🏧 AEPS</button>
-<button onclick="showTab('dmt',this)">💸 DMT</button>
-<button onclick="showTab('recharge',this)">📱 Recharge</button>
-<button onclick="showTab('history',this)">📜 History</button>
-</div>
-
-<div id="tab-home" class="tab">
-<div class="grid3" style="padding:0 12px">
-<div class="service" onclick="showTab('aeps',document.querySelectorAll('.menu button')[1])"><div style="font-size:28px">🏧</div><b>AEPS</b><br><small style="color:#22c55e">Withdraw</small></div>
-<div class="service" onclick="showTab('dmt',document.querySelectorAll('.menu button')[2])"><div style="font-size:28px">💸</div><b>DMT</b><br><small style="color:#38bdf8">Transfer</small></div>
-<div class="service" onclick="showTab('recharge',document.querySelectorAll('.menu button')[3])"><div style="font-size:28px">📱</div><b>Recharge</b><br><small style="color:#f59e0b">Mobile</small></div>
-</div>
-<div class="card"><b>🔔 Retailer Notice</b><p style="font-size:12px;color:#94a3b8">• Wallet low hela Admin / Distributor ku contact kara<br>• AEPS re 0.50% commission<br>• DMT re ₹10 commission<br>• Kounasi problem hele support@payquickpay.in</p></div>
-</div>
-
-<div id="tab-aeps" class="tab" style="display:none">
-<div class="card" style="border-color:#22c55e"><b>🏧 AEPS Cash Withdrawal - Retailer Service</b>
-<div class="grid2" style="margin-top:12px"><select><option>Aadhaar Number</option></select><input id="aadhaar" placeholder="Aadhaar Number (12 Digit)"></div>
-<div class="grid2"><input id="aAmt" type="number" placeholder="Amount ₹ (100-10000)"><select id="bank"><option>Select Bank</option><option>SBI</option><option>HDFC</option><option>ICICI</option><option>Odisha Gramya Bank</option></select></div>
-<button class="btn btn-green" onclick="doAEPS()">💰 WITHDRAW NOW - Biometric</button>
-<p style="font-size:11px;color:#64748b;margin-top:8px">* Demo - Biometric device connect heba pare real transaction heba</p>
-</div>
-</div>
-
-<div id="tab-dmt" class="tab" style="display:none">
-<div class="card" style="border-color:#38bdf8"><b>💸 DMT Money Transfer</b>
-<input id="dMob" placeholder="Customer Mobile (Beneficiary Search)"><div class="grid2"><input id="acc" placeholder="Account Number"><input id="ifsc" placeholder="IFSC Code"></div><input id="dAmt" type="number" placeholder="Amount ₹"><button class="btn btn-blue" onclick="doDMT()">TRANSFER NOW →</button>
-</div>
-</div>
-
-<div id="tab-recharge" class="tab" style="display:none">
-<div class="card" style="border-color:#f59e0b"><b>📱 Mobile / DTH Recharge</b>
-<div class="grid2"><select id="op"><option>Jio</option><option>Airtel</option><option>Vi</option><option>BSNL</option><option>DTH - Tata Play</option></select><input id="rMob" placeholder="Mobile / DTH Number"></div><input id="rAmt" type="number" placeholder="Amount ₹"><button class="btn" style="background:#f59e0b;color:#000" onclick="doRecharge()">RECHARGE NOW</button>
-</div>
-</div>
-
-<div id="tab-history" class="tab" style="display:none">
-<div class="card"><b>📜 Transaction History</b><table class="table"><thead><tr><th>Type</th><th>Amount</th><th>Status</th></tr></thead><tbody id="hist"></tbody></table></div>
-</div>
-
-</div></div>
+<!-- SAME RETAILER.HTML but with COMMISSION SPLIT - Find the 3 functions doAEPS, doDMT, doRecharge and REPLACE with this -->
 
 <script>
-var allMembers = JSON.parse(localStorage.getItem('pq_full_v3')||'[]');
-var trans = JSON.parse(localStorage.getItem('pq_ret_trans')||'[]');
-var cur = null;
-function retailerLogin(){
-var mob=document.getElementById('mob').value.trim(),pass=document.getElementById('pass').value.trim();
-var f=allMembers.find(m=>m.mobile===mob);
-if(!f){document.getElementById('err').innerText='Member nahi';return;}
-if(f.password && f.password!=='' && f.password!==pass && pass!==mob.slice(-4)){document.getElementById('err').innerText='Pass bhul';return;}
-cur=f; localStorage.setItem('pq_retailer',JSON.stringify(f)); show(f);
+//... puruna code same thiba...
+
+function getCommission(serviceName){
+var comms=JSON.parse(localStorage.getItem('pq_comm')||'[]');
+var f=comms.find(c=>c.s.toLowerCase().includes(serviceName.toLowerCase()));
+if(!f) return {r:0.5, d:0.1, a:0.4}; // default %
+function parseVal(v){
+if(typeof v==='string' && v.includes('%')) return parseFloat(v)/100;
+if(typeof v==='string' && v.includes('₹')) return {flat: parseFloat(v.replace('₹',''))};
+return parseFloat(v)/100 || 0;
 }
-function show(m){
-document.getElementById('loginPage').style.display='none';document.getElementById('panelPage').style.display='block';
-document.getElementById('rName').innerText=m.name; document.getElementById('rBal').innerText='₹'+(m.balance||0); document.getElementById('bal2').innerText='₹'+(m.balance||0);
-renderHist();
+return f;
 }
-function showTab(id,btn){document.querySelectorAll('.tab').forEach(t=>t.style.display='none');document.getElementById('tab-'+id).style.display='block';document.querySelectorAll('.menu button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
-function doAEPS(){
-var amt=parseInt(document.getElementById('aAmt').value||0); if(amt<100){alert('Amount 100 ru besi');return}
-if((cur.balance||0)<amt){alert('Wallet low!');return}
-cur.balance-=amt; var comm=Math.floor(amt*0.005); cur.balance+=comm;
+
+function addBalanceToMobile(mobile, amount){
+var idx=allMembers.findIndex(x=>x.mobile===mobile);
+if(idx>=0){ allMembers[idx].balance=(allMembers[idx].balance||0)+amount; }
+}
+
+function distributeCommission(serviceType, totalAmount){
+var comms=JSON.parse(localStorage.getItem('pq_comm')||'[]');
+var rule=comms.find(c=> serviceType.toLowerCase().includes(c.s.toLowerCase()) || c.s.toLowerCase().includes(serviceType.toLowerCase()));
+if(!rule){ rule={r:"0.5%",d:"0.1%",a:"0.4%"}; }
+
+function calc(val, amt){
+if(val.toString().includes('₹')){ return parseInt(val.toString().replace(/[^0-9]/g,''))||0; }
+else { var per=parseFloat(val)||0; return Math.floor(amt*per/100); }
+}
+
+var rComm=calc(rule.r, totalAmount);
+var dComm=calc(rule.d, totalAmount);
+var aComm=calc(rule.a, totalAmount);
+
+// 1. Retailer ku rComm
+cur.balance+=rComm;
+
+// 2. Distributor ku dComm - jadi retailer ra distributor achi
+var distInfo = JSON.parse(localStorage.getItem('pq_dist_retailers')||'[]').find(x=>x.mobile===cur.mobile);
+if(distInfo && distInfo.distId){
+addBalanceToMobile(distInfo.distId, dComm);
+console.log('Distributor '+distInfo.distId+' ku ₹'+dComm+' gala');
+}
+
+// 3. Admin ku aComm - Admin wallet (pq_admin_wallet)
+var adminWallet=parseInt(localStorage.getItem('pq_admin_wallet')||'0');
+adminWallet+=aComm;
+localStorage.setItem('pq_admin_wallet', adminWallet.toString());
+
 allMembers.find(x=>x.mobile===cur.mobile).balance=cur.balance;
 localStorage.setItem('pq_full_v3',JSON.stringify(allMembers));
-trans.push({type:'AEPS Withdraw',amount:amt,comm:comm,status:'Success',time:new Date().toLocaleString()}); localStorage.setItem('pq_ret_trans',JSON.stringify(trans));
-document.getElementById('rBal').innerText='₹'+cur.balance; document.getElementById('bal2').innerText='₹'+cur.balance;
-document.getElementById('earn').innerText='₹'+(trans.reduce((s,x)=>s+(x.comm||0),0));
-alert('✅ AEPS Success! ₹'+amt+' Withdraw + ₹'+comm+' Commission'); renderHist();
+
+return {rComm, dComm, aComm};
 }
-function doDMT(){var amt=parseInt(document.getElementById('dAmt').value||0); if((cur.balance||0)<amt){alert('Wallet low');return} cur.balance-=amt; cur.balance+=10; allMembers.find(x=>x.mobile===cur.mobile).balance=cur.balance; localStorage.setItem('pq_full_v3',JSON.stringify(allMembers)); trans.push({type:'DMT',amount:amt,comm:10,status:'Success',time:new Date().toLocaleString()}); localStorage.setItem('pq_ret_trans',JSON.stringify(trans)); alert('✅ DMT Success ₹'+amt); renderHist(); document.getElementById('rBal').innerText='₹'+cur.balance; document.getElementById('bal2').innerText='₹'+cur.balance;}
-function doRecharge(){var amt=parseInt(document.getElementById('rAmt').value||0); if((cur.balance||0)<amt){alert('Wallet low');return} cur.balance-=amt; var c=Math.floor(amt*0.01); cur.balance+=c; allMembers.find(x=>x.mobile===cur.mobile).balance=cur.balance; localStorage.setItem('pq_full_v3',JSON.stringify(allMembers)); trans.push({type:'Recharge',amount:amt,comm:c,status:'Success',time:new Date().toLocaleString()}); localStorage.setItem('pq_ret_trans',JSON.stringify(trans)); alert('✅ Recharge Success + ₹'+c+' Commission'); renderHist(); document.getElementById('rBal').innerText='₹'+cur.balance; document.getElementById('bal2').innerText='₹'+cur.balance;}
-function renderHist(){var h=''; var tot=0; trans.slice().reverse().forEach(t=>{tot+=t.comm||0; h+='<tr><td>'+t.type+'<br><small style=color:#64748b>'+t.time+'</small></td><td>₹'+t.amount+'<br><small style=color:#22c55e>+₹'+(t.comm||0)+'</small></td><td><span class=badge>'+t.status+'</span></td></tr>';}); document.getElementById('hist').innerHTML=h||'<tr><td colspan=3 style=text-align:center;color:#475569>No Transactions</td></tr>'; document.getElementById('earn').innerText='₹'+tot;}
-function logout(){localStorage.removeItem('pq_retailer');location.reload();}
-var saved=JSON.parse(localStorage.getItem('pq_retailer')||'null'); if(saved){cur=allMembers.find(m=>m.mobile===saved.mobile)||saved; show(cur);}
+
+function doAEPS(){
+var amt=parseInt(document.getElementById('aAmt').value||0); if(amt<100){alert('Amount 100+');return}
+if((cur.balance||0)<amt){alert('Wallet low! Admin ku kuha');return}
+cur.balance-=amt; // amount debit
+var split=distributeCommission('AEPS', amt);
+trans.push({type:'AEPS Withdraw',amount:amt,comm:split.rComm,dComm:split.dComm,aComm:split.aComm,status:'Success',time:new Date().toLocaleString()});
+localStorage.setItem('pq_ret_trans',JSON.stringify(trans));
+updateBalUI();
+alert('✅ AEPS Success!\n\nRetailer: +₹'+split.rComm+'\nDistributor: +₹'+split.dComm+'\nAdmin: +₹'+split.aComm);
+renderHist();
+}
+
+function doDMT(){
+var amt=parseInt(document.getElementById('dAmt').value||0); if(amt<10){alert('Amount dala');return}
+if((cur.balance||0)<amt){alert('Wallet low');return}
+cur.balance-=amt;
+var split=distributeCommission('DMT', amt);
+trans.push({type:'DMT',amount:amt,comm:split.rComm,dComm:split.dComm,aComm:split.aComm,status:'Success',time:new Date().toLocaleString()});
+localStorage.setItem('pq_ret_trans',JSON.stringify(trans));
+updateBalUI();
+alert('✅ DMT Success!\nRetailer +₹'+split.rComm+' | Distri +₹'+split.dComm+' | Admin +₹'+split.aComm);
+renderHist();
+}
+
+function doRecharge(){
+var amt=parseInt(document.getElementById('rAmt').value||0); if(amt<10){alert('Amount');return}
+if((cur.balance||0)<amt){alert('Wallet low');return}
+cur.balance-=amt;
+var split=distributeCommission('Recharge', amt);
+trans.push({type:'Recharge',amount:amt,comm:split.rComm,dComm:split.dComm,aComm:split.aComm,status:'Success',time:new Date().toLocaleString()});
+localStorage.setItem('pq_ret_trans',JSON.stringify(trans));
+updateBalUI();
+alert('✅ Recharge Success!\n\nTuma Commission: ₹'+split.rComm+'\nDistributor ku: ₹'+split.dComm+'\nAdmin ku: ₹'+split.aComm);
+renderHist();
+}
+
+function updateBalUI(){
+document.getElementById('rBal').innerText='₹'+cur.balance;
+document.getElementById('bal2').innerText='₹'+cur.balance;
+localStorage.setItem('pq_full_v3',JSON.stringify(allMembers));
+}
+
+function renderHist(){
+var h=''; var tot=0; trans.slice().reverse().forEach(t=>{
+tot+=t.comm||0;
+h+='<tr><td>'+t.type+'<br><small style=color:#64748b>'+t.time+'</small></td><td>₹'+t.amount+'<br><small style=color:#22c55e>R:₹'+(t.comm||0)+' D:₹'+(t.dComm||0)+' A:₹'+(t.aComm||0)+'</small></td><td><span class=badge>'+t.status+'</span></td></tr>';
+});
+document.getElementById('hist').innerHTML=h||'<tr><td colspan=3 style=text-align:center;color:#475569>No Transactions</td></tr>';
+document.getElementById('earn').innerText='₹'+tot;
+}
+
+//... baki code same...
 </script>
-</body></html>
