@@ -1,73 +1,118 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PayQuickPay - Retailer</title>
+<title>Retailer Dashboard - PayQuickPay</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,sans-serif}
-body{background:#0f172a;color:white;min-height:100vh}
-.header{background:#1e293b;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
-.balance{background:#3b82f6;padding:8px 15px;border-radius:20px;font-weight:bold}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;padding:20px}
-.card{background:#1e293b;border-radius:15px;padding:20px;text-align:center;cursor:pointer;border:1px solid #334155;transition:0.2s}
-.card:hover{background:#334155;transform:scale(1.02);border-color:#3b82f6}
-.card .icon{font-size:30px;margin-bottom:10px}
-.card h3{font-size:14px;margin-bottom:5px}
-.card p{font-size:12px;color:#22c55e;font-weight:bold}
-#modal{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
-.modal-box{background:#1e293b;width:100%;max-width:400px;border-radius:15px;padding:20px}
-.modal-box input{width:100%;padding:12px;margin:10px 0;border-radius:8px;border:none;background:#0f172a;color:white}
-.btn{width:100%;padding:12px;background:#3b82f6;border:none;border-radius:8px;color:white;font-weight:bold;cursor:pointer;margin-top:10px}
-.btn:hover{background:#2563eb}
-.close{float:right;font-size:20px;cursor:pointer}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:#0a1931;color:white;min-height:100vh}
+.header{padding:12px 15px;display:flex;justify-content:space-between;align-items:center;background:#0a1931;border-bottom:1px solid #1e3a5f}
+.header b{color:#3b82f6}
+#loginBox{max-width:360px;margin:80px auto;background:#112240;padding:25px;border-radius:15px;text-align:center}
+#loginBox input{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:none;background:#0a1931;color:white;border:1px solid #334155}
+#dash{display:none}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;padding:20px;max-width:900px;margin:auto}
+@media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}}
+.card{background:#112240;border-radius:12px;padding:18px 10px;text-align:center;cursor:pointer;border:1px solid #1e3a5f;transition:0.2s}
+.card:hover{background:#1a2f55;transform:translateY(-2px);border-color:#3b82f6}
+.card .ico{font-size:24px;margin-bottom:6px}
+.card h4{font-size:13px}
+.card span{font-size:11px;color:#22c55e;display:block;margin-top:4px}
+.topBal{background:#1e293b;padding:6px 12px;border-radius:20px;font-size:13px}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;z-index:99;padding:15px}
+.mBox{background:#112240;width:100%;max-width:380px;border-radius:12px;padding:20px}
+.mBox input{width:100%;padding:11px;margin:8px 0;border-radius:8px;border:1px solid #334155;background:#0a1931;color:white}
+.btn{width:100%;padding:12px;background:#3b82f6;border:none;border-radius:8px;color:white;font-weight:bold;cursor:pointer}
+.welcome{text-align:center;padding:15px}
 </style>
 </head>
 <body>
+
+<div id="loginBox">
+<h2 style="color:#3b82f6">PayQuickPay Retailer</h2>
+<p style="margin:10px 0 15px;font-size:13px;color:#94a3b8">ID Password Dia</p>
+<input type="text" id="uid" placeholder="Retailer ID - Ex: 8018146505">
+<input type="password" id="upass" placeholder="Password">
+<button class="btn" onclick="doLogin()">Login</button>
+<p id="lmsg" style="margin-top:10px;color:#f87171;font-size:13px"></p>
+<p style="margin-top:12px;font-size:11px;color:#64748b">Demo ID: 8018146505 / Pass: 1234</p>
+</div>
+
+<div id="dash">
 <div class="header">
 <div><b>PayQuickPay</b> Retailer</div>
-<div class="balance" onclick="logout()">₹2,540 | ID: 8018146505</div>
+<div class="topBal">₹2,540 | ID: <span id="showId">8018146505</span></div>
 </div>
-
+<div class="welcome">
+<h3>Welcome <span id="wId">8018146505</span> Bhai! 🙏</h3>
+<p style="font-size:12px;color:#94a3b8;margin-top:5px">Sabu service ethi achi - Click kara</p>
+<p style="font-size:12px;color:#3b82f6">← Home</p>
+</div>
 <div class="grid">
-<div class="card" onclick="openService('Mobile Recharge','4% Commission')"><div class="icon">📱</div><h3>Mobile Recharge</h3><p>4% Commission</p></div>
-<div class="card" onclick="openService('DTH Recharge','3% Commission')"><div class="icon">📺</div><h3>DTH Recharge</h3><p>3% Commission</p></div>
-<div class="card" onclick="openService('Electricity Bill','₹5 Commission')"><div class="icon">💡</div><h3>Electricity Bill</h3><p>₹5 Commission</p></div>
-<div class="card" onclick="openService('PAN Card','₹20 Commission')"><div class="icon">💳</div><h3>PAN Card</h3><p>₹20 Commission</p></div>
-<div class="card" onclick="openService('AEPS Service','0.5% Commission')"><div class="icon">🏧</div><h3>AEPS Service</h3><p>Cash Withdraw</p></div>
-<div class="card" onclick="openService('DMT Service','₹10 Commission')"><div class="icon">💸</div><h3>DMT Money Transfer</h3><p>₹10 Commission</p></div>
-<div class="card" onclick="openService('My Wallet','Balance: ₹2,540')"><div class="icon">👛</div><h3>My Wallet</h3><p>Check Balance</p></div>
-<div class="card" onclick="openService('Reports','View All')"><div class="icon">📊</div><h3>Reports</h3><p>History</p></div>
-<div class="card" onclick="openService('Profile','ID: 8018146505')"><div class="icon">👤</div><h3>Profile</h3><p>My Account</p></div>
-<div class="card" onclick="logout()" style="border-color:#ef4444"><div class="icon">🚪</div><h3>Logout</h3><p style="color:#ef4444">Exit</p></div>
+<div class="card" onclick="openS('Mobile Recharge','4% Commission')"><div class="ico">📱</div><h4>Mobile Recharge</h4><span>4% Commission</span></div>
+<div class="card" onclick="openS('DTH Recharge','3% Commission')"><div class="ico">📡</div><h4>DTH Recharge</h4><span>3% Commission</span></div>
+<div class="card" onclick="openS('Electricity Bill','BBPS - ₹5')"><div class="ico">💡</div><h4>Electricity Bill</h4><span>BBPS - ₹5</span></div>
+<div class="card" onclick="openS('Water Bill','BBPS')"><div class="ico">💧</div><h4>Water Bill</h4><span>BBPS</span></div>
+<div class="card" onclick="openS('AEPS','Aadhaar Withdraw')"><div class="ico">🏧</div><h4>AEPS</h4><span>Aadhaar Withdraw</span></div>
+<div class="card" onclick="openS('DMT','Money Transfer')"><div class="ico">💸</div><h4>DMT</h4><span>Money Transfer</span></div>
+<div class="card" onclick="openS('PAN Card','₹20 Commission')"><div class="ico">💳</div><h4>PAN Card</h4><span>₹20 Commission</span></div>
+<div class="card" onclick="openS('Insurance','Bike/Car')"><div class="ico">🛡️</div><h4>Insurance</h4><span>Bike/Car</span></div>
+<div class="card" onclick="openS('Report','Today ₹340')"><div class="ico">📊</div><h4>Report</h4><span>Today ₹340</span></div>
+<div class="card" onclick="openS('Wallet','Add Money')"><div class="ico">👛</div><h4>Wallet</h4><span>Add Money</span></div>
+<div class="card" onclick="openS('Ticket','Support')"><div class="ico">🎫</div><h4>Ticket</h4><span>Support</span></div>
+<div class="card" onclick="logout()" style="border-color:#ef4444"><div class="ico">⚙️</div><h4>Profile</h4><span id="pId">ID: 8018146505 - Logout</span></div>
+</div>
 </div>
 
-<div id="modal"><div class="modal-box">
-<span class="close" onclick="closeModal()">✕</span>
-<h3 id="mTitle">Service</h3>
-<p id="mComm" style="color:#22c55e;margin:5px 0"></p>
-<input type="text" id="mNumber" placeholder="Enter Number / ID">
-<input type="text" id="mAmount" placeholder="Enter Amount">
-<button class="btn" onclick="doRecharge()">Proceed - Commission Add Heba</button>
-<p id="mMsg" style="margin-top:10px;text-align:center"></p>
+<div id="modal"><div class="mBox">
+<div style="display:flex;justify-content:space-between"><h4 id="mTitle">Service</h4><span onclick="closeM()" style="cursor:pointer">✕</span></div>
+<p id="mComm" style="color:#22c55e;font-size:12px;margin:8px 0"></p>
+<input type="text" id="mNum" placeholder="Number / Customer ID">
+<input type="text" id="mAmt" placeholder="Amount">
+<button class="btn" onclick="doPay()">Proceed</button>
+<p id="mMsg" style="text-align:center;margin-top:10px;font-size:13px"></p>
+<button class="btn" style="background:#ef4444;margin-top:10px" onclick="logout()">Logout</button>
 </div></div>
 
 <script>
-function openService(title, comm){
-document.getElementById('mTitle').innerText=title;
-document.getElementById('mComm').innerText=comm;
-document.getElementById('modal').style.display='flex';
+// CHECK LOGIN
+if(localStorage.getItem('pq_retailer')){
+  showDash();
 }
-function closeModal(){document.getElementById('modal').style.display='none';}
-function doRecharge(){
-let num=document.getElementById('mNumber').value;
-let amt=document.getElementById('mAmount').value;
-if(!num||!amt){document.getElementById('mMsg').innerText='Number & Amount dia!';return;}
-document.getElementById('mMsg').innerText='✅ Success! Commission Wallet re add heigala! ₹'+amt;
-setTimeout(closeModal,2000);
+function doLogin(){
+ let id=document.getElementById('uid').value.trim();
+ let pass=document.getElementById('upass').value.trim();
+ if(!id||!pass){document.getElementById('lmsg').innerText='ID Password dia Bhai!';return;}
+ // Demo check - tuma hisab re kichi bi ID chaliba
+ if(id.length<4){document.getElementById('lmsg').innerText='ID thik nahi!';return;}
+ localStorage.setItem('pq_retailer',id);
+ document.getElementById('wId').innerText=id;
+ document.getElementById('showId').innerText=id;
+ document.getElementById('pId').innerText='ID: '+id+' - Logout';
+ showDash();
+}
+function showDash(){
+ document.getElementById('loginBox').style.display='none';
+ document.getElementById('dash').style.display='block';
+}
+function openS(t,c){
+ document.getElementById('mTitle').innerText=t;
+ document.getElementById('mComm').innerText=c;
+ document.getElementById('mMsg').innerText='';
+ document.getElementById('modal').style.display='flex';
+}
+function closeM(){document.getElementById('modal').style.display='none';}
+function doPay(){
+ let n=document.getElementById('mNum').value;
+ let a=document.getElementById('mAmt').value;
+ if(!n||!a){document.getElementById('mMsg').innerText='Number & Amount dia!';return;}
+ document.getElementById('mMsg').innerText='✅ Success! '+document.getElementById('mTitle').innerText+' heigala! Commission add heigala!';
+ setTimeout(closeM,1500);
 }
 function logout(){
-if(confirm('Logout kariba?')){localStorage.clear(); window.location.href='../index.html';}
+ localStorage.removeItem('pq_retailer');
+ location.reload();
 }
 </script>
 </body>
