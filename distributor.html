@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PayQuickPay - Distributor Panel</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#020617;color:#fff;font-family:Arial}
+.loginWrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:radial-gradient(at 30% 20%,#1e1b4b,#020617)}
+.loginBox{background:#0f172a;border:1px solid #6366f1;border-radius:16px;padding:28px;width:380px}
+input,select{width:100%;padding:12px;margin:8px 0;background:#020617;border:1px solid #334155;border-radius:8px;color:#fff}
+.btn{width:100%;padding:12px;border:0;border-radius:8px;font-weight:800;cursor:pointer}
+.btn-violet{background:#8b5cf6;color:#fff}.btn-green{background:#22c55e;color:#fff}.btn-red{background:#ef4444;color:#fff}
+.header{background:#0f172a;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #1e293b;position:sticky;top:0}
+.card{background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:16px;margin:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.badge{background:#1e1b4b;color:#8b5cf6;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.table{width:100%;border-collapse:collapse;margin-top:10px}.table th{color:#64748b;font-size:11px;text-align:left;padding:8px;border-bottom:1px solid #1e293b}.table td{padding:10px 8px;border-bottom:1px solid #0f172a;font-size:13px}
+</style>
+</head><body>
+
+<div id="loginPage" class="loginWrap"><div class="loginBox">
+<h2 style="color:#8b5cf6;text-align:center;margin:0">PayQuickPay</h2>
+<p style="text-align:center;color:#8b5cf6;font-weight:800;margin:4px 0">DISTRIBUTOR LOGIN</p>
+<p style="text-align:center;color:#64748b;font-size:11px">Distributor ID re login - Retailer Add Karipariba</p>
+<input id="mob" placeholder="Distributor Mobile"><input id="pass" type="password" placeholder="Password / Last 4 Digit">
+<button class="btn btn-violet" onclick="distLogin()">LOGIN AS DISTRIBUTOR →</button>
+<p id="err" style="color:#f87171;font-size:12px;text-align:center"></p>
+<div style="text-align:center;margin-top:12px"><a href="admin/panel.html" style="color:#8b5cf6;font-size:12px">← Admin</a> | <a href="retailer.html" style="color:#38bdf8;font-size:12px">Retailer →</a></div>
+</div></div>
+
+<div id="panelPage" style="display:none">
+<div class="header">
+<h3 style="margin:0;color:#8b5cf6">Distributor Panel <span style="color:#22c55e;font-size:11px">● SUPER</span></h3>
+<div><span id="dName" style="color:#94a3b8;font-size:12px"></span> <button onclick="logout()" style="background:#ef4444;color:#fff;border:0;padding:6px 10px;border-radius:6px;margin-left:8px">Logout</button></div>
+</div>
+
+<div style="max-width:1100px;margin:auto;padding:12px">
+<div class="grid3">
+<div class="card" style="text-align:center;border-color:#8b5cf6"><small>MY WALLET</small><h1 id="dBal" style="margin:8px 0;color:#8b5cf6">₹0</h1><span class="badge">Distributor</span></div>
+<div class="card" style="text-align:center"><small>MY RETAILERS</small><h1 id="dRetailers" style="margin:8px 0;color:#38bdf8">0</h1><small style="color:#64748b">Total Added</small></div>
+<div class="card" style="text-align:center"><small>COMMISSION</small><h1 style="margin:8px 0;color:#22c55e">₹0</h1><small style="color:#64748b">Today Earned</small></div>
+</div>
+
+<div class="grid2">
+<div class="card" style="border-color:#22c55e"><b>➕ Add Retailer (Distributor Kama)</b>
+<input id="rName" placeholder="Retailer Name *"><input id="rMob" placeholder="Retailer Mobile *"><input id="rShop" placeholder="Shop Name"><input id="rBal" type="number" placeholder="Opening Balance"><button class="btn btn-green" onclick="addRetailer()">ADD RETAILER NOW</button>
+<p style="font-size:10px;color:#64748b;margin-top:6px">Distributor dwara add heithiba retailer - Commission tuame paiba</p>
+</div>
+<div class="card"><b>💰 Wallet Transfer to Retailer</b><input id="wMob" placeholder="Retailer Mobile"><input id="wAmt" type="number" placeholder="Amount ₹"><button class="btn btn-violet" onclick="transfer()">TRANSFER WALLET →</button></div>
+</div>
+
+<div class="card"><b>👥 My Retailers List (<span id="count">0</span>)</b><table class="table"><thead><tr><th>Name / Shop</th><th>Mobile</th><th>Balance</th><th>Action</th></tr></thead><tbody id="list"></tbody></table></div>
+</div>
+</div>
+
+<script>
+var allMembers = JSON.parse(localStorage.getItem('pq_full_v3')||'[]');
+var myRetailers = JSON.parse(localStorage.getItem('pq_dist_retailers')||'[]');
+var currentDist = null;
+
+function distLogin(){
+var mob=document.getElementById('mob').value.trim();
+var pass=document.getElementById('pass').value.trim();
+var found=allMembers.find(m=>m.mobile===mob && m.type==='distributor');
+if(!found){document.getElementById('err').innerText='❌ Distributor milila nahi! Admin panel re Distributor hisabe add kara';return;}
+if(found.password && found.password!=='' && found.password!==pass && pass!==mob.slice(-4)){document.getElementById('err').innerText='❌ Password bhul';return;}
+currentDist=found;
+localStorage.setItem('pq_dist_login',JSON.stringify(found));
+showDist(found);
+}
+function showDist(d){
+document.getElementById('loginPage').style.display='none';
+document.getElementById('panelPage').style.display='block';
+document.getElementById('dName').innerText=d.name+' ('+d.mobile+')';
+document.getElementById('dBal').innerText='₹'+(d.balance||0);
+render();
+}
+function addRetailer(){
+var n=document.getElementById('rName').value.trim(),mo=document.getElementById('rMob').value.trim(),s=document.getElementById('rShop').value.trim(),b=parseInt(document.getElementById('rBal').value||0);
+if(!n||!mo){alert('Name Mobile darkar');return}
+var obj={name:n,mobile:mo,shop:s,balance:b,distId:currentDist.mobile,distName:currentDist.name,time:new Date().toLocaleString()};
+myRetailers.push(obj);
+allMembers.push({type:'retailer',name:n,mobile:mo,shop:s,balance:b});
+localStorage.setItem('pq_dist_retailers',JSON.stringify(myRetailers));
+localStorage.setItem('pq_full_v3',JSON.stringify(allMembers));
+document.getElementById('rName').value='';document.getElementById('rMob').value='';document.getElementById('rShop').value='';document.getElementById('rBal').value='';
+render(); alert('✅ Retailer Added: '+n);
+}
+function transfer(){
+var mo=document.getElementById('wMob').value.trim(),amt=parseInt(document.getElementById('wAmt').value||0);
+var r=myRetailers.find(x=>x.mobile===mo);
+if(!r){alert('Tuma Retailer nahi');return}
+if((currentDist.balance||0)<amt){alert('Tuma Wallet re paisa nahi');return}
+currentDist.balance=(currentDist.balance||0)-amt;
+r.balance=(r.balance||0)+amt;
+var idx=allMembers.findIndex(x=>x.mobile===currentDist.mobile); if(idx>=0) allMembers[idx].balance=currentDist.balance;
+var idx2=allMembers.findIndex(x=>x.mobile===mo); if(idx2>=0) allMembers[idx2].balance=r.balance;
+localStorage.setItem('pq_full_v3',JSON.stringify(allMembers));
+localStorage.setItem('pq_dist_retailers',JSON.stringify(myRetailers));
+localStorage.setItem('pq_dist_login',JSON.stringify(currentDist));
+document.getElementById('dBal').innerText='₹'+currentDist.balance;
+render(); alert('✅ ₹'+amt+' Transfer heigala to '+r.name);
+}
+function render(){
+var myList=myRetailers.filter(x=>x.distId===currentDist.mobile);
+document.getElementById('count').innerText=myList.length;
+document.getElementById('dRetailers').innerText=myList.length;
+var html=''; myList.forEach(x=>{
+html+='<tr><td><b>'+x.name+'</b><br><small style=color:#94a3b8>'+(x.shop||'')+'</small></td><td>'+x.mobile+'</td><td style=color:#22c55e>₹'+(x.balance||0)+'</td><td><button onclick="if(confirm(\'Delete?\')){myRetailers=myRetailers.filter(y=>y.mobile!==\''+x.mobile+'\');localStorage.setItem(\'pq_dist_retailers\',JSON.stringify(myRetailers));render()}" style="background:#ef4444;color:#fff;border:0;padding:4px 8px;border-radius:6px">X</button></td></tr>';
+});
+document.getElementById('list').innerHTML=html||'<tr><td colspan=4 style=text-align:center;color:#475569>No Retailers - Add kara</td></tr>';
+}
+function logout(){localStorage.removeItem('pq_dist_login');location.reload();}
+var saved=JSON.parse(localStorage.getItem('pq_dist_login')||'null');
+if(saved){currentDist=saved; showDist(saved);}
+</script>
+</body></html>
