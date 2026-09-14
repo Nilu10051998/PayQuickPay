@@ -1,70 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PayQuick REAL ADMIN</title>
+<title>PayQuick ADMIN - FINAL ALL FIX</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-[#080f25] text-white">
 
-<div id="loginScreen" class="fixed inset-0 bg-[#080f25] z-[100] flex items-center justify-center p-4">
-<div class="bg-[#132150] p-8 rounded-2xl w-full max-w-sm border border-slate-700 text-center">
-<h1 class="text-xl font-bold text-sky-400">PayQuick REAL ADMIN</h1>
-<input id="adminPass" type="password" placeholder="Password - PayQuick@123" class="w-full bg-[#080f25] border border-slate-700 p-3 rounded-lg mt-6 outline-none">
-<button onclick="checkLogin()" class="w-full bg-emerald-500 p-3 rounded-lg mt-4 font-bold">LOGIN</button>
-<p id="loginErr" class="text-red-400 text-xs mt-3 hidden">Wrong Password!</p>
-</div>
+<!-- LOGIN SCREEN - PASSWORD HIDDEN FIX -->
+<div id="loginScreen" class="fixed inset-0 bg-[#080f25] z-[999] flex items-center justify-center p-4">
+<div class="bg-[#132150] p-7 rounded-2xl w-full max-w-sm border border-slate-700 text-center">
+<h1 class="text-xl font-bold text-sky-400">PayQuick ADMIN</h1>
+<p id="loginTitle" class="text-xs text-slate-400 mt-2">Loading...</p>
+
+<!-- CREATE PASSWORD - TUME NIJE BANAI PARIBA -->
+<div id="createBox" class="hidden">
+<input id="regMobile" type="tel" maxlength="10" placeholder="Your Mobile - 10 digit" class="w-full bg-[#080f25] border border-slate-700 p-3 rounded-lg mt-4 outline-none text-white">
+<input id="adminPass" type="password" placeholder="Create Password - Hidden" class="w-full bg-[#080f25] border border-slate-700 p-3 rounded-lg mt-3 outline-none text-white">
+<button onclick="handleCreate()" class="w-full bg-emerald-500 hover:bg-emerald-600 p-3 rounded-lg mt-4 font-bold">CREATE PASSWORD</button>
 </div>
 
-<div id="mainAdmin" class="hidden min-h-screen">
-<div class="bg-[#0d1b3a] border-b-2 border-emerald-500 p-3 flex justify-between items-center sticky top-0 z-50">
-<div><h1 class="text-[13px] font-bold text-sky-400">PayQuick REAL ADMIN <span class="text-emerald-400">● LIVE</span></h1><p class="text-[11px] text-emerald-400">● Ready</p></div>
-<button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg text-xs font-bold">LOGOUT</button>
+<!-- LOGIN BOX - PASSWORD PRIVATE -->
+<div id="loginBox" class="hidden">
+<input id="loginPass" type="password" placeholder="Enter Your Password" class="w-full bg-[#080f25] border border-slate-700 p-3 rounded-lg mt-6 outline-none text-white">
+<button onclick="handleLogin()" class="w-full bg-emerald-500 hover:bg-emerald-600 p-3 rounded-lg mt-4 font-bold">LOGIN</button>
+<button onclick="startReset()" class="w-full text-emerald-400 text-xs mt-4 underline">Forgot Password? OTP to Mobile</button>
 </div>
 
-<div class="p-3 grid grid-cols-2 gap-3">
-<div class="bg-[#132150] rounded-xl p-5 text-center"><div>⏳</div><h2 id="c1" class="text-3xl font-black">0</h2><p class="text-xs">Pending</p></div>
-<div class="bg-[#132150] rounded-xl p-5 text-center"><div>👥</div><h2 id="c2" class="text-3xl font-black">0</h2><p class="text-xs">Retailers REAL</p></div>
-<div class="bg-[#132150] rounded-xl p-5 text-center"><div>💸</div><h2 id="c3" class="text-3xl font-black">0</h2><p class="text-xs">Transactions</p></div>
-<div class="bg-[#132150] rounded-xl p-5 text-center"><div>💰</div><h2 id="c4" class="text-3xl font-black">0</h2><p class="text-xs">Wallet Req</p></div>
-<div onclick="addBox.classList.toggle('hidden')" class="bg-emerald-900/30 border border-emerald-500/30 rounded-xl p-5 text-center cursor-pointer"><div>➕</div><h2 class="text-xl font-black">+</h2><p class="text-xs">Add Member</p></div>
-<div onclick="alert('Coming Soon')" class="bg-[#132150] rounded-xl p-5 text-center cursor-pointer"><div>⚙️</div><h2 class="text-xl font-black">ON/OFF</h2><p class="text-xs">Services</p></div>
-</div>
-
-<div class="px-3">
-<div id="addBox" class="bg-[#132150] p-5 rounded-xl border-2 border-emerald-500/50">
-<h3 class="font-bold text-emerald-400">Add New Member</h3>
-<select id="memberType" class="w-full bg-[#080f25] border border-slate-700 p-3 rounded-lg mt-3"><option value="retailer">Retailer</option><option value="distributor">Distributor</option></select>
-<input id="aName" placeholder="Name" class="w-full bg-[#080f25] border border-slate-700 p-3 rounded-lg mt-2">
-<input id="aMob" placeholder="Mobile" class="w-full bg-[#080f25] border border-slate-700 p-3 rounded-lg mt-2">
-<input id="aShop" placeholder="Shop" class="w-full bg-[#080f25] border border-slate-700 p-3 rounded-lg mt-2">
-<button onclick="addNew()" class="w-full bg-emerald-500 p-3 rounded-lg mt-4 font-bold">ADD RETAILER</button>
-</div>
-</div>
-
-<div class="m-3 bg-[#132150] rounded-xl p-4">
-<h3 class="font-bold">⏳ Pending - REAL</h3>
-<p id="pStatus" class="text-xs text-emerald-400 mt-1">Ready</p>
-<div id="pList" class="mt-3"></div>
-</div>
-</div>
-
-<script>
-const ADMIN_PASSWORD = "PayQuick@123";
-function checkLogin(){ if(adminPass.value===ADMIN_PASSWORD){ localStorage.setItem('pqp_admin_login','yes'); loginScreen.classList.add('hidden'); mainAdmin.classList.remove('hidden'); refresh(); } else { loginErr.classList.remove('hidden'); } }
-if(localStorage.getItem('pqp_admin_login')==='yes'){ loginScreen.classList.add('hidden'); mainAdmin.classList.remove('hidden'); }
-function logout(){ localStorage.removeItem('pqp_admin_login'); mainAdmin.classList.add('hidden'); loginScreen.classList.remove('hidden'); adminPass.value=''; location.reload(); }
-
-let retailers=JSON.parse(localStorage.getItem('pqp_r')||'[]');
-let pending=JSON.parse(localStorage.getItem('pqp_p')||'[]');
-let trans=JSON.parse(localStorage.getItem('pqp_t')||'[]');
-let wallets=JSON.parse(localStorage.getItem('pqp_w')||'[]');
-function refresh(){ if(!c1) return; c1.innerText=pending.length;c2.innerText=retailers.length;c3.innerText=trans.length;c4.innerText=wallets.length; pStatus.innerText=pending.length+' Pending'; let h=''; pending.forEach((p,i)=>{ h+=<div class="flex justify-between py-3 border-b border-slate-800 text-[13px]"><span>[${p.type}] ${p.name} - ${p.mobile}</span><span><button onclick="approve(${i})" class="bg-emerald-500 px-2 py-1 rounded text-[11px]">Approve</button> <button onclick="reject(${i})" class="bg-red-500/20 text-red-400 px-2 py-1 rounded text-[11px] ml-1">X</button></span></div> }); pList.innerHTML=h||'<p class="text-center text-slate-500 p-4">No Pending</p>'; }
-function addNew(){ let type=memberType.value,n=aName.value.trim(),m=aMob.value.trim(),s=aShop.value.trim(); if(!n||!m) return alert('Name Mobile dia!'); pending.push({type,n,mobile:m,shop:s,name:n}); localStorage.setItem('pqp_p',JSON.stringify(pending)); aName.value=''; aMob.value=''; aShop.value=''; refresh(); alert('Added to Pending!'); }
-function approve(i){ let p=pending.splice(i,1)[0]; retailers.push(p); trans.push(p); localStorage.setItem('pqp_p',JSON.stringify(pending)); localStorage.setItem('pqp_r',JSON.stringify(retailers)); localStorage.setItem('pqp_t',JSON.stringify(trans)); refresh(); }
-function reject(i){ pending.splice(i,1); localStorage.setItem('pqp_p',JSON.stringify(pending)); refresh(); }
-refresh();
-</script>
-</body>
-</html>
+<!-- OTP BOX - REAL SMS -->
+<div id="otpBox" class="hidden">
+<p class="text-xs text-emerald-400 mt-4">OTP Sending to <span id="otpMobShow" class="font-bold"></span></p>
+<input id="otpInput" type="number" placeholder="6 Digit OTP" class="w-full bg-[#080f25] border border-slate-700 p-3 rounded-lg mt-3 outline-none text-center text-xl tracking-widest text-white">
+<input id="newPassInput" type="password" placeholder="New Password - Hidden" class="w-full bg-[#080f25] border border-slate-700 p-3 rounded-lg mt-3 outline-none text-white">
+<button onclick="verifyOtpReset()" class="w-full bg-blue-500 hover:bg-blue-600 p-3 rounded-lg mt-4 font-bold">VERIFY & RESET</button>
+<button onclick="location.reload()" class="w-full bg-slate-700/50 p-2 rounded-lg mt-2 text-xs">Back to Login</button>
+<p id="otpDemo" class="text-
