@@ -1,36 +1,19 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Retailer Login - PayQuickPay</title>
-<style>
-body{background:#0f172a;color:white;font-family:sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}
-.box{background:#1e293b;padding:30px;border-radius:20px;width:90%;max-width:380px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
-h2{text-align:center;color:#34d399;margin:0 0 20px 0}
-input{width:100%;padding:14px;margin:10px 0;border-radius:10px;border:none;background:#334155;color:white;box-sizing:border-box;font-size:16px}
-.btn{width:100%;padding:14px;background:#34d399;color:#000;border:none;border-radius:10px;font-weight:bold;font-size:18px;cursor:pointer;margin-top:15px}
-.btn:hover{background:#10b981}
-.back{display:block;text-align:center;margin-top:15px;color:#94a3b8;text-decoration:none;font-size:14px}
-</style>
-</head>
-<body>
-<div class="box">
-<h2>🏪 Retailer Login</h2>
-<input id="id" placeholder="Retailer ID">
-<input id="pass" type="password" placeholder="Password">
-<button class="btn" onclick="login()">Login</button>
-<a class="back" href="/">← Back to Home</a>
-</div>
-<script>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Retailer - PayQuickPay</title>
+<style>*{font-family:sans-serif;box-sizing:border-box}body{margin:0;background:#020617;color:#fff;min-height:100vh;display:flex;justify-content:center;align-items:center}
+.box{background:#0f172a;border:1px solid #38bdf8;padding:30px;border-radius:20px;width:92%;max-width:380px;text-align:center}
+input{width:100%;padding:12px;margin:8px 0;border-radius:10px;border:1px solid #334155;background:#020617;color:#fff}
+button{width:100%;padding:12px;background:#38bdf8;border:0;border-radius:10px;font-weight:800;cursor:pointer}
+</style></head><body><div class="box">
+<h2 style="color:#38bdf8">PayQuickPay Retailer</h2>
+<p style="color:#94a3b8;font-size:13px">Dina ku ₹1000-2000 Income</p>
+<input id="m" placeholder="Mobile / User ID">
+<input id="p" type="password" placeholder="Password">
+<button onclick="login()">LOGIN</button>
+<a href="/" style="display:block;margin-top:15px;color:#94a3b8;font-size:12px;text-decoration:none">← Back to Home</a>
+</div><script>
 function login(){
- let i=document.getElementById('id').value;
- let p=document.getElementById('pass').value;
- if(!i||!p){alert('ID Password Dela');return}
- localStorage.setItem('currentRole','retailer');
- localStorage.setItem('currentId',i);
- alert('Login Success: '+i);
- window.location.href='/admin/dashboard.html';
+let u=document.getElementById('m').value;
+if(u.length<5){alert('ID dia Bhai');return;}
+document.body.innerHTML='<div style="display:flex;justify-content:center;align-items:center;min-height:100vh;background:#020617;color:#fff;flex-direction:column"><h2 style="color:#38bdf8">Welcome '+u+' Bhai! 🎉</h2><p>Retailer Dashboard Loading...</p><p style="color:#94a3b8">Balance: ₹2,540 | Today Commission: ₹340</p><a href="/" style="color:#38bdf8;margin-top:20px">Home</a></div>';
 }
-</script>
-</body>
-</html>
+</script></body></html>
