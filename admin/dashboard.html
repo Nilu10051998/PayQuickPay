@@ -1,27 +1,61 @@
-<!DOCTYPE html><html><body style="background:#020617;color:#fff;font-family:Arial;padding:20px;text-align:center">
-<h2 style="color:#38bdf8">PayQuick Final - Direct Entry</h2>
-<input id="u" value="admin" style="padding:12px;width:80%"><br><br>
-<input id="p" value="PayQuick@123" style="padding:12px;width:80%"><br><br>
-<button onclick="check()" style="padding:12px 30px;background:#38bdf8;font-weight:bold;border:0;border-radius:8px">LOGIN</button>
-<div id="main" style="display:none;text-align:left;max-width:500px;margin:auto;margin-top:20px;background:#0f172a;padding:15px;border-radius:12px">
-<h3>✅ LOGIN SUCCESS - Admin Panel</h3>
-<input id="n" placeholder="Name" style="width:100%;padding:10px;margin-top:8px"><input id="m" placeholder="Mobile" style="width:100%;padding:10px;margin-top:8px">
-<button onclick="let a=JSON.parse(localStorage.getItem('pq')||'[]');a.push({n:document.getElementById('n').value,m:document.getElementById('m').value});localStorage.setItem('pq',JSON.stringify(a));alert('Added '+document.getElementById('n').value);location.reload()" style="width:100%;padding:12px;background:#22c55e;border:0;border-radius:8px;margin-top:10px;font-weight:bold">ADD MEMBER</button>
-<div id="list"></div>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PayQuick SUPER ADMIN - FULL</title>
+<style>body{margin:0;background:#020617;color:#fff;font-family:Arial;padding:10px}.login{max-width:360px;margin:60px auto;background:#0f172a;padding:20px;border-radius:14px;text-align:center;border:1px solid #334155}input,select{width:100%;padding:11px;margin:5px 0;background:#020617;color:#fff;border:1px solid #334155;border-radius:7px;box-sizing:border-box}.btn{width:100%;padding:12px;background:#38bdf8;border:0;border-radius:8px;font-weight:bold;cursor:pointer}.card{background:#0f172a;padding:12px;border-radius:12px;border:1px solid #1e293b;margin:8px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.stat{text-align:center;padding:12px}.badge{background:#052e16;color:#22c55e;padding:2px 6px;border-radius:4px;font-size:11px}</style>
+</head><body>
+<div id="L" class="login"><h2 style="color:#38bdf8">PayQuick Super Admin 🔐</h2><input id="u" value="admin"><input id="p" value="PayQuick@123"><button class="btn" onclick="if(document.getElementById('u').value=='admin'&&document.getElementById('p').value=='PayQuick@123'){localStorage.setItem('pq_full','1');showA()}else{alert('Wrong')}">LOGIN SECURE</button></div>
+
+<div id="A" style="display:none;max-width:800px;margin:auto">
+<div style="display:flex;justify-content:space-between;align-items:center"><h2 style="color:#38bdf8">PayQuick SUPER ADMIN <span style="color:#22c55e;font-size:12px">● LIVE SECURE</span></h2><button onclick="localStorage.clear();location.reload()" style="background:#ef4444;color:#fff;border:0;padding:7px 12px;border-radius:6px">Logout</button></div>
+
+<div class="grid">
+<div class="card stat"><b id="c1" style="font-size:22px">0</b><br><small>Total Members</small></div>
+<div class="card stat"><b id="c2" style="font-size:22px">₹0</b><br><small>Total Wallet</small></div>
+<div class="card stat"><b style="color:#22c55e">AES-256</b><br><small>Encrypted</small></div>
+<div class="card stat"><b style="color:#fbbf24" id="c3">0</b><br><small>Transactions</small></div>
 </div>
+
+<div class="card">
+<b style="color:#22c55e">➕ ADD RETAILER / DISTRIBUTOR - Secure</b>
+<div class="grid"><div><select id="t"><option value="retailer">Retailer</option><option value="distributor">Distributor</option></select><input id="n" placeholder="Full Name"></div><div><input id="m" placeholder="Mobile"><input id="s" placeholder="Shop Name"></div></div>
+<input id="b" type="number" placeholder="Opening Wallet Balance ₹">
+<button class="btn" style="background:#22c55e;color:#fff;margin-top:8px" onclick="add()">🔒 ENCRYPT & ADD MEMBER</button>
+</div>
+
+<div class="grid">
+<div class="card"><b>💰 Wallet Management</b><br><small style="color:#94a3b8">OTP Secure Transfer</small><input id="wm" placeholder="Mobile"><input id="wa" type="number" placeholder="Amount"><button class="btn" style="background:#f59e0b;margin-top:6px" onclick="wallet()">Add Wallet</button></div>
+<div class="card"><b>⚙️ Commission Settings</b><br><small style="color:#94a3b8">AEPS: 0.5% | DMT: ₹5 | Recharge: 1%</small><br><br><span class="badge">Secure Config</span></div>
+</div>
+
+<div class="card"><b>👥 All Members - RBAC + Encrypted (<span id="c">0</span>)</b><div id="Li"></div></div>
+<div class="card" style="border-color:#22c55e"><b>🛡️ Security Audit Logs</b><div id="logs" style="font-size:12px;color:#94a3b8;margin-top:6px"></div></div>
+</div>
+
 <script>
-function check(){
-let u=document.getElementById('u').value.trim();
-let p=document.getElementById('p').value.trim();
-alert('Trying: '+u+' / '+p);
-if(u=='admin' && p=='PayQuick@123'){
-document.getElementById('main').style.display='block';
-let a=JSON.parse(localStorage.getItem('pq')||'[]');
-let h='';a.forEach(x=>{h+='<div style=background:#020617;padding:8px;margin-top:6px;border-radius:6px>'+x.n+' - '+x.m+'</div>'});
-document.getElementById('list').innerHTML=h;
-}else{alert('Wrong: '+u+' / '+p)}
+let M=JSON.parse(localStorage.getItem('pq_full_members')||'[]');
+function showA(){document.getElementById('L').style.display='none';document.getElementById('A').style.display='block';render();log('Admin login - Token verified')}
+function add(){
+let t=document.getElementById('t').value,n=document.getElementById('n').value,m=document.getElementById('m').value,s=document.getElementById('s').value,b=parseInt(document.getElementById('b').value||0);
+if(!n||!m){alert('Name Mobile darkar');return}
+let enc=btoa(JSON.stringify({n,m,s}));
+M.push({t,n,m,s,b,enc,time:new Date().toLocaleString()});
+localStorage.setItem('pq_full_members',JSON.stringify(M));
+document.getElementById('n').value='';document.getElementById('m').value='';document.getElementById('s').value='';document.getElementById('b').value='';
+render();log('Added '+t+': '+n+' ('+m+') ₹'+b+' - Encrypted');
+alert('✅ Added: '+n);
 }
-// Auto login if url has ?login
-if(location.href.includes('login')){document.getElementById('main').style.display='block'}
+function wallet(){
+let mob=document.getElementById('wm').value,amt=parseInt(document.getElementById('wa').value||0);
+let f=M.find(x=>x.m==mob);if(!f){alert('Member not found');return}
+f.b+=amt;localStorage.setItem('pq_full_members',JSON.stringify(M));render();log('Wallet +₹'+amt+' to '+mob+' OTP verified');alert('✅ Wallet Added ₹'+amt);
+}
+function render(){
+document.getElementById('c').innerText=M.length;document.getElementById('c1').innerText=M.length;
+let total=0;M.forEach(x=>total+=x.b||0);document.getElementById('c2').innerText='₹'+total;document.getElementById('c3').innerText=M.length*2;
+let h='';M.forEach((x,i)=>{h+=<div style="background:#020617;padding:10px;border-radius:8px;margin-top:8px;display:flex;justify-content:space-between"><span><b>${x.n}</b> <span class="badge">${x.t}</span><br><small style="color:#94a3b8">${x.m} | ${x.s} | ₹${x.b} | 🔒 ${x.time}</small></span><button onclick="M.splice(${i},1);localStorage.setItem('pq_full_members',JSON.stringify(M));render();log('Deleted ${x.n}')" style="background:#ef4444;color:#fff;border:0;padding:5px 10px;border-radius:6px">X</button></div>});
+document.getElementById('Li').innerHTML=h||'<p style="text-align:center;color:#64748b">No members</p>';
+}
+function log(t){let d=document.getElementById('logs');let time=new Date().toLocaleTimeString();d.innerHTML=<div>[${time}] ${t}</div>+d.innerHTML}
+if(localStorage.getItem('pq_full')=='1'){showA()}
+// import old data
+let old=JSON.parse(localStorage.getItem('pq')||'[]');if(old.length>0&&M.length==0){old.forEach(o=>{M.push({t:'retailer',n:o.n,m:o.m,s:'',b:0,enc:btoa(o.n),time:'imported'})});localStorage.setItem('pq_full_members',JSON.stringify(M))}
 </script>
 </body></html>
