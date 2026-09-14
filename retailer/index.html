@@ -1,138 +1,74 @@
-<!-- SAME RETAILER.HTML but with COMMISSION SPLIT - Find the 3 functions doAEPS, doDMT, doRecharge and REPLACE with this -->
-
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Retailer Login - PayQuickPay</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;800&display=swap" rel="stylesheet">
-<style>*{font-family:'Outfit',sans-serif;box-sizing:border-box}
-body{margin:0;min-height:100vh;background:#020617;display:flex;align-items:center;justify-content:center;color:#fff}
-.box{background:#0f172a;border:1px solid #1e293b;padding:32px;border-radius:20px;width:92%;max-width:380px;box-shadow:0 20px 40px rgba(0,0,0,.5)}
-.logo{font-size:26px;font-weight:800;color:#38bdf8;text-align:center} .logo span{color:#22c55e}
-input{width:100%;padding:13px 14px;margin:9px 0;border-radius:10px;border:1px solid #334155;background:#020617;color:#fff;outline:none}
-input:focus{border-color:#38bdf8}
-.btn{width:100%;padding:13px;background:#38bdf8;border:0;border-radius:10px;font-weight:800;font-size:16px;cursor:pointer;margin-top:12px}
-.link{display:block;text-align:center;margin-top:16px;color:#94a3b8;text-decoration:none;font-size:13px}
-.link b{color:#38bdf8}
-</style></head><body>
-<div class="box">
-<div class="logo">PayQuickPay<span>.in</span></div>
-<p style="text-align:center;color:#94a3b8;margin:8px 0 20px;font-size:14px">Retailer Login - Dina ku ₹1000+ Income</p>
-<input id="m" placeholder="Mobile Number - 10 Digit">
-<input id="p" type="password" placeholder="Password">
-<button class="btn" onclick="login()">🚀 LOGIN NOW</button>
-<a class="link" href="/">← <b>Back to Home</b></a>
-<p style="text-align:center;color:#475569;font-size:11px;margin-top:18px">Support: 7908824917</p>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayQuickPay - Retailer</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,sans-serif}
+body{background:#0f172a;color:white;min-height:100vh}
+.header{background:#1e293b;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
+.balance{background:#3b82f6;padding:8px 15px;border-radius:20px;font-weight:bold}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;padding:20px}
+.card{background:#1e293b;border-radius:15px;padding:20px;text-align:center;cursor:pointer;border:1px solid #334155;transition:0.2s}
+.card:hover{background:#334155;transform:scale(1.02);border-color:#3b82f6}
+.card .icon{font-size:30px;margin-bottom:10px}
+.card h3{font-size:14px;margin-bottom:5px}
+.card p{font-size:12px;color:#22c55e;font-weight:bold}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
+.modal-box{background:#1e293b;width:100%;max-width:400px;border-radius:15px;padding:20px}
+.modal-box input{width:100%;padding:12px;margin:10px 0;border-radius:8px;border:none;background:#0f172a;color:white}
+.btn{width:100%;padding:12px;background:#3b82f6;border:none;border-radius:8px;color:white;font-weight:bold;cursor:pointer;margin-top:10px}
+.btn:hover{background:#2563eb}
+.close{float:right;font-size:20px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="header">
+<div><b>PayQuickPay</b> Retailer</div>
+<div class="balance" onclick="logout()">₹2,540 | ID: 8018146505</div>
 </div>
+
+<div class="grid">
+<div class="card" onclick="openService('Mobile Recharge','4% Commission')"><div class="icon">📱</div><h3>Mobile Recharge</h3><p>4% Commission</p></div>
+<div class="card" onclick="openService('DTH Recharge','3% Commission')"><div class="icon">📺</div><h3>DTH Recharge</h3><p>3% Commission</p></div>
+<div class="card" onclick="openService('Electricity Bill','₹5 Commission')"><div class="icon">💡</div><h3>Electricity Bill</h3><p>₹5 Commission</p></div>
+<div class="card" onclick="openService('PAN Card','₹20 Commission')"><div class="icon">💳</div><h3>PAN Card</h3><p>₹20 Commission</p></div>
+<div class="card" onclick="openService('AEPS Service','0.5% Commission')"><div class="icon">🏧</div><h3>AEPS Service</h3><p>Cash Withdraw</p></div>
+<div class="card" onclick="openService('DMT Service','₹10 Commission')"><div class="icon">💸</div><h3>DMT Money Transfer</h3><p>₹10 Commission</p></div>
+<div class="card" onclick="openService('My Wallet','Balance: ₹2,540')"><div class="icon">👛</div><h3>My Wallet</h3><p>Check Balance</p></div>
+<div class="card" onclick="openService('Reports','View All')"><div class="icon">📊</div><h3>Reports</h3><p>History</p></div>
+<div class="card" onclick="openService('Profile','ID: 8018146505')"><div class="icon">👤</div><h3>Profile</h3><p>My Account</p></div>
+<div class="card" onclick="logout()" style="border-color:#ef4444"><div class="icon">🚪</div><h3>Logout</h3><p style="color:#ef4444">Exit</p></div>
+</div>
+
+<div id="modal"><div class="modal-box">
+<span class="close" onclick="closeModal()">✕</span>
+<h3 id="mTitle">Service</h3>
+<p id="mComm" style="color:#22c55e;margin:5px 0"></p>
+<input type="text" id="mNumber" placeholder="Enter Number / ID">
+<input type="text" id="mAmount" placeholder="Enter Amount">
+<button class="btn" onclick="doRecharge()">Proceed - Commission Add Heba</button>
+<p id="mMsg" style="margin-top:10px;text-align:center"></p>
+</div></div>
+
 <script>
-//... puruna code same thiba...
-
-function getCommission(serviceName){
-var comms=JSON.parse(localStorage.getItem('pq_comm')||'[]');
-var f=comms.find(c=>c.s.toLowerCase().includes(serviceName.toLowerCase()));
-if(!f) return {r:0.5, d:0.1, a:0.4}; // default %
-function parseVal(v){
-if(typeof v==='string' && v.includes('%')) return parseFloat(v)/100;
-if(typeof v==='string' && v.includes('₹')) return {flat: parseFloat(v.replace('₹',''))};
-return parseFloat(v)/100 || 0;
-function login(){
-let mobile=document.getElementById('m').value;
-if(mobile.length<10){alert('Mobile number thik deia Bhai!');return;}
-location.href='/retailer/index.html';
+function openService(title, comm){
+document.getElementById('mTitle').innerText=title;
+document.getElementById('mComm').innerText=comm;
+document.getElementById('modal').style.display='flex';
 }
-return f;
-}
-
-function addBalanceToMobile(mobile, amount){
-var idx=allMembers.findIndex(x=>x.mobile===mobile);
-if(idx>=0){ allMembers[idx].balance=(allMembers[idx].balance||0)+amount; }
-}
-
-function distributeCommission(serviceType, totalAmount){
-var comms=JSON.parse(localStorage.getItem('pq_comm')||'[]');
-var rule=comms.find(c=> serviceType.toLowerCase().includes(c.s.toLowerCase()) || c.s.toLowerCase().includes(serviceType.toLowerCase()));
-if(!rule){ rule={r:"0.5%",d:"0.1%",a:"0.4%"}; }
-
-function calc(val, amt){
-if(val.toString().includes('₹')){ return parseInt(val.toString().replace(/[^0-9]/g,''))||0; }
-else { var per=parseFloat(val)||0; return Math.floor(amt*per/100); }
-}
-
-var rComm=calc(rule.r, totalAmount);
-var dComm=calc(rule.d, totalAmount);
-var aComm=calc(rule.a, totalAmount);
-
-// 1. Retailer ku rComm
-cur.balance+=rComm;
-
-// 2. Distributor ku dComm - jadi retailer ra distributor achi
-var distInfo = JSON.parse(localStorage.getItem('pq_dist_retailers')||'[]').find(x=>x.mobile===cur.mobile);
-if(distInfo && distInfo.distId){
-addBalanceToMobile(distInfo.distId, dComm);
-console.log('Distributor '+distInfo.distId+' ku ₹'+dComm+' gala');
-}
-
-// 3. Admin ku aComm - Admin wallet (pq_admin_wallet)
-var adminWallet=parseInt(localStorage.getItem('pq_admin_wallet')||'0');
-adminWallet+=aComm;
-localStorage.setItem('pq_admin_wallet', adminWallet.toString());
-
-allMembers.find(x=>x.mobile===cur.mobile).balance=cur.balance;
-localStorage.setItem('pq_full_v3',JSON.stringify(allMembers));
-
-return {rComm, dComm, aComm};
-}
-
-function doAEPS(){
-var amt=parseInt(document.getElementById('aAmt').value||0); if(amt<100){alert('Amount 100+');return}
-if((cur.balance||0)<amt){alert('Wallet low! Admin ku kuha');return}
-cur.balance-=amt; // amount debit
-var split=distributeCommission('AEPS', amt);
-trans.push({type:'AEPS Withdraw',amount:amt,comm:split.rComm,dComm:split.dComm,aComm:split.aComm,status:'Success',time:new Date().toLocaleString()});
-localStorage.setItem('pq_ret_trans',JSON.stringify(trans));
-updateBalUI();
-alert('✅ AEPS Success!\n\nRetailer: +₹'+split.rComm+'\nDistributor: +₹'+split.dComm+'\nAdmin: +₹'+split.aComm);
-renderHist();
-}
-
-function doDMT(){
-var amt=parseInt(document.getElementById('dAmt').value||0); if(amt<10){alert('Amount dala');return}
-if((cur.balance||0)<amt){alert('Wallet low');return}
-cur.balance-=amt;
-var split=distributeCommission('DMT', amt);
-trans.push({type:'DMT',amount:amt,comm:split.rComm,dComm:split.dComm,aComm:split.aComm,status:'Success',time:new Date().toLocaleString()});
-localStorage.setItem('pq_ret_trans',JSON.stringify(trans));
-updateBalUI();
-alert('✅ DMT Success!\nRetailer +₹'+split.rComm+' | Distri +₹'+split.dComm+' | Admin +₹'+split.aComm);
-renderHist();
-}
-
+function closeModal(){document.getElementById('modal').style.display='none';}
 function doRecharge(){
-var amt=parseInt(document.getElementById('rAmt').value||0); if(amt<10){alert('Amount');return}
-if((cur.balance||0)<amt){alert('Wallet low');return}
-cur.balance-=amt;
-var split=distributeCommission('Recharge', amt);
-trans.push({type:'Recharge',amount:amt,comm:split.rComm,dComm:split.dComm,aComm:split.aComm,status:'Success',time:new Date().toLocaleString()});
-localStorage.setItem('pq_ret_trans',JSON.stringify(trans));
-updateBalUI();
-alert('✅ Recharge Success!\n\nTuma Commission: ₹'+split.rComm+'\nDistributor ku: ₹'+split.dComm+'\nAdmin ku: ₹'+split.aComm);
-renderHist();
+let num=document.getElementById('mNumber').value;
+let amt=document.getElementById('mAmount').value;
+if(!num||!amt){document.getElementById('mMsg').innerText='Number & Amount dia!';return;}
+document.getElementById('mMsg').innerText='✅ Success! Commission Wallet re add heigala! ₹'+amt;
+setTimeout(closeModal,2000);
 }
-
-function updateBalUI(){
-document.getElementById('rBal').innerText='₹'+cur.balance;
-document.getElementById('bal2').innerText='₹'+cur.balance;
-localStorage.setItem('pq_full_v3',JSON.stringify(allMembers));
+function logout(){
+if(confirm('Logout kariba?')){localStorage.clear(); window.location.href='../index.html';}
 }
-
-function renderHist(){
-var h=''; var tot=0; trans.slice().reverse().forEach(t=>{
-tot+=t.comm||0;
-h+='<tr><td>'+t.type+'<br><small style=color:#64748b>'+t.time+'</small></td><td>₹'+t.amount+'<br><small style=color:#22c55e>R:₹'+(t.comm||0)+' D:₹'+(t.dComm||0)+' A:₹'+(t.aComm||0)+'</small></td><td><span class=badge>'+t.status+'</span></td></tr>';
-});
-document.getElementById('hist').innerHTML=h||'<tr><td colspan=3 style=text-align:center;color:#475569>No Transactions</td></tr>';
-document.getElementById('earn').innerText='₹'+tot;
-}
-
-//... baki code same...
 </script>
-</body></html>
+</body>
+</html>
