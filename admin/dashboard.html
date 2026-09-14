@@ -3,151 +3,121 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PayQuick ADMIN - WORKING</title>
-<style>
-body{background:#080f25;color:white;font-family:Arial;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:15px}
-.box{background:#132150;padding:25px;border-radius:15px;width:100%;max-width:350px;border:1px solid #334155;text-align:center}
-input{width:100%;background:#080f25;border:1px solid #475569;padding:12px;border-radius:8px;margin-top:10px;color:white;box-sizing:border-box}
-button{width:100%;padding:12px;border-radius:8px;margin-top:12px;font-weight:bold;border:none;cursor:pointer}
-.btn-green{background:#10b981;color:white}
-.btn-blue{background:#2563eb;color:white}
-.btn-red{background:#dc2626;color:white;padding:8px 15px;width:auto}
-#adminPage{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#080f25;overflow:auto;padding:10px}
-.card{background:#132150;padding:15px;border-radius:10px;margin-top:10px}
-</style>
+<title>PayQuick SUPER ADMIN</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>body{background:#020617}</style>
 </head>
-<body>
+<body class="text-white">
 
-<div id="loginPage" class="box">
-<h2 style="color:#38bdf8">PayQuick ADMIN</h2>
-<p style="font-size:11px;color:#10b981">✅ FIXED - Button 100% Work</p>
-
-<input id="mob" type="text" placeholder="Mobile 10 digit - 7908824917">
-<input id="pass" type="password" placeholder="Create Password - 1234">
-<button class="btn-green" onclick="createAccount()">CREATE & ENTER ADMIN</button>
-
-<hr style="margin:20px 0;border:0;border-top:1px solid #334155">
-
-<input id="loginPass" type="password" placeholder="Login Password">
-<button class="btn-blue" onclick="login()">LOGIN</button>
-<button style="background:none;color:#10b981;font-size:11px;text-decoration:underline" onclick="resetOtp()">Forgot? Reset OTP</button>
-<p id="msg" style="font-size:12px;color:yellow;margin-top:10px"></p>
+<div id="loginPage" class="min-h-screen flex items-center justify-center p-4">
+<div class="bg-[#0f172a] border border-slate-700 p-6 rounded-2xl w-full max-w-sm">
+<h1 class="text-xl font-bold text-sky-400 text-center">PayQuick SUPER ADMIN</h1>
+<p class="text-center text-[11px] text-emerald-400 mt-1">🔒 FULL VERSION - ALL FEATURES</p>
+<input id="pass" type="password" placeholder="Password: PayQuick@123" class="w-full bg-[#020617] border border-slate-600 p-3 rounded-lg mt-6 outline-none">
+<button onclick="login()" class="w-full bg-blue-600 p-3 rounded-lg mt-3 font-bold">LOGIN</button>
+<p class="text-[10px] text-slate-400 text-center mt-3">Pass: PayQuick@123 | Secure Admin</p>
+</div>
 </div>
 
-<div id="adminPage">
-<div style="background:#0d1b3a;padding:10px;display:flex;justify-content:space-between;align-items:center">
-<b style="color:#38bdf8">ADMIN LIVE - <span id="showMob"></span></b>
-<button class="btn-red" onclick="doLogout()">LOGOUT</button>
+<div id="adminPage" class="hidden">
+<div class="bg-[#0f172a] border-b border-slate-800 p-3 flex justify-between items-center sticky top-0 z-10">
+<b class="text-sky-400">PayQuick SUPER ADMIN</b>
+<button onclick="logout()" class="bg-red-600 px-4 py-1.5 rounded-lg text-xs font-bold">LOGOUT</button>
 </div>
 
-<div class="card" style="border:2px solid #10b981">
-<h3 style="color:#10b981;margin:0">ADD MEMBER - 100% FIXED</h3>
-<select id="mType" style="width:100%;background:#080f25;color:white;padding:10px;border-radius:8px;margin-top:10px;border:1px solid #475569"><option value="retailer">Retailer</option><option value="distributor">Distributor</option></select>
-<input id="aName" placeholder="Name - nilu">
-<input id="aMob" placeholder="Mobile - 7908824917">
-<input id="aShop" placeholder="Shop - csc">
-<button class="btn-green" onclick="addMember()">ADD NOW - WORK 100%</button>
-<p id="addMsg" style="color:#10b981;font-size:12px;display:none;margin-top:8px">✅ Added to Pending!</p>
+<div class="p-3 grid grid-cols-2 lg:grid-cols-4 gap-3">
+<div class="bg-[#0f172a] border border-slate-700 p-4 rounded-xl"><p class="text-[11px] text-slate-400">Pending</p><h2 id="c1" class="text-2xl font-black text-yellow-400">0</h2></div>
+<div class="bg-[#0f172a] border border-slate-700 p-4 rounded-xl"><p class="text-[11px] text-slate-400">Retailers</p><h2 id="c2" class="text-2xl font-black text-emerald-400">0</h2></div>
+<div class="bg-[#0f172a] border border-slate-700 p-4 rounded-xl"><p class="text-[11px] text-slate-400">Total Wallet</p><h2 id="c3" class="text-2xl font-black text-sky-400">₹0</h2></div>
+<div class="bg-[#0f172a] border border-slate-700 p-4 rounded-xl"><p class="text-[11px] text-slate-400">Transactions</p><h2 id="c4" class="text-2xl font-black">0</h2></div>
 </div>
 
-<div class="card">
-<h3>Pending: <span id="c1">0</span> | Approved: <span id="c2">0</span></h3>
-<div id="pList" style="margin-top:10px"></div>
+<div class="p-3 grid lg:grid-cols-2 gap-3">
+<div class="bg-[#0f172a] border-2 border-emerald-500/40 p-4 rounded-xl">
+<h3 class="font-bold text-emerald-400 text-sm">➕ ADD MEMBER</h3>
+<div class="grid grid-cols-2 gap-2 mt-3"><select id="type" class="bg-[#020617] border border-slate-600 p-2.5 rounded-lg text-sm"><option value="retailer">Retailer</option><option value="distributor">Distributor</option></select><input id="comm" type="number" placeholder="Comm % - 2" class="bg-[#020617] border border-slate-600 p-2.5 rounded-lg text-sm"></div>
+<input id="name" placeholder="Name - nilu" class="w-full bg-[#020617] border border-slate-600 p-2.5 rounded-lg mt-2 text-sm">
+<input id="mob" placeholder="Mobile - 7908824917" class="w-full bg-[#020617] border border-slate-600 p-2.5 rounded-lg mt-2 text-sm">
+<input id="shop" placeholder="Shop - csc" class="w-full bg-[#020617] border border-slate-600 p-2.5 rounded-lg mt-2 text-sm">
+<button onclick="addMember()" class="w-full bg-emerald-500 p-2.5 rounded-lg mt-3 font-bold text-sm">ADD NOW</button>
+</div>
+
+<div class="bg-[#0f172a] border border-slate-700 p-4 rounded-xl">
+<h3 class="font-bold text-sky-400 text-sm">💰 WALLET & COMMISSION</h3>
+<input id="search" placeholder="🔍 Search Mobile / Name" class="w-full bg-[#020617] border border-slate-600 p-2.5 rounded-lg mt-3 text-sm" onkeyup="searchMember()">
+<div class="mt-3 grid grid-cols-2 gap-2">
+<input id="wMob" placeholder="Mobile" class="bg-[#020617] border border-slate-600 p-2.5 rounded-lg text-sm">
+<input id="wAmt" placeholder="Amount ₹" class="bg-[#020617] border border-slate-600 p-2.5 rounded-lg text-sm">
+</div>
+<div class="grid grid-cols-2 gap-2 mt-2">
+<button onclick="addWallet()" class="bg-sky-600 p-2.5 rounded-lg text-xs font-bold">+ ADD BALANCE</button>
+<button onclick="setCommission()" class="bg-amber-600 p-2.5 rounded-lg text-xs font-bold">SET COMMISSION</button>
+</div>
+<div id="walletInfo" class="mt-3 text-xs text-slate-300"></div>
+</div>
+</div>
+
+<div class="p-3 grid lg:grid-cols-2 gap-3">
+<div class="bg-[#0f172a] border border-slate-700 p-4 rounded-xl">
+<h3 class="font-bold text-yellow-400 text-sm">⏳ PENDING APPROVAL</h3>
+<div id="pendingList" class="mt-3 space-y-2 max-h-[300px] overflow-auto"></div>
+</div>
+<div class="bg-[#0f172a] border border-slate-700 p-4 rounded-xl">
+<h3 class="font-bold text-emerald-400 text-sm">✅ APPROVED MEMBERS</h3>
+<div id="approvedList" class="mt-3 space-y-2 max-h-[300px] overflow-auto"></div>
+</div>
+</div>
+
+<div class="p-3">
+<div class="bg-[#0f172a] border border-slate-700 p-4 rounded-xl">
+<h3 class="font-bold text-sky-400 text-sm">📊 TRANSACTION HISTORY</h3>
+<div id="txnList" class="mt-3 space-y-1 max-h-[300px] overflow-auto text-xs"></div>
+</div>
 </div>
 </div>
 
 <script>
-// Make functions global - 100% work
-window.createAccount = function(){
- var m = document.getElementById('mob').value.trim();
- var p = document.getElementById('pass').value.trim();
- if(m.length!= 10){ alert('Mobile 10 digit lekha!'); return; }
- if(p.length < 3){ alert('Password 3+ lekha!'); return; }
- localStorage.setItem('pqp_m', m);
- localStorage.setItem('pqp_p', p);
- localStorage.setItem('pqp_login', 'yes');
- document.getElementById('msg').innerHTML = '✅ Created! Mobile:'+m;
- alert('Created! Entering Admin...');
- document.getElementById('loginPage').style.display='none';
- document.getElementById('adminPage').style.display='block';
- document.getElementById('showMob').innerText = m;
- loadData();
-}
+const PASS="PayQuick@123";
+let pending=JSON.parse(localStorage.getItem('pq_pen')||'[]');
+let approved=JSON.parse(localStorage.getItem('pq_app')||'[]');
+let txns=JSON.parse(localStorage.getItem('pq_txn')||'[]');
+let wallets=JSON.parse(localStorage.getItem('pq_wal')||'{}');
+let comms=JSON.parse(localStorage.getItem('pq_com')||'{}');
 
-window.login = function(){
- var saved = localStorage.getItem('pqp_p');
- var inp = document.getElementById('loginPass').value.trim();
- if(!saved){ alert('First Create Account!'); return; }
- if(inp === saved){
-   localStorage.setItem('pqp_login','yes');
-   document.getElementById('loginPage').style.display='none';
-   document.getElementById('adminPage').style.display='block';
-   document.getElementById('showMob').innerText = localStorage.getItem('pqp_m');
-   loadData();
- } else { alert('Wrong! Correct: '+saved); }
-}
+function login(){if(document.getElementById('pass').value===PASS){sessionStorage.setItem('ok','yes');showAdmin()}else alert('Wrong! PayQuick@123')}
+function logout(){sessionStorage.removeItem('ok');location.reload()}
+function showAdmin(){document.getElementById('loginPage').style.display='none';document.getElementById('adminPage').classList.remove('hidden');refresh()}
 
-window.doLogout = function(){ localStorage.removeItem('pqp_login'); location.reload(); }
-
-window.resetOtp = function(){
- var mob = localStorage.getItem('pqp_m');
- if(!mob){ alert('First create account!'); return; }
- var otp = Math.floor(100000+Math.random()*900000);
- localStorage.setItem('pqp_otp', otp);
- var entered = prompt('OTP to '+mob+' is: '+otp+'\nEnter OTP to Reset:');
- if(entered == otp){
-   var np = prompt('Enter New Password:');
-   if(np){ localStorage.setItem('pqp_p', np); alert('Password Reset to: '+np); }
- } else { alert('Wrong OTP! Correct: '+otp); }
+function addMember(){
+ let t=document.getElementById('type').value,n=document.getElementById('name').value.trim(),m=document.getElementById('mob').value.trim(),s=document.getElementById('shop').value.trim(),c=document.getElementById('comm').value||2;
+ if(!n||!m){alert('Name Mobile!');return}
+ pending.push({t,n,m,s,c,bal:0}); localStorage.setItem('pq_pen',JSON.stringify(pending));
+ document.getElementById('name').value='';document.getElementById('mob').value='';document.getElementById('shop').value='';
+ refresh(); alert('Added!')
 }
+function refresh(){
+ document.getElementById('c1').innerText=pending.length;
+ document.getElementById('c2').innerText=approved.length;
+ document.getElementById('c4').innerText=txns.length;
+ let total=Object.values(wallets).reduce((a,b)=>a+b,0);
+ document.getElementById('c3').innerText='₹'+total;
 
-window.addMember = function(){
- var t = document.getElementById('mType').value;
- var n = document.getElementById('aName').value.trim();
- var m = document.getElementById('aMob').value.trim();
- var s = document.getElementById('aShop').value.trim();
- if(!n){ alert('Name lekha!'); return; }
- if(!m){ alert('Mobile lekha!'); return; }
- var pending = JSON.parse(localStorage.getItem('pending')||'[]');
- pending.push({type:t,name:n,mobile:m,shop:s});
- localStorage.setItem('pending', JSON.stringify(pending));
- document.getElementById('aName').value=''; document.getElementById('aMob').value=''; document.getElementById('aShop').value='';
- document.getElementById('addMsg').style.display='block';
- setTimeout(()=>{ document.getElementById('addMsg').style.display='none'; }, 2000);
- loadData();
- alert('✅ ADDED! Pending re dekha!');
-}
+ let h1=''; pending.forEach((x,i)=>{h1+=<div class="bg-[#020617] p-2.5 rounded-lg flex justify-between items-center"><div><span class="text-[10px] bg-yellow-900 text-yellow-300 px-1.5 py-0.5 rounded">${x.t} ${x.c}%</span><br><b class="text-sm">${x.n}</b> <span class="text-xs text-slate-400">${x.m}</span><br><small class="text-[11px] text-slate-500">${x.s}</small></div><div class="flex gap-1"><button onclick="approve(${i})" class="bg-emerald-600 px-2.5 py-1 rounded text-[11px]">Approve</button><button onclick="delP(${i})" class="bg-red-900 px-2 py-1 rounded text-[11px]">X</button></div></div>});
+ document.getElementById('pendingList').innerHTML=h1||'<p class="text-slate-500 text-xs text-center py-4">No pending</p>';
 
-window.loadData = function(){
- var pending = JSON.parse(localStorage.getItem('pending')||'[]');
- var approved = JSON.parse(localStorage.getItem('approved')||'[]');
- document.getElementById('c1').innerText = pending.length;
- document.getElementById('c2').innerText = approved.length;
- var h='';
- for(var i=0;i<pending.length;i++){
-   h+='<div style="background:#080f25;padding:10px;border-radius:8px;margin-top:8px;display:flex;justify-content:space-between"><span>'+pending[i].name+' - '+pending[i].mobile+'</span><button class="btn-green" style="width:auto;padding:5px 10px;margin:0" onclick="approve('+i+')">Approve</button></div>';
- }
- document.getElementById('pList').innerHTML = h || 'No pending - Add kara';
-}
+ let h2=''; approved.forEach((x,i)=>{let bal=wallets[x.m]||0; let co=comms[x.m]||x.c; h2+=<div class="bg-[#020617] p-2.5 rounded-lg flex justify-between"><div><b class="text-sm">${x.n}</b> <span class="text-[10px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded">${x.t} ${co}%</span><br><span class="text-xs text-slate-400">${x.m} | ${x.s}</span><br><span class="text-[11px] text-sky-400">Bal: ₹${bal}</span></div><button onclick="delA(${i})" class="bg-red-900 h-7 px-2 rounded text-[11px]">Del</button></div>});
+ document.getElementById('approvedList').innerHTML=h2||'<p class="text-slate-500 text-xs text-center py-4">No members</p>';
 
-window.approve = function(i){
- var pending = JSON.parse(localStorage.getItem('pending')||'[]');
- var approved = JSON.parse(localStorage.getItem('approved')||'[]');
- var item = pending.splice(i,1)[0];
- approved.push(item);
- localStorage.setItem('pending', JSON.stringify(pending));
- localStorage.setItem('approved', JSON.stringify(approved));
- loadData();
+ let h3=''; txns.slice().reverse().slice(0,30).forEach(x=>{h3+=<div class="bg-[#020617] p-2 rounded flex justify-between"><span>${x.type} - ${x.mob} - ₹${x.amt}</span><span class="text-[10px] text-slate-500">${x.time}</span></div>});
+ document.getElementById('txnList').innerHTML=h3||'<p class="text-slate-500 text-xs">No txns</p>';
 }
-
-// Auto login if already
-if(localStorage.getItem('pqp_login')==='yes' && localStorage.getItem('pqp_p')){
- document.getElementById('loginPage').style.display='none';
- document.getElementById('adminPage').style.display='block';
- document.getElementById('showMob').innerText = localStorage.getItem('pqp_m')||'';
- loadData();
-}
-console.log('Admin Loaded OK');
+function approve(i){let x=pending.splice(i,1)[0]; approved.push(x); wallets[x.m]=wallets[x.m]||0; comms[x.m]=x.c; localStorage.setItem('pq_pen',JSON.stringify(pending)); localStorage.setItem('pq_app',JSON.stringify(approved)); localStorage.setItem('pq_wal',JSON.stringify(wallets)); localStorage.setItem('pq_com',JSON.stringify(comms)); txns.push({type:'APPROVED',mob:x.m,amt:0,time:new Date().toLocaleString()}); localStorage.setItem('pq_txn',JSON.stringify(txns)); refresh()}
+function delP(i){pending.splice(i,1); localStorage.setItem('pq_pen',JSON.stringify(pending)); refresh()}
+function delA(i){let x=approved[i]; if(confirm('Delete '+x.n+'?')){approved.splice(i,1); localStorage.setItem('pq_app',JSON.stringify(approved)); refresh()}}
+function addWallet(){let m=document.getElementById('wMob').value.trim(), a=parseInt(document.getElementById('wAmt').value)||0; if(!m||!a){alert('Mobile & Amount!');return} wallets[m]=(wallets[m]||0)+a; localStorage.setItem('pq_wal',JSON.stringify(wallets)); txns.push({type:'ADD BAL',mob:m,amt:a,time:new Date().toLocaleString()}); localStorage.setItem('pq_txn',JSON.stringify(txns)); document.getElementById('walletInfo').innerHTML=<span class="text-emerald-400">✅ ₹${a} added to ${m} | New Bal: ₹${wallets[m]}</span>; refresh()}
+function setCommission(){let m=document.getElementById('wMob').value.trim(), a=document.getElementById('wAmt').value.trim(); if(!m||!a){alert('Mobile & Commission % in Amount box!');return} comms[m]=a; localStorage.setItem('pq_com',JSON.stringify(comms)); document.getElementById('walletInfo').innerHTML=<span class="text-amber-400">✅ Commission ${a}% set for ${m}</span>; refresh()}
+function searchMember(){let q=document.getElementById('search').value.toLowerCase(); let all=[...pending,...approved]; let f=all.filter(x=>x.n.toLowerCase().includes(q)||x.m.includes(q)); if(q){document.getElementById('walletInfo').innerHTML=f.map(x=>${x.n} - ${x.m} - ${x.t} - Bal:₹${wallets[x.m]||0} - Comm:${comms[x.m]||x.c}%).join('<br>')||'Not found'}else document.getElementById('walletInfo').innerHTML=''}
+if(sessionStorage.getItem('ok')==='yes')showAdmin();
 </script>
 </body>
 </html>
