@@ -1,27 +1,38 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Retailer Dashboard</title><style>*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}body{background:#0f172a;color:#fff;padding:12px}.top{display:flex;gap:8px;margin-bottom:12px}.top button{flex:1;padding:10px;border-radius:10px;border:1px solid #334155;background:#1e293b;color:#fff}.head{display:flex;justify-content:space-between;background:linear-gradient(135deg,#1e3a8a,#0f172a);padding:14px;border-radius:14px;border:1px solid #334155;margin-bottom:12px}.bal{color:#22d3ee;font-weight:bold;font-size:18px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.card{background:#1e293b;border:1px solid #334155;padding:14px;border-radius:14px}.card h3{font-size:13px}.card span{color:#22d3ee;font-size:11px;font-weight:bold}.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);justify-content:center;align-items:center;z-index:10;padding:15px}.modal.on{display:flex}.box{background:#1e293b;width:100%;max-width:360px;border-radius:18px;padding:18px;border:1px solid #334155}.box input,.box select{width:100%;padding:11px;margin:7px 0;border-radius:9px;border:1px solid #334155;background:#0f172a;color:#fff}.btn{width:100%;padding:11px;background:#06b6d4;border:none;border-radius:9px;color:#fff;font-weight:bold;margin-top:8px}</style></head><body>
-<div class="top"><button onclick="location.href='/'">🏠 Home</button><button onclick="logout()">🚪 Logout</button></div>
-<div class="head"><div><h3 id="w">Welcome Bhai!</h3><small>ID: 8018146505</small></div><div style="text-align:right"><div class="bal" id="b">₹2540</div><small>Balance</small></div></div>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Retailer</title><style>*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}body{background:#0f172a;color:#fff;padding:12px}.top{display:flex;gap:8px;margin-bottom:12px}.top button{flex:1;padding:10px;border-radius:10px;border:1px solid #334155;background:#1e293b;color:#fff}.head{display:flex;justify-content:space-between;background:linear-gradient(135deg,#1e3a8a,#0f172a);padding:14px;border-radius:14px;border:1px solid #334155;margin-bottom:12px}.bal{color:#22d3ee;font-weight:bold;font-size:18px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.card{background:#1e293b;border:1px solid #334155;padding:14px;border-radius:14px;cursor:pointer}.card h3{font-size:13px}.card span{color:#22d3ee;font-size:11px;font-weight:bold}.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);justify-content:center;align-items:center;z-index:10;padding:15px}.modal.on{display:flex}.box{background:#1e293b;width:100%;max-width:360px;border-radius:18px;padding:18px;border:1px solid #334155}.box label{font-size:11px;color:#94a3b8;margin-top:6px;display:block}.box input,.box select{width:100%;padding:11px;margin:4px 0 8px 0;border-radius:9px;border:1px solid #334155;background:#0f172a;color:#fff}.btn{width:100%;padding:11px;background:#06b6d4;border:none;border-radius:9px;color:#fff;font-weight:bold;margin-top:8px}</style></head><body>
+<div class="top"><button onclick="location.href='/'">🏠 Home</button><button onclick="location.href='/'">🚪 Logout</button></div>
+<div class="head"><div><h3>Welcome Bhai!</h3><small>ID: 8018146505</small></div><div style="text-align:right"><div class="bal" id="b">₹2540</div><small>Balance</small></div></div>
 <div class="grid">
-<div class="card" onclick="openS('Mobile Recharge',4)"><h3>📱 Mobile</h3><span>4% Commission</span></div>
-<div class="card" onclick="openS('DTH Recharge',4)"><h3>📺 DTH</h3><span>4% Commission</span></div>
-<div class="card" onclick="openS('Electricity Bill',3)"><h3>💡 Electricity</h3><span>3% Commission</span></div>
-<div class="card" onclick="openS('Water Bill',3)"><h3>💧 Water</h3><span>3% Commission</span></div>
-<div class="card" onclick="openS('Gas Bill',3)"><h3>🔥 Gas</h3><span>3% Commission</span></div>
-<div class="card" onclick="openS('FASTag',3)"><h3>🚗 FASTag</h3><span>3% Commission</span></div>
-<div class="card" onclick="openS('Broadband',3)"><h3>🌐 Broadband</h3><span>3% Commission</span></div>
-<div class="card" onclick="openS('PAN Card',20,'f')"><h3>🪪 PAN</h3><span>₹20 Commission</span></div>
-<div class="card" onclick="openS('AEPS',20,'f')"><h3>🏧 AEPS</h3><span>₹20 Commission</span></div>
-<div class="card" onclick="openS('DMT',20,'f')"><h3>💸 DMT</h3><span>₹20 Commission</span></div>
-<div class="card" onclick="openS('UPI Wallet',1)"><h3>💳 UPI</h3><span>1% Commission</span></div>
-<div class="card" onclick="alert('Admin ku contact kara - 8018146505')"><h3>➕ Add Balance</h3><span>Request Admin</span></div>
+<div class="card" onclick="openS('mobile')"><h3>📱 Mobile</h3><span>4% Commission</span></div>
+<div class="card" onclick="openS('dth')"><h3>📺 DTH</h3><span>4% Commission</span></div>
+<div class="card" onclick="openS('electricity')"><h3>💡 Electricity</h3><span>3% Commission</span></div>
+<div class="card" onclick="openS('water')"><h3>💧 Water</h3><span>3% Commission</span></div>
+<div class="card" onclick="openS('gas')"><h3>🔥 Gas</h3><span>3% Commission</span></div>
+<div class="card" onclick="openS('fastag')"><h3>🚗 FASTag</h3><span>3% Commission</span></div>
+<div class="card" onclick="openS('broadband')"><h3>🌐 Broadband</h3><span>3% Commission</span></div>
+<div class="card" onclick="openS('pan')"><h3>🪪 PAN Card</h3><span>₹20 Commission</span></div>
+<div class="card" onclick="openS('aeps')"><h3>🏧 AEPS</h3><span>₹20 Commission</span></div>
+<div class="card" onclick="openS('dmt')"><h3>💸 DMT</h3><span>₹20 Commission</span></div>
+<div class="card" onclick="openS('upi')"><h3>💳 UPI Wallet</h3><span>1% Commission</span></div>
+<div class="card" onclick="alert('Admin - 8018146505 ku call kara')"><h3>➕ Add Balance</h3><span>Request Admin</span></div>
 </div>
-<div class="modal" id="m"><div class="box"><h3 id="mt" style="text-align:center;color:#22d3ee;margin-bottom:10px">Service</h3><input id="f1" placeholder="Number / ID"><input id="f2" type="number" placeholder="Amount ₹"><select id="op"><option>Jio</option><option>Airtel</option><option>Vi</option><option>BSNL</option></select><div id="ok" style="display:none;background:#065f46;padding:10px;border-radius:8px;margin-top:8px;text-align:center"></div><button class="btn" onclick="pay()">Pay Now</button><button class="btn" style="background:#334155" onclick="closeM()">Cancel</button></div></div>
+<div class="modal" id="m"><div class="box"><h3 id="mt" style="text-align:center;color:#22d3ee;margin-bottom:10px">Service</h3><label id="l1">Number</label><input id="f1"><label id="l2">Amount</label><input id="f2" type="number"><label id="l3">Operator</label><select id="op"></select><div id="ok" style="display:none;background:#065f46;padding:10px;border-radius:8px;margin-top:8px;text-align:center"></div><button class="btn" onclick="pay()">Pay Now & Get Commission</button><button class="btn" style="background:#334155" onclick="closeM()">Cancel</button></div></div>
 <script>
-let bal=parseInt(localStorage.getItem('pb')||'2540');let cs='',cc=0,ct='p';
-function upB(){document.getElementById('b').innerText='₹'+bal;localStorage.setItem('pb',bal)}
-upB();
-function openS(n,c,t='p'){cs=n;cc=c;ct=t;document.getElementById('mt').innerText=n;document.getElementById('m').classList.add('on');document.getElementById('ok').style.display='none'}
+let bal=parseInt(localStorage.getItem('pb')||'2540');let cur='',cc=0,ct='p';
+let data={
+mobile:{t:'Mobile Recharge',c:4,ct:'p',l1:'Mobile Number (10 digit)',l2:'Recharge Amount ₹',l3:'Select Operator',ops:['Jio','Airtel','Vi','BSNL','Jio Bharat']},
+dth:{t:'DTH Recharge',c:4,ct:'p',l1:'VC Number / Customer ID',l2:'Recharge Amount ₹',l3:'DTH Operator',ops:['Tata Play','Airtel Digital','Dish TV','Sun Direct','d2h']},
+electricity:{t:'Electricity Bill',c:3,ct:'p',l1:'Consumer Number / Service ID',l2:'Bill Amount ₹',l3:'Electricity Board',ops:['TPCODL Odisha','TPNODL','TPSODL','WBSEDCL','MSEDCL','BESCOM']},
+water:{t:'Water Bill',c:3,ct:'p',l1:'Consumer ID / K No',l2:'Bill Amount ₹',l3:'Water Board',ops:['Delhi Jal Board','BWSSB','HYD Water','Pune Water','Other']},
+gas:{t:'Gas Bill Payment',c:3,ct:'p',l1:'Customer ID / LPG ID',l2:'Bill Amount ₹',l3:'Gas Provider',ops:['Indane','Bharat Gas','HP Gas','IGL','Adani Gas']},
+fastag:{t:'FASTag Recharge',c:3,ct:'p',l1:'Vehicle Number / FASTag ID',l2:'Recharge Amount ₹',l3:'FASTag Bank',ops:['PayTM FASTag','ICICI','SBI','HDFC','Axis','Kotak']},
+broadband:{t:'Broadband Bill',c:3,ct:'p',l1:'User ID / Account No',l2:'Bill Amount ₹',l3:'Broadband Provider',ops:['Jio Fiber','Airtel Xstream','BSNL Fiber','ACT','Local Cable']},
+pan:{t:'PAN Card Apply',c:20,ct:'f',l1:'Aadhaar Number (12 digit)',l2:'Mobile Number',l3:'PAN Type',ops:['New PAN - ₹107','Correction - ₹107','Reprint - ₹50']},
+aeps:{t:'AEPS Cash Withdraw',c:20,ct:'f',l1:'Aadhaar Number',l2:'Withdraw Amount ₹',l3:'Bank Name',ops:['SBI','BOI','PNB','HDFC','ICICI','Odisha Gramya Bank']},
+dmt:{t:'DMT Money Transfer',c:20,ct:'f',l1:'Beneficiary Account No',l2:'Transfer Amount ₹',l3:'Bank Name',ops:['SBI','HDFC','ICICI','Axis','BOB','Other Bank']},
+upi:{t:'UPI Wallet Topup',c:1,ct:'p',l1:'UPI ID / Wallet No',l2:'Topup Amount ₹',l3:'Wallet Type',ops:['PhonePe','GPay','PayTM','Amazon Pay']}
+};
+function upB(){document.getElementById('b').innerText='₹'+bal;localStorage.setItem('pb',bal)}upB();
+function openS(k){let d=data[k];cur=k;cc=d.c;ct=d.ct;document.getElementById('mt').innerText=d.t+' - '+(ct=='f'?'₹'+cc:' '+cc+'%');document.getElementById('l1').innerText=d.l1;document.getElementById('l2').innerText=d.l2;document.getElementById('l3').innerText=d.l3;document.getElementById('f1').placeholder=d.l1;document.getElementById('f2').placeholder=d.l2;let sel=document.getElementById('op');sel.innerHTML=d.ops.map(o=>'<option>'+o+'</option>').join('');document.getElementById('m').classList.add('on');document.getElementById('ok').style.display='none';}
 function closeM(){document.getElementById('m').classList.remove('on')}
-function pay(){let id=document.getElementById('f1').value;let am=parseInt(document.getElementById('f2').value);if(!id||!am||am<10){alert('Number & Amount thik bhara');return}if(bal<am){alert('Balance nahi! Bal: ₹'+bal);return}let com=ct=='f'?cc:Math.round(am*cc/100);bal=bal-am+com;upB();let o=document.getElementById('ok');o.style.display='block';o.innerHTML='✅ Success!<br>'+cs+' ₹'+am+'<br>Commission ₹'+com+'<br>New Bal ₹'+bal;setTimeout(closeM,2000)}
-function logout(){location.href='/';}
+function pay(){let am=parseInt(document.getElementById('f2').value);if(!am||am<10){alert('Amount thik bhara Bhai');return}if(bal<am && cur!='pan'){alert('Balance kam! Bal: ₹'+bal);return}let com=ct=='f'?cc:Math.round(am*cc/100);if(cur!='pan')bal=bal-am+com;else bal=bal+com;upB();let o=document.getElementById('ok');o.style.display='block';o.innerHTML='✅ '+data[cur].t+' Success!<br>Amount: ₹'+am+'<br>Commission: ₹'+com+'<br>New Balance: ₹'+bal;setTimeout(closeM,2500)}
 </script></body></html>
