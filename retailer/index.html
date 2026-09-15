@@ -1,85 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PayQuickPay REAL</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
-<style>
-body{margin:0;background:#0f172a;color:#fff;font-family:system-ui;display:flex;justify-content:center;padding:12px}
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PayQuickPay REAL FINAL</title>
+<style>body{margin:0;background:#0f172a;color:#fff;font-family:sans-serif;display:flex;justify-content:center;padding:12px}
 .box{background:#1e293b;width:100%;max-width:400px;border-radius:18px;padding:20px}
-.bal{background:linear-gradient(135deg,#22c55e,#16a34a);padding:20px;border-radius:14px;color:#000;margin:15px 0}
-input{width:100%;padding:14px;margin:8px 0;border-radius:11px;border:none;box-sizing:border-box;font-size:16px}
-.btn{width:100%;padding:15px;background:#22c55e;color:#000;font-weight:900;border:none;border-radius:11px;cursor:pointer;font-size:16px}
-#log{background:#000;color:#0f0;padding:10px;border-radius:8px;margin-top:10px;font-size:11px;white-space:pre-wrap;word-break:break-all}
-.hist-item{background:#0f172a;padding:10px;margin:5px 0;border-radius:8px;font-size:13px}
-</style>
-</head>
-<body>
-<div class="box">
-<h2 style="text-align:center">PayQuickPay REAL</h2>
-<div class="bal"><small>WALLET BALANCE</small><h1 id="bal">Loading...</h1><small id="msg">Connecting...</small></div>
-<input id="mobile" placeholder="Mobile Number" value="8018146505">
-<input id="amount" type="number" placeholder="Amount" value="10">
-<button class="btn" onclick="doRecharge()">RECHARGE NOW</button>
-<p id="status" style="text-align:center;font-weight:bold"></p>
-<div id="history"></div>
-<div id="log">Init...</div>
+.bal{background:#22c55e;padding:18px;border-radius:14px;color:#000}
+input,button{width:100%;padding:14px;margin:8px 0;border-radius:10px;border:none;box-sizing:border-box;font-size:16px}
+button{background:#22c55e;font-weight:900;cursor:pointer}
+.it{background:#0f172a;padding:8px;margin:4px 0;border-radius:6px;font-size:13px}
+#log{background:#000;color:#0f0;padding:8px;border-radius:6px;font-size:10px;white-space:pre-wrap;word-break:break-all}
+</style></head><body><div class="box">
+<h2 style="text-align:center">PayQuickPay FINAL</h2>
+<div class="bal"><small>WALLET</small><h1 id="bal">Loading...</h1><small id="inf">Starting...</small></div>
+<input id="mob" value="8018146505"><input id="amt" type="number" value="10">
+<button onclick="recharge()">RECHARGE NOW</button>
+<p id="stat" style="text-align:center"></p><div id="hist"></div><div id="log">Step 0: Script loaded</div>
 </div>
 <script>
-const SUPA_URL = "https://mojdysebckbodadjdctj.supabase.co";
-const SUPA_KEY = "sb_publishable_D35DfVbEsXtgIITnKLwSwG_RQqS5day";
-let me = null;
-let client = null;
-
-function log(t){document.getElementById("log").innerText = t; console.log(t);}
+const SURL="https://mojdysebckbodadjdctj.supabase.co";
+const SKEY="sb_publishable_D35DfVbEsXtgIITnKLwSwG_RQqS5day";
+let RET=null;
+function L(t){document.getElementById("log").innerText=t; console.log(t);}
 
 async function init(){
-  log("Creating Supabase client...");
-  try{
-    client = window.supabase.createClient(SUPA_URL, SUPA_KEY);
-    log("Client created. Fetching retailers...");
-    let {data, error} = await client.from("retailers").select("*").limit(1);
-    if(error){ log("ERROR: "+error.message); document.getElementById("msg").innerText = error.message; return; }
-    log("Data fetched: "+JSON.stringify(data).slice(0,300));
-    if(!data || data.length==0){
-      log("No retailer found, creating one...");
-      let {data:d2, error:e2} = await client.from("retailers").insert({mobile:"8018146505",name:"My Shop",wallet_balance:1000}).select();
-      if(e2){ log("Insert error: "+e2.message); return; }
-      data = d2;
-    }
-    me = data[0];
-    document.getElementById("bal").innerText = "₹ "+me.wallet_balance;
-    document.getElementById("msg").innerText = me.name+" | "+me.mobile;
-    log("Connected! ID: "+me.id+" Balance: ₹"+me.wallet_balance);
-    loadHistory();
-  }catch(e){ log("CATCH ERROR: "+e.message); }
+ L("Step 1: Calling Supabase...");
+ try{
+  let r=await fetch(SURL+"/rest/v1/retailers?select=*&limit=1",{headers:{"apikey":SKEY}});
+  L("Step 2: Status "+r.status);
+  let txt=await r.text();
+  L("Step 3: Response: "+txt.slice(0,400)+"\nStatus:"+r.status);
+  if(!r.ok){document.getElementById("inf").innerText="Error "+r.status; return;}
+  let d=JSON.parse(txt);
+  if(!d.length){
+   L("Step 4: Creating retailer...");
+   let r2=await fetch(SURL+"/rest/v1/retailers",{method:"POST",headers:{"apikey":SKEY,"Content-Type":"application/json","Prefer":"return=representation"},body:JSON.stringify({mobile:"8018146505",name:"My Shop",wallet_balance:1000})});
+   let t2=await r2.text(); L("Create: "+t2); d=JSON.parse(t2);
+  }
+  RET=d[0];
+  document.getElementById("bal").innerText="₹ "+RET.wallet_balance;
+  document.getElementById("inf").innerText=RET.name+" | "+RET.mobile;
+  L("Step 5: OK! Balance ₹"+RET.wallet_balance);
+  load();
+ }catch(e){L("CATCH: "+e.message+"\n"+e.stack);}
 }
-
-async function doRecharge(){
-  let num = document.getElementById("mobile").value.trim();
-  let amt = parseInt(document.getElementById("amount").value);
-  if(!num ||!amt){ alert("Mobile and Amount required"); return; }
-  if(me.wallet_balance < amt){ alert("Low Balance! You have ₹"+me.wallet_balance); return; }
-  document.getElementById("status").innerText = "Processing...";
-  let newBal = me.wallet_balance - amt;
-  let {error} = await client.from("retailers").update({wallet_balance:newBal}).eq("id", me.id);
-  if(error){ alert(error.message); return; }
-  await client.from("recharge_history").insert({retailer_id:me.id,mobile_number:num,amount:amt,operator:"Jio",status:"SUCCESS"});
-  me.wallet_balance = newBal;
-  document.getElementById("bal").innerText = "₹ "+newBal;
-  document.getElementById("status").innerText = "✅ ₹"+amt+" SUCCESS to "+num;
-  loadHistory();
+async function recharge(){
+ let n=document.getElementById("mob").value; let a=parseInt(document.getElementById("amt").value);
+ if(RET.wallet_balance<a){alert("Low Balance! Have ₹"+RET.wallet_balance);return;}
+ let nb=RET.wallet_balance-a;
+ await fetch(SURL+"/rest/v1/retailers?mobile=eq."+RET.mobile,{method:"PATCH",headers:{"apikey":SKEY,"Content-Type":"application/json"},body:JSON.stringify({wallet_balance:nb})});
+ await fetch(SURL+"/rest/v1/recharge_history",{method:"POST",headers:{"apikey":SKEY,"Content-Type":"application/json"},body:JSON.stringify({retailer_id:RET.id,mobile_number:n,amount:a,operator:"Jio",status:"SUCCESS"})});
+ RET.wallet_balance=nb; document.getElementById("bal").innerText="₹ "+nb; document.getElementById("stat").innerText="✅ ₹"+a+" SUCCESS"; load();
 }
-
-async function loadHistory(){
-  let {data} = await client.from("recharge_history").select("*").order("created_at",{ascending:false}).limit(10);
-  let h = "<b>✅ REAL Recharge History</b>";
-  if(data && data.length){ data.forEach(r=>{ h+=<div class="hist-item">✅ ₹${r.amount} - ${r.mobile_number} - ${r.status}<br><small>${new Date(r.created_at).toLocaleString()}</small></div>; }); }
-  else{ h+="<p>No history yet</p>"; }
-  document.getElementById("history").innerHTML = h;
+async function load(){
+ let r=await fetch(SURL+"/rest/v1/recharge_history?select=*&order=created_at.desc&limit=10",{headers:{"apikey":SKEY}});
+ let d=await r.json(); let h="<b>History</b><br>"; d.forEach(x=>h+=<div class=it>✅ ₹${x.amount} - ${x.mobile_number}</div>); document.getElementById("hist").innerHTML=h;
 }
-
 init();
-</script>
-</body>
-</html>
+</script></body></html>
