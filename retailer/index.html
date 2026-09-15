@@ -1,62 +1,45 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PayQuick - Retailer REAL</title>
+<title>PayQuick REAL</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>body{margin:0;background:#020617;color:#fff;font-family:sans-serif;display:flex;justify-content:center;padding:15px}
 .box{background:#1e293b;width:100%;max-width:380px;border-radius:16px;padding:20px}
-input{width:100%;padding:13px;margin:8px 0;border-radius:10px;border:none;box-sizing:border-box;font-size:16px}
-.btn{width:100%;padding:14px;background:#22c55e;color:#000;font-weight:bold;border:none;border-radius:10px;font-size:16px;cursor:pointer}
-.bal{background:linear-gradient(135deg,#22c55e,#16a34a);padding:18px;border-radius:12px;color:#000;margin:12px 0}</style>
+input{width:100%;padding:13px;margin:8px 0;border-radius:10px;border:none;box-sizing:border-box}
+.btn{width:100%;padding:14px;background:#22c55e;color:#000;font-weight:bold;border:none;border-radius:10px;cursor:pointer}
+.bal{background:#22c55e;padding:18px;border-radius:12px;color:#000;margin:12px 0}
+</style>
 </head><body>
 <div class="box">
-<h2 style="text-align:center;margin:0">💰 PayQuickPay<br><small style="font-size:12px;color:#94a3b8">REAL BUSINESS</small></h2>
-<p id="uid" style="color:#94a3b8;font-size:13px"></p>
-<div class="bal"><small>Wallet Balance</small><h1 id="bal" style="margin:5px 0">₹ Loading...</h1></div>
-<input id="mobile" type="tel" placeholder="Customer Mobile - 10 Digit" maxlength="10">
-<input id="amount" type="number" placeholder="Amount - 10,20,50...">
-<button class="btn" onclick="doRecharge()">⚡ RECHARGE NOW</button>
-<p id="status" style="text-align:center;font-weight:bold"></p>
-<div id="history" style="margin-top:15px;font-size:13px"></div>
-<button onclick="logout()" style="width:100%;margin-top:15px;padding:10px;background:#334155;border:none;border-radius:8px;color:#fff">Logout</button>
+<h2 style="text-align:center">PayQuickPay</h2>
+<p id="debug" style="background:#000;color:#fbbf24;padding:8px;font-size:11px;border-radius:6px;word-break:break-all">Debug: Starting...</p>
+<div class="bal"><small>Wallet</small><h1 id="bal" style="margin:5px 0">₹ Loading...</h1></div>
+<input id="mobile" placeholder="Mobile 10 digit"><input id="amount" type="number" placeholder="Amount">
+<button class="btn" onclick="doRecharge()">RECHARGE NOW</button>
+<p id="status"></p>
 </div>
 <script>
 const SUPA_URL = "https://mojdysebckbodadjdctj.supabase.co";
-const SUPA_KEY = "sb_publishable_D35DfvBe5XtgITTnKLWSwg_R0Qqsday
+// TUMA PUBLISHABLE KEY - Ethe Paste Kara
+const SUPA_KEY = "sb_publishable_D35DfvBe5XtgITTnKLWSwg_R0Qqsday";
+
+document.getElementById("debug").innerText = "URL: " + SUPA_URL + "\nKey: " + SUPA_KEY.substring(0,30) + "...";
+
 const supa = supabase.createClient(SUPA_URL, SUPA_KEY);
-let myMobile = localStorage.getItem("retailer_mobile") || "8018146505";
-let me = null;
+let me=null;
 async function init(){
- document.getElementById("uid").innerText = "ID: " + myMobile;
- let {data} = await supa.from("retailers").select("*").eq("mobile",myMobile).single();
- if(!data){
-   let {data:d2} = await supa.from("retailers").insert({mobile:myMobile,name:"Retailer",wallet_balance:1000}).select().single();
-   data = d2;
- }
- me = data;
- document.getElementById("bal").innerText = "₹ " + data.wallet_balance;
- loadHistory();
+ try{
+  let {data,error} = await supa.from("retailers").select("*").limit(1);
+  if(error){ document.getElementById("debug").innerText = "ERROR: " + JSON.stringify(error); document.getElementById("bal").innerText = "ERROR"; return; }
+  if(!data || data.length==0){
+    let {data:d2,error:e2} = await supa.from("retailers").insert({mobile:"8018146505",name:"Retailer",wallet_balance:1000}).select().single();
+    if(e2){ document.getElementById("debug").innerText = "INSERT ERROR: " + JSON.stringify(e2); return; }
+    data=[d2];
+  }
+  me=data[0];
+  document.getElementById("bal").innerText = "₹ " + me.wallet_balance;
+  document.getElementById("debug").innerText = "SUCCESS Connected! ID: " + me.id;
+ }catch(e){ document.getElementById("debug").innerText = "CATCH ERROR: " + e.message; }
 }
-async function doRecharge(){
- let num = document.getElementById("mobile").value;
- let amt = parseInt(document.getElementById("amount").value);
- if(num.length!=10){alert("10 digit number dia");return}
- if(!amt || amt<10){alert("Amount dia");return}
- if(me.wallet_balance < amt){alert("Balance nahi!");return}
- document.getElementById("status").innerText = "Processing...";
- let newBal = me.wallet_balance - amt;
- await supa.from("retailers").update({wallet_balance:newBal}).eq("id",me.id);
- await supa.from("recharge_history").insert({retailer_id:me.id,mobile_number:num,amount:amt,operator:"Jio",status:"SUCCESS"});
- me.wallet_balance = newBal;
- document.getElementById("bal").innerText = "₹ " + newBal;
- document.getElementById("status").innerText = "✅ ₹"+amt+" Success to "+num;
- loadHistory();
-}
-async function loadHistory(){
- let {data} = await supa.from("recharge_history").select("*").eq("retailer_id",me.id).order("created_at",{ascending:false}).limit(5);
- let h = "<b>Last 5 Recharge:</b><br>";
- if(data) data.forEach(r=>{ h+= ₹${r.amount} - ${r.mobile_number} - ${r.status}<br> });
- document.getElementById("history").innerHTML = h;
-}
-function logout(){ localStorage.clear(); location.href="/retailer-login.html"; }
+async function doRecharge(){ alert("Balance: "+ (me?me.wallet_balance:"No connection")); }
 init();
 </script></body></html>
