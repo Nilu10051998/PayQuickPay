@@ -1,15 +1,22 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Retailer Login</title><style>*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}body{background:#0f172a;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:15px}.box{background:#1e293b;width:100%;max-width:350px;padding:25px;border-radius:20px;border:1px solid #334155;text-align:center}input{width:100%;padding:12px;margin:8px 0;border-radius:10px;border:1px solid #334155;background:#0f172a;color:#fff}.btn{width:100%;padding:12px;background:linear-gradient(90deg,#06b6d4,#3b82f6);border:none;border-radius:10px;color:#fff;font-weight:bold;margin-top:10px;cursor:pointer}h2{color:#22d3ee;margin-bottom:15px}</style></head><body>
-<div class="box"><h2>🔐 Retailer Login</h2><p style="color:#94a3b8;font-size:12px;margin-bottom:15px">PayQuickPay Retailer</p><input id="id" placeholder="Retailer ID - 8018146505" value="8018146505"><input id="pw" type="password" placeholder="Password - 1234" value="1234"><button class="btn" onclick="login()">Login</button><button class="btn" style="background:#334155" onclick="location.href='/'">🏠 Home</button><p style="color:#64748b;font-size:11px;margin-top:12px">ID: 8018146505 / Pass: 1234</p></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-function login(){
-let i=document.getElementById('id').value;
-let p=document.getElementById('pw').value;
-if(i=='8018146505' && p=='1234'){
- localStorage.setItem('retailerLoggedIn','true');
- localStorage.setItem('pb','2540');
- localStorage.setItem('retailerId','8018146505');
- location.href='/retailer/';
-}else{
- alert('ID / Password bhul achi Bhai! ID: 8018146505 Pass: 1234');
-}}
-</script></body></html>
+  const SUPABASE_URL = "https://YOUR_PROJECT.supabase.co";
+  const SUPABASE_KEY = "YOUR_ANON_KEY";
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  async function retailerLogin() {
+    let mobile = document.getElementById("mobile").value;
+    
+    // Save to REAL Database
+    let { data, error } = await supabaseClient
+      .from('retailers')
+      .upsert({ mobile: mobile, name: 'Retailer ' + mobile, wallet_balance: 1000 })
+      .select();
+    
+    if(error) alert(error.message);
+    else {
+      localStorage.setItem("retailer_mobile", mobile);
+      window.location.href = "retailer.html";
+    }
+  }
+</script>
