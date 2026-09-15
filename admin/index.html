@@ -1,21 +1,67 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin - PayQuickPay</title>
-<style>*{font-family:sans-serif;box-sizing:border-box}body{margin:0;background:#020617;color:#fff;min-height:100vh;display:flex;justify-content:center;align-items:center}
-.box{background:#0f172a;border:2px solid #22c55e;padding:30px;border-radius:20px;width:92%;max-width:380px;text-align:center;box-shadow:0 0 30px #22c55e33}
-input{width:100%;padding:13px;margin:9px 0;border-radius:10px;border:1px solid #334155;background:#020617;color:#fff}
-button{width:100%;padding:13px;background:#22c55e;color:#000;border:0;border-radius:10px;font-weight:900;cursor:pointer;font-size:16px}
-</style></head><body><div class="box">
-<h2 style="color:#22c55e">🔐 Admin Panel</h2>
-<p style="color:#86efac;font-size:13px">Full Control - PayQuickPay</p>
-<input id="m" placeholder="Admin ID">
-<input id="p" type="password" placeholder="Admin Password">
-<button onclick="login()">ADMIN LOGIN</button>
-<a href="/" style="display:block;margin-top:16px;color:#94a3b8;font-size:12px;text-decoration:none">← Back to Home</a>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin Panel</title><style>*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}body{background:#0f172a;color:#fff;padding:8px}.box{background:#1e293b;padding:20px;border-radius:14px;border:1px solid #334155;width:100%;max-width:360px;margin:0 auto}input{width:100%;padding:11px;margin:6px 0;border-radius:8px;background:#0f172a;color:#fff;border:1px solid #334155}.card{background:#1e293b;border:1px solid #334155;padding:12px;border-radius:12px;margin-bottom:8px}.btn{padding:9px 14px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;font-size:12px} #L{min-height:100vh;display:flex;align-items:center;justify-content:center} #D{display:none}.tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin:10px 0}.tabs button{padding:10px;background:#1e293b;color:#94a3b8;border:1px solid #334155;border-radius:8px;font-size:11px}.tabs button.on{background:#f59e0b;color:#000}</style></head><body>
+
+<div id="L"><div class="box" style="text-align:center"><div style="font-size:36px">👑</div><h2 style="color:#f59e0b;margin-top:6px">Admin Panel</h2><p style="color:#64748b;font-size:11px">Full Control</p><input id="aid" placeholder="ID - admin" value="admin"><input id="apw" type="password" placeholder="Password - admin123" value="admin123"><button class="btn" style="background:#f59e0b;color:#000;width:100%;margin-top:10px;padding:12px" onclick="login()">LOGIN</button><button class="btn" style="background:#334155;color:#fff;width:100%;margin-top:8px" onclick="location.href='/'">HOME</button><p id="er" style="color:red;font-size:11px;margin-top:6px"></p></div></div>
+
+<div id="D">
+<div style="display:flex;gap:6px;margin-bottom:10px"><button onclick="location.href='/'" style="flex:1;padding:10px;background:#1e293b;color:#fff;border:1px solid #334155;border-radius:8px">Home</button><button onclick="location.href='/distributor/'" style="flex:1;padding:10px;background:#a855f7;color:#fff;border:none;border-radius:8px">Distributor</button><button onclick="location.href='/retailer/'" style="flex:1;padding:10px;background:#22c55e;color:#000;border:none;border-radius:8px">Retailer</button><button onclick="logout()" style="flex:1;padding:10px;background:#ef4444;color:#fff;border:none;border-radius:8px">Logout</button></div>
+
+<div class="card" style="background:linear-gradient(135deg,#78350f,#0f172a);display:flex;justify-content:space-between"><div><b>Admin</b><br><small style="color:#fbbf24">Super Admin</small></div><div style="text-align:right"><small>Total Retailers</small><br><b id="tc" style="color:#f59e0b;font-size:20px">0</b></div></div>
+
+<div class="tabs"><button id="t1" class="on" onclick="tab(1)">➕ Add Retailer</button><button id="t2" onclick="tab(2)">👥 List</button><button id="t3" onclick="tab(3)">💰 Balance</button></div>
+
+<div id="p1" class="card"><b>➕ Add New Retailer</b><br><br><input id="rn" placeholder="Retailer Name - ex: R1 Shop"><input id="rm" placeholder="Mobile Number - ID"><input id="rp" placeholder="Password - ex: 1234"><input id="rb" type="number" placeholder="Opening Balance - 500"><input id="rc" type="number" placeholder="Commission % - 4"><button class="btn" style="background:#f59e0b;color:#000;width:100%;padding:12px;margin-top:8px" onclick="addR()">Add Retailer Now</button><div id="msg" style="font-size:11px;color:#22c55e;margin-top:6px"></div></div>
+
+<div id="p2" class="card" style="display:none"><b>👥 All Retailers</b><div id="list" style="margin-top:10px;font-size:11px"></div></div>
+
+<div id="p3" class="card" style="display:none"><b>💰 Add Balance</b><br><br><input id="bm" placeholder="Retailer Mobile"><input id="ba" type="number" placeholder="Amount - 1000"><button class="btn" style="background:#22c55e;color:#000;width:100%;padding:12px;margin-top:8px" onclick="addBal()">Add Balance</button></div>
+
+<div class="card" style="text-align:center;color:#475569;font-size:10px">Admin v2.0 | All Data Saved in LocalStorage<br>Default Retailer: 9040988989 / 1234</div>
 </div>
+
 <script>
+function getR(){try{return JSON.parse(localStorage.getItem('dr')||'[]')}catch(e){return []}}
+function setR(a){localStorage.setItem('dr',JSON.stringify(a));upd()}
+function upd(){document.getElementById('tc').innerText=getR().length;showList()}
 function login(){
-let u=document.getElementById('m').value;
-let p=document.getElementById('p').value;
-if(!u||!p){alert('Admin ID Password dia');return;}
-document.body.innerHTML='<div style="display:flex;justify-content:center;align-items:center;min-height:100vh;background:#020617;color:#fff;flex-direction:column;text-align:center;padding:20px"><h1 style="color:#22c55e">Welcome Admin '+u+'! 👑</h1><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;width:100%;max-width:400px"><div style="background:#0f172a;padding:16px;border-radius:12px;border:1px solid #334155">Total Retailer<br><b style="font-size:24px">1,248</b></div><div style="background:#0f172a;padding:16px;border-radius:12px;border:1px solid #334155">Today Business<br><b style="font-size:24px">₹2.4L</b></div><div style="background:#0f172a;padding:16px;border-radius:12px;border:1px solid #334155">Total Distributor<br><b style="font-size:24px">86</b></div><div style="background:#0f172a;padding:16px;border-radius:12px;border:1px solid #334155">Commission<br><b style="font-size:24px">₹18k</b></div></div><a href="/" style="color:#22c55e">← Home</a></div>';
+ var id=document.getElementById('aid').value.trim();
+ var pw=document.getElementById('apw').value.trim();
+ if(id=='admin' && pw=='admin123'){
+  localStorage.setItem('al','1');
+  document.getElementById('L').style.display='none';
+  document.getElementById('D').style.display='block';
+  if(getR().length==0){setR([{name:'R1',mobile:'9040988989',pass:'1234',bal:500,comm:4,status:'Active'}])}
+  upd();
+ }else{document.getElementById('er').innerText='Wrong ID/Pass! admin / admin123'}
 }
+function logout(){localStorage.removeItem('al');location.reload()}
+function check(){if(localStorage.getItem('al')=='1'){document.getElementById('L').style.display='none';document.getElementById('D').style.display='block';if(getR().length==0){setR([{name:'R1',mobile:'9040988989',pass:'1234',bal:500,comm:4,status:'Active'}])}upd()}else{document.getElementById('L').style.display='flex';document.getElementById('D').style.display='none'}}
+check();
+function tab(n){for(var i=1;i<=3;i++){document.getElementById('p'+i).style.display=i==n?'block':'none';document.getElementById('t'+i).className=i==n?'on':''} if(n==2)showList()}
+function addR(){
+ var name=document.getElementById('rn').value.trim();
+ var mob=document.getElementById('rm').value.trim();
+ var pass=document.getElementById('rp').value.trim()||'1234';
+ var bal=parseInt(document.getElementById('rb').value)||500;
+ var comm=parseInt(document.getElementById('rc').value)||4;
+ if(!name ||!mob){alert('Name & Mobile required');return}
+ var all=getR();
+ for(var i=0;i<all.length;i++){if(all[i].mobile==mob){alert('Already exists!');return}}
+ all.push({name:name,mobile:mob,pass:pass,bal:bal,comm:comm,status:'Active'});
+ setR(all);
+ document.getElementById('msg').innerText='✅ '+name+' Added! ID: '+mob+' Pass: '+pass;
+ document.getElementById('rn').value='';document.getElementById('rm').value='';document.getElementById('rp').value='';document.getElementById('rb').value='';document.getElementById('rc').value='';
+ setTimeout(function(){document.getElementById('msg').innerText=''},3000);
+}
+function showList(){
+ var all=getR(); var s='';
+ if(all.length==0){document.getElementById('list').innerHTML='No retailers';return}
+ for(var i=0;i<all.length;i++){
+  var r=all[i];
+  s+='<div style="background:#0f172a;padding:10px;border-radius:8px;margin-bottom:6px;border:1px solid #334155"><div style="display:flex;justify-content:space-between"><div><b>'+r.name+'</b><br><small>'+r.mobile+' | Pass: '+r.pass+'</small><br><small style="color:#22c55e">₹'+r.bal+' | '+r.comm+'% | '+r.status+'</small></div><div><button onclick="blockR(\''+r.mobile+'\')" style="background:#f59e0b;color:#000;border:none;padding:5px 8px;border-radius:6px;font-size:10px;margin-bottom:4px;width:100%">'+(r.status=='Active'?'Block':'Unblock')+'</button><br><button onclick="delR(\''+r.mobile+'\')" style="background:#ef4444;color:#fff;border:none;padding:5px 8px;border-radius:6px;font-size:10px;width:100%">Delete</button></div></div></div>';
+ }
+ document.getElementById('list').innerHTML=s;
+}
+function blockR(mob){var all=getR();for(var i=0;i<all.length;i++){if(all[i].mobile==mob){all[i].status=all[i].status=='Active'?'Blocked':'Active'}} setR(all)}
+function delR(mob){if(!confirm('Delete '+mob+'?'))return;var all=getR();var n=[];for(var i=0;i<all.length;i++){if(all[i].mobile!=mob)n.push(all[i])} setR(n)}
+function addBal(){var mob=document.getElementById('bm').value.trim();var amt=parseInt(document.getElementById('ba').value);if(!mob||!amt){alert('Enter mobile & amount');return}var all=getR();var f=false;for(var i=0;i<all.length;i++){if(all[i].mobile==mob){all[i].bal+=amt;f=true}}if(!f){alert('Not found');return}setR(all);alert('₹'+amt+' Added to '+mob);document.getElementById('bm').value='';document.getElementById('ba').value=''}
 </script></body></html>
