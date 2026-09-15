@@ -1,12 +1,85 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>WORKING TEST</title>
-<style>body{background:#0f172a;color:#fff;font-family:sans-serif;display:flex;justify-content:center;padding:20px}
-.box{background:#1e293b;padding:20px;border-radius:18px;width:100%;max-width:400px;text-align:center}
-.bal{background:#22c55e;color:#000;padding:20px;border-radius:14px;font-size:32px;font-weight:900}
-</style></head><body><div class="box">
-<h1>TEST OK</h1>
-<div class="bal">₹ 1000</div>
-<p>Jadi eta dekhu cha, file update heuchi!</p>
-<p id="time"></p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PayQuickPay REAL</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
+<style>
+body{margin:0;background:#0f172a;color:#fff;font-family:system-ui;display:flex;justify-content:center;padding:12px}
+.box{background:#1e293b;width:100%;max-width:400px;border-radius:18px;padding:20px}
+.bal{background:linear-gradient(135deg,#22c55e,#16a34a);padding:20px;border-radius:14px;color:#000;margin:15px 0}
+input{width:100%;padding:14px;margin:8px 0;border-radius:11px;border:none;box-sizing:border-box;font-size:16px}
+.btn{width:100%;padding:15px;background:#22c55e;color:#000;font-weight:900;border:none;border-radius:11px;cursor:pointer;font-size:16px}
+#log{background:#000;color:#0f0;padding:10px;border-radius:8px;margin-top:10px;font-size:11px;white-space:pre-wrap;word-break:break-all}
+.hist-item{background:#0f172a;padding:10px;margin:5px 0;border-radius:8px;font-size:13px}
+</style>
+</head>
+<body>
+<div class="box">
+<h2 style="text-align:center">PayQuickPay REAL</h2>
+<div class="bal"><small>WALLET BALANCE</small><h1 id="bal">Loading...</h1><small id="msg">Connecting...</small></div>
+<input id="mobile" placeholder="Mobile Number" value="8018146505">
+<input id="amount" type="number" placeholder="Amount" value="10">
+<button class="btn" onclick="doRecharge()">RECHARGE NOW</button>
+<p id="status" style="text-align:center;font-weight:bold"></p>
+<div id="history"></div>
+<div id="log">Init...</div>
 </div>
-<script>document.getElementById("time").innerText = "Time: "+new Date().toLocaleString();</script></body></html>
+<script>
+const SUPA_URL = "https://mojdysebckbodadjdctj.supabase.co";
+const SUPA_KEY = "sb_publishable_D35DfVbEsXtgIITnKLwSwG_RQqS5day";
+let me = null;
+let client = null;
+
+function log(t){document.getElementById("log").innerText = t; console.log(t);}
+
+async function init(){
+  log("Creating Supabase client...");
+  try{
+    client = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+    log("Client created. Fetching retailers...");
+    let {data, error} = await client.from("retailers").select("*").limit(1);
+    if(error){ log("ERROR: "+error.message); document.getElementById("msg").innerText = error.message; return; }
+    log("Data fetched: "+JSON.stringify(data).slice(0,300));
+    if(!data || data.length==0){
+      log("No retailer found, creating one...");
+      let {data:d2, error:e2} = await client.from("retailers").insert({mobile:"8018146505",name:"My Shop",wallet_balance:1000}).select();
+      if(e2){ log("Insert error: "+e2.message); return; }
+      data = d2;
+    }
+    me = data[0];
+    document.getElementById("bal").innerText = "₹ "+me.wallet_balance;
+    document.getElementById("msg").innerText = me.name+" | "+me.mobile;
+    log("Connected! ID: "+me.id+" Balance: ₹"+me.wallet_balance);
+    loadHistory();
+  }catch(e){ log("CATCH ERROR: "+e.message); }
+}
+
+async function doRecharge(){
+  let num = document.getElementById("mobile").value.trim();
+  let amt = parseInt(document.getElementById("amount").value);
+  if(!num ||!amt){ alert("Mobile and Amount required"); return; }
+  if(me.wallet_balance < amt){ alert("Low Balance! You have ₹"+me.wallet_balance); return; }
+  document.getElementById("status").innerText = "Processing...";
+  let newBal = me.wallet_balance - amt;
+  let {error} = await client.from("retailers").update({wallet_balance:newBal}).eq("id", me.id);
+  if(error){ alert(error.message); return; }
+  await client.from("recharge_history").insert({retailer_id:me.id,mobile_number:num,amount:amt,operator:"Jio",status:"SUCCESS"});
+  me.wallet_balance = newBal;
+  document.getElementById("bal").innerText = "₹ "+newBal;
+  document.getElementById("status").innerText = "✅ ₹"+amt+" SUCCESS to "+num;
+  loadHistory();
+}
+
+async function loadHistory(){
+  let {data} = await client.from("recharge_history").select("*").order("created_at",{ascending:false}).limit(10);
+  let h = "<b>✅ REAL Recharge History</b>";
+  if(data && data.length){ data.forEach(r=>{ h+=<div class="hist-item">✅ ₹${r.amount} - ${r.mobile_number} - ${r.status}<br><small>${new Date(r.created_at).toLocaleString()}</small></div>; }); }
+  else{ h+="<p>No history yet</p>"; }
+  document.getElementById("history").innerHTML = h;
+}
+
+init();
+</script>
+</body>
+</html>
