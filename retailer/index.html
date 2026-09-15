@@ -1,81 +1,97 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PayQuickPay REAL</title>
 <style>
-body{margin:0;background:#0f172a;color:#fff;font-family:system-ui;display:flex;justify-content:center;padding:12px}
+body{margin:0;background:#0f172a;color:#fff;font-family:sans-serif;display:flex;justify-content:center;padding:12px}
 .box{background:#1e293b;width:100%;max-width:400px;border-radius:18px;padding:20px}
-.bal{background:linear-gradient(135deg,#22c55e,#16a34a);padding:20px;border-radius:14px;color:#000;text-align:center}
-.bal h1{margin:5px 0;font-size:36px}
-input{width:100%;padding:14px;margin:8px 0;border-radius:11px;border:none;box-sizing:border-box;font-size:16px;background:#0f172a;color:#fff;border:1px solid #334155}
-.btn{width:100%;padding:15px;background:#22c55e;color:#000;font-weight:900;border:none;border-radius:11px;cursor:pointer;font-size:16px;margin-top:8px}
-.hist{margin-top:15px}
-.it{background:#0f172a;padding:10px;margin:6px 0;border-radius:8px;font-size:13px;border-left:3px solid #22c55e}
-.success{color:#22c55e;text-align:center;font-weight:900;margin:10px 0}
-</style></head><body><div class="box">
-<h2 style="text-align:center;margin:0 0 10px">PayQuickPay</h2>
-<div class="bal"><small>WALLET BALANCE</small><h1 id="bal">Loading...</h1><small id="inf">Connecting to REAL DB...</small></div>
-<input id="mob" placeholder="Customer Mobile Number" value="8018146505">
-<input id="amt" type="number" placeholder="Amount" value="10">
-<button class="btn" onclick="recharge()">RECHARGE NOW</button>
-<p id="stat" class="success"></p>
-<div class="hist" id="hist">Loading history...</div>
+.bal{background:#22c55e;padding:18px;border-radius:14px;color:#000;text-align:center}
+input,button{width:100%;padding:14px;margin:8px 0;border-radius:10px;border:none;box-sizing:border-box}
+button{background:#22c55e;font-weight:900}
+#log{background:#000;color:#0f0;padding:8px;border-radius:6px;font-size:11px;word-break:break-all}
+.it{background:#0f172a;padding:8px;margin:4px 0;border-radius:6px}
+</style>
+</head>
+<body>
+<div class="box">
+<div class="bal">
+<h1 id="bal">Loading...</h1>
+<small id="inf">Connecting...</small>
 </div>
+<div id="log">Init...</div>
+<input id="mob" placeholder="Mobile" value="8018146505">
+<input id="amt" type="number" placeholder="Amount" value="10">
+<button onclick="doRecharge()">RECHARGE NOW</button>
+<div id="hist"></div>
+</div>
+
 <script>
-const SURL="https://mojdysebckbodadjdctj.supabase.co";
-const SKEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vamR5c2ViY2tib2RhZGpkY3RqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0NjMyNjUsImV4cCI6MjEwNTAzOTI2NX0.aoK0cXDCsKZigLUNHXQV6eFClqf7_i91zpw8zrRu0ic";
-let RET=null;
+const SURL = "https://mojdysebckbodadjdctj.supabase.co";
+const SKEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vamR5c2ViY2tib2RhZGpkY3RqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0NjMyNjUsImV4cCI6MjEwNTAzOTI2NX0.aoK0cXDCsKZigLUNHXQV6eFClqf7_i91zpw8zrRu0ic";
+let RET = null;
 
-async function api(path,method,body){
- let r=await fetch(SURL+"/rest/v1/"+path,{
-  method:method||"GET",
-  headers:{"apikey":SKEY,"Authorization":"Bearer "+SKEY,"Content-Type":"application/json","Prefer":"return=representation"},
-  body:body?JSON.stringify(body):undefined
- });
- let txt=await r.text();
- if(!r.ok) throw new Error(txt);
- return JSON.parse(txt);
-}
-
-async function init(){
- try{
-  let d=await api("retailers?select=*&limit=1");
-  if(!d.length){
-   d=await api("retailers","POST",{mobile:"8018146505",name:"My Shop",wallet_balance:1000});
+async function init() {
+  document.getElementById("log").innerText = "Step 1: Connecting to Supabase...";
+  try {
+    const res = await fetch(SURL + "/rest/v1/retailers?select=*&limit=1", {
+      headers: { "apikey": SKEY, "Authorization": "Bearer " + SKEY }
+    });
+    document.getElementById("log").innerText = "Step 2: Status " + res.status;
+    const txt = await res.text();
+    document.getElementById("log").innerText = "Step 3: " + txt.substring(0,200);
+    if (!res.ok) throw new Error(txt);
+    let data = JSON.parse(txt);
+    if (data.length === 0) {
+      const r2 = await fetch(SURL + "/rest/v1/retailers", {
+        method: "POST",
+        headers: { "apikey": SKEY, "Authorization": "Bearer " + SKEY, "Content-Type": "application/json", "Prefer": "return=representation" },
+        body: JSON.stringify({ mobile: "8018146505", name: "My Shop", wallet_balance: 1000 })
+      });
+      data = await r2.json();
+    }
+    RET = data[0];
+    document.getElementById("bal").innerText = "₹ " + RET.wallet_balance;
+    document.getElementById("inf").innerText = "REAL DB OK - " + RET.mobile;
+    document.getElementById("log").innerText = "SUCCESS! Balance ₹" + RET.wallet_balance;
+    loadHistory();
+  } catch (e) {
+    document.getElementById("log").innerText = "ERROR: " + e.message;
   }
-  RET=d[0];
-  document.getElementById("bal").innerText="₹ "+RET.wallet_balance;
-  document.getElementById("inf").innerText=RET.name+" | "+RET.mobile+" | REAL DB";
-  load();
- }catch(e){
-  document.getElementById("bal").innerText="Error";
-  document.getElementById("inf").innerText=e.message.slice(0,150);
- }
 }
 
-async function recharge(){
- let num=document.getElementById("mob").value.trim();
- let amt=parseInt(document.getElementById("amt").value);
- if(!num ||!amt){ alert("Mobile & Amount required"); return; }
- if(RET.wallet_balance < amt){ alert("Low Balance! You have ₹"+RET.wallet_balance); return; }
- document.getElementById("stat").innerText="Processing...";
- let newBal=RET.wallet_balance-amt;
- await api("retailers?id=eq."+RET.id,"PATCH",{wallet_balance:newBal});
- await api("recharge_history","POST",{retailer_id:RET.id,mobile_number:num,amount:amt,operator:"Jio",status:"SUCCESS"});
- RET.wallet_balance=newBal;
- document.getElementById("bal").innerText="₹ "+newBal;
- document.getElementById("stat").innerText="✅ ₹"+amt+" RECHARGE SUCCESS to "+num;
- load();
+async function doRecharge() {
+  const num = document.getElementById("mob").value;
+  const amt = parseInt(document.getElementById("amt").value);
+  if (RET.wallet_balance < amt) { alert("Low Balance"); return; }
+  const nb = RET.wallet_balance - amt;
+  await fetch(SURL + "/rest/v1/retailers?id=eq." + RET.id, {
+    method: "PATCH",
+    headers: { "apikey": SKEY, "Authorization": "Bearer " + SKEY, "Content-Type": "application/json" },
+    body: JSON.stringify({ wallet_balance: nb })
+  });
+  await fetch(SURL + "/rest/v1/recharge_history", {
+    method: "POST",
+    headers: { "apikey": SKEY, "Authorization": "Bearer " + SKEY, "Content-Type": "application/json" },
+    body: JSON.stringify({ retailer_id: RET.id, mobile_number: num, amount: amt, operator: "Jio", status: "SUCCESS" })
+  });
+  RET.wallet_balance = nb;
+  document.getElementById("bal").innerText = "₹ " + nb;
+  loadHistory();
 }
 
-async function load(){
- try{
-  let d=await api("recharge_history?select=*&order=created_at.desc&limit=20");
-  let h="<b>✅ REAL Recharge History (Supabase)</b>";
-  if(d.length){ d.forEach(x=>{ h+=<div class=it>✅ ₹${x.amount} - ${x.mobile_number} - ${x.status}<br><small>${new Date(x.created_at).toLocaleString()}</small></div>; }); }
-  else h+="<p>No recharges yet</p>";
-  document.getElementById("hist").innerHTML=h;
- }catch(e){ document.getElementById("hist").innerText="History error: "+e.message.slice(0,100); }
+async function loadHistory() {
+  const r = await fetch(SURL + "/rest/v1/recharge_history?select=*&order=created_at.desc&limit=10", {
+    headers: { "apikey": SKEY, "Authorization": "Bearer " + SKEY }
+  });
+  const d = await r.json();
+  let h = "<b>History</b>";
+  d.forEach(x => { h += <div class=it>✅ ₹${x.amount} - ${x.mobile_number}</div>; });
+  document.getElementById("hist").innerHTML = h;
 }
 
 init();
-</script></body></html>
+</script>
+</body>
+</html>
