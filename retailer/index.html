@@ -1,67 +1,31 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PayQuickPay REAL - FINAL</title>
-<style>body{margin:0;background:#0f172a;color:#fff;font-family:sans-serif;display:flex;justify-content:center;padding:12px}
-.box{background:#1e293b;width:100%;max-width:400px;border-radius:18px;padding:20px}
-.bal{background:#22c55e;padding:20px;border-radius:14px;color:#000;margin:15px 0}
-input{width:100%;padding:14px;margin:8px 0;border-radius:11px;border:none;box-sizing:border-box;font-size:16px}
-.btn{width:100%;padding:15px;background:#22c55e;color:#000;font-weight:900;border:none;border-radius:11px;cursor:pointer}
-#log{background:#000;color:#0f0;padding:10px;border-radius:8px;margin-top:10px;font-size:12px;white-space:pre-wrap}
-</style></head><body><div class="box">
-<h2 style="text-align:center">PayQuickPay REAL</h2>
-<div class="bal"><small>WALLET</small><h1 id="bal">Loading...</h1><small id="msg"></small></div>
-<input id="mobile" value="8018146505"><input id="amount" type="number" value="10">
-<button class="btn" onclick="doRecharge()">RECHARGE</button>
-<p id="status"></p>
-<div id="history"></div>
-<div id="log">Log...</div>
-</div>
+<title>DEBUG</title>
+<style>body{background:#000;color:#0f0;padding:20px;font-family:monospace}</style>
+</head><body>
+<h2>DEBUG TEST</h2>
+<div id="out">Starting...</div>
 <script>
 const URL = "https://mojdysebckbodadjdctj.supabase.co";
 const KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vamR5c2ViY2tib2RhZGpkY3RqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5NDYzMjYsImV4cCI6MjEwNTAzOTI2NX0.aoK0cXDCsKZigLUNHXQV6eFClqf7_i91zpw8zrRu0ic";
-let me=null;
-
-async function api(path, method, body){
-  let r = await fetch(URL+"/rest/v1/"+path, {
-    method: method||"GET",
-    headers:{"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":"application/json","Prefer":"return=representation"},
-    body: body?JSON.stringify(body):undefined
-  });
-  let t = await r.text();
-  document.getElementById("log").innerText = "API: "+path+"\nStatus: "+r.status+"\n"+t.substring(0,500);
-  try{return JSON.parse(t);}catch{return [];}
-}
-
-async function init(){
-  document.getElementById("msg").innerText="Fetching...";
-  let data = await api("retailers?select=*&limit=1");
-  if(!data || data.length==0){
-    document.getElementById("msg").innerText="Creating...";
-    data = await api("retailers","POST",{mobile:"8018146505",name:"shop",wallet_balance:1000});
+async function run(){
+  let o=document.getElementById("out");
+  try{
+    o.innerText="Fetching "+URL+"...";
+    let res = await fetch(URL+"/rest/v1/retailers?select=*",{
+      headers:{"apikey":KEY,"Authorization":"Bearer "+KEY}
+    });
+    let txt = await res.text();
+    o.innerText="STATUS: "+res.status+"\n\nRESPONSE:\n"+txt+"\n\nIf status 200 and data shows, DB OK!";
+    if(res.ok){
+      let data=JSON.parse(txt);
+      o.innerText+="\n\nWALLET: ₹"+data[0].wallet_balance+"\n\nNow we know DB works! Fixing index.html...";
+      // auto save
+      localStorage.setItem("debug_wallet", data[0].wallet_balance);
+    }
+  }catch(e){
+    o.innerText="ERROR: "+e.message+"\n\nCheck Internet / Supabase URL";
   }
-  me = data[0];
-  document.getElementById("bal").innerText = "₹ "+me.wallet_balance;
-  document.getElementById("msg").innerText = me.name+" | "+me.mobile+" | ID:"+me.id;
-  loadHistory();
 }
-async function doRecharge(){
-  let num=document.getElementById("mobile").value;
-  let amt=parseInt(document.getElementById("amount").value);
-  if(me.wallet_balance < amt){alert("Low Balance");return;}
-  document.getElementById("status").innerText="Processing...";
-  let newBal=me.wallet_balance-amt;
-  await api("retailers?mobile=eq."+me.mobile,"PATCH",{wallet_balance:newBal});
-  await api("recharge_history","POST",{retailer_id:me.id,mobile_number:num,amount:amt,operator:"Jio",status:"SUCCESS"});
-  me.wallet_balance=newBal;
-  document.getElementById("bal").innerText="₹ "+newBal;
-  document.getElementById("status").innerText="✅ SUCCESS ₹"+amt+" to "+num;
-  loadHistory();
-}
-async function loadHistory(){
-  let data = await api("recharge_history?select=*&order=created_at.desc&limit=10");
-  let h="<b>REAL HISTORY</b><br><br>";
-  if(data) data.forEach(r=>{h+=✅ ₹${r.amount} - ${r.mobile_number}<br>;});
-  document.getElementById("history").innerHTML=h;
-}
-init();
+run();
 </script></body></html>
