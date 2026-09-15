@@ -1,0 +1,38 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FINAL REAL</title>
+<style>body{margin:0;background:#0f172a;color:#fff;font-family:sans-serif;display:flex;justify-content:center;padding:12px}
+.box{background:#1e293b;width:100%;max-width:400px;border-radius:18px;padding:20px}
+.bal{background:#22c55e;padding:18px;border-radius:14px;color:#000;text-align:center}
+input,button{width:100%;padding:14px;margin:8px 0;border-radius:10px;border:none;box-sizing:border-box}
+button{background:#22c55e;font-weight:900}
+#log{background:#000;color:#0f0;padding:8px;border-radius:6px;font-size:10px;white-space:pre-wrap}
+</style></head><body><div class="box">
+<div class="bal"><h1 id="bal">Loading...</h1><small id="inf">...</small></div>
+<div id="log">Init</div>
+<input id="mob" value="8018146505"><input id="amt" value="10" type="number">
+<button onclick="recharge()">RECHARGE</button><div id="hist"></div></div>
+<script>
+const SURL="https://mojdysebckbodadjdctj.supabase.co";
+const SKEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vamR5c2ViY2tib2RhZGpkY3RqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0NjMyNjUsImV4cCI6MjEwNTAzOTI2NX0.aoK0cXDCsKZigLUNHXQV6eFClqf7_i91zpw8zrRu0ic";
+let RET=null;
+function L(t){document.getElementById("log").innerText+= "\n"+t}
+async function api(p,m,b){
+ let r=await fetch(SURL+"/rest/v1/"+p,{method:m||"GET",headers:{"apikey":SKEY,"Authorization":"Bearer "+SKEY,"Content-Type":"application/json","Prefer":"return=representation"},body:b?JSON.stringify(b):null});
+ let txt=await r.text(); L(p+" => "+r.status); if(!r.ok){ L(txt.slice(0,200)); throw new Error(txt); } return JSON.parse(txt);
+}
+async function init(){
+ try{
+  L("Fetching retailers..."); let d=await api("retailers?select=*&limit=1");
+  L("Got "+d.length); if(!d.length){ L("Creating..."); d=await api("retailers","POST",{mobile:"8018146505",name:"My Shop",wallet_balance:1000}); }
+  RET=d[0]; document.getElementById("bal").innerText="₹ "+RET.wallet_balance; document.getElementById("inf").innerText="REAL DB OK"; load();
+ }catch(e){ document.getElementById("bal").innerText="ERROR"; document.getElementById("inf").innerText=e.message.slice(0,300); L("ERR: "+e.message.slice(0,300)); }
+}
+async function recharge(){
+ let n=document.getElementById("mob").value; let a=parseInt(document.getElementById("amt").value);
+ if(RET.wallet_balance<a){alert("Low Balance");return;}
+ let nb=RET.wallet_balance-a; await api("retailers?id=eq."+RET.id,"PATCH",{wallet_balance:nb});
+ await api("recharge_history","POST",{retailer_id:RET.id,mobile_number:n,amount:a,operator:"Jio",status:"SUCCESS"});
+ RET.wallet_balance=nb; document.getElementById("bal").innerText="₹ "+nb; load();
+}
+async function load(){ let d=await api("recharge_history?select=*&order=created_at.desc&limit=10"); let h=""; d.forEach(x=>h+=<div>✅ ₹${x.amount} - ${x.mobile_number}</div>); document.getElementById("hist").innerHTML=h; }
+init();
+</script></body></html>
