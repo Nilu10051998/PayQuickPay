@@ -1,58 +1,76 @@
-<!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PayQuickPay REAL</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PayQuickPay REAL FINAL</title>
 <style>body{margin:0;background:#0f172a;color:#fff;font-family:sans-serif;display:flex;justify-content:center;padding:12px}
 .box{background:#1e293b;width:100%;max-width:400px;border-radius:18px;padding:20px}
 .bal{background:#22c55e;padding:20px;border-radius:14px;color:#000;margin:15px 0}
 input{width:100%;padding:14px;margin:8px 0;border-radius:11px;border:none;box-sizing:border-box}
 .btn{width:100%;padding:15px;background:#22c55e;color:#000;font-weight:900;border:none;border-radius:11px;cursor:pointer}
-#log{background:#000;color:#0f0;padding:10px;border-radius:8px;margin-top:10px;font-size:11px;white-space:pre-wrap}
+#log{background:#000;color:#0f0;padding:10px;border-radius:8px;margin-top:10px;font-size:11px;white-space:pre-wrap;word-break:break-all}
 </style></head><body><div class="box">
 <h2 style="text-align:center">PayQuickPay REAL</h2>
 <div class="bal"><small>WALLET</small><h1 id="bal">Loading...</h1><small id="msg">Init...</small></div>
 <input id="mobile" value="8018146505"><input id="amount" type="number" value="10">
 <button class="btn" onclick="doRecharge()">RECHARGE</button>
-<p id="status"></p><div id="history"></div><div id="log">Starting with supabase-js lib...</div>
+<p id="status"></p><div id="history"></div><div id="log">Step 1: Starting...</div>
 </div>
 <script>
 const URL = "https://mojdysebckbodadjdctj.supabase.co";
 const KEY = "sb_publishable_D35DfVbEsXtgIITnKLwSwG_RQqS5day";
 let me=null;
-let supa=null;
+function log(m){document.getElementById("log").innerText = m; console.log(m);}
+
 async function init(){
+  log("Step 2: Fetching with NEW publishable key...\nKey: "+KEY.substring(0,20)+"...");
   try{
-    document.getElementById("log").innerText="Creating client...";
-    supa = window.supabase.createClient(URL, KEY);
-    document.getElementById("log").innerText="Client OK, fetching retailers...";
-    let {data, error} = await supa.from("retailers").select("*").limit(1);
-    if(error){document.getElementById("log").innerText="ERROR: "+error.message+"\n\n"+JSON.stringify(error); document.getElementById("msg").innerText=error.message; return;}
-    document.getElementById("log").innerText="DATA: "+JSON.stringify(data);
+    let res = await fetch(URL+"/rest/v1/retailers?select=*&limit=1", {
+      headers: { "apikey": KEY }
+    });
+    log("Step 3: Got response!\nStatus: "+res.status+"\nHeaders: "+res.headers.get("content-type"));
+    let txt = await res.text();
+    log("Step 4: Response Text (first 500):\n"+txt+"\n\nStatus: "+res.status);
+    if(!res.ok){ document.getElementById("msg").innerText="API Error: "+res.status; return; }
+    let data = JSON.parse(txt);
     if(!data || data.length==0){
-      document.getElementById("log").innerText="No data, inserting...";
-      let {data:d2, error:e2} = await supa.from("retailers").insert({mobile:"8018146505",name:"shop",wallet_balance:1000}).select();
-      if(e2){document.getElementById("log").innerText="Insert Error: "+e2.message;return;}
-      data=d2;
+      log("Step 5: No data, creating...");
+      let res2 = await fetch(URL+"/rest/v1/retailers",{
+        method:"POST",
+        headers:{"apikey":KEY,"Content-Type":"application/json","Prefer":"return=representation"},
+        body: JSON.stringify({mobile:"8018146505",name:"shop",wallet_balance:1000})
+      });
+      let txt2 = await res2.text();
+      log("Create response: "+txt2);
+      data = JSON.parse(txt2);
     }
-    me=data[0];
-    document.getElementById("bal").innerText="₹ "+me.wallet_balance;
-    document.getElementById("msg").innerText=me.name+" | "+me.mobile;
+    me = data[0];
+    document.getElementById("bal").innerText = "₹ "+me.wallet_balance;
+    document.getElementById("msg").innerText = me.name+" | "+me.mobile;
     loadHistory();
-  }catch(e){document.getElementById("log").innerText="CATCH: "+e.message;}
+  }catch(e){
+    log("FETCH CATCH ERROR:\n"+e.message+"\n\n"+e.stack);
+  }
 }
 async function doRecharge(){
   let num=document.getElementById("mobile").value; let amt=parseInt(document.getElementById("amount").value);
   if(me.wallet_balance<amt){alert("Low");return;}
   let newBal=me.wallet_balance-amt;
-  await supa.from("retailers").update({wallet_balance:newBal}).eq("id",me.id);
-  await supa.from("recharge_history").insert({retailer_id:me.id,mobile_number:num,amount:amt,operator:"Jio",status:"SUCCESS"});
+  await fetch(URL+"/rest/v1/retailers?mobile=eq."+me.mobile,{
+    method:"PATCH",
+    headers:{"apikey":KEY,"Content-Type":"application/json"},
+    body: JSON.stringify({wallet_balance:newBal})
+  });
+  await fetch(URL+"/rest/v1/recharge_history",{
+    method:"POST",
+    headers:{"apikey":KEY,"Content-Type":"application/json"},
+    body: JSON.stringify({retailer_id:me.id,mobile_number:num,amount:amt,operator:"Jio",status:"SUCCESS"})
+  });
   me.wallet_balance=newBal;
   document.getElementById("bal").innerText="₹ "+newBal;
-  document.getElementById("status").innerText="✅ ₹"+amt+" SUCCESS";
+  document.getElementById("status").innerText="✅ SUCCESS ₹"+amt;
   loadHistory();
 }
 async function loadHistory(){
-  let {data}=await supa.from("recharge_history").select("*").order("created_at",{ascending:false}).limit(10);
+  let res = await fetch(URL+"/rest/v1/recharge_history?select=*&order=created_at.desc&limit=10",{headers:{"apikey":KEY}});
+  let data = await res.json();
   let h="<b>REAL HISTORY</b><br><br>"; if(data) data.forEach(r=>{h+=✅ ₹${r.amount} - ${r.mobile_number}<br>;});
   document.getElementById("history").innerHTML=h;
 }
