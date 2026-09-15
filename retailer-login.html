@@ -1,21 +1,22 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  const SUPABASE_URL = "https://YOUR_PROJECT.supabase.co";
-  const SUPABASE_KEY = "YOUR_ANON_KEY";
+  const SUPABASE_URL = "https://mojdysebckbodadjdctj.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_D35DfvBe5XtgITTnKLWSwg_R0Qqsday"; // Upara wala copy kari paste kara
   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   async function retailerLogin() {
-    let mobile = document.getElementById("mobile").value;
+    let mobile = document.getElementById("mobile")?.value || document.querySelector('input[type="tel"]')?.value;
+    if(!mobile || mobile.length < 10){ alert("Mobile Number Thik Lekha!"); return; }
     
-    // Save to REAL Database
     let { data, error } = await supabaseClient
       .from('retailers')
-      .upsert({ mobile: mobile, name: 'Retailer ' + mobile, wallet_balance: 1000 })
+      .upsert({ mobile: mobile, name: 'Retailer ' + mobile, wallet_balance: 1000 }, { onConflict: 'mobile' })
       .select();
     
-    if(error) alert(error.message);
+    if(error){ alert("Error: " + error.message); console.log(error); }
     else {
       localStorage.setItem("retailer_mobile", mobile);
+      alert("Login Success! Database re Save Heigala ✅");
       window.location.href = "retailer.html";
     }
   }
