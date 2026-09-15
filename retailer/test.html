@@ -1,0 +1,7 @@
+<h1>TEST</h1><div id="o">Loading...</div>
+<script>
+fetch("https://mojdysebckbodadjdctj.supabase.co/rest/v1/retailers?select=*&limit=1",{
+ headers:{apikey:"sb_publishable_D35DfvBe5XtgIITnKLWSwG_R0Qqsday"}
+}).then(r=>r.text()).then(t=>document.getElementById("o").innerText=t)
+.catch(e=>document.getElementById("o").innerText="ERR:"+e);
+</script>
