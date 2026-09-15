@@ -1,9 +1,104 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Retailer Panel</title><style>*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}body{background:#0f172a;color:#fff;padding:10px}.box{background:#1e293b;padding:20px;border-radius:14px;border:1px solid #334155;max-width:360px;width:100%}input{width:100%;padding:12px;margin:7px 0;border-radius:8px;background:#0f172a;color:#fff;border:1px solid #334155}#L{min-height:100vh;display:flex;justify-content:center;align-items:center}#D{display:none}.card{background:#1e293b;border:1px solid #334155;padding:14px;border-radius:12px;margin-bottom:10px}</style></head><body>
-<div id="L"><div class="box" style="text-align:center"><h2 style="color:#22c55e">🏪 Retailer Login</h2><input id="id" placeholder="Mobile Number ex: 9040889090" style="margin-top:15px"><input id="pw" type="password" placeholder="Password"><button style="background:#22c55e;color:#fff;width:100%;padding:12px;border:none;border-radius:8px;margin-top:10px;font-weight:bold" onclick="login()">LOGIN</button><button style="background:#334155;color:#fff;width:100%;padding:10px;border:none;border-radius:8px;margin-top:6px" onclick="location.href='/'">HOME</button><p id="er" style="color:#ef4444;font-size:11px;margin-top:8px"></p><p style="color:#666;font-size:10px;margin-top:10px">ID = Mobile, Pass = Distributor set karithiba password</p></div></div>
-<div id="D"><div style="display:flex;justify-content:space-between;margin-bottom:10px"><button onclick="location.href='/'" style="padding:10px;border-radius:8px;background:#1e293b;color:#fff;border:1px solid #334155">Home</button><button onclick="logout()" style="padding:10px;border-radius:8px;background:#ef4444;color:#fff;border:none">Logout</button></div><div class="card" style="background:linear-gradient(135deg,#14532d,#0f172a)"><b id="rn">Retailer</b><br><small id="rm">Mobile</small><div style="margin-top:8px"><b id="rb" style="color:#22c55e;font-size:20px">₹0</b> Balance</div></div><div class="card">Recharge, BBPS, PAN, DMT, AEPS Services Active ✅</div></div>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Retailer Full Panel</title><style>*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}body{background:#0f172a;color:#fff;padding:8px}.box{background:#1e293b;padding:22px;border-radius:16px;border:1px solid #334155;width:100%;max-width:380px;margin:0 auto}input,select{width:100%;padding:12px;margin:6px 0;border-radius:10px;background:#0f172a;color:#fff;border:1px solid #334155;outline:none}input:focus,select:focus{border-color:#22c55e}.card{background:#1e293b;border:1px solid #334155;padding:14px;border-radius:14px;margin-bottom:8px}.btn{padding:11px;border:none;border-radius:10px;font-weight:bold;cursor:pointer;width:100%}#L{min-height:100vh;display:flex;align-items:center;justify-content:center}#D{display:none}.tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin:10px 0}.tabs button{padding:10px 3px;background:#1e293b;color:#94a3b8;border:1px solid #334155;border-radius:10px;font-size:10px;font-weight:600}.tabs button.on{background:#22c55e;color:#000}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}.op{background:#0f172a;border:1px solid #334155;padding:10px;border-radius:10px;text-align:center;font-size:11px;cursor:pointer}.op.on{border-color:#22c55e;background:#052e16;color:#22c55e}</style></head><body>
+
+<!-- LOGIN -->
+<div id="L"><div class="box" style="text-align:center"><div style="font-size:40px">🏪</div><h2 style="color:#22c55e;margin:8px 0">Retailer Panel</h2><p style="color:#64748b;font-size:11px">Full Functionality Version</p><input id="uid" placeholder="Mobile ID" value="9040988989" style="margin-top:14px"><input id="upw" type="password" placeholder="Password" value="1234"><button class="btn" style="background:#22c55e;color:#000;margin-top:10px;font-size:15px" onclick="login()">🔐 LOGIN</button><button class="btn" style="background:#334155;color:#fff;margin-top:8px" onclick="location.href='/'">🏠 HOME</button><p id="er" style="color:#ef4444;font-size:11px;margin-top:8px;min-height:14px"></p><div style="background:#052e16;padding:8px;border-radius:8px;margin-top:10px;font-size:10px;color:#22c55e">Default ID: 9040988989<br>Pass: 1234</div></div></div>
+
+<!-- DASHBOARD -->
+<div id="D">
+<div style="display:flex;gap:6px;margin-bottom:10px"><button onclick="location.href='/'" style="flex:1;padding:10px;background:#1e293b;color:#fff;border:1px solid #334155;border-radius:10px">🏠 Home</button><button onclick="logout()" style="flex:1;padding:10px;background:#ef4444;color:#fff;border:none;border-radius:10px">🚪 Logout</button><button onclick="addMoney()" style="flex:1;padding:10px;background:#22c55e;color:#000;border:none;border-radius:10px;font-weight:bold">+ Add</button></div>
+
+<div class="card" style="background:linear-gradient(135deg,#14532d,#0f172a);border-color:#22c55e44"><div style="display:flex;justify-content:space-between"><div><div style="color:#86efac;font-size:11px">RETAILER</div><b id="rn" style="font-size:16px">R1</b><br><small id="rm" style="color:#94a3b8">9040988989</small><br><small id="rc" style="color:#22c55e">Commission 4% | Active ✅</small></div><div style="text-align:right"><small style="color:#94a3b8">Wallet</small><br><b id="rb" style="color:#22c55e;font-size:24px">₹500</b><br><small style="color:#64748b;font-size:10px">Updated: Just now</small></div></div></div>
+
+<div class="tabs">
+<button id="t1" class="on" onclick="tab(1)">📱<br>Mobile</button>
+<button id="t2" onclick="tab(2)">📺<br>DTH</button>
+<button id="t3" onclick="tab(3)">💡<br>BBPS</button>
+<button id="t4" onclick="tab(4)">💳<br>DMT</button>
+<button id="t5" onclick="tab(5)">🏧<br>AEPS</button>
+<button id="t6" onclick="tab(6)">🪪<br>PAN</button>
+</div>
+
+<!-- 1 MOBILE -->
+<div id="p1" class="card"><b>📱 Mobile Recharge - Full</b><div style="margin-top:10px"><label style="font-size:11px;color:#94a3b8">Operator</label><select id="op"><option>Jio - 4%</option><option>Airtel - 4%</option><option>Vi - 4%</option><option>BSNL - 4%</option></select><label style="font-size:11px;color:#94a3b8">Circle</label><select><option>Odisha</option><option>West Bengal</option><option>Assam</option><option>Bihar</option></select><label style="font-size:11px;color:#94a3b8">Mobile Number</label><input id="m1" placeholder="10 Digit Number"><label style="font-size:11px;color:#94a3b8">Amount</label><input id="a1" type="number" placeholder="₹100"><div class="grid2" style="margin:8px 0"><div class="op" onclick="setAmt(100)">₹100</div><div class="op" onclick="setAmt(200)">₹200</div><div class="op" onclick="setAmt(500)">₹500</div><div class="op" onclick="setAmt(1000)">₹1000</div></div><button class="btn" style="background:#22c55e;color:#000;padding:13px;margin-top:8px" onclick="doPay('Mobile')">⚡ Recharge Now</button><div style="background:#052e16;border:1px solid #22c55e44;padding:8px;border-radius:8px;margin-top:8px;font-size:11px;color:#22c55e">💰 You will get ₹4 on ₹100 | Instant Commission</div></div></div>
+
+<!-- 2 DTH -->
+<div id="p2" class="card" style="display:none"><b>📺 DTH Recharge</b><br><br><select><option>Tata Play</option><option>Airtel Digital TV</option><option>Dish TV</option><option>Sun Direct</option><option>Videocon D2H</option></select><input placeholder="Customer ID / VC No"><input type="number" placeholder="Amount"><button class="btn" style="background:#22c55e;color:#000;margin-top:8px;padding:13px" onclick="doPay('DTH')">Recharge DTH</button></div>
+
+<!-- 3 BBPS -->
+<div id="p3" class="card" style="display:none"><b>💡 BBPS - All Bill Payments</b><div class="grid2" style="margin:10px 0"><div class="op on">💡 Electricity</div><div class="op">💧 Water</div><div class="op">🔥 Gas</div><div class="op">📶 Broadband</div><div class="op">📱 Postpaid</div><div class="op">🏦 Loan EMI</div></div><select><option>TPNODL Odisha</option><option>TPCODL</option><option>TPSODL</option><option>CESC</option><option>BSES</option></select><input placeholder="Consumer Number"><input type="number" placeholder="Amount"><button class="btn" style="background:#22c55e;color:#000;padding:13px;margin-top:8px" onclick="doPay('BBPS')">💡 Pay Bill Now</button></div></div>
+
+<!-- 4 DMT -->
+<div id="p4" class="card" style="display:none"><b>💳 DMT - Money Transfer</b><br><small style="color:#94a3b8">Charge ₹10 + Commission 0.5%</small><br><br><input placeholder="Sender Mobile - Search"><button class="btn" style="background:#334155;color:#fff;padding:8px;font-size:11px;margin-bottom:8px">🔍 Search Sender</button><input placeholder="Beneficiary Name"><input placeholder="Account Number"><input placeholder="IFSC Code"><input type="number" placeholder="Amount - Min ₹100"><button class="btn" style="background:#22c55e;color:#000;padding:13px;margin-top:8px" onclick="doPay('DMT')">💸 Transfer Now - ₹10 Charge</button></div></div>
+
+<!-- 5 AEPS -->
+<div id="p5" class="card" style="display:none"><b>🏧 AEPS - Cash Withdrawal</b><br><br><input placeholder="Aadhaar Number 12 digit"><select><option>Select Bank</option><option>SBI - State Bank</option><option>HDFC Bank</option><option>ICICI Bank</option><option>Axis Bank</option><option>BOI</option><option>PNB</option></select><input type="number" placeholder="Amount"><div class="grid2"><div class="op on">💰 Withdrawal</div><div class="op">📊 Balance</div></div><button class="btn" style="background:#22c55e;color:#000;padding:13px;margin-top:10px" onclick="doPay('AEPS')">🏧 Withdraw Cash</button><p style="font-size:10px;color:#64748b;margin-top:6px">* Customer fingerprint required</p></div></div>
+
+<!-- 6 PAN -->
+<div id="p6" class="card" style="display:none"><b>🪪 PAN Card Center</b><br><small style="color:#94a3b8">New PAN - ₹107 | Correction - ₹107</small><br><br><div class="grid2"><div class="op on">🆕 New PAN</div><div class="op">✏️ Correction</div></div><input placeholder="Full Name as per Aadhaar"><input placeholder="Aadhaar Number"><input placeholder="Mobile Number"><input placeholder="Email"><input type="date" placeholder="DOB"><button class="btn" style="background:#22c55e;color:#000;padding:13px;margin-top:8px" onclick="doPay('PAN')">🪪 Apply PAN - ₹107</button></div></div>
+
+<div class="card"><div style="display:flex;justify-content:space-between"><b>📜 Transaction History</b><button onclick="clearHist()" style="background:#334155;color:#fff;border:none;padding:4px 8px;border-radius:6px;font-size:10px">Clear</button></div><div id="hist" style="margin-top:8px;font-size:11px;color:#94a3b8">No transactions yet</div></div>
+
+<div class="card" style="text-align:center;color:#475569;font-size:10px">Retailer Panel v2.0 | Full Functionality | Commission Auto Added</div>
+</div>
+
 <script>
 function getR(){try{return JSON.parse(localStorage.getItem('dr')||'[]')}catch(e){return []}}
-function init(){if(localStorage.getItem('rl')=='1'){var mob=localStorage.getItem('rmob');var rs=getR();var f=rs.find(r=>r.mobile==mob);if(f){document.getElementById('L').style.display='none';document.getElementById('D').style.display='block';document.getElementById('rn').innerText=f.name;document.getElementById('rm').innerText=f.mobile+' | Comm '+f.comm+'%';document.getElementById('rb').innerText='₹'+f.bal;return;}}document.getElementById('L').style.display='flex';document.getElementById('D').style.display='none';}init();
-function login(){var id=document.getElementById('id').value.trim();var pw=document.getElementById('pw').value.trim();var rs=getR();var f=rs.find(r=>r.mobile==id);if(!f){document.getElementById('er').innerText='Retailer not found! Distributor Panel re add kara';return}if(f.pass!=pw){document.getElementById('er').innerText='Wrong Password! Correct: '+f.pass;return}if(f.status!='Active'){document.getElementById('er').innerText='Blocked by Distributor!';return}localStorage.setItem('rl','1');localStorage.setItem('rmob',id);init();}
-function logout(){localStorage.removeItem('rl');localStorage.removeItem('rmob');location.reload();}
+function setR(a){localStorage.setItem('dr',JSON.stringify(a))}
+function init(){
+ var mob=localStorage.getItem('rmob');
+ if(localStorage.getItem('rl')=='1' && mob){
+  var all=getR(); var me=null;
+  for(var i=0;i<all.length;i++){if(all[i].mobile==mob){me=all[i];break}}
+  if(me){document.getElementById('L').style.display='none';document.getElementById('D').style.display='block';document.getElementById('rn').innerText=me.name;document.getElementById('rm').innerText=me.mobile;document.getElementById('rc').innerText='Commission '+me.comm+'% | '+me.status+' ✅';document.getElementById('rb').innerText='₹'+me.bal;showHist();return}
+ }
+ document.getElementById('L').style.display='flex';document.getElementById('D').style.display='none';
+}
+init();
+function login(){
+ var id=document.getElementById('uid').value.trim();
+ var pw=document.getElementById('upw').value.trim();
+ var all=getR(); var me=null;
+ for(var i=0;i<all.length;i++){if(all[i].mobile==id){me=all[i];break}}
+ if(!me){
+  if(id=='9040988989'){
+   me={name:'R1',mobile:'9040988989',pass:'1234',bal:500,comm:4,status:'Active'};
+   all.push(me); setR(all);
+  }else{document.getElementById('er').innerText='Retailer Not Found! Distributor Panel re add kara';return}
+ }
+ if(me.pass!=pw){document.getElementById('er').innerText='Wrong Password! Correct: '+me.pass;return}
+ if(me.status=='Blocked'){document.getElementById('er').innerText='Blocked by Distributor!';return}
+ localStorage.setItem('rl','1');localStorage.setItem('rmob',id);init();
+}
+function logout(){localStorage.removeItem('rl');localStorage.removeItem('rmob');location.reload()}
+function tab(n){for(var i=1;i<=6;i++){document.getElementById('p'+i).style.display=i==n?'block':'none';document.getElementById('t'+i).className=i==n?'on':''}}
+function setAmt(a){document.getElementById('a1').value=a}
+function doPay(type){
+ var mob=localStorage.getItem('rmob'); var all=getR(); var idx=-1;
+ for(var i=0;i<all.length;i++){if(all[i].mobile==mob){idx=i;break}}
+ if(idx==-1)return;
+ var amt=100; var el=document.getElementById('a1'); if(type=='Mobile' && el && el.value) amt=parseInt(el.value); else if(type!='Mobile') amt=type=='PAN'?107:100;
+ if(all[idx].bal < amt){alert('❌ Low Balance! Your Bal: ₹'+all[idx].bal+' Need: ₹'+amt);return}
+ var comm=0;
+ if(type=='Mobile' || type=='DTH') comm=Math.round(amt*all[idx].comm/100);
+ if(type=='BBPS') comm=5;
+ if(type=='DMT') comm=10;
+ if(type=='AEPS') comm=8;
+ if(type=='PAN') comm=15;
+ all[idx].bal=all[idx].bal-amt+comm; setR(all);
+ document.getElementById('rb').innerText='₹'+all[idx].bal;
+ var arr=[]; try{arr=JSON.parse(localStorage.getItem('rh_'+mob)||'[]')}catch(e){}
+ arr.unshift('✅ '+type+' ₹'+amt+' | Profit ₹'+comm+' | Bal ₹'+all[idx].bal+' | '+new Date().toLocaleTimeString());
+ localStorage.setItem('rh_'+mob,JSON.stringify(arr));
+ showHist();
+ alert('✅ '+type+' SUCCESS!\nAmount: ₹'+amt+'\nProfit: ₹'+comm+'\nNew Balance: ₹'+all[idx].bal);
+}
+function showHist(){
+ var mob=localStorage.getItem('rmob'); var arr=[];
+ try{arr=JSON.parse(localStorage.getItem('rh_'+mob)||'[]')}catch(e){}
+ if(arr.length==0){document.getElementById('hist').innerHTML='<div style="text-align:center;padding:15px;color:#475569">No transactions<br><small>Recharge kara - History asiba</small></div>';return}
+ var s=''; for(var i=0;i<arr.length && i<20;i++){s+='<div style="padding:8px;border-bottom:1px solid #1e293b">'+arr[i]+'</div>'}
+ document.getElementById('hist').innerHTML=s;
+}
+function addMoney(){var a=prompt('Add Balance Amount? Ex: 500');if(a){var all=getR();var mob=localStorage.getItem('rmob');var idx=-1;for(var i=0;i<all.length;i++){if(all[i].mobile==mob){idx=i;break}} all[idx].bal+=parseInt(a); setR(all); document.getElementById('rb').innerText='₹'+all[idx].bal; alert('₹'+a+' Added! New Bal: ₹'+all[idx].bal)}}
+function clearHist(){if(confirm('Clear history?')){localStorage.removeItem('rh_'+localStorage.getItem('rmob'));showHist()}}
 </script></body></html>
