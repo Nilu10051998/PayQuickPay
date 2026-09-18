@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel</title>
+<style>
+body{margin:0;background:#020617;color:#fff;font-family:system-ui;padding:10px}
+.top{background:#1e293b;padding:12px;border-radius:12px;display:flex;justify-content:space-between;font-weight:900}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px 0}
+.g{background:#1e293b;padding:12px;border-radius:10px;text-align:center}
+.g b{color:#22c55e;display:block;font-size:18px}
+.tab{display:flex;gap:6px;overflow:auto;margin:10px 0}
+.tab button{padding:10px 14px;border-radius:8px;border:none;background:#334155;color:#fff}
+.tab button.active{background:#22c55e;color:#000;font-weight:900}
+.card{background:#1e293b;padding:15px;border-radius:12px;margin:10px 0;display:none}
+.card.active{display:block}
+input,select{width:100%;padding:12px;border-radius:8px;margin:6px 0;background:#0f172a;color:#fff;border:1px solid #334155}
+button.b{width:100%;padding:12px;border-radius:8px;background:#22c55e;color:#000;font-weight:900;border:none}
+.it{background:#0f172a;padding:10px;border-radius:8px;margin:6px 0;display:flex;justify-content:space-between}
+</style>
+</head>
+<body>
+<script>
+var ADM=JSON.parse(localStorage.getItem("admin")||"null");
+if(!ADM){location.href="login.html";}
+function doLogout(){localStorage.clear();location.href="login.html";}
+</script>
+<div class="top"><span>ADMIN PANEL</span><button onclick="doLogout()" style="background:#ef4444;color:#fff;border:none;padding:8px 14px;border-radius:6px;font-weight:900">Logout</button></div>
+<div class="grid"><div class="g"><small>Total Retailer</small><b id="cr">0</b></div><div class="g"><small>Wallet Left</small><b id="repSale">Rs 0</b></div><div class="g"><small>Today Sale</small><b id="today">Rs 0</b></div></div>
+<div class="tab"><button class="active" onclick="sh(1)" id="b1">Add Balance</button><button onclick="sh(2)" id="b2">Create ID</button><button onclick="sh(3)" id="b3">Setup</button><button onclick="sh(4)" id="b4">Block</button><button onclick="sh(5)" id="b5">History</button><button onclick="sh(6)" id="b6">Report</button></div>
+<div id="c1" class="card active"><h3>Add Balance</h3><select id="balType"><option value="retailers">Retailer</option><option value="distributors">Dist</option></select><input id="balMob" placeholder="Mobile"><input id="balAmt" type="number" placeholder="Amount"><button class="b" onclick="addBal()">ADD NOW</button><p id="balMsg"></p></div>
+<div id="c2" class="card"><h3>Create ID</h3><select id="crType"><option value="retailers">Retailer</option><option value="distributors">Dist</option></select><input id="crMob" placeholder="Mobile"><input id="crPass" placeholder="Pass"><input id="crName" placeholder="Name"><button class="b" onclick="createID()">CREATE</button><p id="crMsg"></p></div>
+<div id="c3" class="card"><h3>Setup</h3><div id="stList"></div></div>
+<div id="c4" class="card"><h3>Block</h3><select id="pType"><option value="retailers">Retailer</option><option value="distributors">Dist</option></select><input id="pMob" placeholder="Mobile"><select id="pStat"><option value="ACTIVE">ACTIVE</option><option value="BLOCKED">BLOCKED</option></select><button class="b" onclick="changePass()">UPDATE</button><p id="pMsg"></p></div>
+<div id="c5" class="card"><h3>History</h3><div id="hList"></div><button class="b" onclick="loadHist()">Refresh</button></div>
+<div id="c6" class="card"><h3>Report</h3><div id="rep"></div></div>
+<script>
+var SURL="https://mojdysebckbodadjdctj.supabase.co";var SKEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vamR5c2ViY2tib2RhZGpkY3RqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0NjMyNjUsImV4cCI6MjEwNTAzOTI2NX0.aoK0cXDCsKZigLUNHXQV6eFClqf7_i91zpw8zrRu0ic";
+function sh(n){for(var i=1;i<=6;i++){document.getElementById("c"+i).className=i==n?"card active":"card";document.getElementById("b"+i).className=i==n?"active":"";}if(n==3)loadService();if(n==5)loadHist();if(n==6)loadRep();}
+async function addBal(){var ty=balType.value,mob=balMob.value,amt=parseInt(balAmt.value);var r=await fetch(SURL+"/rest/v1/"+ty+"?mobile=eq."+mob+"&select=wallet_balance",{headers:{apikey:SKEY,Authorization:"Bearer "+SKEY}});var d=await r.json();if(!d.length){alert("ID nahi");return}var nb=d[0].wallet_balance+amt;await fetch(SURL+"/rest/v1/"+ty+"?mobile=eq."+mob,{method:"PATCH",headers:{apikey:SKEY,Authorization:"Bearer "+SKEY,"Content-Type":"application/json"},body:JSON.stringify({wallet_balance:nb})});balMsg.innerText="Done Rs"+nb;}
+async function createID(){var ty=crType.value,m=cMob.value,p=cPass.value,n=cName.value;await fetch(SURL+"/rest/v1/"+ty,{method:"POST",headers:{apikey:SKEY,Authorization:"Bearer "+SKEY,"Content-Type":"application/json"},body:JSON.stringify({mobile:m,password:p,name:n,wallet_balance:0,status:"ACTIVE"})});cMsg.innerText="Created "+m;}
+async function loadService(){var r=await fetch(SURL+"/rest/v1/services?select=*",{headers:{apikey:SKEY,Authorization:"Bearer "+SKEY}});var d=await r.json();var h="";for(var i=0;i<d.length;i++)h+="<div class=it><span>"+d[i].name+"</span><span>"+d[i].status+"</span></div>";stList.innerHTML=h;}
+async function changePass(){var ty=pType.value,m=pMob.value,s=pStat.value;await fetch(SURL+"/rest/v1/"+ty+"?mobile=eq."+m,{method:"PATCH",headers:{apikey:SKEY,Authorization:"Bearer "+SKEY,"Content-Type":"application/json"},body:JSON.stringify({status:s})});pMsg.innerText="Updated";}
+async function loadHist(){var r=await fetch(SURL+"/rest/v1/recharge_history?select=*&order=created_at.desc&limit=20",{headers:{apikey:SKEY,Authorization:"Bearer "+SKEY}});var d=await r.json();var h="";for(var i=0;i<d.length;i++)h+="<div class=it><span>Rs"+d[i].amount+" - "+d[i].mobile_number+"</span><span>"+d[i].status+"</span></div>";hList.innerHTML=h;}
+async function loadRep(){var r1=await fetch(SURL+"/rest/v1/retailers?select=id",{headers:{apikey:SKEY,Authorization:"Bearer "+SKEY}});var d1=await r1.json();cr.innerText=d1.length;}
+loadRep();
+</script>
+</body>
+</html>
