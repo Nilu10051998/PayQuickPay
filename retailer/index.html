@@ -1,33 +1,102 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Retailer Dashboard - LIVE</title>
+<title>Retailer - PayQuickPay</title>
 <style>
-body{margin:0;background:#020617;color:#fff;font-family:system-ui;display:flex;justify-content:center;padding:14px}
-.card{background:#1e293b;width:100%;max-width:430px;border-radius:22px;padding:18px}
-.top{background:linear-gradient(135deg,#22c55e,#16a34a);color:#000;text-align:center;padding:22px;border-radius:18px}
-#bal{font-size:48px;font-weight:900}
-#shop{font-weight:700}
-#log{background:#000;color:#22c55e;padding:10px;border-radius:10px;margin:12px 0}
-input,select{width:100%;padding:15px;border-radius:14px;border:none;background:#0f172a;color:#fff;margin:6px 0}
-button{background:#22c55e;color:#000;font-weight:900;border:none;padding:12px;border-radius:12px;width:100%;margin:7px 0;font-size:18px}
-</style></head><body><div class="card">
-<div class="top"><div id="bal">Rs 4792</div><div id="shop">PayQuickPay | LIVE OK</div></div>
-<div id="log">SUCCESS Rs 4792 | Ready for recharge</div>
-<select id="opr"><option>Jio</option><option>Airtel</option><option>Vi</option><option>BSNL</option></select>
-<input id="mob" placeholder="Customer Mobile">
-<input id="amt" type="number" placeholder="Amount">
-<button onclick="recharge()">RECHARGE NOW</button>
+body{margin:0;background:#020617;color:#fff;font-family:system-ui}
+.top{background:#0f172a;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:99;border-bottom:1px solid #1e293b}
+.bal{background:#22c55e;color:#000;padding:6px 14px;border-radius:20px;font-weight:900;font-size:14px}
+.live{font-size:10px;background:#22c55e;color:#000;padding:3px 8px;border-radius:10px;font-weight:800}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:12px}
+.card{background:#1e293b;padding:16px 6px;border-radius:16px;text-align:center;border:1px solid #334155;cursor:pointer}
+.card:active{transform:scale(.95)} .card span{font-size:24px} .card p{margin:6px 0 0;font-size:11px;font-weight:600}
+h4{padding:0 16px;margin:18px 0 6px;color:#94a3b8;font-size:12px;letter-spacing:1px}
+#box{display:none;padding:16px;background:#1e293b;margin:12px;border-radius:18px;border:1px solid #22c55e;position:fixed;bottom:0;left:0;right:0}
+input,select{width:100%;padding:13px;border-radius:12px;border:none;background:#0f172a;color:#fff;margin:6px 0;box-sizing:border-box;outline:none}
+.btn{width:100%;padding:14px;background:#22c55e;color:#000;font-weight:900;border:none;border-radius:12px;margin-top:6px}
+.close{float:right;background:#334155;color:#fff;border:none;padding:4px 10px;border-radius:10px}
+.hist{padding:12px} .h-item{background:#1e293b;padding:10px 12px;border-radius:10px;margin:6px 0;display:flex;justify-content:space-between;font-size:13px}
+</style></head><body>
+
+<div class="top">
+<b>PayQuickPay</b>
+<div>
+<span class="live">● LIVE</span>
+<span class="bal" id="bal">Rs 4792</span>
+<button onclick="logout()" style="background:#ef4444;color:#fff;border:none;padding:6px 12px;border-radius:20px;font-weight:800;margin-left:6px">Logout</button>
 </div>
+</div>
+
+<h4>RECHARGE & BBPS - SBU WORKING</h4>
+<div class="grid">
+<div class="card" onclick="openR('📱 Mobile Recharge')"><span>📱</span><p>Mobile</p></div>
+<div class="card" onclick="openR('📺 DTH Recharge')"><span>📺</span><p>DTH</p></div>
+<div class="card" onclick="openR('💡 Electricity')"><span>💡</span><p>Electricity</p></div>
+<div class="card" onclick="openR('💧 Water Bill')"><span>💧</span><p>Water</p></div>
+<div class="card" onclick="openR('🔥 Gas Bill')"><span>🔥</span><p>Gas</p></div>
+<div class="card" onclick="openR('🌐 Broadband')"><span>🌐</span><p>Broadband</p></div>
+<div class="card" onclick="openR('🚗 FASTag')"><span>🚗</span><p>FASTag</p></div>
+<div class="card" onclick="openR('🛡️ LIC Premium')"><span>🛡️</span><p>LIC</p></div>
+<div class="card" onclick="openR('🏦 Loan EMI')"><span>🏦</span><p>Loan</p></div>
+</div>
+
+<h4>BANKING & TRAVEL - SBU WORKING</h4>
+<div class="grid">
+<div class="card" onclick="openR('💳 AEPS Withdraw')"><span>💳</span><p>AEPS</p></div>
+<div class="card" onclick="openR('💸 Money Transfer')"><span>💸</span><p>DMT</p></div>
+<div class="card" onclick="openR('🪪 PAN Card')"><span>🪪</span><p>PAN</p></div>
+<div class="card" onclick="openR('🆔 Aadhaar Service')"><span>🆔</span><p>Aadhaar</p></div>
+<div class="card" onclick="openR('✈️ Flight Booking')"><span>✈️</span><p>Flight</p></div>
+<div class="card" onclick="openR('🚌 Bus Booking')"><span>🚌</span><p>Bus</p></div>
+<div class="card" onclick="openR('🏨 Hotel Booking')"><span>🏨</span><p>Hotel</p></div>
+<div class="card" onclick="openR('🛡️ Insurance')"><span>🛡️</span><p>Insurance</p></div>
+<div class="card" onclick="openR('💰 Credit Card Bill')"><span>💰</span><p>Credit Card</p></div>
+</div>
+
+<div class="hist">
+<h4>RECENT TRANSACTION</h4>
+<div id="history"><div style="color:#64748b;font-size:12px">Kichi transaction nahi - service use kara</div></div>
+</div>
+
+<div id="box">
+<button class="close" onclick="closeBox()">X</button>
+<h3 id="sName" style="margin:0 0 10px">Recharge</h3>
+<input id="cNum" placeholder="Mobile No / Customer ID / Policy No">
+<select id="op"><option>Jio</option><option>Airtel</option><option>Vi</option><option>BSNL</option><option>Tata Power</option><option>TPCODL</option></select>
+<input id="amt" type="number" placeholder="Amount Rs">
+<button class="btn" onclick="doR()">PAY NOW</button>
+<p id="msg" style="text-align:center"></p>
+</div>
+
 <script>
-let balance=4792;
-function recharge(){
-let m=document.getElementById('mob').value;
-let a=parseInt(document.getElementById('amt').value);
-if(m.length!=10){alert('10 digit mobile');return}
-if(a>balance){alert('Low balance');return}
-balance=balance-a;
-document.getElementById('bal').innerText='Rs '+balance;
-document.getElementById('log').innerText='SUCCESS Rs '+a+' to '+m+' | Balance Rs '+balance;
-alert('Recharge Success Rs '+a);
+let bal = 4792;
+let transactions = [];
+function openR(name){
+document.getElementById('sName').innerText=name;
+document.getElementById('box').style.display='block';
+document.getElementById('msg').innerHTML='';
 }
-</script></body></html>
+function closeBox(){document.getElementById('box').style.display='none'}
+function doR(){
+let num=document.getElementById('cNum').value;
+let amt=parseInt(document.getElementById('amt').value);
+let service=document.getElementById('sName').innerText;
+if(!num||!amt){alert('Number aau Amount dia bhai');return}
+if(amt>bal){alert('Balance kami achi! Rs '+bal+' achi');return}
+bal-=amt;
+document.getElementById('bal').innerText='Rs '+bal;
+document.getElementById('msg').innerHTML='<b style=color:#22c55e>✓ SUCCESS!</b><br><span style=font-size:12px>'+service+' - Rs '+amt+' - '+num+'</span>';
+let time=new Date().toLocaleTimeString();
+transactions.unshift({s:service,a:amt,n:num,t:time});
+let html='';
+transactions.slice(0,5).forEach(tr=>{
+html+='<div class=h-item><span>'+tr.s+'<br><small style=color:#94a3b8>'+tr.n+' | '+tr.t+'</small></span><b style=color:#22c55e>-Rs '+tr.a+'</b></div>';
+});
+document.getElementById('history').innerHTML=html;
+setTimeout(closeBox,2000);
+}
+function logout(){
+localStorage.clear();
+location.href='/retailer.html';
+}
+</script>
+</body></html>
