@@ -70,33 +70,65 @@ input,select{width:100%;padding:13px;border-radius:12px;border:none;background:#
 <script>
 let bal = 4792;
 let transactions = [];
+
+const serviceConfig = {
+"Mobile": {ph:"Mobile Number", op:["Jio","Airtel","Vi","BSNL"], amt:true},
+"DTH": {ph:"Customer ID / VC No", op:["Tata Play","Airtel DTH","Dish TV","Sun Direct"], amt:true},
+"Electricity": {ph:"Consumer No", op:["TPCODL","TPWODL","TPSODL","TPNODL"], amt:true},
+"Water": {ph:"Water Connection ID", op:["PHE Dept","Municipality"], amt:true},
+"Gas": {ph:"Gas Consumer No", op:["Indane","Bharat Gas","HP Gas"], amt:true},
+"Broadband": {ph:"Broadband ID / Mobile", op:["Jio Fiber","Airtel Xstream","BSNL"], amt:true},
+"FASTag": {ph:"Vehicle No", op:["HDFC FASTag","ICICI FASTag","Paytm"], amt:true},
+"LIC": {ph:"Policy Number", op:["LIC Premium"], amt:true},
+"Loan": {ph:"Loan Account No", op:["Bajaj Finance","HDFC Loan"], amt:true},
+"AEPS": {ph:"Aadhaar Number", op:["Cash Withdrawal","Balance Enquiry","Mini Statement"], amt:true},
+"DMT": {ph:"Beneficiary Account No", op:["IMPS","NEFT"], amt:true},
+"PAN": {ph:"Aadhaar No for PAN", op:["New PAN","Correction"], amt:false, fixed:107},
+"Aadhaar": {ph:"Mobile Linked to Aadhaar", op:["Address Update","Mobile Update"], amt:false, fixed:50},
+"Flight": {ph:"From - To (BBSR-DEL)", op:["IndiGo","Air India","SpiceJet"], amt:true},
+"Bus": {ph:"From - To", op:["OSRTC","Private Bus"], amt:true},
+"Hotel": {ph:"City Name", op:["1 Night","2 Nights"], amt:true},
+"Insurance": {ph:"Policy No", op:["Health Insurance","Bike Insurance"], amt:true},
+"Credit Card": {ph:"Credit Card No", op:["HDFC","SBI","ICICI"], amt:true}
+}
+
 function openR(name){
 document.getElementById('sName').innerText=name;
+let key = Object.keys(serviceConfig).find(k=>name.includes(k));
+let cfg = serviceConfig[key] || {ph:"Number / ID", op:["General"], amt:true};
+
+document.getElementById('cNum').placeholder = cfg.ph;
+let opSelect = document.getElementById('op');
+opSelect.innerHTML = '';
+cfg.op.forEach(o=>{ let opt=document.createElement('option'); opt.text=o; opSelect.add(opt) });
+
+if(cfg.fixed){
+document.getElementById('amt').value=cfg.fixed;
+document.getElementById('amt').placeholder='Fixed Rs '+cfg.fixed;
+}else{
+document.getElementById('amt').value='';
+document.getElementById('amt').placeholder='Amount Rs';
+}
 document.getElementById('box').style.display='block';
 document.getElementById('msg').innerHTML='';
 }
+
 function closeBox(){document.getElementById('box').style.display='none'}
 function doR(){
 let num=document.getElementById('cNum').value;
 let amt=parseInt(document.getElementById('amt').value);
 let service=document.getElementById('sName').innerText;
-if(!num||!amt){alert('Number aau Amount dia bhai');return}
-if(amt>bal){alert('Balance kami achi! Rs '+bal+' achi');return}
+if(!num||!amt){alert('Details dia bhai');return}
+if(amt>bal){alert('Balance kami! Rs '+bal);return}
 bal-=amt;
 document.getElementById('bal').innerText='Rs '+bal;
-document.getElementById('msg').innerHTML='<b style=color:#22c55e>✓ SUCCESS!</b><br><span style=font-size:12px>'+service+' - Rs '+amt+' - '+num+'</span>';
-let time=new Date().toLocaleTimeString();
-transactions.unshift({s:service,a:amt,n:num,t:time});
-let html='';
-transactions.slice(0,5).forEach(tr=>{
-html+='<div class=h-item><span>'+tr.s+'<br><small style=color:#94a3b8>'+tr.n+' | '+tr.t+'</small></span><b style=color:#22c55e>-Rs '+tr.a+'</b></div>';
+document.getElementById('msg').innerHTML='<b style=color:#22c55e>✓ '+service+' SUCCESS Rs '+amt+'</b>';
+transactions.unshift({s:service,a:amt,n:num,t:new Date().toLocaleTimeString()});
+let html='';transactions.slice(0,5).forEach(tr=>{
+html+='<div class=h-item><span>'+tr.s+'<br><small style=color:#94a3b8>'+tr.n+'</small></span><b style=color:#22c55e>-Rs '+tr.a+'</b></div>';
 });
 document.getElementById('history').innerHTML=html;
 setTimeout(closeBox,2000);
 }
-function logout(){
-localStorage.clear();
-location.href='/retailer.html';
-}
+function logout(){localStorage.clear();location.href='/retailer.html';}
 </script>
-</body></html>
