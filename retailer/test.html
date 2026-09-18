@@ -1,7 +1,0 @@
-<!DOCTYPE html>
-<html><body>Loading...
-<script>
-const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vamR5c2ViY2tib2RhZGpkY3RqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0NjMyNjUsImV4cCI6MjEwNTAzOTI2NX0.aoK0cXDCsKZigLUNHXQV6eFClqf7_i91zpw8zrRu0ic"
-fetch("https://mojdysebckbodadjdctj.supabase.co/rest/v1/retailers?select=*",{headers:{apikey:KEY,Authorization:"Bearer "+KEY}}).then(r=>r.text()).then(t=>document.body.innerHTML="<h2>Result:</h2><pre>"+t+"</pre>")
-</script>
-</body></html>
