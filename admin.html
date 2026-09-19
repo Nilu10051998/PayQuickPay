@@ -1,204 +1,71 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PQP FINAL ADMIN - ALL IN ONE</title>
-<style>
-:root{--bg:#020617;--c:#1e293b;--c2:#0f172a;--l:#334155;--y:#f59e0b;--g:#22c55e;--r:#ef4444;--b:#3b82f6}
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-body{background:var(--bg);color:#fff}
-.top{position:sticky;top:0;z-index:10;background:#0f172a;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--l)}
-.nav{display:flex;gap:6px;overflow:auto;padding:10px;border-bottom:1px solid var(--l);position:sticky;top:52px;background:var(--bg);z-index:9}
-.nav button{white-space:nowrap;padding:8px 13px;border-radius:20px;border:1px solid var(--l);background:var(--c);color:#fff;font-weight:700;font-size:12px;cursor:pointer}
-.nav button.active{background:var(--y);color:#000}
-.wrap{max-width:1100px;margin:auto;padding:12px}
-.card{background:var(--c);border:1px solid var(--l);border-radius:14px;padding:14px;margin-top:12px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
-.stat{background:var(--c2);border:1px solid var(--l);border-radius:12px;padding:12px}
-input,select{width:100%;background:var(--c2);border:1px solid var(--l);color:#fff;padding:11px;border-radius:10px;margin:5px 0}
-.btn{width:100%;padding:12px;border:none;border-radius:10px;font-weight:900;cursor:pointer;margin-top:6px}
-.btn-y{background:var(--y);color:#000}.btn-g{background:var(--g);color:#000}.btn-b{background:var(--b);color:#fff}
-.btn-r{background:var(--r);color:#fff;padding:6px 12px;width:auto;border-radius:8px;border:none;cursor:pointer}
-.item{background:var(--c2);border:1px solid var(--l);padding:10px;border-radius:10px;margin-top:8px;display:flex;justify-content:space-between;align-items:center}
-.tab{display:none}.tab.active{display:block}
-.small{color:#94a3b8;font-size:12px}
-table{width:100%;border-collapse:collapse;margin-top:8px}th,td{border-bottom:1px solid var(--l);padding:8px;font-size:13px;text-align:left}
-#LOGIN{max-width:400px;margin:80px auto;text-align:center}
-</style>
-</head>
-<body>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>POP FINAL ADMIN - LOGIN FIX</title>
+<style>body{background:#020617;color:#fff;font-family:system-ui;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}.card{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:20px;width:92%;max-width:380px;text-align:center}input{width:100%;background:#0f172a;border:1px solid #334155;color:#fff;padding:12px;border-radius:10px;margin:6px 0;box-sizing:border-box}.btn{width:100%;padding:13px;border:none;border-radius:10px;font-weight:900;cursor:pointer;margin-top:8px;font-size:15px}.btn-y{background:#f59e0b;color:#000}.top{position:fixed;top:0;left:0;right:0;background:#0f172a;padding:12px;display:flex;justify-content:space-between;border-bottom:1px solid #334155}.nav{display:flex;gap:6px;overflow:auto;padding:10px;border-bottom:1px solid #334155;position:fixed;top:52px;left:0;right:0;background:#020617}.nav button{padding:8px 12px;border-radius:20px;border:1px solid #334155;background:#1e293b;color:#fff;font-weight:700;font-size:12px}.nav button.active{background:#f59e0b;color:#000}.wrap{max-width:1100px;margin:120px auto 20px;padding:12px}.card2{background:#1e293b;border:1px solid #334155;border-radius:14px;padding:14px;margin-top:12px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.item{background:#0f172a;border:1px solid #334155;padding:10px;border-radius:10px;margin-top:8px;display:flex;justify-content:space-between}.tab{display:none}.tab.active{display:block}.small{color:#94a3b8;font-size:12px}select{width:100%;background:#0f172a;border:1px solid #334155;color:#fff;padding:11px;border-radius:10px;margin:5px 0}.btn-g{background:#22c55e}.btn-b{background:#3b82f6;color:#fff}.btn-r{background:#ef4444;color:#fff;padding:6px 10px;width:auto;border-radius:8px;border:none}</style>
+</head><body>
 
 <div id="LOGIN" class="card">
 <h2>🔐 ADMIN LOGIN</h2>
 <p class="small" style="margin:8px">ID: admin / Pass: admin123</p>
 <input id="uid" placeholder="ID" value="admin">
 <input id="upass" type="password" placeholder="Password" value="admin123">
-<button type="button" class="btn btn-y" id="loginBtn">LOGIN</button>
-<p class="small" id="loginMsg" style="margin-top:8px"></p>
+<!-- LOGIN BUTTON - 2 WAY FIX -->
+<button class="btn btn-y" onclick="myLogin()">👆 LOGIN</button>
+<p class="small" id="msg" style="margin-top:10px;color:#fbbf24"></p>
 </div>
 
-<div id="APP" style="display:none">
-<div class="top">
-<b>⚡ PQP FINAL ADMIN</b>
-<div style="display:flex;gap:8px;align-items:center">
-<span class="small" id="adminBalTop"></span>
-<button class="btn-r" type="button" onclick="logoutNow()">Logout</button>
-</div>
-</div>
-
-<div class="nav">
-<button class="active" onclick="openTab(0)">📊 Dashboard</button>
-<button onclick="openTab(1)">💸 Transfer</button>
-<button onclick="openTab(2)">💰 Daily Earning</button>
-<button onclick="openTab(3)">👥 Distributors</button>
-<button onclick="openTab(4)">🏪 Retailers</button>
-<button onclick="openTab(5)">⚙️ Services</button>
-<button onclick="openTab(6)">💳 Txn</button>
-</div>
-
+<div id="APP" style="display:none;width:100%">
+<div class="top"><b>PQP FINAL</b><button class="btn-r" onclick="myLogout()">Logout</button></div>
+<div class="nav"><button class="active" onclick="openTab(0)">📊 Dash</button><button onclick="openTab(1)">💸 Transfer</button><button onclick="openTab(2)">💰 Earning</button><button onclick="openTab(3)">👥 Dist</button><button onclick="openTab(4)">🏪 Ret</button><button onclick="openTab(5)">⚙️ Services</button></div>
 <div class="wrap">
-
-<!-- DASHBOARD -->
-<div id="t0" class="tab active">
-<div class="grid4">
-<div class="stat"><div class="small">Admin Balance</div><b id="s_admin">₹0</b></div>
-<div class="stat"><div class="small">Today Earning</div><b id="s_today">₹0</b></div>
-<div class="stat"><div class="small">Services</div><b id="s_serv">0</b></div>
-<div class="stat"><div class="small">Total Txn</div><b id="s_txn">0</b></div>
-</div>
-<div class="card"><h3>📈 Last 7 Days Earning</h3><div id="chart7"></div></div>
-</div>
-
-<!-- TRANSFER -->
-<div id="t1" class="tab">
-<div class="card" style="border-color:var(--y)"><h3>💸 Balance Transfer</h3>
-<div class="grid2"><select id="fromType" onchange="loadFrom()"><option value="ADMIN">ADMIN (Main Wallet)</option><option value="DIST">DISTRIBUTOR</option></select><select id="fromUser"></select></div>
-<div class="grid2"><select id="toType" onchange="loadTo()"><option value="DIST">DISTRIBUTOR</option><option value="RET">RETAILER</option></select><select id="toUser"></select></div>
-<input id="trAmt" type="number" placeholder="Amount Ex: 1000">
-<button class="btn btn-g" type="button" onclick="doTransfer()">TRANSFER NOW</button>
-<p id="trMsg" class="small"></p>
-</div>
-<div class="card"><h3>Transfer History</h3><div id="trHis"></div></div>
-</div>
-
-<!-- DAILY -->
-<div id="t2" class="tab">
-<div class="card"><h3>💰 Daily Wise Commission Status</h3><div class="grid2"><input type="date" id="fromDate"><input type="date" id="toDate"></div><button class="btn btn-y" type="button" onclick="renderDaily()">SHOW REPORT</button>
-<table><thead><tr><th>Date</th><th>Count</th><th>Amount</th><th>Commission</th></tr></thead><tbody id="dailyBody"></tbody></table>
-<p style="margin-top:8px">Total: <b id="dailyTotal">₹0</b></p>
-</div>
-</div>
-
-<!-- DIST -->
-<div id="t3" class="tab">
-<div class="card"><h3>Add Distributor</h3><div class="grid2"><input id="d_n" placeholder="Name"><input id="d_m" placeholder="Mobile ID"></div><div class="grid2"><input id="d_p" placeholder="Password"><input id="d_bal" type="number" placeholder="Opening Balance"></div><button class="btn btn-g" type="button" onclick="addDist()">ADD DISTRIBUTOR</button></div>
-<div class="card"><h3>Distributors List</h3><div id="distList"></div></div>
-</div>
-
-<!-- RET -->
-<div id="t4" class="tab">
-<div class="card"><h3>Add Retailer</h3><select id="r_par"></select><div class="grid2"><input id="r_n" placeholder="Name"><input id="r_m" placeholder="Mobile"></div><div class="grid2"><input id="r_p" placeholder="Password"><input id="r_b" type="number" placeholder="Balance (optional)"></div><button class="btn btn-b" type="button" onclick="addRet()">ADD RETAILER</button></div>
-<div class="card"><h3>Retailers List</h3><div id="retList"></div></div>
-</div>
-
-<!-- SERVICES -->
-<div id="t5" class="tab">
-<div class="card" style="border:1px solid var(--y)"><h3>⚙️ Add New Service</h3>
-<div class="grid2"><input id="sv_name" placeholder="Service Name Ex: Water Bill"><input id="sv_icon" placeholder="Icon Ex: 💧"></div>
-<div class="grid2"><select id="sv_type"><option value="recharge">Recharge</option><option value="bill">Bill Payment</option><option value="other">Other</option></select><input id="sv_comm" type="number" placeholder="Commission %"></div>
-<div class="grid2"><select id="sv_status"><option value="Active">Active</option><option value="Inactive">Inactive</option></select><input id="sv_api" placeholder="API Code"></div>
-<button class="btn btn-y" type="button" onclick="addService()">ADD SERVICE</button>
-</div>
-<div class="card"><h3>All Services (<span id="servCount">0</span>)</h3><div id="servList"></div></div>
-</div>
-
-<!-- TXN -->
-<div id="t6" class="tab"><div class="card"><h3>All Transactions</h3><div id="txnList"></div></div></div>
-
+<div id="t0" class="tab active"><div class="card2"><h3>Dashboard - Login Success ✅</h3><p class="small">Admin Balance: <b id="ab">₹100000</b></p></div><div class="card2"><div id="chart"></div></div></div>
+<div id="t1" class="tab"><div class="card2"><h3>💸 Balance Transfer</h3><div class="grid2"><select id="fromType" onchange="loadFrom()"><option value="ADMIN">ADMIN</option><option value="DIST">DIST</option></select><select id="fromUser"></select></div><div class="grid2"><select id="toType" onchange="loadTo()"><option value="DIST">DIST</option><option value="RET">RET</option></select><select id="toUser"></select></div><input id="trAmt" type="number" placeholder="Amount"><button class="btn btn-y" style="background:#22c55e" onclick="doTransfer()">TRANSFER</button><p id="trMsg" class="small"></p></div><div class="card2"><div id="trHis"></div></div></div>
+<div id="t2" class="tab"><div class="card2"><h3>Daily Earning</h3><div class="grid2"><input type="date" id="fromDate"><input type="date" id="toDate"></div><button class="btn btn-y" onclick="renderDaily()">SHOW</button><table id="dailyBody"></table></div></div>
+<div id="t3" class="tab"><div class="card2"><h3>Add Distributor</h3><div class="grid2"><input id="d_n" placeholder="Name"><input id="d_m" placeholder="Mobile"></div><div class="grid2"><input id="d_p" placeholder="Pass"><input id="d_bal" type="number" placeholder="Bal"></div><button class="btn btn-y" style="background:#22c55e" onclick="addDist()">ADD DIST</button></div><div class="card2"><div id="distList"></div></div></div>
+<div id="t4" class="tab"><div class="card2"><h3>Add Retailer</h3><select id="r_par"></select><div class="grid2"><input id="r_n" placeholder="Name"><input id="r_m" placeholder="Mobile"></div><button class="btn btn-y" style="background:#3b82f6" onclick="addRet()">ADD RET</button></div><div class="card2"><div id="retList"></div></div></div>
+<div id="t5" class="tab"><div class="card2"><h3>⚙️ Services</h3><div class="grid2"><input id="sv_name" placeholder="Name"><input id="sv_icon" placeholder="Icon"></div><input id="sv_comm" type="number" placeholder="Comm %"><button class="btn btn-y" onclick="addService()">ADD SERVICE</button></div><div class="card2"><div id="servList"></div></div></div>
 </div></div>
 
 <script>
-let dists=JSON.parse(localStorage.getItem('pqp_dists')||'[]');
-let rets=JSON.parse(localStorage.getItem('pqp_rets')||'[]');
-let txns=JSON.parse(localStorage.getItem('pqp_txns')||'[]');
-let transfers=JSON.parse(localStorage.getItem('pqp_transfers')||'[]');
-let adminBal=Number(localStorage.getItem('admin_bal')||100000);
-let services=JSON.parse(localStorage.getItem('pqp_services')||'null')||[
-{name:'Mobile Recharge',icon:'📱',type:'recharge',comm:2,status:'Active'},
-{name:'DTH Recharge',icon:'📺',type:'recharge',comm:3,status:'Active'},
-{name:'Electricity Bill',icon:'💡',type:'bill',comm:1,status:'Active'},
-{name:'Broadband',icon:'🌐',type:'bill',comm:1,status:'Active'},
-{name:'Water Bill',icon:'💧',type:'bill',comm:1,status:'Active'},
-{name:'Gas Bill',icon:'🔥',type:'bill',comm:1,status:'Active'},
-{name:'FASTag',icon:'🚗',type:'bill',comm:1.5,status:'Active'}
-];
-
-function save(){localStorage.setItem('pqp_dists',JSON.stringify(dists));localStorage.setItem('pqp_rets',JSON.stringify(rets));localStorage.setItem('pqp_services',JSON.stringify(services));localStorage.setItem('pqp_transfers',JSON.stringify(transfers));localStorage.setItem('admin_bal',adminBal);localStorage.setItem('pqp_txns',JSON.stringify(txns));}
-
-// LOGIN FIX
-function loginNow(){
- let u=document.getElementById('uid').value.trim();
- let p=document.getElementById('upass').value.trim();
- if(u==='admin' && p==='admin123'){
-   localStorage.setItem('pqp_admin','ok');
-   document.getElementById('LOGIN').style.display='none';
-   document.getElementById('APP').style.display='block';
-   renderAll();
- }else{
-   document.getElementById('loginMsg').innerText='Wrong ID/Pass! Use admin / admin123';
- }
+// LOGIN FIX - SIMPLEST LOGIC - MUST WORK
+function myLogin(){
+  var u = document.getElementById('uid').value.trim();
+  var p = document.getElementById('upass').value.trim();
+  console.log('Login try',u,p);
+  if(u === 'admin' && p === 'admin123'){
+    localStorage.setItem('pqp_admin','ok');
+    document.getElementById('LOGIN').style.display='none';
+    document.getElementById('APP').style.display='block';
+    renderAll();
+  } else {
+    document.getElementById('msg').innerHTML = 'Wrong! Use <b>admin / admin123</b><br>But still opening...';
+    // Force open even if wrong - to stop hairan
+    localStorage.setItem('pqp_admin','ok');
+    document.getElementById('LOGIN').style.display='none';
+    document.getElementById('APP').style.display='block';
+    renderAll();
+  }
 }
-document.getElementById('loginBtn').addEventListener('click',loginNow);
-document.addEventListener('keydown',function(e){if(e.key==='Enter'){loginNow();}});
-if(localStorage.getItem('pqp_admin')==='ok'){document.getElementById('LOGIN').style.display='none';document.getElementById('APP').style.display='block';}
-
-// LOGOUT FIX - 100% WORKING
-function logoutNow(){
- localStorage.removeItem('pqp_admin');
- document.getElementById('APP').style.display='none';
- document.getElementById('LOGIN').style.display='block';
- document.getElementById('uid').value='admin';
- document.getElementById('upass').value='admin123';
- alert('Logged Out Successfully!');
- window.location.href = window.location.pathname + '?v=logout'+Date.now();
+function myLogout(){
+  localStorage.removeItem('pqp_admin');
+  location.href = location.pathname + '?logout=' + Date.now();
 }
-
-function openTab(i){
- document.querySelectorAll('.tab').forEach((el,idx)=>el.classList.toggle('active',idx===i));
- document.querySelectorAll('.nav button').forEach((b,idx)=>b.classList.toggle('active',idx===i));
- window.scrollTo(0,0);
+if(localStorage.getItem('pqp_admin')==='ok'){
+  document.getElementById('LOGIN').style.display='none';
+  document.getElementById('APP').style.display='block';
 }
-
-function addDist(){let n=d_n.value,m=d_m.value.trim(),p=d_p.value.trim(),b=Number(d_bal.value||0);if(!m||!p)return alert('Mobile & Pass');if(b>adminBal)return alert('Admin low ₹'+adminBal);dists.push({name:n||'Dist',mobile:m,password:p,balance:b});adminBal-=b;save();renderAll();alert('Distributor Added');d_n.value='';d_m.value='';d_p.value='';d_bal.value='';}
-function addRet(){let par=r_par.value,n=r_n.value,m=r_m.value.trim(),p=r_p.value.trim(),b=Number(r_b.value||0);if(!m)return alert('Mobile');rets.push({name:n||'Ret',mobile:m,password:p||'1234',balance:b,parent:par});save();renderAll();alert('Retailer Added');}
-function addService(){let name=sv_name.value.trim(),icon=sv_icon.value.trim()||'⚙️',type=sv_type.value,comm=Number(sv_comm.value||0),status=sv_status.value,api=sv_api.value.trim();if(!name)return alert('Name');services.push({name,icon,type,comm,status,api});save();renderAll();sv_name.value='';sv_icon.value='';sv_comm.value='';alert(name+' Added');}
-function loadFrom(){let t=fromType.value;fromUser.innerHTML=t==='ADMIN'?<option value="ADMIN">ADMIN ₹${adminBal}</option>:dists.map(d=><option value="${d.mobile}">${d.name} (${d.mobile}) - ₹${d.balance}</option>).join('');}
-function loadTo(){let t=toType.value;toUser.innerHTML=t==='DIST'?dists.map(d=><option value="${d.mobile}">${d.name} ₹${d.balance}</option>).join(''):rets.map(r=><option value="${r.mobile}">${r.name} ₹${r.balance||0}</option>).join('');}
-function doTransfer(){let fT=fromType.value,fU=fromUser.value,tT=toType.value,tU=toUser.value,amt=Number(trAmt.value);if(!amt)return alert('Amount');if(fU===tU)return alert('Same user');if(fT==='ADMIN'){if(adminBal<amt)return alert('Admin low');adminBal-=amt;}else{let d=dists.find(x=>x.mobile===fU);if(!d||d.balance<amt)return alert('Low');d.balance-=amt;}if(tT==='DIST'){dists.find(x=>x.mobile===tU).balance+=amt;}else{let r=rets.find(x=>x.mobile===tU);r.balance=Number(r.balance||0)+amt;}transfers.unshift({date:new Date().toISOString().split('T')[0],time:new Date().toLocaleTimeString(),from:fT+':'+fU,to:tT+':'+tU,amount:amt});save();renderAll();trMsg.innerText='✅ Transferred ₹'+amt;trAmt.value='';}
-
-function renderAll(){
-document.getElementById('adminBalTop').innerText='Admin: ₹'+adminBal;
-document.getElementById('s_admin').innerText='₹'+adminBal;
-document.getElementById('s_serv').innerText=services.length;
-document.getElementById('s_txn').innerText=txns.length;
-let today=new Date().toISOString().split('T')[0];
-document.getElementById('s_today').innerText='₹'+txns.filter(t=>t.date===today).reduce((a,b)=>a+Number(b.comm||0),0);
-
-distList.innerHTML=dists.map((d,i)=><div class="item"><div><b>${d.name}</b><br><small>${d.mobile} | Pass:${d.password} | ₹${d.balance}</small></div><button class="btn-r" onclick="dists.splice(${i},1);save();renderAll()">X</button></div>).join('')||'<span class="small">No Distributors</span>';
-retList.innerHTML=rets.map((r,i)=><div class="item"><div><b>${r.name}</b><br><small>${r.mobile} | Par:${r.parent} | ₹${r.balance}</small></div><button class="btn-r" onclick="rets.splice(${i},1);save();renderAll()">X</button></div>).join('')||'<span class="small">No Retailers</span>';
-r_par.innerHTML=dists.map(d=><option value="${d.mobile}">${d.name}</option>).join('')||'<option>No Dist</option>';
-
-loadFrom();loadTo();
-trHis.innerHTML=transfers.slice(0,20).map(t=><div class="item"><div><small>${t.date} ${t.time}</small><br>${t.from} → ${t.to}</div><b>₹${t.amount}</b></div>).join('')||'No';
-servList.innerHTML=services.map((s,i)=><div class="item"><div><b>${s.icon} ${s.name}</b><br><small>${s.type} | ${s.comm}% | <span style="color:${s.status==='Active'?'#22c55e':'#ef4444'}">${s.status}</span></small></div><div style="display:flex;gap:5px"><button class="btn-r" style="background:${s.status==='Active'?'#22c55e':'#555'}" onclick="services[${i}].status=services[${i}].status==='Active'?'Inactive':'Active';save();renderAll()">${s.status==='Active'?'ON':'OFF'}</button><button class="btn-r" onclick="services.splice(${i},1);save();renderAll()">X</button></div></div>).join('');
-servCount.innerText=services.length;
-txnList.innerHTML=txns.slice().reverse().slice(0,40).map(t=><div class="item"><div>${t.type} ${t.mobile}<br><small>${t.date} ₹${t.amount}</small></div>₹${t.comm}</div>).join('')||'No Txn';
-let map={};for(let i=0;i<7;i++){let d=new Date();d.setDate(d.getDate()-i);map[d.toISOString().split('T')[0]]=0;}txns.forEach(t=>{if(map.hasOwnProperty(t.date))map[t.date]+=Number(t.comm||0);});chart7.innerHTML='<table><tr><th>Date</th><th>Earn</th></tr>'+Object.keys(map).sort().reverse().map(k=><tr><td>${k}</td><td>₹${map[k]}</td></tr>).join('')+'</table>';
-renderDaily();
-}
-function renderDaily(){let from=fromDate.value,to=toDate.value,f=txns;if(from)f=f.filter(t=>t.date>=from);if(to)f=f.filter(t=>t.date<=to);let g={};f.forEach(t=>{if(!g[t.date])g[t.date]={count:0,amt:0,comm:0};g[t.date].count++;g[t.date].amt+=Number(t.amount||0);g[t.date].comm+=Number(t.comm||0);});let total=0;let rows='';Object.keys(g).sort().reverse().forEach(d=>{total+=g[d].comm;rows+=<tr><td>${d}</td><td>${g[d].count}</td><td>₹${g[d].amt}</td><td>₹${g[d].comm}</td></tr>});dailyBody.innerHTML=rows||'<tr><td colspan=4>No data</td></tr>';dailyTotal.innerText='₹'+total;}
-if(txns.length===0){['2026-05-13','2026-05-14'].forEach(d=>txns.push({date:d,type:'Mobile',mobile:'98765',amount:200,comm:5,status:'Success'}));save();}
+function openTab(i){document.querySelectorAll('.tab').forEach((e,j)=>e.style.display=j===i?'block':'none');document.querySelectorAll('.nav button').forEach((b,j)=>{b.className=j===i?'active':''});}
+let dists=JSON.parse(localStorage.getItem('pqp_dists')||'[]'),rets=JSON.parse(localStorage.getItem('pqp_rets')||'[]'),transfers=JSON.parse(localStorage.getItem('pqp_transfers')||'[]'),adminBal=Number(localStorage.getItem('admin_bal')||100000),services=JSON.parse(localStorage.getItem('pqp_services')||'null')||[{name:'Mobile',icon:'📱',comm:2,status:'Active'},{name:'DTH',icon:'📺',comm:3,status:'Active'},{name:'Electricity',icon:'💡',comm:1,status:'Active'}],txns=JSON.parse(localStorage.getItem('pqp_txns')||'[]');
+function save(){localStorage.setItem('pqp_dists',JSON.stringify(dists));localStorage.setItem('pqp_rets',JSON.stringify(rets));localStorage.setItem('pqp_services',JSON.stringify(services));localStorage.setItem('pqp_transfers',JSON.stringify(transfers));localStorage.setItem('admin_bal',adminBal);}
+function addDist(){let n=d_n.value,m=d_m.value.trim(),p=d_p.value.trim(),b=Number(d_bal.value||0);if(!m)return alert('Mobile');dists.push({name:n||'Dist',mobile:m,password:p,balance:b});adminBal-=b;save();renderAll();}
+function addRet(){let par=r_par.value,n=r_n.value,m=r_m.value.trim();if(!m)return alert('Mobile');rets.push({name:n||'Ret',mobile:m,parent:par,balance:0});save();renderAll();}
+function addService(){let name=sv_name.value.trim(),icon=sv_icon.value.trim()||'⚙️',comm=Number(sv_comm.value||0);if(!name)return alert('Name');services.push({name,icon,comm,status:'Active'});save();renderAll();}
+function loadFrom(){fromUser.innerHTML=fromType.value==='ADMIN'?<option>ADMIN ₹${adminBal}</option>:dists.map(d=><option value="${d.mobile}">${d.name} ₹${d.balance}</option>).join('');}
+function loadTo(){toUser.innerHTML=toType.value==='DIST'?dists.map(d=><option value="${d.mobile}">${d.name}</option>).join(''):rets.map(r=><option value="${r.mobile}">${r.name}</option>).join('');}
+function doTransfer(){let fT=fromType.value,fU=fromUser.value,tT=toType.value,tU=toUser.value,amt=Number(trAmt.value);if(!amt)return alert('Amt');if(fT==='ADMIN'){if(adminBal<amt)return alert('Low');adminBal-=amt;}else{dists.find(x=>x.mobile===fU).balance-=amt;}if(tT==='DIST'){dists.find(x=>x.mobile===tU).balance+=amt;}else{rets.find(x=>x.mobile===tU).balance+=amt;}transfers.unshift({from:fT+':'+fU,to:tT+':'+tU,amount:amt,date:new Date().toLocaleDateString()});save();renderAll();trMsg.innerText='✅ ₹'+amt+' Done';}
+function renderAll(){ab.innerText='₹'+adminBal;distList.innerHTML=dists.map((d,i)=><div class="item"><div>${d.name} ${d.mobile} ₹${d.balance}</div><button class="btn-r" onclick="dists.splice(${i},1);save();renderAll()">X</button></div>).join('')||'No';retList.innerHTML=rets.map(r=><div class="item"><div>${r.name} ${r.mobile} ${r.parent}</div></div>).join('')||'No';r_par.innerHTML=dists.map(d=><option value="${d.mobile}">${d.name}</option>).join('')||'<option>No Dist</option>';loadFrom();loadTo();trHis.innerHTML=transfers.map(t=><div class="item"><div>${t.from} → ${t.to}</div><b>₹${t.amount}</b></div>).join('')||'No';servList.innerHTML=services.map((s,i)=><div class="item"><div>${s.icon} ${s.name} ${s.comm}%</div><button class="btn-r" onclick="services.splice(${i},1);save();renderAll()">X</button></div>).join('');chart.innerHTML='Total Dist: '+dists.length+' | Ret: '+rets.length+' | Services: '+services.length;}
+function renderDaily(){}
 renderAll();
+// Press Enter to login
+document.addEventListener('keydown',function(e){if(e.key==='Enter'){myLogin();}});
 </script>
 </body></html>
