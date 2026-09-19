@@ -1,34 +1,124 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin</title>
-<style>body{background:#020617;color:#fff;display:flex;justify-content:center;padding:10px;font-family:sans-serif}
-.card{background:#1e293b;padding:16px;border-radius:12px;margin-top:12px;border:1px solid #334155;width:100%;max-width:420px}
-input{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:none;background:#0f172a;color:#fff}
-.btn{width:100%;padding:12px;border:none;border-radius:8px;font-weight:900;margin-top:8px;cursor:pointer}
-.btn-y{background:#f59e0b}.btn-g{background:#22c55e}.btn-r{background:#ef4444;color:#fff;padding:8px 14px;border-radius:6px;border:none}
-.item{background:#0f172a;padding:10px;border-radius:8px;margin:6px 0;display:flex;justify-content:space-between}
-#panel{display:none}</style></head><body>
-<div style="width:100%;max-width:420px">
-<div id="loginBox" class="card" style="margin-top:60px;text-align:center">
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayQuickPay - Final Admin</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
+body{background:#020617;color:#fff;min-height:100vh;display:flex;justify-content:center;padding:12px}
+.box{width:100%;max-width:430px}
+.card{background:#1e293b;border:1px solid #334155;border-radius:14px;padding:16px;margin-top:12px}
+input{width:100%;background:#0f172a;border:1px solid #334155;color:#fff;padding:12px;border-radius:10px;margin:6px 0;outline:none}
+.btn{width:100%;padding:13px;border:none;border-radius:10px;font-weight:900;cursor:pointer;margin-top:8px;font-size:15px}
+.btn-y{background:#f59e0b;color:#000}
+.btn-g{background:#22c55e;color:#000}
+.btn-r{background:#ef4444;color:#fff;padding:8px 12px;border-radius:8px;border:none}
+.top{display:flex;justify-content:space-between;align-items:center}
+.item{background:#0f172a;border:1px solid #1e293b;padding:10px;border-radius:10px;margin-top:8px;display:flex;justify-content:space-between;align-items:center}
+small{color:#94a3b8}
+#PANEL{display:none}
+#LOGIN{display:block}
+</style>
+</head>
+<body>
+<div class="box">
+
+<div id="LOGIN" class="card" style="margin-top:70px;text-align:center">
 <h2>🔐 ADMIN LOGIN</h2>
-<input id="id" value="admin"><input id="pass" type="password" value="admin123">
-<button class="btn btn-y" onclick="forceLogin()">LOGIN - CLICK HERE</button>
-<p style="font-size:12px;margin-top:8px;color:#94a3b8">Click kariba matre khulijiba</p>
+<p style="color:#94a3b8;font-size:13px;margin:8px 0">ID: admin | Pass: admin123</p>
+<input id="uid" type="text" value="admin">
+<input id="upass" type="password" value="admin123">
+<button class="btn btn-y" onclick="doLogin()">LOGIN</button>
 </div>
-<div id="panel">
-<div class="card" style="display:flex;justify-content:space-between;align-items:center"><b>PQP ADMIN</b><button class="btn-r" onclick="logout()">LOGOUT</button></div>
-<div class="card"><h3>Commission</h3><input id="c_m" placeholder="Mobile %"><input id="c_d" placeholder="DTH %"><button class="btn btn-y" onclick="saveC()">SAVE</button></div>
-<div class="card"><h3>Add Distributor</h3><input id="n" placeholder="Name"><input id="m" placeholder="Mobile ID"><input id="p" placeholder="Password"><button class="btn btn-g" onclick="add()">ADD NOW</button></div>
-<div class="card"><h3>List: <span id="cnt">0</span></h3><div id="list"></div></div>
+
+<div id="PANEL">
+<div class="card top"><b>PayQuickPay ADMIN</b><button class="btn-r" onclick="doLogout()">LOGOUT</button></div>
+
+<div class="card">
+<h3>💰 Commission %</h3>
+<input id="cm" placeholder="Mobile Recharge %">
+<input id="cd" placeholder="DTH %">
+<input id="ce" placeholder="Electricity %">
+<button class="btn btn-y" onclick="saveComm()">SAVE COMMISSION</button>
+</div>
+
+<div class="card">
+<h3>👤 Add Distributor</h3>
+<input id="dname" placeholder="Name">
+<input id="dmob" placeholder="Mobile - Eita Login ID heba">
+<input id="dpass" placeholder="Password">
+<button class="btn btn-g" onclick="addDist()">ADD DISTRIBUTOR</button>
+</div>
+
+<div class="card">
+<h3>📋 Distributors - <span id="dcnt">0</span></h3>
+<div id="dlist"></div>
 </div>
 </div>
+
+</div>
+
 <script>
-function check(){if(localStorage.getItem('admin_login')==='true'){document.getElementById('loginBox').style.display='none';document.getElementById('panel').style.display='block';load();}}
-function forceLogin(){localStorage.setItem('admin_login','true');alert('Login Success!');document.getElementById('loginBox').style.display='none';document.getElementById('panel').style.display='block';load();}
-function logout(){localStorage.removeItem('admin_login');location.reload();}
-function saveC(){localStorage.setItem('cm',document.getElementById('c_m').value);localStorage.setItem('cd',document.getElementById('c_d').value);alert('Saved');}
-function load(){document.getElementById('c_m').value=localStorage.getItem('cm')||2;document.getElementById('c_d').value=localStorage.getItem('cd')||3;let a=JSON.parse(localStorage.getItem('distributors')||'[]');document.getElementById('cnt').innerText=a.length;let h='';a.forEach((d,i)=>{h+=<div class="item"><div><b>${d.name}</b><br><small>${d.mobile}</small></div><button class="btn-r" onclick="del(${i})">X</button></div>});document.getElementById('list').innerHTML=h||'No Data';}
-function add(){let n=document.getElementById('n').value,m=document.getElementById('m').value.trim(),p=document.getElementById('p').value.trim();if(!m||!p){alert('Mobile Pass lekha');return;}let a=JSON.parse(localStorage.getItem('distributors')||'[]');a.push({name:n||'Dist',mobile:m,password:p});localStorage.setItem('distributors',JSON.stringify(a));load();alert('Added '+m);}
-function del(i){let a=JSON.parse(localStorage.getItem('distributors')||'[]');a.splice(i,1);localStorage.setItem('distributors',JSON.stringify(a));load();}
-check();
-</script></body></html>
+// CHECK LOGIN
+if(localStorage.getItem('pqp_admin')==='ok'){
+  showPanel();
+}
+function doLogin(){
+  var u = document.getElementById('uid').value.trim();
+  var p = document.getElementById('upass').value.trim();
+  if(u==='admin' && p==='admin123'){
+    localStorage.setItem('pqp_admin','ok');
+    showPanel();
+  }else{
+    alert('ID = admin, Pass = admin123');
+  }
+}
+function showPanel(){
+  document.getElementById('LOGIN').style.display='none';
+  document.getElementById('PANEL').style.display='block';
+  loadAll();
+}
+function doLogout(){
+  localStorage.removeItem('pqp_admin');
+  location.reload();
+}
+function saveComm(){
+  localStorage.setItem('comm_m', document.getElementById('cm').value);
+  localStorage.setItem('comm_d', document.getElementById('cd').value);
+  localStorage.setItem('comm_e', document.getElementById('ce').value);
+  alert('Commission Saved!');
+}
+function loadAll(){
+  document.getElementById('cm').value = localStorage.getItem('comm_m') || '2';
+  document.getElementById('cd').value = localStorage.getItem('comm_d') || '3';
+  document.getElementById('ce').value = localStorage.getItem('comm_e') || '1';
+  var arr = JSON.parse(localStorage.getItem('pqp_dists')||'[]');
+  document.getElementById('dcnt').innerText = arr.length;
+  var html = '';
+  for(var i=0;i<arr.length;i++){
+    html += '<div class="item"><div><b>'+arr[i].name+'</b><br><small>'+arr[i].mobile+' | '+arr[i].password+'</small></div><button class="btn-r" onclick="delDist('+i+')">X</button></div>';
+  }
+  document.getElementById('dlist').innerHTML = html || '<small>No Distributors</small>';
+}
+function addDist(){
+  var n = document.getElementById('dname').value || 'Distributor';
+  var m = document.getElementById('dmob').value.trim();
+  var p = document.getElementById('dpass').value.trim();
+  if(!m ||!p){ alert('Mobile & Password darkar'); return; }
+  var arr = JSON.parse(localStorage.getItem('pqp_dists')||'[]');
+  arr.push({name:n, mobile:m, password:p});
+  localStorage.setItem('pqp_dists', JSON.stringify(arr));
+  document.getElementById('dname').value=''; document.getElementById('dmob').value=''; document.getElementById('dpass').value='';
+  loadAll();
+  alert('Distributor Added: '+m);
+}
+function delDist(i){
+  var arr = JSON.parse(localStorage.getItem('pqp_dists')||'[]');
+  arr.splice(i,1);
+  localStorage.setItem('pqp_dists', JSON.stringify(arr));
+  loadAll();
+}
+</script>
+</body>
+</html>
