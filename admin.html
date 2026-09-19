@@ -1,72 +1,43 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PQP - Balance Transfer</title>
-<style>:root{--bg:#020617;--card:#1e293b;--card2:#0f172a;--line:#334155;--y:#f59e0b;--g:#22c55e;--r:#ef4444;--b:#3b82f6}*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}body{background:var(--bg);color:#fff}.top{position:sticky;top:0;background:#0f172a;padding:12px;display:flex;justify-content:space-between;border-bottom:1px solid var(--line)}.nav{display:flex;gap:6px;overflow:auto;padding:10px;border-bottom:1px solid var(--line)}.nav button{padding:8px 12px;border-radius:20px;border:1px solid var(--line);background:var(--card);color:#fff;font-weight:700;font-size:12px}.nav button.active{background:var(--y);color:#000}.wrap{max-width:1100px;margin:auto;padding:12px}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px}.stat{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.item{background:var(--card2);border:1px solid var(--line);padding:10px;border-radius:10px;margin-top:8px;display:flex;justify-content:space-between;align-items:center}input,select{width:100%;background:var(--card2);border:1px solid var(--line);color:#fff;padding:11px;border-radius:10px;margin:5px 0}.btn{width:100%;padding:12px;border:none;border-radius:10px;font-weight:900;margin-top:6px;cursor:pointer}.btn-y{background:var(--y)}.btn-g{background:var(--g)}.btn-b{background:var(--b);color:#fff}.btn-r{background:var(--r);color:#fff}.tab{display:none}.tab.active{display:block}.small{color:#94a3b8;font-size:12px}table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid var(--line);padding:8px;font-size:13px}#LOGIN{max-width:400px;margin:80px auto}</style>
+<title>PQP Admin - Direct</title>
+<style>body{background:#020617;color:#fff;font-family:system-ui;padding:10px} .card{background:#1e293b;border:1px solid #334155;border-radius:14px;padding:14px;margin-top:12px} input,select{width:100%;background:#0f172a;border:1px solid #334155;color:#fff;padding:11px;border-radius:10px;margin:5px 0} .btn{width:100%;padding:12px;border:none;border-radius:10px;font-weight:900;margin-top:6px;cursor:pointer} .btn-y{background:#f59e0b}.btn-g{background:#22c55e}.btn-b{background:#3b82f6;color:#fff}.btn-r{background:#ef4444;color:#fff;padding:6px 10px;width:auto;border-radius:8px;border:none} .item{background:#0f172a;border:1px solid #1e293b;padding:10px;border-radius:10px;margin-top:8px;display:flex;justify-content:space-between} .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px} .small{color:#94a3b8;font-size:12px}</style>
 </head><body>
-<div id="LOGIN" class="card"><h2 style="text-align:center">🔐 ADMIN</h2><input id="uid" value="admin"><input id="upass" type="password" value="admin123"><button class="btn btn-y" onclick="login()">LOGIN</button></div>
-<div id="APP" style="display:none">
-<div class="top"><b>PQP ADMIN</b><div><span id="adminBal" class="small" style="margin-right:8px">Admin: ₹0</span><button class="btn-r" style="padding:6px 10px;width:auto" onclick="logout()">Logout</button></div></div>
-<div class="nav">
-<button class="active" onclick="openTab(0)">📊 Dashboard</button>
-<button onclick="openTab(1)">💸 Balance Transfer</button>
-<button onclick="openTab(2)">💰 Daily Earning</button>
-<button onclick="openTab(3)">👥 Distributors</button>
-<button onclick="openTab(4)">🏪 Retailers</button>
-</div>
-<div class="wrap">
+<div style="max-width:500px;margin:auto">
+<div class="card" style="display:flex;justify-content:space-between;align-items:center"><b>PQP ADMIN - DIRECT (No Login)</b><span class="small" id="ab">Admin: ₹100000</span></div>
 
-<div id="t0" class="tab active">
-<div class="grid2"><div class="stat"><div class="small">Admin Balance</div><b id="s_admin">₹0</b></div><div class="stat"><div class="small">Today Earning</div><b id="s_today">₹0</b></div></div>
-<div class="card"><h3>Quick Transfer</h3><button class="btn btn-y" onclick="openTab(1)">Go to Balance Transfer →</button></div>
+<div class="card"><h3>💸 Balance Transfer</h3>
+<label class="small">From</label><select id="fromType"><option value="ADMIN">ADMIN</option><option value="DIST">DISTRIBUTOR</option></select><select id="fromUser"></select>
+<label class="small">To</label><select id="toType"><option value="DIST">DISTRIBUTOR</option><option value="RET">RETAILER</option></select><select id="toUser"></select>
+<input id="trAmt" type="number" placeholder="Amount">
+<button class="btn btn-g" onclick="doTransfer()">TRANSFER NOW</button><p id="msg" class="small"></p>
 </div>
 
-<div id="t1" class="tab">
-<div class="card" style="border-color:var(--y)"><h3>💸 Balance Transfer</h3>
-<label class="small">From</label><select id="fromType" onchange="loadFrom()"><option value="ADMIN">ADMIN (Main Wallet)</option><option value="DIST">DISTRIBUTOR</option></select><select id="fromUser"></select>
-<label class="small">To</label><select id="toType" onchange="loadTo()"><option value="DIST">DISTRIBUTOR</option><option value="RET">RETAILER</option></select><select id="toUser"></select>
-<label class="small">Amount ₹</label><input id="trAmt" type="number" placeholder="Ex: 1000">
-<button class="btn btn-g" onclick="doTransfer()">TRANSFER NOW</button>
-<p class="small" id="trMsg" style="margin-top:6px"></p>
-</div>
-<div class="card"><h3>Transfer History</h3><div id="trHistory"></div><button class="btn btn-r" style="margin-top:8px" onclick="if(confirm('Clear history?')){transfers=[];save();renderAll()}">Clear History</button></div>
-</div>
+<div class="card"><h3>Add Distributor</h3><div class="grid2"><input id="d_n" placeholder="Name"><input id="d_m" placeholder="Mobile ID"></div><input id="d_p" placeholder="Password"><button class="btn btn-y" onclick="addDist()">ADD DISTRIBUTOR</button></div>
+<div class="card"><h3>Add Retailer</h3><select id="r_par"></select><div class="grid2"><input id="r_n" placeholder="Name"><input id="r_m" placeholder="Mobile"></div><button class="btn btn-b" onclick="addRet()">ADD RETAILER</button></div>
 
-<div id="t2" class="tab">
-<div class="card"><h3>Daily Commission</h3><div class="grid2"><input type="date" id="fromDate"><input type="date" id="toDate"></div><button class="btn btn-y" onclick="renderDaily()">SHOW</button><table><thead><tr><th>Date</th><th>Count</th><th>Comm</th></tr></thead><tbody id="dailyBody"></tbody></table></div>
+<div class="card"><h3>Distributors</h3><div id="distList"></div></div>
+<div class="card"><h3>Retailers</h3><div id="retList"></div></div>
+<div class="card"><h3>Transfer History</h3><div id="trHis"></div></div>
 </div>
-
-<div id="t3" class="tab"><div class="card"><h3>Add Distributor</h3><div class="grid2"><input id="d_n" placeholder="Name"><input id="d_m" placeholder="Mobile ID"></div><div class="grid2"><input id="d_p" placeholder="Pass"><input id="d_bal" type="number" placeholder="Opening Balance"></div><button class="btn btn-g" onclick="addDist()">ADD DISTRIBUTOR</button></div><div class="card"><div id="distList"></div></div></div>
-<div id="t4" class="tab"><div class="card"><h3>Add Retailer</h3><select id="r_par"></select><div class="grid2"><input id="r_n" placeholder="Name"><input id="r_m" placeholder="Mobile"></div><button class="btn btn-b" onclick="addRet()">ADD RETAILER</button></div><div class="card"><div id="retList"></div></div></div>
-
-</div></div>
 <script>
-let dists=JSON.parse(localStorage.getItem('pqp_dists')||'[]'), rets=JSON.parse(localStorage.getItem('pqp_rets')||'[]'), txns=JSON.parse(localStorage.getItem('pqp_txns')||'[]'), transfers=JSON.parse(localStorage.getItem('pqp_transfers')||'[]'), adminBal=Number(localStorage.getItem('admin_bal')||100000);
-function login(){if(uid.value==='admin'&&upass.value==='admin123'){localStorage.setItem('pqp_admin','ok');show();}else alert('wrong')}function show(){LOGIN.style.display='none';APP.style.display='block';renderAll();}function logout(){localStorage.removeItem('pqp_admin');location.reload();}if(localStorage.getItem('pqp_admin')==='ok')show();
-function openTab(i){document.querySelectorAll('.tab').forEach((e,j)=>e.classList.toggle('active',j===i));document.querySelectorAll('.nav button').forEach((b,j)=>b.classList.toggle('active',j===i));}
-function save(){localStorage.setItem('pqp_dists',JSON.stringify(dists));localStorage.setItem('pqp_rets',JSON.stringify(rets));localStorage.setItem('pqp_txns',JSON.stringify(txns));localStorage.setItem('pqp_transfers',JSON.stringify(transfers));localStorage.setItem('admin_bal',adminBal);}
-function addDist(){let n=d_n.value,m=d_m.value.trim(),p=d_p.value.trim(),b=Number(d_bal.value||0);if(!m||!p)return alert('need');if(adminBal<b)return alert('Admin balance low');dists.push({name:n||'Dist',mobile:m,password:p,balance:b});adminBal-=b;save();renderAll();alert('Distributor Added, ₹'+b+' deducted from Admin');}
-function addRet(){let par=r_par.value,n=r_n.value,m=r_m.value.trim();if(!m)return alert('need');rets.push({name:n||'Ret',mobile:m,parent:par,balance:0});save();renderAll();}
-function loadFrom(){let t=fromType.value;if(t==='ADMIN'){fromUser.innerHTML='<option value="ADMIN">ADMIN - ₹'+adminBal+'</option>';}else{fromUser.innerHTML=dists.map(d=><option value="${d.mobile}">${d.name} (${d.mobile}) - ₹${d.balance}</option>).join('');}}
-function loadTo(){let t=toType.value;if(t==='DIST'){toUser.innerHTML=dists.map(d=><option value="${d.mobile}">${d.name} (${d.mobile}) - ₹${d.balance}</option>).join('');}else{toUser.innerHTML=rets.map(r=><option value="${r.mobile}">${r.name} (${r.mobile}) - ₹${r.balance}</option>).join('');}}
-function doTransfer(){let fT=fromType.value,fU=fromUser.value,tT=toType.value,tU=toUser.value,amt=Number(trAmt.value);if(!amt||amt<=0)return alert('Amount lekha');if(fU===tU)return alert('Same user ku transfer heba nahi');
- // Deduct From
- if(fT==='ADMIN'){if(adminBal<amt)return alert('Admin balance low - Only ₹'+adminBal);adminBal-=amt;}else{let d=dists.find(x=>x.mobile===fU);if(!d||d.balance<amt)return alert('Distributor balance low');d.balance-=amt;}
- // Add To
- if(tT==='DIST'){let d=dists.find(x=>x.mobile===tU);d.balance+=amt;}else{let r=rets.find(x=>x.mobile===tU);r.balance+=amt;}
- transfers.unshift({date:new Date().toISOString().split('T')[0],time:new Date().toLocaleTimeString(),from:fT+':'+fU,to:tT+':'+tU,amount:amt});
- save();renderAll();trMsg.innerText='✅ Transferred ₹'+amt+' Success!';trAmt.value='';setTimeout(()=>trMsg.innerText='',3000);
+let dists=JSON.parse(localStorage.getItem('pqp_dists')||'[]'),rets=JSON.parse(localStorage.getItem('pqp_rets')||'[]'),trans=JSON.parse(localStorage.getItem('pqp_transfers')||'[]'),adminBal=Number(localStorage.getItem('admin_bal')||100000);
+function save(){localStorage.setItem('pqp_dists',JSON.stringify(dists));localStorage.setItem('pqp_rets',JSON.stringify(rets));localStorage.setItem('pqp_transfers',JSON.stringify(trans));localStorage.setItem('admin_bal',adminBal);}
+function render(){document.getElementById('ab').innerText='Admin: ₹'+adminBal;
+distList.innerHTML=dists.map((d,i)=><div class="item"><div><b>${d.name}</b><br><small>${d.mobile} | ₹${d.balance}</small></div><button class="btn-r" onclick="dists.splice(${i},1);save();render()">X</button></div>).join('')||'No';
+retList.innerHTML=rets.map(r=><div class="item"><div><b>${r.name}</b><br><small>${r.mobile} | Par:${r.parent} | ₹${r.balance||0}</small></div></div>).join('')||'No';
+r_par.innerHTML=dists.map(d=><option value="${d.mobile}">${d.name}</option>).join('')||'<option>No Dist</option>';
+let fT=fromType.value; fromUser.innerHTML=fT==='ADMIN'?<option value="ADMIN">ADMIN ₹${adminBal}</option>:dists.map(d=><option value="${d.mobile}">${d.name} ₹${d.balance}</option>).join('');
+let tT=toType.value; toUser.innerHTML=tT==='DIST'?dists.map(d=><option value="${d.mobile}">${d.name} ₹${d.balance}</option>).join(''):rets.map(r=><option value="${r.mobile}">${r.name} ₹${r.balance||0}</option>).join('');
+trHis.innerHTML=trans.slice(0,20).map(t=><div class="item"><div><small>${t.date}</small><br><b>${t.from}</b> → ${t.to}</div><b>₹${t.amount}</b></div>).join('')||'No';
 }
-function renderAll(){
- document.getElementById('s_admin').innerText='₹'+adminBal; adminBal.innerText='Admin: ₹'+adminBal; document.getElementById('s_today').innerText='₹'+txns.filter(t=>t.date===new Date().toISOString().split('T')[0]).reduce((a,b)=>a+Number(b.comm||0),0);
- // lists
- distList.innerHTML=dists.map((d,i)=><div class="item"><div><b>${d.name}</b><br><small>${d.mobile} | Bal: ₹${d.balance}</small></div><button class="btn-r" style="width:auto;padding:6px" onclick="dists.splice(${i},1);save();renderAll()">X</button></div>).join('')||'No';
- retList.innerHTML=rets.map(r=><div class="item"><div><b>${r.name}</b><br><small>${r.mobile} | Par:${r.parent} | Bal:₹${r.balance}</small></div></div>).join('')||'No';
- r_par.innerHTML=dists.map(d=><option value="${d.mobile}">${d.name}</option>).join('')||'<option>No Dist</option>';
- loadFrom(); loadTo();
- trHistory.innerHTML=transfers.slice(0,20).map(t=><div class="item"><div><small>${t.date} ${t.time}</small><br><b>${t.from}</b> → <b>${t.to}</b></div><b>₹${t.amount}</b></div>).join('')||'No transfers yet';
- // daily
- renderDaily();
-}
-function renderDaily(){let from=fromDate.value,to=toDate.value;let f=txns;if(from)f=f.filter(t=>t.date>=from);if(to)f=f.filter(t=>t.date<=to);let g={};f.forEach(t=>{if(!g[t.date])g[t.date]={count:0,comm:0};g[t.date].count++;g[t.date].comm+=Number(t.comm||0);});let rows='';Object.keys(g).sort().reverse().forEach(d=>{rows+=<tr><td>${d}</td><td>${g[d].count}</td><td>₹${g[d].comm}</td></tr>});dailyBody.innerHTML=rows||'<tr><td colspan=3>No data</td></tr>';}
+function addDist(){let n=d_n.value,m=d_m.value.trim(),p=d_p.value.trim();if(!m||!p)return alert('Mobile Pass');dists.push({name:n||'Dist',mobile:m,password:p,balance:0});save();render();alert('Added '+m);}
+function addRet(){let par=r_par.value,n=r_n.value,m=r_m.value.trim();if(!m)return alert('Mobile');rets.push({name:n||'Ret',mobile:m,parent:par,balance:0});save();render();alert('Retailer Added');}
+function doTransfer(){let fT=fromType.value,fU=fromUser.value,tT=toType.value,tU=toUser.value,amt=Number(trAmt.value);if(!amt)return alert('Amount');if(fU===tU)return alert('Same user');
+if(fT==='ADMIN'){if(adminBal<amt)return alert('Admin low');adminBal-=amt;}else{let d=dists.find(x=>x.mobile===fU);if(d.balance<amt)return alert('Low');d.balance-=amt;}
+if(tT==='DIST'){dists.find(x=>x.mobile===tU).balance+=amt;}else{let r=rets.find(x=>x.mobile===tU);r.balance=(Number(r.balance||0)+amt);}
+trans.unshift({date:new Date().toLocaleDateString(),from:fT+':'+fU,to:tT+':'+tU,amount:amt});save();render();msg.innerText='✅ ₹'+amt+' Transferred!';trAmt.value='';}
+fromType.onchange=render; toType.onchange=render;
+render();
 </script>
 </body></html>
