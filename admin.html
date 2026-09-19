@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin - PayQuickPay</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
+body{background:#020617;color:#fff;display:flex;justify-content:center;padding:10px}
+.box{width:100%;max-width:420px}
+.card{background:#1e293b;padding:15px;border-radius:12px;margin-top:12px;border:1px solid #334155}
+input{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:none;background:#0f172a;color:#fff}
+.btn{width:100%;padding:12px;border:none;border-radius:8px;font-weight:900;margin-top:8px;cursor:pointer}
+.btn-y{background:#f59e0b}.btn-g{background:#22c55e}.btn-r{background:#ef4444;color:#fff;padding:8px 14px;border-radius:6px;border:none}
+.item{background:#0f172a;padding:10px;border-radius:8px;margin:6px 0;display:flex;justify-content:space-between;border:1px solid #334155}
+#panel{display:none}
+#loginBox{display:block}
+</style></head><body>
+<div class="box">
+
+<div id="loginBox" class="card" style="margin-top:80px">
+<h2 style="text-align:center">🔐 ADMIN LOGIN</h2>
+<input id="id" value="admin" placeholder="ID">
+<input id="pass" value="admin123" type="password" placeholder="Password">
+<button class="btn btn-y" onclick="login()">LOGIN</button>
+</div>
+
+<div id="panel">
+<div class="card" style="display:flex;justify-content:space-between;align-items:center">
+<b>PQP ADMIN</b><button class="btn-r" onclick="logout()">LOGOUT</button>
+</div>
+
+<div class="card">
+<h3>Commission</h3>
+<input id="c_m" placeholder="Mobile %"><input id="c_d" placeholder="DTH %"><input id="c_e" placeholder="Electricity %">
+<button class="btn btn-y" onclick="saveC()">SAVE</button>
+</div>
+
+<div class="card">
+<h3>Add Distributor</h3>
+<input id="n" placeholder="Name"><input id="m" placeholder="Mobile ID"><input id="p" placeholder="Password">
+<button class="btn btn-g" onclick="add()">ADD NOW</button>
+</div>
+
+<div class="card">
+<h3>List: <span id="cnt">0</span></h3>
+<div id="list"></div>
+</div>
+</div>
+
+</div>
+<script>
+function check(){
+ if(localStorage.getItem('admin_login')==='true'){
+   document.getElementById('loginBox').style.display='none';
+   document.getElementById('panel').style.display='block';
+   load();
+ }
+}
+function login(){
+ if(document.getElementById('id').value==='admin' && document.getElementById('pass').value==='admin123'){
+   localStorage.setItem('admin_login','true');
+   check();
+ } else alert('Wrong ID/Pass');
+}
+function logout(){
+ localStorage.removeItem('admin_login');
+ location.reload();
+}
+function saveC(){
+ localStorage.setItem('cm',document.getElementById('c_m').value);
+ localStorage.setItem('cd',document.getElementById('c_d').value);
+ localStorage.setItem('ce',document.getElementById('c_e').value);
+ alert('Saved!');
+}
+function load(){
+ document.getElementById('c_m').value=localStorage.getItem('cm')||2;
+ document.getElementById('c_d').value=localStorage.getItem('cd')||3;
+ document.getElementById('c_e').value=localStorage.getItem('ce')||1;
+ let a=JSON.parse(localStorage.getItem('distributors')||'[]');
+ document.getElementById('cnt').innerText=a.length;
+ let h='';
+ a.forEach((d,i)=>{h+=<div class="item"><div><b>${d.name}</b><br><small>${d.mobile} | ${d.password}</small></div><button class="btn-r" onclick="del(${i})">X</button></div>});
+ document.getElementById('list').innerHTML=h||'No Data';
+}
+function add(){
+ let name=document.getElementById('n').value, mob=document.getElementById('m').value.trim(), pass=document.getElementById('p').value.trim();
+ if(!mob||!pass){alert('Mobile & Pass darkar');return;}
+ let a=JSON.parse(localStorage.getItem('distributors')||'[]');
+ a.push({name:name||'Dist',mobile:mob,password:pass});
+ localStorage.setItem('distributors',JSON.stringify(a));
+ document.getElementById('n').value='';document.getElementById('m').value='';document.getElementById('p').value='';
+ load(); alert('Added '+mob);
+}
+function del(i){
+ let a=JSON.parse(localStorage.getItem('distributors')||'[]');
+ a.splice(i,1);
+ localStorage.setItem('distributors',JSON.stringify(a));
+ load();
+}
+check();
+</script>
+</body></html>
