@@ -3,98 +3,108 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PQP Admin - All Functions ON</title>
+<title>PayQuickPay Admin - Final</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-body{background:#f0f2f5}
-.card{border:none;border-radius:15px;box-shadow:0 4px 15px rgba(0,0,0,0.1)}
-.stat{font-size:28px;font-weight:700}
+body{background:#f0f2f5; font-family: sans-serif;}
+.card{border:none;border-radius:15px;box-shadow:0 4px 15px rgba(0,0,0,0.08)}
+.stat{font-size:26px;font-weight:700}
 </style>
 </head>
 <body>
 <nav class="navbar navbar-dark bg-dark p-3">
-<span class="navbar-brand">⚡ PayQuickPay - Admin Panel (All Functions Active)</span>
-<a href="index.html" class="btn btn-sm btn-warning">Go to App</a>
+<span class="navbar-brand">⚡ PayQuickPay - ADMIN (All ON)</span>
+<a href="index.html" class="btn btn-sm btn-warning">Go App</a>
 </nav>
 
 <div class="container mt-4">
 <div class="row g-3">
-<div class="col-md-3"><div class="card p-3 text-center"><h6>Total Users</h6><div class="stat" id="totalUsers">0</div></div></div>
-<div class="col-md-3"><div class="card p-3 text-center"><h6>Total Transactions</h6><div class="stat" id="totalTx">0</div></div></div>
-<div class="col-md-3"><div class="card p-3 text-center"><h6>Today Income</h6><div class="stat">₹<span id="todayInc">0</span></div></div></div>
-<div class="col-md-3"><div class="card p-3 text-center"><h6>System</h6><div class="stat text-success">● ONLINE</div></div></div>
+<div class="col-6 col-md-3"><div class="card p-3 text-center"><small>Total Users</small><div class="stat" id="totalUsers">0</div></div></div>
+<div class="col-6 col-md-3"><div class="card p-3 text-center"><small>Retailers</small><div class="stat" id="totalRet">0</div></div></div>
+<div class="col-6 col-md-3"><div class="card p-3 text-center"><small>Distributors</small><div class="stat" id="totalDist">0</div></div></div>
+<div class="col-6 col-md-3"><div class="card p-3 text-center"><small>Status</small><div class="stat text-success">● LIVE</div></div></div>
 </div>
 
 <div class="card mt-4 p-3">
-<h5>👥 All Users Management</h5>
+<h5>➕ Add Retailer / Distributor</h5>
+<div class="row g-2 mt-2">
+<div class="col-md-3"><input id="newName" class="form-control" placeholder="Full Name"></div>
+<div class="col-md-3"><input id="newMobile" class="form-control" placeholder="Mobile Number"></div>
+<div class="col-md-2">
+<select id="newRole" class="form-select">
+<option value="retailer">Retailer</option>
+<option value="distributor">Distributor</option>
+<option value="admin">Admin</option>
+</select>
+</div>
+<div class="col-md-2"><input id="newWallet" class="form-control" type="number" placeholder="Wallet ₹"></div>
+<div class="col-md-2"><button onclick="addRetailer()" class="btn btn-primary w-100">Add Now</button></div>
+</div>
+</div>
+
+<div class="card mt-4 p-3">
+<h5>👥 All Users List</h5>
 <table class="table table-striped mt-3">
-<thead><tr><th>Name</th><th>Mobile</th><th>Wallet</th><th>Action</th></tr></thead>
+<thead><tr><th>Name</th><th>Mobile</th><th>Role</th><th>Wallet</th><th>Action</th></tr></thead>
 <tbody id="userList"></tbody>
 </table>
 </div>
 
-<div class="card mt-4 p-3">
-<h5>💳 All Transactions</h5>
-<table class="table mt-3">
-<thead><tr><th>ID</th><th>User</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead>
-<tbody id="txList"></tbody>
-</table>
-</div>
-
 <div class="card mt-4 p-3 mb-5">
-<h5>⚙️ Admin Control</h5>
+<h5>💰 Quick Wallet Topup</h5>
 <div class="row g-2 mt-2">
-<div class="col-md-4"><input id="addMoneyUser" class="form-control" placeholder="User Mobile Number"></div>
+<div class="col-md-4"><input id="addMoneyUser" class="form-control" placeholder="Mobile"></div>
 <div class="col-md-3"><input id="addMoneyAmt" class="form-control" type="number" placeholder="Amount"></div>
-<div class="col-md-5"><button onclick="addMoney()" class="btn btn-success w-100">Add Money to Wallet</button></div>
+<div class="col-md-5"><button onclick="addMoney()" class="btn btn-success w-100">Add Money</button></div>
 </div>
-<p class="text-muted mt-3 small">Login hata deichi, sabu function direct chalu achi. Firebase / LocalStorage ru data asiba.</p>
 </div>
 </div>
 
 <script>
 function loadData(){
   let users = JSON.parse(localStorage.getItem('pqp_users') || '[]');
-  let txs = JSON.parse(localStorage.getItem('pqp_transactions') || '[]');
-  
   document.getElementById('totalUsers').innerText = users.length;
-  document.getElementById('totalTx').innerText = txs.length;
+  document.getElementById('totalRet').innerText = users.filter(u=>u.role=='retailer').length;
+  document.getElementById('totalDist').innerText = users.filter(u=>u.role=='distributor').length;
   
   let ul = document.getElementById('userList');
   ul.innerHTML = '';
   users.forEach(u=>{
-    ul.innerHTML += <tr><td>${u.name||'User'}</td><td>${u.mobile||u.phone||'-'}</td><td>₹${u.wallet||0}</td><td><button onclick="delUser('${u.mobile}')" class="btn btn-sm btn-danger">Delete</button></td></tr>;
+    ul.innerHTML += <tr><td>${u.name}</td><td>${u.mobile||u.phone}</td><td><span class="badge ${u.role=='distributor'?'bg-warning text-dark':'bg-info'}">${u.role}</span></td><td>₹${u.wallet||0}</td><td><button onclick="delUser('${u.mobile||u.phone}')" class="btn btn-sm btn-danger">Delete</button></td></tr>;
   });
-  if(users.length==0) ul.innerHTML='<tr><td colspan=4 class=text-center>No users yet. App re register karantu.</td></tr>';
-
-  let tl = document.getElementById('txList');
-  tl.innerHTML = '';
-  txs.slice(-20).reverse().forEach(t=>{
-    tl.innerHTML += <tr><td>${t.id||'TXN'}</td><td>${t.mobile||'-'}</td><td>${t.type||'AEPS'}</td><td>₹${t.amount||0}</td><td><span class="badge bg-success">${t.status||'Success'}</span></td></tr>;
-  });
-  if(txs.length==0) tl.innerHTML='<tr><td colspan=5 class=text-center>No transactions</td></tr>';
+  if(users.length==0) ul.innerHTML='<tr><td colspan=5 class=text-center>No users. Add upare form ru add kara.</td></tr>';
 }
-
-function addMoney(){
-  let mob = document.getElementById('addMoneyUser').value;
-  let amt = parseInt(document.getElementById('addMoneyAmt').value);
-  if(!mob || !amt) return alert('Mobile and Amount dia');
-  let users = JSON.parse(localStorage.getItem('pqp_users') || '[]');
-  let f = users.find(u=> (u.mobile||u.phone)==mob);
-  if(f){ f.wallet = (parseInt(f.wallet||0)+amt); localStorage.setItem('pqp_users', JSON.stringify(users)); alert('₹'+amt+' Added to '+mob); loadData(); }
-  else alert('User miluni - mobile number check kara');
-}
-
-function delUser(mob){
-  if(!confirm('Delete kariba?')) return;
-  let users = JSON.parse(localStorage.getItem('pqp_users') || '[]');
-  users = users.filter(u=> (u.mobile||u.phone)!=mob);
-  localStorage.setItem('pqp_users', JSON.stringify(users));
+function addRetailer(){
+  let name=document.getElementById('newName').value.trim();
+  let mobile=document.getElementById('newMobile').value.trim();
+  let role=document.getElementById('newRole').value;
+  let wallet=parseInt(document.getElementById('newWallet').value)||0;
+  if(!name||!mobile) return alert('Name au Mobile dia bhai');
+  let users=JSON.parse(localStorage.getItem('pqp_users')||'[]');
+  if(users.find(u=>(u.mobile||u.phone)==mobile)) return alert('E mobile already achi!');
+  users.push({name,mobile,phone:mobile,role,wallet});
+  localStorage.setItem('pqp_users',JSON.stringify(users));
+  alert(role.toUpperCase()+' Add heigala: '+name);
+  document.getElementById('newName').value=''; document.getElementById('newMobile').value=''; document.getElementById('newWallet').value='';
   loadData();
 }
-
+function addMoney(){
+  let mob=document.getElementById('addMoneyUser').value.trim();
+  let amt=parseInt(document.getElementById('addMoneyAmt').value);
+  if(!mob||!amt) return alert('Mobile au Amount dia');
+  let users=JSON.parse(localStorage.getItem('pqp_users')||'[]');
+  let f=users.find(u=>(u.mobile||u.phone)==mob);
+  if(f){ f.wallet=(parseInt(f.wallet||0)+amt); localStorage.setItem('pqp_users',JSON.stringify(users)); alert('₹'+amt+' Added'); loadData(); }
+  else alert('User miluni');
+}
+function delUser(mob){
+  if(!confirm('Delete kariba?')) return;
+  let users=JSON.parse(localStorage.getItem('pqp_users')||'[]');
+  users=users.filter(u=>(u.mobile||u.phone)!=mob);
+  localStorage.setItem('pqp_users',JSON.stringify(users));
+  loadData();
+}
 loadData();
-setInterval(loadData, 3000);
 </script>
 </body>
 </html>
