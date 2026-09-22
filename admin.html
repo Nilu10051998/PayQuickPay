@@ -1,8 +1,40 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin Direct No Login</title></head><body style="font-family:Arial;background:#f1f5f9;margin:0">
-<div style="background:#4f46e5;color:#fff;padding:15px;text-align:center;font-weight:700">ADMIN PANEL - NO LOGIN - DIRECT OPEN ✅</div>
-<div style="max-width:600px;margin:auto;padding:12px">
-<div style="background:#fff;padding:15px;border-radius:12px;margin-bottom:10px">System Status: <b style="color:green">ONLINE ✅</b><br><br><button onclick="let a=prompt('Distributor Name?');if(a){let d=JSON.parse(localStorage.getItem('d')||'[]');d.push(a);localStorage.setItem('d',JSON.stringify(d));alert(a+' Added ✅');location.reload()}" style="width:100%;padding:12px;background:#4f46e5;color:#fff;border:0;border-radius:10px;font-weight:700">Add Distributor Test</button></div>
-<div style="background:#fff;padding:15px;border-radius:12px">Login System: <b>REMOVED</b> - Ebe direct khuluchi, login darkar nahi</div>
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PayQuick Admin Secure Login</title>
+<style>*{box-sizing:border-box;margin:0;padding:0;font-family:Arial}body{background:#eef2ff}.card{background:#fff;border-radius:14px;padding:18px;margin:10px;box-shadow:0 4px 12px #0001}input{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin-bottom:10px}.btn{width:100%;padding:12px;background:#4f46e5;color:#fff;border:0;border-radius:10px;font-weight:700;cursor:pointer}.btn:active{transform:scale(.98)}.row{border:1px solid #eee;padding:10px;border-radius:8px;margin:6px 0;display:flex;justify-content:space-between;font-size:13px}.tbtn{padding:8px 12px;border-radius:8px;border:1px solid #ddd;background:#fff;margin:2px;font-size:12px;font-weight:700}.tbtn.active{background:#4f46e5;color:#fff}.tab{display:none}.tab.active{display:block}</style>
+</head><body>
+
+<div id="loginBox" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px">
+<div class="card" style="width:100%;max-width:380px;text-align:center">
+<h2 style="color:#4f46e5">PayQuickPay ADMIN</h2><p style="font-size:12px;color:#666;margin-top:4px">Secure Login Required 🔒</p>
+<input id="em" type="text" placeholder="Email" value="admin@payquick.com" style="margin-top:20px">
+<input id="ps" type="password" placeholder="Password" value="admin123">
+<button id="lb" class="btn">LOGIN SECURE</button>
+<p id="err" style="color:red;font-size:12px;margin-top:8px;display:none">❌ Wrong Email or Password</p>
+<div style="margin-top:12px;background:#f1f5f9;padding:8px;border-radius:8px;font-size:11px;color:#666;text-align:left"><b>Demo Login:</b><br>Email: admin@payquick.com<br>Pass: admin123</div>
 </div>
-<script>alert("Admin Panel Open Heigala ✅ - Login Hataideli");</script>
-</body></html>
+</div>
+
+<div id="dashBox" style="display:none">
+<div style="background:#4f46e5;color:#fff;padding:12px;display:flex;justify-content:space-between;position:sticky;top:0"><b>ADMIN PANEL ✅</b><span id="lob" style="background:#fff;color:#4f46e5;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer">Logout</span></div>
+<div style="max-width:650px;margin:auto;padding:8px">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"><div class="card" style="text-align:center"><small>Distributor</small><br><b id="cD">0</b></div><div class="card" style="text-align:center"><small>Retailer</small><br><b id="cR">0</b></div><div class="card" style="text-align:center"><small>Wallet</small><br><b id="cW">₹0</b></div></div>
+<div style="display:flex;flex-wrap:wrap;margin:6px"><button class="tbtn active" onclick="showTab('t1',this)">Dashboard</button><button class="tbtn" onclick="showTab('t2',this)">Distributor</button><button class="tbtn" onclick="showTab('t3',this)">Retailer</button><button class="tbtn" onclick="showTab('t4',this)">Services</button></div>
+<div id="t1" class="tab active card"><h3>Dashboard</h3><br><p>Distributor: <b id="cd">0</b></p><p>Retailer: <b id="cr">0</b></p><p>Wallet: <b id="cw">₹0</b></p><p style="color:green;font-size:12px;margin-top:10px">✅ Login Success - Secure Access</p></div>
+<div id="t2" class="tab card"><h3>Add Distributor</h3><br><input id="dN" placeholder="Name"><input id="dE" placeholder="Email"><input id="dP" placeholder="Password"><input id="dC" placeholder="Commission %"><button onclick="addD()" class="btn" style="background:#16a34a">Add Distributor</button><div id="dL" style="margin-top:12px"></div></div>
+<div id="t3" class="tab card"><h3>Add Retailer</h3><br><input id="rN" placeholder="Name"><input id="rE" placeholder="Email"><input id="rP" placeholder="Password"><select id="rD"></select><button onclick="addR()" class="btn">Add Retailer</button><div id="rL" style="margin-top:12px"></div></div>
+<div id="t4" class="tab card"><h3>Services ON/OFF</h3><div id="sL"></div></div>
+</div>
+</div>
+
+<script>
+const EMAIL="admin@payquick.com";const PASS="admin123";
+function $(id){return document.getElementById(id)}
+function login(){let e=$("em").value.trim().toLowerCase();let p=$("ps").value.trim();if(e===EMAIL && p===PASS){localStorage.setItem("pq_auth","yes");showDash();}else{$("err").style.display="block";setTimeout(()=>{$("err").style.display="none"},2000);}}
+function showDash(){$("loginBox").style.display="none";$("dashBox").style.display="block";load();}
+function showTab(id,btn){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
+$("lb").addEventListener("click",login);$("ps").addEventListener("keypress",function(e){if(e.key==="Enter")login()});$("lob").addEventListener("click",function(){localStorage.removeItem("pq_auth");location.reload()});
+if(localStorage.getItem("pq_auth")==="yes"){showDash()}
+function get(k){return JSON.parse(localStorage.getItem(k)||"[]")}function set(k,v){localStorage.setItem(k,JSON.stringify(v))}
+function load(){let d=get("pq_dist_final"),r=get("pq_ret_final");$("cD").innerText=d.length;$("cd").innerText=d.length;$("cR").innerText=r.length;$("cr").innerText=r.length;let tot=0;[...d,...r].forEach(x=>tot+=(x.wallet||0));$("cW").innerText="₹"+tot;$("cw").innerText="₹"+tot;$("dL").innerHTML=d.map(x=><div class="row"><div><b>${x.name}</b><br><span style="font-size:11px">${x.email} | ₹${x.wallet||0}</span></div><div><span onclick="addM('pq_dist_final',${x.id})" style="background:#22c55e;color:#fff;padding:5px 9px;border-radius:6px;cursor:pointer">+₹</span> <span onclick="del('pq_dist_final',${x.id})" style="background:#ef4444;color:#fff;padding:5px 8px;border-radius:6px;cursor:pointer">X</span></div></div>).join("")||"Empty";let o='<option value="">Direct</option>';d.forEach(x=>o+=<option value="${x.name}">${x.name}</option>);$("rD").innerHTML=o;$("rL").innerHTML=r.map(x=><div class="row"><div><b>${x.name}</b><br><span style="font-size:11px">${x.email}</span></div><div><span onclick="addM('pq_ret_final',${x.id})" style="background:#22c55e;color:#fff;padding:5px 9px;border-radius:6px;cursor:pointer">+₹</span> <span onclick="del('pq_ret_final',${x.id})" style="background:#ef4444;color:#fff;padding:5px 8px;border-radius:6px;cursor:pointer">X</span></div></div>).join("")||"Empty";let s=JSON.parse(localStorage.getItem("pq_services_final")||"null");if(!s){s=[{id:"recharge",name:"📱 Recharge",a:1},{id:"dth",name:"📺 DTH",a:1},{id:"elec",name:"💡 Electricity",a:1},{id:"bbps",name:"🏦 BBPS",a:1},{id:"aeps",name:"💳 AePS",a:1},{id:"dmt",name:"💸 DMT",a:1}];localStorage.setItem("pq_services_final",JSON.stringify(s))}$("sL").innerHTML=s.map(x=><div class="row"><span>${x.name}</span><button onclick="tog('${x.id}')" style="padding:4px 14px;border-radius:20px;border:0;background:${x.a?'#22c55e':'#9ca3af'};color:#fff;font-weight:700">${x.a?'ON':'OFF'}</button></div>).join("")}
+function addD(){let n=$("dN").value,e=$("dE").value,p=$("dP").value,c=$("dC").value;if(!n||!e)return alert("Name Email lekha");let a=get("pq_dist_final");a.push({id:Date.now(),name:n,email:e,pass:p,comm:c||2,wallet:1000});set("pq_dist_final",a);load();alert("Added ✅")}function addR(){let n=$("rN").value,e=$("rE").value;if(!n||!e)return alert("Name Email lekha");let a=get("pq_ret_final");a.push({id:Date.now(),name:n,email:e,wallet:500});set("pq_ret_final",a);load();alert("Added ✅")}function del(k,id){if(confirm("Delete?")){set(k,get(k).filter(x=>x.id!=id));load()}}function addM(k,id){let am=prompt("Amount?");if(!am)return;let a=get(k);let f=a.find(x=>x.id==id);f.wallet=(f.wallet||0)+parseInt(am);set(k,a);load()}function tog(id){let s=JSON.parse(localStorage.getItem("pq_services_final"));let f=s.find(x=>x.id==id);f.a=f.a?0:1;localStorage.setItem("pq_services_final",JSON.stringify(s));load()}
+</script></body></html>
