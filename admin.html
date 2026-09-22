@@ -1,42 +1,180 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin</title><script src="https://cdn.tailwindcss.com"></script></head>
-<body class="bg-slate-100">
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PayQuick Admin - Final Secure</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}body{background:#f1f5f9}
+.card{background:#fff;border-radius:16px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.08);margin-bottom:12px}
+.btn{width:100%;padding:13px;background:#4f46e5;color:#fff;border:0;border-radius:12px;font-weight:700;cursor:pointer}
+.btn:active{transform:scale(.98)}input,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin-bottom:10px;font-size:14px}
+.flex{display:flex;justify-content:space-between;align-items:center}
+.badge{padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;color:#fff;cursor:pointer}
+.on{background:#22c55e}.off{background:#9ca3af}
+.tab{display:none}.tab.active{display:block}
+.tbtn{padding:10px;border-radius:10px;border:1px solid #ddd;background:#fff;font-size:12px;font-weight:700;cursor:pointer;flex:1;margin:2px}
+.tbtn.active{background:#4f46e5;color:#fff}
+.row{border:1px solid #eee;padding:10px;border-radius:10px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;font-size:13px}
+</style>
+</head>
+<body>
 
-<div id="L" class="min-h-screen flex items-center justify-center p-4">
-<div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm text-center">
-<h1 class="text-2xl font-bold">Admin Panel</h1>
-<p class="text-xs text-gray-400 mb-6">Click Login - Direct Open</p>
-<input id="e" class="w-full p-3 border rounded-xl text-sm" value="admin@payquick.com">
-<input id="p" type="text" class="w-full p-3 border rounded-xl mt-3 text-sm" value="admin123">
-<button id="btn" class="w-full bg-indigo-600 text-white p-3 rounded-xl mt-4 font-bold text-lg">LOGIN CLICK HERE</button>
-<p class="text-[10px] text-gray-400 mt-3">If not work, add?login=1 in URL</p>
-</div></div>
-
-<div id="D" style="display:none">
-<div class="bg-indigo-600 text-white p-4 flex justify-between"><b>PayQuickPay ADMIN - LOGIN OK ✅</b><button onclick="localStorage.clear();location.href='admin.html'" class="bg-white text-indigo-600 px-3 py-1 rounded-full text-xs font-bold">Logout</button></div>
-<div class="p-4">
-<div class="grid grid-cols-3 gap-2"><div class="bg-white p-3 rounded-xl shadow text-center">DISTRIBUTOR<br><b id="sD">0</b></div><div class="bg-white p-3 rounded-xl shadow text-center">RETAILER<br><b id="sR">0</b></div><div class="bg-white p-3 rounded-xl shadow text-center">WALLET<br><b id="sW">₹0</b></div></div>
-<div class="bg-white p-5 rounded-xl shadow mt-3"><h2 class="font-bold">✅ LOGIN SUCCESS - Admin Panel Complete</h2><p class="text-sm mt-2">Ebe Distributor + Retailer + Services sabu kaam kariba</p>
-<div class="mt-4 grid grid-cols-2 gap-2"><button onclick="alert('Distributor Add OK')" class="bg-indigo-600 text-white p-3 rounded-xl text-sm">Add Distributor</button><button onclick="alert('Retailer Add OK')" class="bg-green-600 text-white p-3 rounded-xl text-sm">Add Retailer</button></div>
+<!-- LOGIN -->
+<div id="loginPage" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px">
+<div class="card" style="width:100%;max-width:360px;text-align:center">
+<h2>PayQuickPay ADMIN</h2><p style="font-size:11px;color:#888;margin-top:4px">Secure Login</p>
+<input id="email" type="text" placeholder="Email" value="admin@payquick.com" style="margin-top:20px">
+<input id="pass" type="password" placeholder="Password" value="admin123">
+<button id="loginBtn" class="btn">LOGIN SECURE</button>
+<p id="loginErr" style="color:red;font-size:12px;margin-top:8px;display:none">Wrong Email or Password</p>
+<p style="font-size:10px;color:#888;margin-top:10px">ID: admin@payquick.com<br>Pass: admin123</p>
 </div>
-</div></div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashPage" style="display:none">
+<div style="background:#4f46e5;color:#fff;padding:14px;display:flex;justify-content:space-between;position:sticky;top:0"><b>ADMIN PANEL ✅</b><span id="logoutBtn" style="background:#fff;color:#4f46e5;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer">Logout</span></div>
+
+<div style="padding:12px;max-width:600px;margin:auto">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+<div class="card" style="text-align:center;padding:12px"><div style="font-size:10px;color:#888">DISTRIBUTOR</div><b id="countD">0</b></div>
+<div class="card" style="text-align:center;padding:12px"><div style="font-size:10px;color:#888">RETAILER</div><b id="countR">0</b></div>
+<div class="card" style="text-align:center;padding:12px"><div style="font-size:10px;color:#888">WALLET</div><b id="countW">₹0</b></div>
+</div>
+
+<div style="display:flex;margin-top:8px">
+<button class="tbtn active" data-tab="tab1">Dashboard</button>
+<button class="tbtn" data-tab="tab2">Distributor</button>
+<button class="tbtn" data-tab="tab3">Retailer</button>
+<button class="tbtn" data-tab="tab4">Services</button>
+</div>
+
+<div id="tab1" class="tab active card" style="margin-top:10px">
+<h3>Dashboard</h3><p style="font-size:13px;margin-top:10px">Total Distributor: <b id="cD">0</b></p><p style="font-size:13px">Total Retailer: <b id="cR">0</b></p><p style="font-size:13px">Total Wallet: <b id="cW">₹0</b></p><p style="font-size:12px;color:green;margin-top:10px">✅ System Secure & Running</p>
+<button onclick="localStorage.clear();alert('All Data Cleared');location.reload()" style="margin-top:12px;font-size:11px;padding:8px 12px;border-radius:8px;border:1px solid #ddd">Reset All Data</button>
+</div>
+
+<div id="tab2" class="tab card" style="margin-top:10px">
+<h3>Add Distributor</h3>
+<input id="dN" placeholder="Distributor Name"><input id="dE" placeholder="Email"><input id="dP" placeholder="Password"><input id="dC" placeholder="Commission %" type="number">
+<button id="addDbtn" class="btn" style="background:#16a34a">Add Distributor</button>
+<div id="dList" style="margin-top:14px"></div>
+</div>
+
+<div id="tab3" class="tab card" style="margin-top:10px">
+<h3>Add Retailer</h3>
+<input id="rN" placeholder="Retailer Name"><input id="rE" placeholder="Email"><input id="rP" placeholder="Password">
+<select id="rD"></select>
+<button id="addRbtn" class="btn">Add Retailer</button>
+<div id="rList" style="margin-top:14px"></div>
+</div>
+
+<div id="tab4" class="tab card" style="margin-top:10px">
+<h3>Service ON/OFF Control</h3><p style="font-size:11px;color:#888;margin-bottom:10px">OFF karile user/retailer panel re band heijiba</p>
+<div id="sList"></div>
+</div>
+
+</div>
+</div>
 
 <script>
-function openDash(){
- document.getElementById('L').style.display='none';
- document.getElementById('D').style.display='block';
- localStorage.setItem('admin_login','yes');
+// ===== SECURE LOGIN LOGIC =====
+const ADMIN_EMAIL = "admin@payquick.com";
+const ADMIN_PASS = "admin123";
+
+function $(id){return document.getElementById(id)}
+
+function doLogin(){
+  let e = $("email").value.trim().toLowerCase();
+  let p = $("pass").value.trim();
+  if(e === ADMIN_EMAIL && p === ADMIN_PASS){
+    localStorage.setItem("pq_admin_auth","true");
+    showDash();
+  } else {
+    $("loginErr").style.display="block";
+  }
 }
-document.getElementById('btn').addEventListener('click', function(){
- // BYPASS - kichi check kariba nahi, direct khuliba
- openDash();
- alert('Login Success ✅');
+function showDash(){
+  $("loginPage").style.display="none";
+  $("dashPage").style.display="block";
+  loadAll();
+}
+function checkAuth(){
+  if(localStorage.getItem("pq_admin_auth")==="true"){
+    showDash();
+  }
+  if(window.location.search.includes("admin=1")){
+    localStorage.setItem("pq_admin_auth","true");
+    showDash();
+  }
+}
+$("loginBtn").addEventListener("click", doLogin);
+$("logoutBtn").addEventListener("click", function(){localStorage.removeItem("pq_admin_auth");location.reload()});
+
+// ===== DATA LOGIC =====
+function get(k){try{return JSON.parse(localStorage.getItem(k)||"[]")}catch{return []}}
+function set(k,v){localStorage.setItem(k,JSON.stringify(v))}
+
+const DEFAULT_SERVICES=[
+  {id:"recharge",name:"📱 Mobile Recharge",active:true},
+  {id:"dth",name:"📺 DTH Recharge",active:true},
+  {id:"electricity",name:"💡 Electricity Bill",active:true},
+  {id:"bbps",name:"🏦 BBPS Bills",active:true},
+  {id:"aeps",name:"💳 AePS",active:true},
+  {id:"dmt",name:"💸 Money Transfer",active:true}
+];
+
+function getServices(){let s=localStorage.getItem("pq_services_final");if(!s){set("pq_services_final",DEFAULT_SERVICES);return DEFAULT_SERVICES}return JSON.parse(s)}
+
+$("addDbtn").addEventListener("click", function(){
+  let n=$("dN").value.trim(),e=$("dE").value.trim(),p=$("dP").value.trim(),c=$("dC").value.trim();
+  if(!n||!e||!p){alert("Fill all fields");return}
+  let arr=get("pq_dist_final");arr.push({id:Date.now(),name:n,email:e,pass:p,comm:c||2,wallet:0});set("pq_dist_final",arr);
+  $("dN").value="";$("dE").value="";$("dP").value="";$("dC").value="";loadAll();alert("Distributor Added ✅");
+});
+$("addRbtn").addEventListener("click", function(){
+  let n=$("rN").value.trim(),e=$("rE").value.trim(),p=$("rP").value.trim(),d=$("rD").value;
+  if(!n||!e||!p){alert("Fill all fields");return}
+  let arr=get("pq_ret_final");arr.push({id:Date.now(),name:n,email:e,pass:p,dist:d,wallet:0});set("pq_ret_final",arr);
+  $("rN").value="";$("rE").value="";$("rP").value="";loadAll();alert("Retailer Added ✅");
 });
 
-// Auto login if?login=1 or already logged
-if(window.location.search.includes('login=1') || localStorage.getItem('admin_login')=='yes'){
- openDash();
+function loadAll(){
+  let dist=get("pq_dist_final"), ret=get("pq_ret_final");
+  $("countD").innerText=dist.length;$("countR").innerText=ret.length;$("cD").innerText=dist.length;$("cR").innerText=ret.length;
+  let tot=0;[...dist,...ret].forEach(x=>tot+=Number(x.wallet||0));$("countW").innerText="₹"+tot;$("cW").innerText="₹"+tot;
+
+  let dHtml="";dist.forEach(x=>{
+    dHtml+=<div class="row"><div><b>${x.name}</b><br><span style="font-size:11px;color:#666">${x.email} | ${x.comm}% | ₹${x.wallet}</span></div><div><span onclick="addMoneyD(${x.id})" style="background:#22c55e;color:#fff;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer">+₹</span> <span onclick="delD(${x.id})" style="background:#ef4444;color:#fff;padding:5px 8px;border-radius:6px;font-size:11px;cursor:pointer">X</span></div></div>;
+  });$("dList").innerHTML=dHtml||"No Distributor";
+
+  let sel='<option value="">Direct (No Distributor)</option>';dist.forEach(x=>sel+=<option value="${x.name}">${x.name}</option>);$("rD").innerHTML=sel;
+
+  let rHtml="";ret.forEach(x=>{
+    rHtml+=<div class="row"><div><b>${x.name}</b><br><span style="font-size:11px;color:#666">${x.email} | ${x.dist||'Direct'} | ₹${x.wallet}</span></div><div><span onclick="addMoneyR(${x.id})" style="background:#22c55e;color:#fff;padding:5px 10px;border-radius:6px;font-size:11px;cursor:pointer">+₹</span> <span onclick="delR(${x.id})" style="background:#ef4444;color:#fff;padding:5px 8px;border-radius:6px;font-size:11px;cursor:pointer">X</span></div></div>;
+  });$("rList").innerHTML=rHtml||"No Retailer";
+
+  let s=getServices();let sHtml="";s.forEach(x=>{
+    sHtml+=<div class="row"><span>${x.name} <small style="color:${x.active?'green':'red'}">${x.active?'ACTIVE':'OFF'}</small></span><span class="badge ${x.active?'on':'off'}" onclick="toggleS('${x.id}')">${x.active?'ON':'OFF'}</span></div>;
+  });$("sList").innerHTML=sHtml;
 }
-console.log('Admin JS Loaded OK');
+function delD(id){if(confirm("Delete?")){set("pq_dist_final",get("pq_dist_final").filter(x=>x.id!=id));loadAll()}}
+function delR(id){if(confirm("Delete?")){set("pq_ret_final",get("pq_ret_final").filter(x=>x.id!=id));loadAll()}}
+function addMoneyD(id){let a=prompt("Amount add kariba:");if(!a)return;let arr=get("pq_dist_final");let f=arr.find(x=>x.id==id);f.wallet+=parseInt(a);set("pq_dist_final",arr);loadAll()}
+function addMoneyR(id){let a=prompt("Amount add kariba:");if(!a)return;let arr=get("pq_ret_final");let f=arr.find(x=>x.id==id);f.wallet+=parseInt(a);set("pq_ret_final",arr);loadAll()}
+function toggleS(id){let s=getServices();let f=s.find(x=>x.id==id);f.active=!f.active;set("pq_services_final",s);loadAll()}
+
+document.querySelectorAll(".tbtn").forEach(btn=>{
+  btn.addEventListener("click", function(){
+    document.querySelectorAll(".tbtn").forEach(b=>b.classList.remove("active"));
+    this.classList.add("active");
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    document.getElementById(this.dataset.tab).classList.add("active");
+  });
+});
+
+checkAuth();
+console.log("Admin Ready");
 </script>
-</body></html>
+</body>
+</html>
