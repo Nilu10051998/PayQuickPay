@@ -1,110 +1,125 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PayQuickPay Admin - Final</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-body{background:#f0f2f5; font-family: sans-serif;}
-.card{border:none;border-radius:15px;box-shadow:0 4px 15px rgba(0,0,0,0.08)}
-.stat{font-size:26px;font-weight:700}
-</style>
-</head>
-<body>
-<nav class="navbar navbar-dark bg-dark p-3">
-<span class="navbar-brand">⚡ PayQuickPay - ADMIN (All ON)</span>
-<a href="index.html" class="btn btn-sm btn-warning">Go App</a>
-</nav>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin Final</title><script src="https://cdn.tailwindcss.com"></script></head>
+<body class="bg-slate-100 min-h-screen">
 
-<div class="container mt-4">
-<div class="row g-3">
-<div class="col-6 col-md-3"><div class="card p-3 text-center"><small>Total Users</small><div class="stat" id="totalUsers">0</div></div></div>
-<div class="col-6 col-md-3"><div class="card p-3 text-center"><small>Retailers</small><div class="stat" id="totalRet">0</div></div></div>
-<div class="col-6 col-md-3"><div class="card p-3 text-center"><small>Distributors</small><div class="stat" id="totalDist">0</div></div></div>
-<div class="col-6 col-md-3"><div class="card p-3 text-center"><small>Status</small><div class="stat text-success">● LIVE</div></div></div>
+<!-- LOGIN -->
+<div id="loginBox" class="min-h-screen flex items-center justify-center p-4">
+<div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm text-center">
+<h1 class="text-2xl font-bold">Admin Panel</h1><p class="text-xs text-gray-400 mt-1">PayQuickPay Final</p>
+<input id="aEmail" class="w-full p-3 border rounded-xl mt-6 text-sm" placeholder="admin@payquick.com">
+<input id="aPass" type="password" class="w-full p-3 border rounded-xl mt-3 text-sm" placeholder="admin123">
+<button onclick="login()" class="w-full bg-indigo-600 text-white p-3 rounded-xl mt-4 font-bold">Login</button>
+</div></div>
+
+<!-- DASH -->
+<div id="dashBox" class="hidden">
+<div class="bg-indigo-600 text-white p-4 flex justify-between items-center sticky top-0"><b>PayQuickPay Admin</b><button onclick="logout()" class="bg-white text-indigo-600 px-4 py-1.5 rounded-full text-xs font-bold">Logout</button></div>
+
+<div class="p-3 max-w-2xl mx-auto">
+<!-- STATS -->
+<div class="grid grid-cols-3 gap-2">
+<div class="bg-white p-3 rounded-xl shadow text-center"><p class="text-[10px] text-gray-500">DISTRIBUTOR</p><p id="sDis" class="font-bold text-lg">0</p></div>
+<div class="bg-white p-3 rounded-xl shadow text-center"><p class="text-[10px] text-gray-500">RETAILER</p><p id="sRet" class="font-bold text-lg">0</p></div>
+<div class="bg-white p-3 rounded-xl shadow text-center"><p class="text-[10px] text-gray-500">WALLET</p><p id="sWal" class="font-bold text-lg">₹0</p></div>
 </div>
 
-<div class="card mt-4 p-3">
-<h5>➕ Add Retailer / Distributor</h5>
-<div class="row g-2 mt-2">
-<div class="col-md-3"><input id="newName" class="form-control" placeholder="Full Name"></div>
-<div class="col-md-3"><input id="newMobile" class="form-control" placeholder="Mobile Number"></div>
-<div class="col-md-2">
-<select id="newRole" class="form-select">
-<option value="retailer">Retailer</option>
-<option value="distributor">Distributor</option>
-<option value="admin">Admin</option>
-</select>
-</div>
-<div class="col-md-2"><input id="newWallet" class="form-control" type="number" placeholder="Wallet ₹"></div>
-<div class="col-md-2"><button onclick="addRetailer()" class="btn btn-primary w-100">Add Now</button></div>
-</div>
+<!-- TABS -->
+<div class="grid grid-cols-4 gap-2 mt-3">
+<button onclick="showTab('t1')" id="b1" class="bg-indigo-600 text-white p-2.5 rounded-xl text-xs font-bold">Dashboard</button>
+<button onclick="showTab('t2')" id="b2" class="bg-white p-2.5 rounded-xl text-xs font-bold">Distributor</button>
+<button onclick="showTab('t3')" id="b3" class="bg-white p-2.5 rounded-xl text-xs font-bold">Retailer</button>
+<button onclick="showTab('t4')" id="b4" class="bg-white p-2.5 rounded-xl text-xs font-bold">Services</button>
 </div>
 
-<div class="card mt-4 p-3">
-<h5>👥 All Users List</h5>
-<table class="table table-striped mt-3">
-<thead><tr><th>Name</th><th>Mobile</th><th>Role</th><th>Wallet</th><th>Action</th></tr></thead>
-<tbody id="userList"></tbody>
-</table>
+<!-- T1 Dashboard -->
+<div id="t1" class="bg-white p-5 rounded-xl shadow mt-3">
+<h2 class="font-bold">Overview</h2>
+<p class="text-sm mt-3">Total Distributor: <b id="cDis">0</b></p>
+<p class="text-sm">Total Retailer: <b id="cRet">0</b></p>
+<p class="text-sm">Total Wallet Balance: <b id="cWal">₹0</b></p>
+<p class="text-sm text-green-600 mt-2">✅ All Systems Active</p>
 </div>
 
-<div class="card mt-4 p-3 mb-5">
-<h5>💰 Quick Wallet Topup</h5>
-<div class="row g-2 mt-2">
-<div class="col-md-4"><input id="addMoneyUser" class="form-control" placeholder="Mobile"></div>
-<div class="col-md-3"><input id="addMoneyAmt" class="form-control" type="number" placeholder="Amount"></div>
-<div class="col-md-5"><button onclick="addMoney()" class="btn btn-success w-100">Add Money</button></div>
+<!-- T2 Distributor -->
+<div id="t2" class="hidden bg-white p-5 rounded-xl shadow mt-3">
+<h2 class="font-bold mb-3">Add Distributor</h2>
+<input id="dName" placeholder="Distributor Name" class="w-full border p-2.5 rounded-lg mb-2 text-sm">
+<input id="dEmail" placeholder="Email" class="w-full border p-2.5 rounded-lg mb-2 text-sm">
+<input id="dPass" placeholder="Password" class="w-full border p-2.5 rounded-lg mb-2 text-sm">
+<input id="dComm" type="number" placeholder="Commission % (ex: 5)" class="w-full border p-2.5 rounded-lg mb-2 text-sm">
+<button onclick="addDistributor()" class="w-full bg-indigo-600 text-white p-2.5 rounded-lg font-bold text-sm">Add Distributor</button>
+<div id="dList" class="mt-4"></div>
 </div>
+
+<!-- T3 Retailer -->
+<div id="t3" class="hidden bg-white p-5 rounded-xl shadow mt-3">
+<h2 class="font-bold mb-3">Add Retailer</h2>
+<input id="rName" placeholder="Retailer Name" class="w-full border p-2.5 rounded-lg mb-2 text-sm">
+<input id="rEmail" placeholder="Email" class="w-full border p-2.5 rounded-lg mb-2 text-sm">
+<input id="rPass" placeholder="Password" class="w-full border p-2.5 rounded-lg mb-2 text-sm">
+<select id="rDis" class="w-full border p-2.5 rounded-lg mb-2 text-sm"><option value="">Select Distributor (Optional)</option></select>
+<button onclick="addRetailer()" class="w-full bg-indigo-600 text-white p-2.5 rounded-lg font-bold text-sm">Add Retailer</button>
+<div id="rList" class="mt-4"></div>
 </div>
+
+<!-- T4 Services -->
+<div id="t4" class="hidden bg-white p-5 rounded-xl shadow mt-3">
+<h2 class="font-bold mb-3">Service ON/OFF Control</h2>
+<div id="sList"></div>
 </div>
+
+</div></div>
 
 <script>
-function loadData(){
-  let users = JSON.parse(localStorage.getItem('pqp_users') || '[]');
-  document.getElementById('totalUsers').innerText = users.length;
-  document.getElementById('totalRet').innerText = users.filter(u=>u.role=='retailer').length;
-  document.getElementById('totalDist').innerText = users.filter(u=>u.role=='distributor').length;
-  
-  let ul = document.getElementById('userList');
-  ul.innerHTML = '';
-  users.forEach(u=>{
-    ul.innerHTML += <tr><td>${u.name}</td><td>${u.mobile||u.phone}</td><td><span class="badge ${u.role=='distributor'?'bg-warning text-dark':'bg-info'}">${u.role}</span></td><td>₹${u.wallet||0}</td><td><button onclick="delUser('${u.mobile||u.phone}')" class="btn btn-sm btn-danger">Delete</button></td></tr>;
-  });
-  if(users.length==0) ul.innerHTML='<tr><td colspan=5 class=text-center>No users. Add upare form ru add kara.</td></tr>';
+const ADMIN_E='admin@payquick.com',ADMIN_P='admin123';
+function login(){if(aEmail.value==ADMIN_E&&aPass.value==ADMIN_P){localStorage.setItem('admin_login','yes');init()}else alert('Wrong ID: admin@payquick.com / admin123')}
+function logout(){localStorage.removeItem('admin_login');location.reload()}
+function init(){if(localStorage.getItem('admin_login')=='yes'){loginBox.classList.add('hidden');dashBox.classList.remove('hidden');loadAll()}}
+function showTab(id){
+ ['t1','t2','t3','t4'].forEach(t=>document.getElementById(t).classList.add('hidden'));
+ ['b1','b2','b3','b4'].forEach(b=>{document.getElementById(b).className='bg-white p-2.5 rounded-xl text-xs font-bold'});
+ document.getElementById(id).classList.remove('hidden');
+ document.getElementById('b'+id[1]).className='bg-indigo-600 text-white p-2.5 rounded-xl text-xs font-bold';
+ loadAll();
+}
+function get(k){return JSON.parse(localStorage.getItem(k)||'[]')}
+function set(k,v){localStorage.setItem(k,JSON.stringify(v))}
+
+const defS=[{id:'recharge',name:'📱 Mobile Recharge',active:true},{id:'dth',name:'📺 DTH Recharge',active:true},{id:'electricity',name:'💡 Electricity',active:true},{id:'bbps',name:'🏦 BBPS Bills',active:true},{id:'aeps',name:'💳 AePS',active:true},{id:'dmt',name:'💸 Money Transfer',active:true}];
+function getS(){let s=localStorage.getItem('pq_services');if(!s){set('pq_services',defS);return defS}return JSON.parse(s)}
+function toggleS(id){let s=getS();s.find(x=>x.id==id).active=!s.find(x=>x.id==id).active;set('pq_services',s);loadServices()}
+
+function addDistributor(){
+ let n=dName.value,e=dEmail.value,p=dPass.value,c=dComm.value;
+ if(!n||!e||!p)return alert('Fill all');
+ let d=get('pq_distributor');d.push({id:Date.now(),name:n,email:e,pass:p,comm:c||2,wallet:0});
+ set('pq_distributor',d);dName.value='';dEmail.value='';dPass.value='';dComm.value='';alert('Distributor Added ✅');loadAll();
 }
 function addRetailer(){
-  let name=document.getElementById('newName').value.trim();
-  let mobile=document.getElementById('newMobile').value.trim();
-  let role=document.getElementById('newRole').value;
-  let wallet=parseInt(document.getElementById('newWallet').value)||0;
-  if(!name||!mobile) return alert('Name au Mobile dia bhai');
-  let users=JSON.parse(localStorage.getItem('pqp_users')||'[]');
-  if(users.find(u=>(u.mobile||u.phone)==mobile)) return alert('E mobile already achi!');
-  users.push({name,mobile,phone:mobile,role,wallet});
-  localStorage.setItem('pqp_users',JSON.stringify(users));
-  alert(role.toUpperCase()+' Add heigala: '+name);
-  document.getElementById('newName').value=''; document.getElementById('newMobile').value=''; document.getElementById('newWallet').value='';
-  loadData();
+ let n=rName.value,e=rEmail.value,p=rPass.value,dis=rDis.value;
+ if(!n||!e||!p)return alert('Fill all');
+ let d=get('pq_retailers');d.push({id:Date.now(),name:n,email:e,pass:p,distributor:dis,wallet:0});
+ set('pq_retailers',d);rName.value='';rEmail.value='';rPass.value='';alert('Retailer Added ✅');loadAll();
 }
-function addMoney(){
-  let mob=document.getElementById('addMoneyUser').value.trim();
-  let amt=parseInt(document.getElementById('addMoneyAmt').value);
-  if(!mob||!amt) return alert('Mobile au Amount dia');
-  let users=JSON.parse(localStorage.getItem('pqp_users')||'[]');
-  let f=users.find(u=>(u.mobile||u.phone)==mob);
-  if(f){ f.wallet=(parseInt(f.wallet||0)+amt); localStorage.setItem('pqp_users',JSON.stringify(users)); alert('₹'+amt+' Added'); loadData(); }
-  else alert('User miluni');
+function delD(id){if(confirm('Delete?')){set('pq_distributor',get('pq_distributor').filter(x=>x.id!=id));loadAll()}}
+function delR(id){if(confirm('Delete?')){set('pq_retailers',get('pq_retailers').filter(x=>x.id!=id));loadAll()}}
+function addMoneyD(id){let a=prompt('Kete wallet add kariba?');if(!a)return;let d=get('pq_distributor');d.find(x=>x.id==id).wallet+=parseInt(a);set('pq_distributor',d);loadAll()}
+function addMoneyR(id){let a=prompt('Kete wallet add kariba?');if(!a)return;let d=get('pq_retailers');d.find(x=>x.id==id).wallet+=parseInt(a);set('pq_retailers',d);loadAll()}
+
+function loadServices(){
+ let s=getS();let h='';s.forEach(x=>{
+ h+=<div class="flex justify-between items-center border p-3 rounded-xl mb-2"><div><p class="font-bold text-sm">${x.name}</p><p class="text-[10px] text-gray-400">${x.active?'ACTIVE ✅':'INACTIVE ❌'}</p></div><button onclick="toggleS('${x.id}')" class="${x.active?'bg-green-500':'bg-gray-400'} text-white px-5 py-1.5 rounded-full text-xs font-bold">${x.active?'ON':'OFF'}</button></div>;
+ });document.getElementById('sList').innerHTML=h;
 }
-function delUser(mob){
-  if(!confirm('Delete kariba?')) return;
-  let users=JSON.parse(localStorage.getItem('pqp_users')||'[]');
-  users=users.filter(u=>(u.mobile||u.phone)!=mob);
-  localStorage.setItem('pqp_users',JSON.stringify(users));
-  loadData();
+function loadAll(){
+ let d=get('pq_distributor'),r=get('pq_retailers');
+ document.getElementById('sDis').innerText=d.length;document.getElementById('sRet').innerText=r.length;document.getElementById('cDis').innerText=d.length;document.getElementById('cRet').innerText=r.length;
+ let tot=0;[...d,...r].forEach(x=>tot+=x.wallet);document.getElementById('sWal').innerText='₹'+tot;document.getElementById('cWal').innerText='₹'+tot;
+
+ let dh='';d.forEach(x=>dh+=<div class="border p-3 rounded-xl mb-2 flex justify-between items-center"><div><p class="font-bold text-sm">${x.name}</p><p class="text-xs text-gray-500">${x.email} | Comm ${x.comm}% | ₹${x.wallet}</p></div><div class="flex gap-1"><button onclick="addMoneyD(${x.id})" class="bg-green-500 text-white px-2 py-1 rounded text-xs">+₹</button><button onclick="delD(${x.id})" class="bg-red-500 text-white px-2 py-1 rounded text-xs">X</button></div></div>);document.getElementById('dList').innerHTML=dh||'<p class="text-xs text-gray-400">No Distributor</p>';
+ let sel='<option value="">No Distributor (Direct Admin)</option>';d.forEach(x=>sel+=<option value="${x.name}">${x.name}</option>);document.getElementById('rDis').innerHTML=sel;
+ let rh='';r.forEach(x=>rh+=<div class="border p-3 rounded-xl mb-2 flex justify-between items-center"><div><p class="font-bold text-sm">${x.name}</p><p class="text-xs text-gray-500">${x.email} | ${x.distributor||'Direct'} | ₹${x.wallet}</p></div><div class="flex gap-1"><button onclick="addMoneyR(${x.id})" class="bg-green-500 text-white px-2 py-1 rounded text-xs">+₹</button><button onclick="delR(${x.id})" class="bg-red-500 text-white px-2 py-1 rounded text-xs">X</button></div></div>);document.getElementById('rList').innerHTML=rh||'<p class="text-xs text-gray-400">No Retailer</p>';
+ loadServices();
 }
-loadData();
-</script>
-</body>
-</html>
+init();
+</script></body></html>
