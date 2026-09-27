@@ -1,1 +1,129 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin Fixed</title></head><body style="background:#020617;color:#fff;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;font-family:sans-serif"><div id="L" style="background:#1e293b;padding:20px;border-radius:14px;width:300px"><h3>ADMIN LOGIN</h3><input id="u" value="admin" style="width:100%;padding:10px;margin:5px 0"><input id="p" type="password" value="admin123" style="width:100%;padding:10px;margin:5px 0"><button id="btn" style="width:100%;padding:12px;background:#f59e0b;border:none;font-weight:800">LOGIN</button></div><div id="D" style="display:none;background:#1e293b;padding:20px;border-radius:14px;width:340px"><h3>✅ LOGIN SUCCESS</h3><p>Admin Panel Ready</p><input id="dn" placeholder="Distributor Name" style="width:100%;padding:8px;margin:4px 0"><input id="dm" placeholder="Mobile" style="width:100%;padding:8px;margin:4px 0"><input id="dp" placeholder="Password" style="width:100%;padding:8px;margin:4px 0"><button id="add" style="width:100%;padding:10px;background:#22c55e;border:none">ADD</button><div id="list"></div></div><script>document.getElementById('btn').onclick=function(){if(document.getElementById('u').value=='admin'&&document.getElementById('p').value=='admin123'){document.getElementById('L').style.display='none';document.getElementById('D').style.display='block';}else alert('wrong')};document.getElementById('add').onclick=function(){var m=document.getElementById('dm').value;if(!m)return;var d=JSON.parse(localStorage.getItem('distributors')||'[]');d.push({name:document.getElementById('dn').value,mobile:m,password:document.getElementById('dp').value});localStorage.setItem('distributors',JSON.stringify(d));load()};function load(){var d=JSON.parse(localStorage.getItem('distributors')||'[]');var h='';for(var i=0;i<d.length;i++){h+='<div style=background:#0f172a;padding:6px;margin:4px 0;border-radius:6px>'+d[i].mobile+'</div>'}document.getElementById('list').innerHTML=h}load();</script></body></html>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FULL ADMIN - PayQuickPay</title>
+<style>
+*{box-sizing:border-box;font-family:system-ui,Arial}body{background:#020617;color:#fff;margin:0;padding:10px}
+.h{background:#0f172a;padding:12px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;border:1px solid #1e293b;position:sticky;top:5px}
+.c{background:#1e293b;padding:14px;border-radius:14px;margin:10px 0;border:1px solid #334155}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.s{background:#0f172a;padding:12px;border-radius:10px;text-align:center}
+input{width:100%;padding:11px;margin:5px 0;border-radius:8px;border:none;background:#020617;color:#fff}
+.b{width:100%;padding:11px;border:none;border-radius:8px;font-weight:800;cursor:pointer}
+.by{background:#f59e0b;color:#000}.bg{background:#22c55e;color:#000}.br{background:#ef4444;color:#fff}
+.tabs{display:flex;gap:6px;overflow:auto;margin:10px 0}
+.t{padding:8px 14px;background:#1e293b;border-radius:20px;border:1px solid #334155;cursor:pointer;white-space:nowrap}
+.t.on{background:#f59e0b;color:#000;font-weight:800}
+.it{background:#0f172a;padding:10px;border-radius:10px;margin:6px 0;display:flex;justify-content:space-between;align-items:center}
+.hid{display:none}
+</style>
+</head>
+<body>
+<div id="loginDiv" style="height:90vh;display:flex;justify-content:center;align-items:center">
+<div style="background:#1e293b;padding:22px;border-radius:16px;width:340px;border:1px solid #334155">
+<h3 style="text-align:center">🔐 ADMIN LOGIN</h3>
+<input id="aid" value="admin"><input id="ap" type="password" value="admin123">
+<button class="b by" id="loginBtn">LOGIN</button>
+</div>
+</div>
+
+<div id="mainDiv" class="hid">
+<div class="h"><b>PayQuickPay <span style="color:#f59e0b">FULL ADMIN</span></b><button class="b br" style="width:auto;padding:6px 12px" id="logoutBtn">LOGOUT</button></div>
+
+<div class="tabs">
+<div class="t on" data-tab="dash">📊 Dashboard</div>
+<div class="t" data-tab="dist">👥 Distributors</div>
+<div class="t" data-tab="ret">🏪 Retailers</div>
+<div class="t" data-tab="comm">💰 Commission</div>
+<div class="t" data-tab="hist">📜 History</div>
+</div>
+
+<div id="dash" class="c"><div class="g">
+<div class="s"><h2 id="td">0</h2><small>Distributors</small></div>
+<div class="s"><h2 id="tr">0</h2><small>Retailers</small></div>
+<div class="s"><h2>₹<span id="ta">0</span></h2><small>Total Recharge</small></div>
+<div class="s"><h2 id="tc">0%</h2><small>Comm. Rate</small></div>
+</div><button class="b br" style="margin-top:10px" id="clearBtn">🗑️ Clear All Data</button></div>
+
+<div id="dist" class="c hid"><h3>➕ Add Distributor</h3>
+<input id="dn" placeholder="Name"><input id="dm" placeholder="Mobile = Login ID"><input id="dp" placeholder="Password"><input id="db" type="number" placeholder="Opening Balance">
+<button class="b bg" id="addDistBtn">ADD DISTRIBUTOR</button>
+<h3 style="margin-top:12px">List (<span id="dc">0</span>)</h3><div id="dList"></div></div>
+
+<div id="ret" class="c hid"><h3>🏪 All Retailers</h3><div id="rList">Loading...</div></div>
+<div id="comm" class="c hid"><h3>💰 Commission %</h3><small>Mobile</small><input id="c1" type="number" value="2"><small>DTH</small><input id="c2" type="number" value="3"><small>Electricity</small><input id="c3" type="number" value="1"><small>BBPS</small><input id="c4" type="number" value="1"><button class="b by" id="saveCommBtn">SAVE</button></div>
+<div id="hist" class="c hid"><h3>📜 Recharge History</h3><div id="hList">Loading...</div></div>
+</div>
+
+<script>
+var $ = function(id){return document.getElementById(id)};
+function showMain(){ $("loginDiv").style.display="none"; $("mainDiv").classList.remove("hid"); loadAll(); }
+$("loginBtn").onclick = function(){
+ if($("aid").value=="admin" && $("ap").value=="admin123"){localStorage.setItem("isAdmin","yes"); showMain();} else alert("Wrong ID Pass");
+};
+$("logoutBtn").onclick = function(){localStorage.removeItem("isAdmin"); location.reload();};
+
+document.querySelectorAll(".t").forEach(function(el){
+ el.onclick = function(){
+  document.querySelectorAll(".t").forEach(function(x){x.classList.remove("on")});
+  el.classList.add("on");
+  document.getElementById("dash").classList.add("hid");
+  document.getElementById("dist").classList.add("hid");
+  document.getElementById("ret").classList.add("hid");
+  document.getElementById("comm").classList.add("hid");
+  document.getElementById("hist").classList.add("hid");
+  document.getElementById(el.getAttribute("data-tab")).classList.remove("hid");
+  if(el.getAttribute("data-tab")=="ret") showRet();
+  if(el.getAttribute("data-tab")=="hist") showHist();
+ };
+});
+
+function loadAll(){
+ var d = JSON.parse(localStorage.getItem("distributors")||"[]");
+ var r = JSON.parse(localStorage.getItem("retailers")||"[]");
+ var h = JSON.parse(localStorage.getItem("recharges")||"[]");
+ $("td").innerText = d.length;
+ $("tr").innerText = r.length;
+ $("dc").innerText = d.length;
+ var total=0; for(var i=0;i<h.length;i++){total+=Number(h[i].amount||0);}
+ $("ta").innerText = total;
+ $("tc").innerText = (localStorage.getItem("comm_mobile")||2)+"%";
+ var html="";
+ for(var i=0;i<d.length;i++){
+  html += '<div class="it"><div><b>'+d[i].name+'</b><br><small>'+d[i].mobile+' | Pass:'+d[i].password+' | Bal:₹'+(d[i].balance||0)+'</small></div><div><button class="b by" style="width:auto;padding:4px 8px" onclick="addBal('+i+')">+₹</button> <button class="b br" style="width:auto;padding:4px 8px" onclick="delD('+i+')">X</button></div></div>';
+ }
+ $("dList").innerHTML = html || "No data";
+}
+$("addDistBtn").onclick = function(){
+ var n=$("dn").value, m=$("dm").value, p=$("dp").value, b=$("db").value||0;
+ if(!m||!p){alert("Mobile & Pass darkar"); return;}
+ var d=JSON.parse(localStorage.getItem("distributors")||"[]");
+ for(var i=0;i<d.length;i++){if(d[i].mobile==m){alert("Already achi"); return;}}
+ d.push({name:n||"Dist", mobile:m, password:p, balance:Number(b)});
+ localStorage.setItem("distributors", JSON.stringify(d));
+ $("dn").value=""; $("dm").value=""; $("dp").value=""; $("db").value="";
+ loadAll(); alert("Added ✅");
+};
+function delD(i){ if(!confirm("Delete?")) return; var d=JSON.parse(localStorage.getItem("distributors")||"[]"); d.splice(i,1); localStorage.setItem("distributors", JSON.stringify(d)); loadAll(); }
+function addBal(i){ var amt=prompt("Kete Balance Add kariba?"); if(!amt) return; var d=JSON.parse(localStorage.getItem("distributors")||"[]"); d[i].balance=(Number(d[i].balance||0)+Number(amt)); localStorage.setItem("distributors", JSON.stringify(d)); loadAll(); }
+function showRet(){
+ var r=JSON.parse(localStorage.getItem("retailers")||"[]");
+ if(!r.length){$("rList").innerHTML="No Retailer yet - index.html ru register hebe"; return;}
+ var h=""; for(var i=0;i<r.length;i++){h+='<div class="it"><div><b>'+(r[i].name||"Retailer")+'</b><br><small>'+r[i].mobile+' | ₹'+(r[i].balance||0)+'</small></div><button class="b br" style="width:auto" onclick="delR('+i+')">X</button></div>';}
+ $("rList").innerHTML=h;
+}
+function delR(i){ var r=JSON.parse(localStorage.getItem("retailers")||"[]"); r.splice(i,1); localStorage.setItem("retailers", JSON.stringify(r)); showRet(); loadAll(); }
+$("saveCommBtn").onclick = function(){ localStorage.setItem("comm_mobile",$("c1").value); localStorage.setItem("comm_dth",$("c2").value); localStorage.setItem("comm_elec",$("c3").value); localStorage.setItem("comm_bbps",$("c4").value); alert("Saved ✅"); loadAll(); };
+function showHist(){
+ var h=JSON.parse(localStorage.getItem("recharges")||"[]");
+ if(!h.length){$("hList").innerHTML="No History"; return;}
+ var html=""; for(var i=h.length-1;i>=0;i--){html+='<div class="it"><div><b>'+h[i].type+' - '+h[i].number+'</b><br><small>₹'+h[i].amount+' | '+h[i].retailer+'</small></div></div>';}
+ $("hList").innerHTML=html;
+}
+$("clearBtn").onclick = function(){ if(confirm("Sabu delete heba! Sure?")){ localStorage.removeItem("distributors"); localStorage.removeItem("retailers"); localStorage.removeItem("recharges"); loadAll(); alert("Cleared"); } };
+if(localStorage.getItem("isAdmin")=="yes"){ showMain(); }
+$("c1").value=localStorage.getItem("comm_mobile")||2; $("c2").value=localStorage.getItem("comm_dth")||3; $("c3").value=localStorage.getItem("comm_elec")||1; $("c4").value=localStorage.getItem("comm_bbps")||1;
+</script>
+</body>
+</html>
