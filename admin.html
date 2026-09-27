@@ -1,93 +1,75 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin Login - PayQuickPay</title>
+<title>Admin Login</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-body{background:#020617;color:#fff;padding:12px}
-.header{background:#0f172a;padding:14px;border-radius:14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border:1px solid #1e293b}
-.box{background:#1e293b;padding:16px;border-radius:16px;margin-bottom:12px;border:1px solid #334155}
-input{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;background:#0f172a;color:#fff}
-.btn{width:100%;padding:12px;background:#f59e0b;color:#000;font-weight:900;border:none;border-radius:10px;margin-top:8px;cursor:pointer}
-.list-item{background:#0f172a;padding:10px;border-radius:10px;margin:6px 0;display:flex;justify-content:space-between;align-items:center}
-#loginPage{height:90vh;display:flex;justify-content:center;align-items:center}
+body{background:#0f172a;color:#fff}
+#loginPage{height:100vh;display:flex;justify-content:center;align-items:center}
 .loginCard{background:#1e293b;padding:24px;border-radius:16px;width:330px;border:1px solid #334155}
+input{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;background:#020617;color:#fff}
+.btn{width:100%;padding:12px;background:#f59e0b;color:#000;font-weight:900;border:none;border-radius:10px;margin-top:8px;cursor:pointer}
 </style></head>
 <body>
 
 <div id="loginPage">
 <div class="loginCard">
-<h2 style="text-align:center;margin-bottom:12px">🔐 ADMIN LOGIN</h2>
-<input id="adminId" placeholder="ID - admin">
-<input id="adminPass" type="password" placeholder="Password - admin123">
-<button class="btn" onclick="login()">LOGIN</button>
-<p id="loginErr" style="color:#ef4444;text-align:center;margin-top:10px"></p>
-<small style="display:block;text-align:center;margin-top:8px;color:#94a3b8">ID: admin / Pass: admin123</small>
+<h2 style="text-align:center">🔐 ADMIN LOGIN</h2>
+<input id="adminId" value="admin">
+<input id="adminPass" type="password" value="admin123">
+<button class="btn" type="button" id="loginBtn">LOGIN</button>
+<p id="loginErr" style="color:red;text-align:center;margin-top:8px"></p>
 </div>
 </div>
 
-<div id="adminPage" style="display:none">
-<div class="header"><div><b>PayQuickPay</b> <small style="color:#f59e0b">ADMIN</small></div><button onclick="logout()" style="background:#ef4444;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-weight:800">LOGOUT</button></div>
-
-<div class="box"><h3>👥 ADD DISTRIBUTOR</h3>
-<input id="d_name" placeholder="Name"><input id="d_mobile" placeholder="Mobile (ID)"><input id="d_pass" placeholder="Password">
-<button class="btn" style="background:#22c55e" onclick="addDist()">+ ADD DISTRIBUTOR</button>
-<p id="msg" style="color:#22c55e;text-align:center;margin-top:6px"></p></div>
-
-<div class="box"><h3>📋 DISTRIBUTORS (<span id="count">0</span>)</h3><div id="distList"></div></div>
-
-<div class="box"><h3>💰 COMMISSION</h3>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div><small>Mobile %</small><input id="c_mobile"></div><div><small>DTH %</small><input id="c_dth"></div></div>
-<button class="btn" onclick="saveComm()">SAVE COMMISSION</button></div>
+<div id="adminPage" style="display:none;padding:12px">
+<h2 style="text-align:center;margin:20px">✅ LOGIN SUCCESS - ADMIN PANEL</h2>
+<div style="background:#1e293b;padding:16px;border-radius:12px">
+<h3>Add Distributor</h3>
+<input id="d_name" placeholder="Name"><input id="d_mobile" placeholder="Mobile"><input id="d_pass" placeholder="Password">
+<button class="btn" style="background:#22c55e" onclick="addDist()">ADD</button>
+<div id="distList" style="margin-top:12px"></div>
+<button class="btn" style="background:#ef4444;margin-top:20px" onclick="localStorage.clear();location.reload()">LOGOUT</button>
+</div>
 </div>
 
 <script>
-function check(){
+console.log("Script loaded");
+document.getElementById('loginBtn').addEventListener('click', function(){
+  let id = document.getElementById('adminId').value.trim();
+  let pass = document.getElementById('adminPass').value.trim();
+  console.log(id, pass);
+  if(id === 'admin' && pass === 'admin123'){
+    alert('Login Success ✅');
+    document.getElementById('loginPage').style.display='none';
+    document.getElementById('adminPage').style.display='block';
+    localStorage.setItem('isAdmin','yes');
+  } else {
+    alert('Wrong Password! Use admin / admin123');
+  }
+});
+
+function addDist(){
+ let m=document.getElementById('d_mobile').value;
+ let p=document.getElementById('d_pass').value;
+ let n=document.getElementById('d_name').value;
+ if(!m||!p){alert('Mobile Pass darkar');return;}
+ let list=JSON.parse(localStorage.getItem('distributors')||'[]');
+ list.push({name:n,mobile:m,password:p});
+ localStorage.setItem('distributors',JSON.stringify(list));
+ alert('Distributor Added ✅');
+ showList();
+}
+function showList(){
+ let list=JSON.parse(localStorage.getItem('distributors')||'[]');
+ let h='';
+ list.forEach(d=>{h+=<div style="background:#020617;padding:8px;margin:4px 0;border-radius:6px">${d.name} - ${d.mobile}</div>});
+ document.getElementById('distList').innerHTML=h;
+}
+// auto login if already logged
 if(localStorage.getItem('isAdmin')=='yes'){
 document.getElementById('loginPage').style.display='none';
 document.getElementById('adminPage').style.display='block';
-load();
-}else{
-document.getElementById('loginPage').style.display='flex';
-document.getElementById('adminPage').style.display='none';
 }
-}
-function login(){
-let id=document.getElementById('adminId').value.trim();
-let p=document.getElementById('adminPass').value.trim();
-if(id==='admin' && p==='admin123'){
-localStorage.setItem('isAdmin','yes');
-check();
-}else{
-document.getElementById('loginErr').innerText='Wrong ID or Password!';
-}
-}
-function logout(){localStorage.removeItem('isAdmin');check();}
-
-function load(){
-document.getElementById('c_mobile').value=localStorage.getItem('comm_mobile')||2;
-document.getElementById('c_dth').value=localStorage.getItem('comm_dth')||3;
 showList();
-}
-function saveComm(){localStorage.setItem('comm_mobile',c_mobile.value);localStorage.setItem('comm_dth',c_dth.value);alert('Saved ✅');}
-function showList(){
-let list=JSON.parse(localStorage.getItem('distributors')||'[]');
-document.getElementById('count').innerText=list.length;
-let h='';
-list.forEach((d,i)=>{h+=<div class="list-item"><div><b>${d.name}</b><br><small>${d.mobile} | ${d.password}</small></div><button onclick="delDist(${i})" style="background:#ef4444;color:#fff;border:none;padding:5px 10px;border-radius:6px">X</button></div>});
-document.getElementById('distList').innerHTML=h||'No Distributors';
-}
-function addDist(){
-let n=d_name.value.trim(),m=d_mobile.value.trim(),p=d_pass.value.trim();
-if(!m||!p){alert('Mobile & Pass darkar');return;}
-let list=JSON.parse(localStorage.getItem('distributors')||'[]');
-if(list.find(x=>x.mobile==m)){alert('Already achi');return;}
-list.push({name:n||'Dist',mobile:m,password:p});
-localStorage.setItem('distributors',JSON.stringify(list));
-d_name.value='';d_mobile.value='';d_pass.value='';
-msg.innerText='Added ✅';showList();
-setTimeout(()=>msg.innerText='',2000);
-}
-function delDist(i){let l=JSON.parse(localStorage.getItem('distributors')||'[]');l.splice(i,1);localStorage.setItem('distributors',JSON.stringify(l));showList();}
-check();
 </script>
 </body></html>
