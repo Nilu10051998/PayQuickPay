@@ -1,25 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin Panel</title>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Panel - PayQuickPay</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
 body{background:#020617;color:#fff;padding:12px}
-.header{background:#0f172a;padding:14px;border-radius:14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border:1px solid #1e293b}
+.header{background:#0f172a;padding:14px;border-radius:14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border:1px solid #1e293b;position:sticky;top:12px;z-index:10}
 .box{background:#1e293b;padding:16px;border-radius:16px;margin-bottom:12px;border:1px solid #334155}
-input{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;background:#0f172a;color:#fff;outline:none}
+input{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;background:#0f172a;color:#fff}
 .btn{width:100%;padding:12px;background:#f59e0b;color:#000;font-weight:900;border:none;border-radius:10px;margin-top:8px;cursor:pointer}
-.btn-green{background:#22c55e}
+.btn-green{background:#22c55e}.btn-red{background:#ef4444;color:#fff}
 .list-item{background:#0f172a;padding:12px;border-radius:10px;margin:6px 0;display:flex;justify-content:space-between;align-items:center;border:1px solid #334155}
-</style>
-</head>
+.toggle{display:flex;justify-content:space-between;align-items:center;background:#0f172a;padding:12px;border-radius:10px;margin:6px 0}
+</style></head>
 <body>
 <script>
-// LOGIN CHECK
-if(localStorage.getItem('admin_login')!='true'){
-window.location.href='login.html';
-}
+if(localStorage.getItem('admin_login')!='true'){location.replace('login.html');}
+function logout(){if(confirm('Logout?')){localStorage.removeItem('admin_login');location.replace('login.html');}}
 </script>
 
 <div class="header">
@@ -27,23 +23,32 @@ window.location.href='login.html';
 <button onclick="logout()" style="background:#ef4444;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-weight:800;cursor:pointer">LOGOUT</button>
 </div>
 
+<!-- COMMISSION -->
 <div class="box" style="border-color:#f59e0b">
-<h3>💰 COMMISSION SETTINGS</h3>
+<h3>💰 COMMISSION %</h3>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
-<div><small>Mobile %</small><input id="c_mobile" type="number"></div>
-<div><small>DTH %</small><input id="c_dth" type="number"></div>
-<div><small>Electricity %</small><input id="c_elec" type="number"></div>
-<div><small>AePS %</small><input id="c_aeps" type="number"></div>
+<div><small>Mobile</small><input id="c_mobile" type="number" step="0.1"></div>
+<div><small>DTH</small><input id="c_dth" type="number" step="0.1"></div>
+<div><small>Electricity</small><input id="c_elec" type="number" step="0.1"></div>
+<div><small>AePS</small><input id="c_aeps" type="number" step="0.1"></div>
 </div>
 <button class="btn" onclick="saveComm()">SAVE COMMISSION</button>
 </div>
 
+<!-- SERVICES ON/OFF -->
 <div class="box" style="border-color:#22c55e">
+<h3>⚙️ SERVICES ON/OFF</h3>
+<div id="serviceList" style="margin-top:10px"></div>
+<button class="btn btn-green" onclick="saveServices()">SAVE SERVICES</button>
+</div>
+
+<!-- DISTRIBUTOR -->
+<div class="box">
 <h3>👥 ADD DISTRIBUTOR</h3>
-<input id="d_name" placeholder="Distributor Name">
-<input id="d_mobile" placeholder="Mobile No (ID) Ex: 8018146505">
-<input id="d_pass" placeholder="Password Ex: 1234">
-<button class="btn btn-green" onclick="addDist()">+ ADD DISTRIBUTOR</button>
+<input id="d_name" placeholder="Name">
+<input id="d_mobile" placeholder="Mobile (Login ID)">
+<input id="d_pass" placeholder="Password">
+<button class="btn btn-green" onclick="addDist()">+ ADD</button>
 </div>
 
 <div class="box">
@@ -52,55 +57,53 @@ window.location.href='login.html';
 </div>
 
 <script>
-function logout(){
-localStorage.removeItem('admin_login');
-window.location.replace('login.html');
+let defaultServices=['Mobile Recharge','DTH','Electricity','BBPS','AePS','Money Transfer','PAN','Fastag'];
+
+function loadServices(){
+let saved=JSON.parse(localStorage.getItem('services_status')||'{}');
+let h='';
+defaultServices.forEach(s=>{
+let on=saved[s]!==false;
+h+=<div class=toggle><span>${s}</span><label><input type=checkbox ${on?'checked':''} onchange="toggleService('${s}',this.checked)"> ${on?'ON':'OFF'}</label></div>;
+});
+document.getElementById('serviceList').innerHTML=h;
 }
+function toggleService(name,val){
+let saved=JSON.parse(localStorage.getItem('services_status')||'{}');
+saved[name]=val;
+localStorage.setItem('services_status',JSON.stringify(saved));
+}
+function saveServices(){alert('Services Saved ✅');}
 function saveComm(){
-localStorage.setItem('comm_mobile', document.getElementById('c_mobile').value);
-localStorage.setItem('comm_dth', document.getElementById('c_dth').value);
-localStorage.setItem('comm_elec', document.getElementById('c_elec').value);
-localStorage.setItem('comm_aeps', document.getElementById('c_aeps').value);
+localStorage.setItem('comm_mobile',c_mobile.value);
+localStorage.setItem('comm_dth',c_dth.value);
+localStorage.setItem('comm_elec',c_elec.value);
+localStorage.setItem('comm_aeps',c_aeps.value);
 alert('Commission Saved ✅');
 }
 function addDist(){
-let name=document.getElementById('d_name').value.trim();
-let mob=document.getElementById('d_mobile').value.trim();
-let pass=document.getElementById('d_pass').value.trim();
-if(!mob||!pass){alert('Mobile & Password darkar');return;}
+let n=d_name.value.trim(),m=d_mobile.value.trim(),p=d_pass.value.trim();
+if(!m||!p){alert('Mobile & Pass darkar');return;}
 let list=JSON.parse(localStorage.getItem('distributors')||'[]');
-if(list.find(x=>x.mobile==mob)){alert('Already achi!');return;}
-list.push({mobile:mob,password:pass,name:name||'Distributor',wallet:0});
+if(list.find(x=>x.mobile==m)){alert('Already achi');return;}
+list.push({mobile:m,password:p,name:n||'Dist',wallet:0});
 localStorage.setItem('distributors',JSON.stringify(list));
-alert('Added: '+mob+' ✅');
-document.getElementById('d_name').value='';
-document.getElementById('d_mobile').value='';
-document.getElementById('d_pass').value='';
-showList();
+d_name.value='';d_mobile.value='';d_pass.value='';showList();
 }
 function showList(){
 let list=JSON.parse(localStorage.getItem('distributors')||'[]');
-document.getElementById('count').innerText=list.length;
-let html='';
-list.forEach((d,i)=>{
-html+=<div class="list-item"><div><b>${d.name}</b><br><small style="color:#94a3b8">${d.mobile} | Pass: ${d.password}</small></div><button onclick="delDist(${i})" style="background:#ef4444;color:#fff;border:none;padding:6px 10px;border-radius:6px">Delete</button></div>;
-});
-document.getElementById('distList').innerHTML= html || '<small style=color:#64748b>No Data</small>';
+count.innerText=list.length;
+let h='';
+list.forEach((d,i)=>{h+=<div class=list-item><div><b>${d.name}</b><br><small>${d.mobile} | Pass:${d.password}</small></div><button onclick="delDist(${i})" class="btn-red" style="padding:6px 10px;border:none;border-radius:6px">Delete</button></div>});
+distList.innerHTML=h||'<small>No Distributors</small>';
 }
-function delDist(i){
-if(confirm('Delete?')){
-let list=JSON.parse(localStorage.getItem('distributors')||'[]');
-list.splice(i,1);
-localStorage.setItem('distributors',JSON.stringify(list));
-showList();
-}
-}
-// Load old values
-document.getElementById('c_mobile').value=localStorage.getItem('comm_mobile')||2;
-document.getElementById('c_dth').value=localStorage.getItem('comm_dth')||3;
-document.getElementById('c_elec').value=localStorage.getItem('comm_elec')||1.5;
-document.getElementById('c_aeps').value=localStorage.getItem('comm_aeps')||5;
-showList();
+function delDist(i){if(confirm('Delete?')){let l=JSON.parse(localStorage.getItem('distributors')||'[]');l.splice(i,1);localStorage.setItem('distributors',JSON.stringify(l));showList();}}
+
+// init
+c_mobile.value=localStorage.getItem('comm_mobile')||2;
+c_dth.value=localStorage.getItem('comm_dth')||3;
+c_elec.value=localStorage.getItem('comm_elec')||1.5;
+c_aeps.value=localStorage.getItem('comm_aeps')||5;
+loadServices();showList();
 </script>
-</body>
-</html>
+</body></html>
