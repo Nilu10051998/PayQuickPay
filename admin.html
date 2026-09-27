@@ -1,75 +1,76 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin Login</title>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin Login</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-body{background:#0f172a;color:#fff}
-#loginPage{height:100vh;display:flex;justify-content:center;align-items:center}
-.loginCard{background:#1e293b;padding:24px;border-radius:16px;width:330px;border:1px solid #334155}
+body{background:#0f172a;color:#fff;display:flex;justify-content:center;align-items:center;height:100vh}
+.card{background:#1e293b;padding:24px;border-radius:16px;width:330px;border:1px solid #334155}
 input{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;background:#020617;color:#fff}
 .btn{width:100%;padding:12px;background:#f59e0b;color:#000;font-weight:900;border:none;border-radius:10px;margin-top:8px;cursor:pointer}
 </style></head>
 <body>
 
-<div id="loginPage">
-<div class="loginCard">
+<div id="loginBox" class="card">
 <h2 style="text-align:center">🔐 ADMIN LOGIN</h2>
-<input id="adminId" value="admin">
-<input id="adminPass" type="password" value="admin123">
-<button class="btn" type="button" id="loginBtn">LOGIN</button>
-<p id="loginErr" style="color:red;text-align:center;margin-top:8px"></p>
-</div>
+<input id="aid" placeholder="ID" value="admin">
+<input id="apass" type="password" placeholder="Password" value="admin123">
+<button class="btn" onclick="doLogin()">LOGIN</button>
+<p id="err" style="color:#ef4444;text-align:center;margin-top:8px"></p>
 </div>
 
-<div id="adminPage" style="display:none;padding:12px">
-<h2 style="text-align:center;margin:20px">✅ LOGIN SUCCESS - ADMIN PANEL</h2>
-<div style="background:#1e293b;padding:16px;border-radius:12px">
-<h3>Add Distributor</h3>
-<input id="d_name" placeholder="Name"><input id="d_mobile" placeholder="Mobile"><input id="d_pass" placeholder="Password">
-<button class="btn" style="background:#22c55e" onclick="addDist()">ADD</button>
-<div id="distList" style="margin-top:12px"></div>
-<button class="btn" style="background:#ef4444;margin-top:20px" onclick="localStorage.clear();location.reload()">LOGOUT</button>
-</div>
+<div id="adminBox" class="card" style="display:none;width:360px">
+<h2 style="text-align:center">✅ ADMIN PANEL</h2>
+<input id="dname" placeholder="Distributor Name">
+<input id="dmob" placeholder="Mobile">
+<input id="dpass" placeholder="Password">
+<button class="btn" style="background:#22c55e" onclick="addD()">ADD DISTRIBUTOR</button>
+<div id="list" style="margin-top:12px"></div>
+<button class="btn" style="background:#ef4444;margin-top:12px" onclick="doLogout()">LOGOUT</button>
 </div>
 
 <script>
-console.log("Script loaded");
-document.getElementById('loginBtn').addEventListener('click', function(){
-  let id = document.getElementById('adminId').value.trim();
-  let pass = document.getElementById('adminPass').value.trim();
-  console.log(id, pass);
+function doLogin(){
+  var id = document.getElementById('aid').value;
+  var pass = document.getElementById('apass').value;
   if(id === 'admin' && pass === 'admin123'){
-    alert('Login Success ✅');
-    document.getElementById('loginPage').style.display='none';
-    document.getElementById('adminPage').style.display='block';
+    document.getElementById('loginBox').style.display='none';
+    document.getElementById('adminBox').style.display='block';
     localStorage.setItem('isAdmin','yes');
-  } else {
-    alert('Wrong Password! Use admin / admin123');
+    show();
+  }else{
+    document.getElementById('err').innerText='Wrong ID/Pass';
   }
-});
-
-function addDist(){
- let m=document.getElementById('d_mobile').value;
- let p=document.getElementById('d_pass').value;
- let n=document.getElementById('d_name').value;
- if(!m||!p){alert('Mobile Pass darkar');return;}
- let list=JSON.parse(localStorage.getItem('distributors')||'[]');
- list.push({name:n,mobile:m,password:p});
- localStorage.setItem('distributors',JSON.stringify(list));
- alert('Distributor Added ✅');
- showList();
 }
-function showList(){
- let list=JSON.parse(localStorage.getItem('distributors')||'[]');
- let h='';
- list.forEach(d=>{h+=<div style="background:#020617;padding:8px;margin:4px 0;border-radius:6px">${d.name} - ${d.mobile}</div>});
- document.getElementById('distList').innerHTML=h;
+function doLogout(){
+  localStorage.removeItem('isAdmin');
+  document.getElementById('adminBox').style.display='none';
+  document.getElementById('loginBox').style.display='block';
 }
-// auto login if already logged
-if(localStorage.getItem('isAdmin')=='yes'){
-document.getElementById('loginPage').style.display='none';
-document.getElementById('adminPage').style.display='block';
+function addD(){
+  var n = document.getElementById('dname').value;
+  var m = document.getElementById('dmob').value;
+  var p = document.getElementById('dpass').value;
+  if(m === '' || p === ''){alert('Mobile Pass darkar');return;}
+  var arr = JSON.parse(localStorage.getItem('distributors') || '[]');
+  arr.push({name:n,mobile:m,password:p});
+  localStorage.setItem('distributors',JSON.stringify(arr));
+  document.getElementById('dname').value='';
+  document.getElementById('dmob').value='';
+  document.getElementById('dpass').value='';
+  alert('Added');
+  show();
 }
-showList();
+function show(){
+  var arr = JSON.parse(localStorage.getItem('distributors') || '[]');
+  var txt = '';
+  for(var i=0;i<arr.length;i++){
+    txt = txt + arr[i].name + ' - ' + arr[i].mobile + '\n';
+  }
+  document.getElementById('list').innerText = txt || 'No data';
+}
+if(localStorage.getItem('isAdmin') === 'yes'){
+  document.getElementById('loginBox').style.display='none';
+  document.getElementById('adminBox').style.display='block';
+  show();
+}
 </script>
 </body></html>
