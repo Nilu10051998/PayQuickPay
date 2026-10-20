@@ -1,106 +1,16 @@
-<!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Retailer - PayQuickPay LIVE</title>
-<style>
-body{margin:0;background:#020617;color:#fff;font-family:system-ui}
-.top{background:#0f172a;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0}
-.bal{color:#22c55e;font-weight:900}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
-.card{background:#1e293b;padding:16px 10px;border-radius:12px;text-align:center;border:1px solid #334155;cursor:pointer}
-.card:active{transform:scale(.95)}
-.btn{padding:14px;background:#22c55e;color:#000;font-weight:900;border:none;border-radius:12px;margin-top:10px;width:100%;font-size:16px}
-input,select{width:100%;padding:13px;border-radius:12px;border:none;background:#1e293a;color:#fff;margin-top:10px;box-sizing:border-box}
-.live{font-size:11px;background:#22c55e;color:#000;padding:2px 8px;border-radius:20px}
-</style>
-</head><body>
-
-<div class="top">
-<b>PayQuickPay</b> <span class="live">● LIVE</span>
-<span id="bal" class="bal">Rs 4792</span>
-<button onclick="location.href='/'" style="background:#ef4444;color:#fff;border:none;padding:7px 12px;border-radius:20px">Logout</button>
-</div>
-
-<h4 style="padding:0 12px">RECHARGE & BBPS - SBU WORKING</h4>
-<div class="grid">
-<div class="card" onclick="openK('Mobile Recharge')">📱 Mobile</div>
-<div class="card" onclick="openK('DTH Recharge')">📺 DTH</div>
-<div class="card" onclick="openK('Electricity')">💡 Electricity</div>
-<div class="card" onclick="openK('Water Bill')">💧 Water</div>
-<div class="card" onclick="openK('Broadband')">🌐 Broadband</div>
-<div class="card" onclick="openK('FASTag')">🚗 FASTag</div>
-<div class="card" onclick="openK('LIC Premium')">🛡️ LIC</div>
-<div class="card" onclick="openK('Loan EMI')">🏦 Loan</div>
-</div>
-
-<h4 style="padding:0 12px">BANKING & TRAVEL</h4>
-<div class="grid">
-<div class="card" onclick="openK('AEPS Withdraw')">💰 AEPS</div>
-<div class="card" onclick="openK('Money Transfer')">💸 DMT</div>
-<div class="card" onclick="openK('PAN Card')">🪪 PAN</div>
-<div class="card" onclick="openK('Bus Booking')">🚌 Bus</div>
-</div>
-
-<div style="padding:12px">
-<h4>RECENT TRANSACTION - Firebase</h4>
-<div id="history" style="color:#64748b;font-size:12px">Loading from Firebase...</div>
-</div>
-
-<div id="box" style="padding:12px;display:none;border-top:1px solid #334155">
-<h3 id="bName">Recharge</h3>
-<input id="num" placeholder="Mobile No / Customer ID">
-<select id="op"><option>Airtel</option><option>Jio</option><option>Vi</option><option>BSNL</option></select>
-<input id="amt" type="number" placeholder="Amount (Rs)">
-<button class="btn" onclick="doK()">PAY NOW - SAVE TO FIREBASE</button>
-<p id="msg" style="text-align:center"></p>
-</div>
-
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Retailer - LIVE FINAL</title><style>body{margin:0;background:#020617;color:#fff;font-family:system-ui}.top{background:#0f172a;padding:14px 16px;display:flex;justify-content:space-between;position:sticky;top:0}.bal{color:#22c55e;font-weight:900}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}.card{background:#1e293b;padding:16px 10px;border-radius:12px;text-align:center;border:1px solid #334155}.btn{padding:14px;background:#22c55e;color:#000;font-weight:900;border:none;border-radius:12px;margin-top:10px;width:100%}input,select{width:100%;padding:13px;border-radius:12px;border:none;background:#1e293a;color:#fff;margin-top:10px;box-sizing:border-box}.live{font-size:11px;background:#22c55e;color:#000;padding:3px 8px;border-radius:20px;font-weight:700}</style></head><body>
+<div class="top"><b>PayQuickPay</b><span class="live">● LIVE + WALLET</span><span id="bal" class="bal">Rs Loading...</span><button onclick="location.href='/'" style="background:#ef4444;color:#fff;border:none;padding:7px 12px;border-radius:20px">Logout</button></div>
+<h4 style="padding:0 12px">RECHARGE & BBPS</h4>
+<div class="grid"><div class="card" onclick="openK('Mobile Recharge')">📱 Mobile</div><div class="card" onclick="openK('DTH Recharge')">📺 DTH</div><div class="card" onclick="openK('Electricity')">💡 Electricity</div><div class="card" onclick="openK('Water Bill')">💧 Water</div><div class="card" onclick="openK('Broadband')">🌐 Broadband</div><div class="card" onclick="openK('FASTag')">🚗 FASTag</div><div class="card" onclick="openK('LIC Premium')">🛡️ LIC</div><div class="card" onclick="openK('Loan EMI')">🏦 Loan</div></div>
+<div style="padding:12px"><h4>RECENT TRANSACTION - Firebase LIVE</h4><div id="history">Firebase ru loading...</div></div>
+<div id="box" style="padding:12px;display:none;border-top:1px solid #334155"><h3 id="bName">Recharge</h3><input id="num" placeholder="Mobile No / Customer ID"><select id="op"><option>Airtel</option><option>Jio</option><option>Vi</option><option>BSNL</option></select><input id="amt" type="number" placeholder="Amount - Ex: 100"><button class="btn" onclick="doK()">PAY NOW - WALLET CUT</button><p id="msg" style="text-align:center;font-weight:800"></p></div>
 <script type="module">
-import { db } from '/public/firebase.js';
-import { collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-let bal = 4792;
-let cur = '';
-
-window.openK = (name)=>{
-  cur=name;
-  document.getElementById('bName').innerText=name;
-  document.getElementById('box').style.display='block';
-  window.scrollTo(0,document.body.scrollHeight);
-}
-
-window.doK = async ()=>{
-  const num=document.getElementById('num').value;
-  const amt=document.getElementById('amt').value||10;
-  if(!num){alert('Number lekha!');return;}
-  
-  document.getElementById('msg').innerText='⏳ Saving to Firebase...';
-  try{
-    await addDoc(collection(db,"transactions"),{
-      service:cur, number:num, amount:Number(amt),
-      time:new Date(), retailer:'Nilu', status:'SUCCESS'
-    });
-    bal-=Number(amt);
-    document.getElementById('bal').innerText='Rs '+bal;
-    document.getElementById('msg').innerText='✅ SUCCESS! Firebase re save hela!';
-    loadHist();
-  }catch(e){
-    document.getElementById('msg').innerText='❌ Error: '+e.message;
-  }
-}
-
-async function loadHist(){
-  try{
-    const q=query(collection(db,"transactions"),orderBy("time","desc"),limit(5));
-    const snap=await getDocs(q);
-    let h='';
-    snap.forEach(d=>{
-      const t=d.data();
-      h+=`<div style="background:#1e293b;padding:8px 12px;border-radius:10px;margin-top:8px;display:flex;justify-content:space-between"><span>${t.service} - ${t.number}</span><span style="color:#22c55e">Rs ${t.amount}</span></div>`;
-    });
-    if(h) document.getElementById('history').innerHTML=h;
-    else document.getElementById('history').innerHTML='Kichi transaction nahi - service use kara';
-  }catch(e){document.getElementById('history').innerText='Firebase connect hauchi...';}
-}
-loadHist();
-</script>
-</body></html>
+import { db } from '../public/firebase.js';
+import { collection, addDoc, getDocs, query, orderBy, limit, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+let bal=4792;let cur='Mobile Recharge';const walletId='Nilu10051998';
+async function initWallet(){try{const wRef=doc(db,"wallets",walletId);const wSnap=await getDoc(wRef);if(wSnap.exists()){bal=wSnap.data().balance;}else{await setDoc(wRef,{balance:bal,retailer:walletId,updated:new Date()});}document.getElementById('bal').innerText='Rs '+bal;}catch(e){document.getElementById('bal').innerText='Rs '+bal+' (local)';document.getElementById('history').innerHTML='Wallet Error: '+e.message;}}
+window.openK=(name)=>{cur=name;document.getElementById('bName').innerText=name;document.getElementById('box').style.display='block';document.getElementById('box').scrollIntoView({behavior:'smooth'});}
+window.doK=async()=>{const num=document.getElementById('num').value.trim();const amt=Number(document.getElementById('amt').value||10);if(!num){alert('Number lekha!');return;}if(bal<amt){alert('Balance kam!');return;}document.getElementById('msg').innerText='⏳ Processing...';try{await addDoc(collection(db,"transactions"),{service:cur,number:num,amount:amt,time:new Date(),retailer:walletId,status:'SUCCESS'});bal-=amt;await setDoc(doc(db,"wallets",walletId),{balance:bal,retailer:walletId,updated:new Date()});document.getElementById('bal').innerText='Rs '+bal;document.getElementById('msg').innerText='✅ SUCCESS! Rs '+amt+' cut hela!';loadHist();}catch(e){document.getElementById('msg').innerText='❌ Error: '+e.message;}}
+async function loadHist(){try{const q=query(collection(db,"transactions"),orderBy("time","desc"),limit(10));const snap=await getDocs(q);let h='';snap.forEach(d=>{const t=d.data();h+=`<div style="background:#1e293b;padding:10px 12px;border-radius:10px;margin-top:8px;display:flex;justify-content:space-between"><div><b>${t.service}</b><br><small>${t.number} | ${t.retailer}</small></div><div style="color:#22c55e;font-weight:800">Rs ${t.amount}</div></div>`;});document.getElementById('history').innerHTML=h||'Kichi transaction nahi';}catch(e){document.getElementById('history').innerHTML='Error: '+e.message;}}
+initWallet();loadHist();
+</script></body></html>
