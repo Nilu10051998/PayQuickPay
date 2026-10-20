@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin Panel Fix</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Panel - FINAL</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#020617;color:#fff;font-family:system-ui;padding:12px}
 .h{display:flex;justify-content:space-between;align-items:center;background:#1e293b;padding:12px;border-radius:12px}
@@ -11,7 +10,7 @@
 .c{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:15px;text-align:center}
 .c b{font-size:22px;display:block;color:#f59e0b}
 .card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:15px;margin-bottom:12px}
-input,select{width:100%;padding:11px;margin:5px 0;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff;outline:none}
+input{width:100%;padding:11px;margin:5px 0;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff;outline:none}
 .btn{padding:10px 14px;border-radius:8px;border:none;font-weight:800;cursor:pointer}
 .b1{background:#22c55e;color:#000}.b2{background:#38bdf8;color:#000}.b3{background:#f59e0b}.b4{background:#ef4444;color:#fff}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -22,9 +21,9 @@ th{color:#94a3b8;font-size:11px}.badge{background:#f59e0b;color:#000;padding:2px
 <body>
 
 <div class="h">
-<div><b>👑 ADMIN FIX</b></div>
+<div><b>👑 ADMIN FINAL</b></div>
 <div style="display:flex;gap:8px">
-<button class="btn b3" onclick="fixData()">Fix Undefined</button>
+<button class="btn b3" onclick="fixData()">Fix Data</button>
 <button class="btn b4" onclick="logout()">Logout</button>
 </div>
 </div>
@@ -32,28 +31,29 @@ th{color:#94a3b8;font-size:11px}.badge{background:#f59e0b;color:#000;padding:2px
 <div class="cards">
 <div class="c"><small>Distributors</small><b id="tD">0</b></div>
 <div class="c"><small>Retailers</small><b id="tR">0</b></div>
-<div class="c"><small>Total Recharge</small><b id="tT">₹0</b></div>
+<div class="c"><small>Balance</small><b id="tT">₹0</b></div>
 </div>
 
 <div class="card">
 <h3 style="margin:0 0 10px">➕ Create Distributor</h3>
 <div class="grid2">
-<input id="dName" placeholder="Name">
-<input id="dId" placeholder="ID ex: D1">
+<input id="dName" placeholder="Name ex: Nilu">
+<input id="dId" placeholder="ID ex: D1 (Unique)">
 </div>
 <div class="grid2">
-<input id="dPass" placeholder="Password ex: 1234">
-<input id="dMob" placeholder="Mobile">
+<input id="dPass" placeholder="Password ex: 12345">
+<input id="dMob" placeholder="Mobile (Optional)">
 </div>
 <div class="grid2">
 <input id="dComm" type="number" placeholder="Commission % ex: 2">
-<input id="dBal" type="number" placeholder="Opening Balance">
+<input id="dBal" type="number" placeholder="Balance ex: 500">
 </div>
-<button class="btn b1" style="width:100%;margin-top:8px" onclick="addDist()">Add Distributor</button>
+<button class="btn b1" style="width:100%;margin-top:8px;background:#22c55e;padding:14px;font-size:16px" onclick="addDist()">✅ Add Distributor</button>
+<p id="addMsg" style="text-align:center"></p>
 </div>
 
 <div class="card">
-<h3 style="margin:0">📋 Distributors (<span id="count">0</span>)</h3>
+<h3>📋 Distributors (<span id="count">0</span>)</h3>
 <input id="search" placeholder="Search..." oninput="render()" style="margin-top:8px">
 <div style="overflow:auto;margin-top:10px">
 <table>
@@ -64,80 +64,79 @@ th{color:#94a3b8;font-size:11px}.badge{background:#f59e0b;color:#000;padding:2px
 </div>
 
 <script>
-function getD(){return JSON.parse(localStorage.getItem("distributors")||"[]")}
-function saveD(l){localStorage.setItem("distributors",JSON.stringify(l))}
-function getR(){return JSON.parse(localStorage.getItem("retailers")||"[]")}
+// NO AUTO CREATE - NO CLEAR - 100% SAFE
+function getD(){ try{return JSON.parse(localStorage.getItem("distributors")||"[]")}catch(e){return []} }
+function saveD(l){ localStorage.setItem("distributors",JSON.stringify(l)); console.log("Saved",l.length); }
+function getR(){ try{return JSON.parse(localStorage.getItem("retailers")||"[]")}catch(e){return []} }
 
 function fixData(){
- let list=getD();
- let fixed=0;
+ let list=getD(); let fixed=0;
  list=list.map(x=>{
-   if(!x.id || x.id=="undefined" || x.id==undefined){
-     let newId = x.mobile || x.mob || x.name.replace(/\s/g,'') || "D"+Date.now();
-     x.id=newId;
-     x.mobile=newId;
-     fixed++;
-   }
+   if(!x.id || x.id=="undefined"){ x.id=x.mobile||x.name||"D"+Date.now(); fixed++; }
    if(!x.mobile) x.mobile=x.id;
    return x;
  });
- saveD(list);
- alert(fixed+" Data Fixed Heigala Bhai! Ebe Delete Heba");
- render();
+ saveD(list); alert(fixed+" Fixed"); render();
 }
 
 function addDist(){
- let n=document.getElementById('dName').value.trim(), id=document.getElementById('dId').value.trim(), p=document.getElementById('dPass').value.trim(), m=document.getElementById('dMob').value.trim()||id, c=document.getElementById('dComm').value.trim()||2, b=document.getElementById('dBal').value.trim()||0;
- if(!id||!p){alert("ID Password Dia");return}
+ let name=document.getElementById('dName').value.trim();
+ let id=document.getElementById('dId').value.trim();
+ let pass=document.getElementById('dPass').value.trim();
+ let mob=document.getElementById('dMob').value.trim()||id;
+ let comm=document.getElementById('dComm').value.trim()||2;
+ let bal=document.getElementById('dBal').value.trim()||0;
+ let msg=document.getElementById('addMsg');
+ 
+ if(!id){ msg.innerText="❌ ID Dia Bhai"; msg.style.color="#ef4444"; return; }
+ if(!pass){ msg.innerText="❌ Password Dia"; msg.style.color="#ef4444"; return; }
+ 
  let list=getD();
- if(list.find(x=> (x.id==id || x.mobile==id) )){alert("Already Exists");return}
- list.push({name:n||id, id:id, mobile:id, password:p, mob:m, commission:parseFloat(c), balance:parseFloat(b), created:Date.now()});
+ if(list.find(x=> x.id==id)){ msg.innerText="❌ "+id+" Already Achhi"; msg.style.color="#ef4444"; return; }
+ 
+ let newObj={name:name||id, id:id, mobile:mob, password:pass, commission:parseFloat(comm), balance:parseFloat(bal), created:Date.now()};
+ list.push(newObj);
  saveD(list);
- ["dName","dId","dPass","dMob","dComm","dBal"].forEach(x=>document.getElementById(x).value="");
- alert("Created "+id); render();
+ 
+ msg.innerText="✅ "+id+" Created Success!"; msg.style.color="#22c55e";
+ document.getElementById('dName').value=""; document.getElementById('dId').value=""; document.getElementById('dPass').value=""; document.getElementById('dMob').value=""; document.getElementById('dComm').value=""; document.getElementById('dBal').value="";
+ 
+ render();
 }
 
-function delDist(idOrIndex){
- if(!confirm("Delete "+idOrIndex+" ?"))return;
+function delDist(id){
+ if(!confirm("Delete "+id+" ? Pakka?"))return;
  let list=getD();
- // index re delete bhi kama kariba
- if(!isNaN(idOrIndex) && parseInt(idOrIndex)<list.length){
-   list.splice(parseInt(idOrIndex),1);
- } else {
-   list=list.filter(x=> x.id!=idOrIndex && x.mobile!=idOrIndex && x.name!=idOrIndex);
- }
+ let before=list.length;
+ list=list.filter(x=> x.id!=id && x.mobile!=id);
  saveD(list);
- // retailers clean
- let rlist=getR().filter(x=> x.distributorId!=idOrIndex);
+ // retailers of this distributor delete
+ let rlist=getR().filter(x=> x.distributorId!=id);
  localStorage.setItem("retailers",JSON.stringify(rlist));
+ alert(id+" Deleted ("+before+"->"+list.length+")");
  render();
 }
 
 function render(){
- let d=getD();
- // Auto fix undefined on load
- let needFix=false;
- d.forEach(x=>{ if(!x.id || x.id=="undefined") needFix=true; });
- if(needFix){ fixData(); return; }
-
- let r=getR();
+ let d=getD(); let r=getR();
  document.getElementById('tD').innerText=d.length;
  document.getElementById('tR').innerText=r.length;
- document.getElementById('tT').innerText="₹0";
  document.getElementById('count').innerText=d.length;
-
  let s=document.getElementById('search').value.toLowerCase();
- let f=d; if(s) f=d.filter(x=> (x.id+x.name).toLowerCase().includes(s));
-
+ let f=s? d.filter(x=> (x.id+x.name).toLowerCase().includes(s)): d;
  let h="";
- [...f].forEach((x,idx)=>{
-  // real index in original array
-  let realIdx = d.indexOf(x);
-  h+=`<tr><td><span class=badge>${x.id||x.mobile}</span></td><td>${x.name}</td><td>₹${x.balance||0}</td><td>${x.commission||2}%</td><td>${x.password}</td><td><button class="btn b4" style="padding:5px 10px" onclick="delDist('${x.id||x.mobile}')">X</button></td></tr>`;
+ f.slice().reverse().forEach(x=>{
+  h+=`<tr><td><span class=badge>${x.id}</span></td><td>${x.name}</td><td>₹${x.balance||0}</td><td>${x.commission||2}%</td><td>${x.password}</td><td><button class="btn b4" style="padding:5px 10px" onclick="delDist('${x.id}')">X</button></td></tr>`;
  });
- document.getElementById('list').innerHTML=h||`<tr><td colspan=6 style="text-align:center;color:#94a3b8">No Data</td></tr>`;
+ document.getElementById('list').innerHTML=h||`<tr><td colspan=6 style="text-align:center;color:#94a3b8">No Data - Create Karo</td></tr>`;
 }
-function logout(){localStorage.removeItem("currentRole"); location.href="index.html";}
+function logout(){
+ // IMPORTANT: clear() KEBE NAHI - Kebala Session Delete
+ localStorage.removeItem("currentRole");
+ localStorage.removeItem("distributorLoggedIn");
+ localStorage.removeItem("currentDist");
+ location.href="index.html";
+}
 render();
 </script>
 </body>
