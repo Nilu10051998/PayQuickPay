@@ -1,158 +1,120 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pay Quick Pay - Unified Panel</title>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pay Quick Pay - Home</title>
 <style>
-body{margin:0;background:#020617;color:#fff;font-family:system-ui;display:flex;justify-content:center;padding:15px;min-height:100vh}
-.box{background:#1e293b;padding:20px;border-radius:16px;width:100%;max-width:440px;border:1px solid #334155;box-shadow:0 10px 30px #0006}
-input,button,select{width:100%;padding:13px;margin:8px 0;border-radius:10px;border:none;box-sizing:border-box;font-size:15px}
-input{background:#0f172a;color:#fff;border:1px solid #334155}
-button{background:#22c55e;color:#000;font-weight:900;cursor:pointer}
-.card{background:#0f172a;padding:12px;border-radius:10px;margin:8px 0;border:1px solid #1e293b}
-.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.badge{padding:4px 10px;border-radius:20px;font-size:12px;font-weight:800}
-.b-admin{background:#f59e0b}.b-dist{background:#22c55e}.b-ret{background:#38bdf8}
-small{color:#94a3b8}
-</style></head><body>
+*{box-sizing:border-box}
+body{margin:0;background:#020617;color:#fff;font-family:system-ui;padding:20px;min-height:100vh}
+.header{text-align:center;padding:25px 0}
+.logo{font-size:40px;font-weight:900;background:linear-gradient(90deg,#22c55e,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.panels{display:grid;grid-template-columns:1fr;gap:16px;max-width:900px;margin:20px auto}
+@media(min-width:700px){.panels{grid-template-columns:1fr 1fr 1fr}}
+.card{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:20px}
+.card h3{margin:0 0 15px;text-align:center}
+.card.admin{border-top:4px solid #f59e0b}
+.card.dist{border-top:4px solid #22c55e}
+.card.ret{border-top:4px solid #38bdf8}
+input{width:100%;padding:12px;margin:8px 0;border-radius:10px;border:1px solid #334155;background:#0f172a;color:#fff;outline:none}
+button{width:100%;padding:12px;border-radius:10px;border:none;font-weight:800;cursor:pointer;margin-top:10px}
+.b-a{background:#f59e0b}.b-d{background:#22c55e;color:#000}.b-r{background:#38bdf8;color:#000}
+#msg{text-align:center;color:#f87171;margin-top:15px;font-weight:700}
+small{color:#94a3b8;font-size:12px;display:block;text-align:center;margin-top:10px}
+</style>
+</head>
+<body>
 
-<div class="box" id="LOGIN_BOX">
-<h2 style="text-align:center;margin:0">⚡ PAY QUICK PAY</h2>
-<p style="text-align:center;color:#94a3b8;font-size:13px">Gote Panel - Sabu Login</p>
-
-<div style="background:#0f172a;padding:10px;border-radius:10px;font-size:12px;line-height:1.6">
-<b>DEMO LOGIN:</b><br>
-Admin: 9999999999 / 1234<br>
-Distributor: 7008249177 / 1234<br>
-Retailer: Add heba pare login
+<div class="header">
+<div class="logo">⚡ PAY QUICK PAY</div>
+<small>Distributor & Retailer Recharge Panel</small>
 </div>
 
-<input id="m" placeholder="Mobile Number" value="7008249177">
-<input id="p" placeholder="Password" type="password" value="1234">
-<button id="lb">LOGIN</button>
-<p id="msg" style="text-align:center;color:#f87171;font-size:13px"></p>
+<div class="panels">
+
+<!-- ADMIN -->
+<div class="card admin">
+<h3>👑 ADMIN</h3>
+<form autocomplete="off" onsubmit="return false">
+<input id="am" placeholder="Admin ID" autocomplete="off">
+<input id="ap" type="password" placeholder="Password" autocomplete="new-password">
+<button class="b-a" onclick="loginAdmin()">Admin Login</button>
+</form>
+<small>ID: admin / Pass: 1430</small>
 </div>
 
-<!-- ADMIN PANEL -->
-<div class="box" id="ADMIN" style="display:none;max-width:600px">
-<div class="top"><h3>ADMIN PANEL <span class="badge b-admin">ADMIN</span></h3><button onclick="logout()" style="width:auto;background:#ef4444;color:#fff;padding:6px 14px">Logout</button></div>
-<div class="card">Total Distributors: <b id="ad_d">0</b> | Retailers: <b id="ad_r">0</b></div>
-<h4>Add Distributor</h4>
-<input id="ad_n" placeholder="Name"><input id="ad_m" placeholder="Mobile"><input id="ad_p" placeholder="Password">
-<button id="ad_btn">Add Distributor</button>
-<h4>All Distributors</h4><div id="ad_list"></div>
-<a href="admin2.html" style="color:#22c55e;display:block;text-align:center;margin-top:10px">Open Full Admin2 -></a>
+<!-- DISTRIBUTOR -->
+<div class="card dist">
+<h3>🏢 DISTRIBUTOR</h3>
+<form autocomplete="off" onsubmit="return false">
+<input id="dm" placeholder="Distributor ID" autocomplete="off">
+<input id="dp" type="password" placeholder="Password" autocomplete="new-password">
+<button class="b-d" onclick="loginDist()">Distributor Login</button>
+</form>
+<small>Admin Dwara Created ID</small>
 </div>
 
-<!-- DISTRIBUTOR PANEL -->
-<div class="box" id="DIST" style="display:none;max-width:600px">
-<div class="top"><h3 id="dn">Distributor</h3><div><span class="badge b-dist" id="dm"></span> <button onclick="logout()" style="width:auto;background:#ef4444;color:#fff;padding:6px 10px;margin-left:5px">Logout</button></div></div>
-<div class="card">My Retailers: <b id="d_rc">0</b> | Balance: <b id="d_bal" style="color:#22c55e">Rs 0</b></div>
-<h4>Add Retailer</h4>
-<input id="rn" placeholder="Retailer Name"><input id="rm" placeholder="Mobile"><input id="rp" placeholder="Password">
-<button id="ar">Add Retailer</button>
-<h4>My Retailers</h4><div id="rl"></div>
-<div style="margin-top:15px"><a href="distributor/index.html" style="color:#22c55e">Go to LIVE Transaction Page -></a></div>
+<!-- RETAILER -->
+<div class="card ret">
+<h3>🏪 RETAILER</h3>
+<form autocomplete="off" onsubmit="return false">
+<input id="rm" placeholder="Retailer ID" autocomplete="off">
+<input id="rp" type="password" placeholder="Password" autocomplete="new-password">
+<button class="b-r" onclick="loginRet()">Retailer Login</button>
+</form>
+<small>Distributor Dwara Created ID</small>
 </div>
 
-<!-- RETAILER PANEL -->
-<div class="box" id="RET" style="display:none;max-width:500px">
-<div class="top"><h3 id="retn">Retailer</h3><div><span class="badge b-ret" id="retm"></span> <button onclick="logout()" style="width:auto;background:#ef4444;color:#fff;padding:6px 10px">Logout</button></div></div>
-<div class="card">Welcome! Recharge Panel Ready<br><small>Distributor: <span id="ret_dist"></span></small></div>
-<input placeholder="Customer Mobile"><input placeholder="Amount">
-<button>Recharge (Demo)</button>
-<div class="card" style="margin-top:10px"><small>Recent Transactions (Demo)</small><br>No Tx yet</div>
 </div>
+
+<p id="msg"></p>
 
 <script>
-function ensure(){
-  let d=JSON.parse(localStorage.getItem("distributors")||"[]");
-  if(!d.find(x=>x.mobile=="7008249177")){
-    d.push({name:"Nilu Distributor",mobile:"7008249177",password:"1234"});
-    localStorage.setItem("distributors",JSON.stringify(d));
-  }
-}
-ensure();
-const $=id=>document.getElementById(id);
+const $ = id => document.getElementById(id);
 
-$("lb").onclick=()=>{
-  const m=$("m").value.trim(), p=$("p").value.trim();
-  if(!m||!p){$("msg").innerText="Mobile / Password Dia";return;}
-  // ADMIN CHECK
-  if(m=="9999999999" && p=="1234"){
-    localStorage.setItem("currentRole","admin"); localStorage.setItem("currentAdmin",JSON.stringify({mobile:m}));
-    showAdmin(); return;
-  }
-  let dists=JSON.parse(localStorage.getItem("distributors")||"[]");
-  let fDist=dists.find(x=>x.mobile==m && x.password==p);
-  if(fDist){
-    localStorage.setItem("currentRole","distributor");
-    localStorage.setItem("currentDist",JSON.stringify(fDist));
-    localStorage.setItem("distributorId",fDist.mobile);
-    localStorage.setItem("distributorLoggedIn",fDist.mobile);
-    showDist(fDist); return;
-  }
-  let rets=JSON.parse(localStorage.getItem("retailers")||"[]");
-  let fRet=rets.find(x=>x.mobile==m && x.password==p);
-  if(fRet){
-    localStorage.setItem("currentRole","retailer");
-    localStorage.setItem("currentRet",JSON.stringify(fRet));
-    showRet(fRet); return;
-  }
-  $("msg").innerText="Wrong Login! Distributor/Retailer Not Found";
-};
-
-// --- ADMIN FUNCS ---
-function showAdmin(){
-  $("LOGIN_BOX").style.display="none"; $("ADMIN").style.display="block"; loadAdmin();
-}
-function loadAdmin(){
-  let d=JSON.parse(localStorage.getItem("distributors")||"[]");
-  let r=JSON.parse(localStorage.getItem("retailers")||"[]");
-  $("ad_d").innerText=d.length; $("ad_r").innerText=r.length;
-  let h=""; d.forEach(x=>{h+=`<div class="card"><b>${x.name}</b> - ${x.mobile} <span style="float:right;color:#f59e0b">${x.password}</span></div>`});
-  $("ad_list").innerHTML=h||"<small>No distributors</small>";
-}
-$("ad_btn").onclick=()=>{
-  let n=$("ad_n").value.trim(), m=$("ad_m").value.trim(), p=$("ad_p").value.trim();
-  if(!n||!m||!p){alert("Fill all");return;}
-  let d=JSON.parse(localStorage.getItem("distributors")||"[]");
-  if(d.find(x=>x.mobile==m)){alert("Already exists");return;}
-  d.push({name:n,mobile:m,password:p}); localStorage.setItem("distributors",JSON.stringify(d));
-  $("ad_n").value="";$("ad_m").value="";$("ad_p").value=""; loadAdmin();
-};
-
-// --- DISTRIBUTOR FUNCS ---
-function showDist(f){
-  $("LOGIN_BOX").style.display="none"; $("DIST").style.display="block";
-  $("dn").innerText=f.name; $("dm").innerText=f.mobile; loadR(f.mobile);
-}
-function loadR(distMobile){
-  let r=JSON.parse(localStorage.getItem("retailers")||"[]");
-  let my=r.filter(x=>x.distributor==distMobile);
-  $("d_rc").innerText=my.length;
-  let h=""; my.forEach(x=>{h+=`<div class="card"><b>${x.name}</b><br><small>${x.mobile}</small><span style="float:right;color:#22c55e">${x.password}</span></div>`});
-  $("rl").innerHTML=h||"<small>No retailers</small>";
-}
-$("ar").onclick=()=>{
-  let cur=JSON.parse(localStorage.getItem("currentDist")); if(!cur)return;
-  let n=$("rn").value.trim(), m=$("rm").value.trim(), p=$("rp").value.trim();
-  if(!n||!m||!p){alert("Fill all");return;}
-  let r=JSON.parse(localStorage.getItem("retailers")||"[]");
-  if(r.find(x=>x.mobile==m)){alert("Mobile exists");return;}
-  r.push({name:n,mobile:m,password:p,distributor:cur.mobile}); localStorage.setItem("retailers",JSON.stringify(r));
-  $("rn").value="";$("rm").value="";$("rp").value=""; loadR(cur.mobile);
-};
-
-// --- RETAILER FUNCS ---
-function showRet(f){
-  $("LOGIN_BOX").style.display="none"; $("RET").style.display="block";
-  $("retn").innerText=f.name; $("retm").innerText=f.mobile; $("ret_dist").innerText=f.distributor;
+function loginAdmin(){
+ let m=$('am').value.trim(), p=$('ap').value.trim();
+ if(!m){ $('msg').innerText="Admin ID Dia Bhai"; return; }
+ if(!p){ $('msg').innerText="Password Dia Bhai"; return; }
+ if(m==="admin" && p==="1430"){
+   localStorage.setItem("currentRole","admin");
+   location.href="admin2.html";
+ } else {
+   $('msg').innerText="Wrong Admin ID / Password";
+ }
 }
 
-function logout(){ localStorage.removeItem("currentRole"); localStorage.removeItem("currentDist"); localStorage.removeItem("currentRet"); localStorage.removeItem("distributorId"); location.reload(); }
+function loginDist(){
+ let m=$('dm').value.trim(), p=$('dp').value.trim();
+ if(!m){ $('msg').innerText="Distributor ID Dia"; return; }
+ if(!p){ $('msg').innerText="Password Dia"; return; }
+ let list = JSON.parse(localStorage.getItem("distributors")||"[]");
+ let f = list.find(x=> (x.mobile===m || x.id===m) && x.password===p);
+ if(f){
+   localStorage.setItem("currentRole","distributor");
+   localStorage.setItem("distributorLoggedIn",f.mobile);
+   localStorage.setItem("currentDist",JSON.stringify(f));
+   localStorage.setItem("distributorId",f.mobile);
+   location.href="distributor.html";
+ } else {
+   $('msg').innerText="Distributor ID Not Found - Admin Nku Contact Kara";
+ }
+}
 
-// AUTO LOGIN
-let role=localStorage.getItem("currentRole");
-if(role=="admin") showAdmin();
-else if(role=="distributor"){ let c=JSON.parse(localStorage.getItem("currentDist")||"null"); if(c) showDist(c); }
-else if(role=="retailer"){ let c=JSON.parse(localStorage.getItem("currentRet")||"null"); if(c) showRet(c); }
-</script></body></html>
+function loginRet(){
+ let m=$('rm').value.trim(), p=$('rp').value.trim();
+ if(!m){ $('msg').innerText="Retailer ID Dia"; return; }
+ if(!p){ $('msg').innerText="Password Dia"; return; }
+ let list = JSON.parse(localStorage.getItem("retailers")||"[]");
+ let f = list.find(x=> (x.mobile===m || x.id===m) && x.password===p);
+ if(f){
+   localStorage.setItem("currentRole","retailer");
+   localStorage.setItem("currentRet",JSON.stringify(f));
+   location.href="retailer.html";
+ } else {
+   $('msg').innerText="Retailer ID Not Found - Distributor Nku Contact Kara";
+ }
+}
+</script>
+</body>
+</html>
