@@ -2,103 +2,149 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PayQuickPay - REAL ADMIN</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Panel Full</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#020617;color:#fff;font-family:system-ui;padding:12px}
+.h{display:flex;justify-content:space-between;align-items:center;background:#1e293b;padding:12px;border-radius:12px}
+.cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0}
+@media(max-width:700px){.cards{grid-template-columns:1fr}}
+.c{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:15px;text-align:center}
+.c b{font-size:22px;display:block;color:#f59e0b}
+.card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:15px;margin-bottom:12px}
+input,select{width:100%;padding:11px;margin:5px 0;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff;outline:none}
+.btn{padding:10px 14px;border-radius:8px;border:none;font-weight:800;cursor:pointer}
+.b1{background:#22c55e;color:#000}.b2{background:#38bdf8;color:#000}.b3{background:#f59e0b}.b4{background:#ef4444;color:#fff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+table{width:100%;border-collapse:collapse}th,td{padding:9px;border-bottom:1px solid #334155;font-size:13px;text-align:left}
+th{color:#94a3b8;font-size:11px}
+.badge{background:#f59e0b;color:#000;padding:2px 8px;border-radius:20px;font-weight:800;font-size:12px}
+</style>
 </head>
-<body class="bg-gray-100 p-4">
-<div class="max-w-6xl mx-auto bg-white p-6 rounded-xl shadow-lg">
-<h1 class="text-3xl font-bold mb-2">PayQuickPay ADMIN</h1>
-<p class="text-gray-500 mb-6">Project: payquickpay-73fb3 | REAL WORKING</p>
+<body>
 
-<div class="bg-blue-50 p-4 rounded mb-6 grid grid-cols-1 md:grid-cols-4 gap-2">
-<input id="dName" placeholder="Distributor Name" class="border p-2 rounded">
-<input id="dPhone" placeholder="Phone 10 digit" class="border p-2 rounded">
-<input id="dEmail" placeholder="Email" class="border p-2 rounded">
-<button onclick="addDist()" class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded font-bold">+ ADD</button>
+<div class="h">
+<div><b>👑 ADMIN</b><br><small style="color:#94a3b8">admin / 1430</small></div>
+<button class="btn b4" onclick="logout()">Logout</button>
 </div>
 
-<div id="distList" class="space-y-3"></div>
-
-<h2 class="text-xl font-bold mt-10 mb-3">Recent Transactions</h2>
-<div id="transList"></div>
+<div class="cards">
+<div class="c"><small>Distributors</small><b id="tD">0</b></div>
+<div class="c"><small>Retailers</small><b id="tR">0</b></div>
+<div class="c"><small>Total Recharge</small><b id="tT">₹0</b></div>
 </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+<div class="card">
+<h3 style="margin:0 0 10px">➕ Create Distributor</h3>
+<div class="grid2">
+<input id="dName" placeholder="Name">
+<input id="dId" placeholder="ID ex: D1">
+</div>
+<div class="grid2">
+<input id="dPass" placeholder="Password ex: 1234">
+<input id="dMob" placeholder="Mobile">
+</div>
+<div class="grid2">
+<input id="dComm" type="number" placeholder="Commission % ex: 2">
+<input id="dBal" type="number" placeholder="Opening Balance ex: 1000">
+</div>
+<button class="btn b1" style="width:100%;margin-top:8px" onclick="addDist()">Add Distributor</button>
+</div>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyB9RW1EER-zuCsZqXadbBi3W4RNJRFqaJY",
-  authDomain: "payquickpay-73fb3.firebaseapp.com",
-  projectId: "payquickpay-73fb3",
-  storageBucket: "payquickpay-73fb3.firebasestorage.app",
-  messagingSenderId: "290917109615",
-  appId: "1:290917109615:web:d88a1db85ba3467824a29a",
-  measurementId: "G-R4QVW222RB"
-};
+<div class="card">
+<h3 style="margin:0 0 10px">💰 Balance / Commission Set</h3>
+<div class="grid2">
+<select id="selDist"></select>
+<input id="addBal" type="number" placeholder="Amount Add">
+</div>
+<div class="grid2">
+<input id="setComm" type="number" placeholder="New Commission %">
+<div style="display:flex;gap:6px">
+<button class="btn b2" style="flex:1" onclick="addBalance()">+ Balance</button>
+<button class="btn b3" style="flex:1" onclick="setCommission()">Set Comm %</button>
+</div>
+</div>
+</div>
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<h3 style="margin:0">📋 Distributors (<span id="count">0</span>)</h3>
+<input id="search" placeholder="Search..." oninput="render()" style="width:140px">
+</div>
+<div style="overflow:auto;margin-top:10px">
+<table>
+<thead><tr><th>ID</th><th>Name</th><th>Bal</th><th>Comm</th><th>Pass</th><th>Del</th></tr></thead>
+<tbody id="list"></tbody>
+</table>
+</div>
+</div>
 
-window.addDist = async () => {
-  const name = document.getElementById('dName').value.trim();
-  const phone = document.getElementById('dPhone').value.trim();
-  const email = document.getElementById('dEmail').value.trim();
-  if(!name || !phone) return alert("Name & Phone Lekha");
-  await addDoc(collection(db,"distributors"), {name, phone, email, balance:0, wallet:0, createdAt: new Date()});
-  document.getElementById('dName').value=""; document.getElementById('dPhone').value=""; document.getElementById('dEmail').value="";
-  alert("Distributor LIVE Added!");
-  loadDist();
+<div class="card">
+<h3 style="margin:0 0 10px">📊 Last 10 Recharge Report</h3>
+<div style="overflow:auto">
+<table>
+<thead><tr><th>Date</th><th>Retailer</th><th>Number</th><th>Amt</th></tr></thead>
+<tbody id="report"></tbody>
+</table>
+</div>
+</div>
+
+<script>
+function getD(){return JSON.parse(localStorage.getItem("distributors")||"[]")}
+function saveD(l){localStorage.setItem("distributors",JSON.stringify(l))}
+function getR(){return JSON.parse(localStorage.getItem("retailers")||"[]")}
+function getTx(){return JSON.parse(localStorage.getItem("transactions")||"[]")}
+
+function addDist(){
+ let n=document.getElementById('dName').value.trim(), id=document.getElementById('dId').value.trim(), p=document.getElementById('dPass').value.trim(), m=document.getElementById('dMob').value.trim()||id, c=document.getElementById('dComm').value.trim()||2, b=document.getElementById('dBal').value.trim()||0;
+ if(!id||!p){alert("ID Password Dia");return}
+ let list=getD();
+ if(list.find(x=>x.id==id||x.mobile==id)){alert("Already Exists");return}
+ list.push({name:n||id, id:id, mobile:id, password:p, mob:m, commission:parseFloat(c), balance:parseFloat(b), created:Date.now()});
+ saveD(list);
+ ["dName","dId","dPass","dMob","dComm","dBal"].forEach(x=>document.getElementById(x).value="");
+ alert("Created "+id); render();
 }
-
-window.deleteDist = async (id, name) => {
-  if(!confirm(`${name} ku Pakka Delete Kariba? Firebase ru permanent delete heba!`)) return;
-  await deleteDoc(doc(db,"distributors",id));
-  alert("Permanently Deleted!");
-  loadDist();
+function delDist(id){
+ if(!confirm("Delete "+id+" ?"))return;
+ let list=getD().filter(x=>x.id!=id&&x.mobile!=id); saveD(list);
+ let rlist=getR().filter(x=>x.distributorId!=id); localStorage.setItem("retailers",JSON.stringify(rlist));
+ render();
 }
-
-window.addBal = async (id) => {
-  let amt = prompt("Kete Taka Add Kariba? Ex: 5000");
-  if(!amt) return;
-  amt = parseInt(amt);
-  if(isNaN(amt)) return alert("Number Lekha");
-  const ref = doc(db,"distributors",id);
-  const snap = await getDoc(ref);
-  if(!snap.exists()) return alert("Not Found");
-  const old = snap.data().balance || 0;
-  await updateDoc(ref, {balance: old + amt, wallet: old + amt});
-  alert(`₹${amt} Added! New Balance: ₹${old+amt}`);
-  loadDist();
+function addBalance(){
+ let id=document.getElementById('selDist').value, amt=parseFloat(document.getElementById('addBal').value);
+ if(!id||!amt){alert("Select & Amount Dia");return}
+ let list=getD(); let f=list.find(x=>x.id==id); if(!f)return; f.balance=(f.balance||0)+amt; saveD(list); alert("₹"+amt+" Added to "+id); document.getElementById('addBal').value=""; render();
 }
-
-async function loadDist(){
-  const snap = await getDocs(collection(db,"distributors"));
-  let html="";
-  snap.forEach(d=>{
-    const x = d.data();
-    html+=`<div class="flex justify-between items-center border p-4 rounded-lg hover:shadow">
-      <div><p class="font-bold text-lg">${x.name}</p><p class="text-sm text-gray-600">${x.phone} | ${x.email||''}</p><p class="text-green-600 font-bold">Balance: ₹${x.balance||0}</p></div>
-      <div class="flex gap-2">
-        <button onclick="addBal('${d.id}')" class="bg-green-600 text-white px-4 py-2 rounded">+Balance</button>
-        <button onclick="deleteDist('${d.id}','${x.name}')" class="bg-red-600 text-white px-4 py-2 rounded">Delete</button>
-      </div>
-    </div>`;
-  });
-  document.getElementById('distList').innerHTML = html || "<p class='text-gray-400'>No Distributors Found - Add Kara</p>";
-  loadTrans();
+function setCommission(){
+ let id=document.getElementById('selDist').value, comm=parseFloat(document.getElementById('setComm').value);
+ if(!id||isNaN(comm)){alert("Select & Commission Dia");return}
+ let list=getD(); let f=list.find(x=>x.id==id); f.commission=comm; saveD(list); alert("Commission "+comm+"% Set"); document.getElementById('setComm').value=""; render();
 }
+function render(){
+ let d=getD(), r=getR(), tx=getTx();
+ document.getElementById('tD').innerText=d.length;
+ document.getElementById('tR').innerText=r.length;
+ let total=0; tx.forEach(t=>total+=parseFloat(t.amount||0));
+ document.getElementById('tT').innerText="₹"+total;
 
-async function loadTrans(){
-  try{
-    const snap = await getDocs(collection(db,"transactions"));
-    let html=""; let c=0;
-    snap.forEach(t=>{ if(c<10){ const x=t.data(); html+=`<div class="border p-2 rounded text-sm flex justify-between"><span>${x.type||'Payment'} - ₹${x.amount||0}</span><span class="${x.status=='success'?'text-green-600':'text-orange-500'}">${x.status||'pending'}</span></div>`; c++; } });
-    document.getElementById('transList').innerHTML = html || "No Transactions";
-  }catch(e){ document.getElementById('transList').innerHTML = "Transaction collection nahi";}
+ let s=document.getElementById('search').value.toLowerCase();
+ let f=d; if(s) f=d.filter(x=>(x.id+x.name).toLowerCase().includes(s));
+ document.getElementById('count').innerText=f.length;
+ let h=""; [...f].reverse().forEach(x=>{
+  h+=`<tr><td><span class=badge>${x.id}</span></td><td>${x.name}</td><td>₹${x.balance||0}</td><td>${x.commission||2}%</td><td>${x.password}</td><td><button class="btn b4" style="padding:5px 8px" onclick="delDist('${x.id}')">X</button></td></tr>`;
+ });
+ document.getElementById('list').innerHTML=h||`<tr><td colspan=6 style="text-align:center;color:#94a3b8">No Data</td></tr>`;
+
+ let sel=document.getElementById('selDist'); sel.innerHTML=d.map(x=>`<option value="${x.id}">${x.id} - ${x.name} (₹${x.balance||0})</option>`).join('')||"<option>No Distributor</option>";
+
+ let rh=""; [...tx].reverse().slice(0,10).forEach(t=>{
+  rh+=`<tr><td>${new Date(t.time||Date.now()).toLocaleDateString()}</td><td>${t.retailer||"-"}</td><td>${t.number||"-"}</td><td>₹${t.amount}</td></tr>`;
+ });
+ document.getElementById('report').innerHTML=rh||`<tr><td colspan=4 style="text-align:center;color:#94a3b8">No Recharge Yet</td></tr>`;
 }
-loadDist();
+function logout(){localStorage.removeItem("currentRole"); location.href="index.html";}
+render();
 </script>
 </body>
 </html>
