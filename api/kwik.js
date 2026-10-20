@@ -10,7 +10,7 @@ export default async function handler(req, res) {
 
   const API_KEY = '9c8e29-96295a-7e7e75-6c2fbe-b45f27';
   const BASE = 'https://kwikapi.com';
-  const order_id = 'PQP' + Date.now() + Math.floor(Math.random()*1000);
+  const order_id = Date.now().toString() + Math.floor(1000 + Math.random() * 9000).toString();
 
   try {
     // STEP 1: Get correct opid from KwikAPI Detect
