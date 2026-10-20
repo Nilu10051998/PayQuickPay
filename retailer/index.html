@@ -1,134 +1,106 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Retailer - PayQuickPay</title>
+<title>Retailer - PayQuickPay LIVE</title>
 <style>
 body{margin:0;background:#020617;color:#fff;font-family:system-ui}
-.top{background:#0f172a;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:99;border-bottom:1px solid #1e293b}
-.bal{background:#22c55e;color:#000;padding:6px 14px;border-radius:20px;font-weight:900;font-size:14px}
-.live{font-size:10px;background:#22c55e;color:#000;padding:3px 8px;border-radius:10px;font-weight:800}
-.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:12px}
-.card{background:#1e293b;padding:16px 6px;border-radius:16px;text-align:center;border:1px solid #334155;cursor:pointer}
-.card:active{transform:scale(.95)} .card span{font-size:24px} .card p{margin:6px 0 0;font-size:11px;font-weight:600}
-h4{padding:0 16px;margin:18px 0 6px;color:#94a3b8;font-size:12px;letter-spacing:1px}
-#box{display:none;padding:16px;background:#1e293b;margin:12px;border-radius:18px;border:1px solid #22c55e;position:fixed;bottom:0;left:0;right:0}
-input,select{width:100%;padding:13px;border-radius:12px;border:none;background:#0f172a;color:#fff;margin:6px 0;box-sizing:border-box;outline:none}
-.btn{width:100%;padding:14px;background:#22c55e;color:#000;font-weight:900;border:none;border-radius:12px;margin-top:6px}
-.close{float:right;background:#334155;color:#fff;border:none;padding:4px 10px;border-radius:10px}
-.hist{padding:12px} .h-item{background:#1e293b;padding:10px 12px;border-radius:10px;margin:6px 0;display:flex;justify-content:space-between;font-size:13px}
-</style></head><body>
+.top{background:#0f172a;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0}
+.bal{color:#22c55e;font-weight:900}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
+.card{background:#1e293b;padding:16px 10px;border-radius:12px;text-align:center;border:1px solid #334155;cursor:pointer}
+.card:active{transform:scale(.95)}
+.btn{padding:14px;background:#22c55e;color:#000;font-weight:900;border:none;border-radius:12px;margin-top:10px;width:100%;font-size:16px}
+input,select{width:100%;padding:13px;border-radius:12px;border:none;background:#1e293a;color:#fff;margin-top:10px;box-sizing:border-box}
+.live{font-size:11px;background:#22c55e;color:#000;padding:2px 8px;border-radius:20px}
+</style>
+</head><body>
 
 <div class="top">
-<b>PayQuickPay</b>
-<div>
-<span class="live">● LIVE</span>
-<span class="bal" id="bal">Rs 4792</span>
-<button onclick="logout()" style="background:#ef4444;color:#fff;border:none;padding:6px 12px;border-radius:20px;font-weight:800;margin-left:6px">Logout</button>
-</div>
+<b>PayQuickPay</b> <span class="live">● LIVE</span>
+<span id="bal" class="bal">Rs 4792</span>
+<button onclick="location.href='/'" style="background:#ef4444;color:#fff;border:none;padding:7px 12px;border-radius:20px">Logout</button>
 </div>
 
-<h4>RECHARGE & BBPS - SBU WORKING</h4>
+<h4 style="padding:0 12px">RECHARGE & BBPS - SBU WORKING</h4>
 <div class="grid">
-<div class="card" onclick="openR('📱 Mobile Recharge')"><span>📱</span><p>Mobile</p></div>
-<div class="card" onclick="openR('📺 DTH Recharge')"><span>📺</span><p>DTH</p></div>
-<div class="card" onclick="openR('💡 Electricity')"><span>💡</span><p>Electricity</p></div>
-<div class="card" onclick="openR('💧 Water Bill')"><span>💧</span><p>Water</p></div>
-<div class="card" onclick="openR('🔥 Gas Bill')"><span>🔥</span><p>Gas</p></div>
-<div class="card" onclick="openR('🌐 Broadband')"><span>🌐</span><p>Broadband</p></div>
-<div class="card" onclick="openR('🚗 FASTag')"><span>🚗</span><p>FASTag</p></div>
-<div class="card" onclick="openR('🛡️ LIC Premium')"><span>🛡️</span><p>LIC</p></div>
-<div class="card" onclick="openR('🏦 Loan EMI')"><span>🏦</span><p>Loan</p></div>
+<div class="card" onclick="openK('Mobile Recharge')">📱 Mobile</div>
+<div class="card" onclick="openK('DTH Recharge')">📺 DTH</div>
+<div class="card" onclick="openK('Electricity')">💡 Electricity</div>
+<div class="card" onclick="openK('Water Bill')">💧 Water</div>
+<div class="card" onclick="openK('Broadband')">🌐 Broadband</div>
+<div class="card" onclick="openK('FASTag')">🚗 FASTag</div>
+<div class="card" onclick="openK('LIC Premium')">🛡️ LIC</div>
+<div class="card" onclick="openK('Loan EMI')">🏦 Loan</div>
 </div>
 
-<h4>BANKING & TRAVEL - SBU WORKING</h4>
+<h4 style="padding:0 12px">BANKING & TRAVEL</h4>
 <div class="grid">
-<div class="card" onclick="openR('💳 AEPS Withdraw')"><span>💳</span><p>AEPS</p></div>
-<div class="card" onclick="openR('💸 Money Transfer')"><span>💸</span><p>DMT</p></div>
-<div class="card" onclick="openR('🪪 PAN Card')"><span>🪪</span><p>PAN</p></div>
-<div class="card" onclick="openR('🆔 Aadhaar Service')"><span>🆔</span><p>Aadhaar</p></div>
-<div class="card" onclick="openR('✈️ Flight Booking')"><span>✈️</span><p>Flight</p></div>
-<div class="card" onclick="openR('🚌 Bus Booking')"><span>🚌</span><p>Bus</p></div>
-<div class="card" onclick="openR('🏨 Hotel Booking')"><span>🏨</span><p>Hotel</p></div>
-<div class="card" onclick="openR('🛡️ Insurance')"><span>🛡️</span><p>Insurance</p></div>
-<div class="card" onclick="openR('💰 Credit Card Bill')"><span>💰</span><p>Credit Card</p></div>
+<div class="card" onclick="openK('AEPS Withdraw')">💰 AEPS</div>
+<div class="card" onclick="openK('Money Transfer')">💸 DMT</div>
+<div class="card" onclick="openK('PAN Card')">🪪 PAN</div>
+<div class="card" onclick="openK('Bus Booking')">🚌 Bus</div>
 </div>
 
-<div class="hist">
-<h4>RECENT TRANSACTION</h4>
-<div id="history"><div style="color:#64748b;font-size:12px">Kichi transaction nahi - service use kara</div></div>
+<div style="padding:12px">
+<h4>RECENT TRANSACTION - Firebase</h4>
+<div id="history" style="color:#64748b;font-size:12px">Loading from Firebase...</div>
 </div>
 
-<div id="box">
-<button class="close" onclick="closeBox()">X</button>
-<h3 id="sName" style="margin:0 0 10px">Recharge</h3>
-<input id="cNum" placeholder="Mobile No / Customer ID / Policy No">
-<select id="op"><option>Jio</option><option>Airtel</option><option>Vi</option><option>BSNL</option><option>Tata Power</option><option>TPCODL</option></select>
-<input id="amt" type="number" placeholder="Amount Rs">
-<button class="btn" onclick="doR()">PAY NOW</button>
+<div id="box" style="padding:12px;display:none;border-top:1px solid #334155">
+<h3 id="bName">Recharge</h3>
+<input id="num" placeholder="Mobile No / Customer ID">
+<select id="op"><option>Airtel</option><option>Jio</option><option>Vi</option><option>BSNL</option></select>
+<input id="amt" type="number" placeholder="Amount (Rs)">
+<button class="btn" onclick="doK()">PAY NOW - SAVE TO FIREBASE</button>
 <p id="msg" style="text-align:center"></p>
 </div>
 
-<script>
+<script type="module">
+import { db } from '../firebase.js';
+import { collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
 let bal = 4792;
-let transactions = [];
+let cur = '';
 
-const serviceConfig = {
-"Mobile": {ph:"Mobile Number", op:["Jio","Airtel","Vi","BSNL"], amt:true},
-"DTH": {ph:"Customer ID / VC No", op:["Tata Play","Airtel DTH","Dish TV","Sun Direct"], amt:true},
-"Electricity": {ph:"Consumer No", op:["TPCODL","TPWODL","TPSODL","TPNODL"], amt:true},
-"Water": {ph:"Water Connection ID", op:["PHE Dept","Municipality"], amt:true},
-"Gas": {ph:"Gas Consumer No", op:["Indane","Bharat Gas","HP Gas"], amt:true},
-"Broadband": {ph:"Broadband ID / Mobile", op:["Jio Fiber","Airtel Xstream","BSNL"], amt:true},
-"FASTag": {ph:"Vehicle No", op:["HDFC FASTag","ICICI FASTag","Paytm"], amt:true},
-"LIC": {ph:"Policy Number", op:["LIC Premium"], amt:true},
-"Loan": {ph:"Loan Account No", op:["Bajaj Finance","HDFC Loan"], amt:true},
-"AEPS": {ph:"Aadhaar Number", op:["Cash Withdrawal","Balance Enquiry","Mini Statement"], amt:true},
-"DMT": {ph:"Beneficiary Account No", op:["IMPS","NEFT"], amt:true},
-"PAN": {ph:"Aadhaar No for PAN", op:["New PAN","Correction"], amt:false, fixed:107},
-"Aadhaar": {ph:"Mobile Linked to Aadhaar", op:["Address Update","Mobile Update"], amt:false, fixed:50},
-"Flight": {ph:"From - To (BBSR-DEL)", op:["IndiGo","Air India","SpiceJet"], amt:true},
-"Bus": {ph:"From - To", op:["OSRTC","Private Bus"], amt:true},
-"Hotel": {ph:"City Name", op:["1 Night","2 Nights"], amt:true},
-"Insurance": {ph:"Policy No", op:["Health Insurance","Bike Insurance"], amt:true},
-"Credit Card": {ph:"Credit Card No", op:["HDFC","SBI","ICICI"], amt:true}
+window.openK = (name)=>{
+  cur=name;
+  document.getElementById('bName').innerText=name;
+  document.getElementById('box').style.display='block';
+  window.scrollTo(0,document.body.scrollHeight);
 }
 
-function openR(name){
-document.getElementById('sName').innerText=name;
-let key = Object.keys(serviceConfig).find(k=>name.includes(k));
-let cfg = serviceConfig[key] || {ph:"Number / ID", op:["General"], amt:true};
-
-document.getElementById('cNum').placeholder = cfg.ph;
-let opSelect = document.getElementById('op');
-opSelect.innerHTML = '';
-cfg.op.forEach(o=>{ let opt=document.createElement('option'); opt.text=o; opSelect.add(opt) });
-
-if(cfg.fixed){
-document.getElementById('amt').value=cfg.fixed;
-document.getElementById('amt').placeholder='Fixed Rs '+cfg.fixed;
-}else{
-document.getElementById('amt').value='';
-document.getElementById('amt').placeholder='Amount Rs';
+window.doK = async ()=>{
+  const num=document.getElementById('num').value;
+  const amt=document.getElementById('amt').value||10;
+  if(!num){alert('Number lekha!');return;}
+  
+  document.getElementById('msg').innerText='⏳ Saving to Firebase...';
+  try{
+    await addDoc(collection(db,"transactions"),{
+      service:cur, number:num, amount:Number(amt),
+      time:new Date(), retailer:'Nilu', status:'SUCCESS'
+    });
+    bal-=Number(amt);
+    document.getElementById('bal').innerText='Rs '+bal;
+    document.getElementById('msg').innerText='✅ SUCCESS! Firebase re save hela!';
+    loadHist();
+  }catch(e){
+    document.getElementById('msg').innerText='❌ Error: '+e.message;
+  }
 }
-document.getElementById('box').style.display='block';
-document.getElementById('msg').innerHTML='';
-}
 
-function closeBox(){document.getElementById('box').style.display='none'}
-function doR(){
-let num=document.getElementById('cNum').value;
-let amt=parseInt(document.getElementById('amt').value);
-let service=document.getElementById('sName').innerText;
-if(!num||!amt){alert('Details dia bhai');return}
-if(amt>bal){alert('Balance kami! Rs '+bal);return}
-bal-=amt;
-document.getElementById('bal').innerText='Rs '+bal;
-document.getElementById('msg').innerHTML='<b style=color:#22c55e>✓ '+service+' SUCCESS Rs '+amt+'</b>';
-transactions.unshift({s:service,a:amt,n:num,t:new Date().toLocaleTimeString()});
-let html='';transactions.slice(0,5).forEach(tr=>{
-html+='<div class=h-item><span>'+tr.s+'<br><small style=color:#94a3b8>'+tr.n+'</small></span><b style=color:#22c55e>-Rs '+tr.a+'</b></div>';
-});
-document.getElementById('history').innerHTML=html;
-setTimeout(closeBox,2000);
+async function loadHist(){
+  try{
+    const q=query(collection(db,"transactions"),orderBy("time","desc"),limit(5));
+    const snap=await getDocs(q);
+    let h='';
+    snap.forEach(d=>{
+      const t=d.data();
+      h+=`<div style="background:#1e293b;padding:8px 12px;border-radius:10px;margin-top:8px;display:flex;justify-content:space-between"><span>${t.service} - ${t.number}</span><span style="color:#22c55e">Rs ${t.amount}</span></div>`;
+    });
+    if(h) document.getElementById('history').innerHTML=h;
+    else document.getElementById('history').innerHTML='Kichi transaction nahi - service use kara';
+  }catch(e){document.getElementById('history').innerText='Firebase connect hauchi...';}
 }
-function logout(){localStorage.clear();location.href='/retailer.html';}
+loadHist();
 </script>
+</body></html>
