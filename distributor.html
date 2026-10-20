@@ -12,20 +12,18 @@ table{width:100%;border-collapse:collapse}th,td{padding:9px;border-bottom:1px so
 </style>
 </head>
 <body>
-
 <div style="display:flex;justify-content:space-between;align-items:center;background:#1e293b;padding:12px;border-radius:12px;margin-bottom:12px">
-<div><b id="dTitle">Distributor</b></div>
+<div><b id="dTitle">Distributor Panel</b></div>
 <div style="display:flex;gap:8px">
 <button class="btn b1" onclick="location.href='index.html'">Home</button>
 <button class="btn b4" onclick="logout()">Logout</button>
 </div>
 </div>
 
-<div id="loginBox" class="card" style="max-width:400px;margin:80px auto;text-align:center">
+<div id="loginBox" class="card" style="max-width:400px;margin:80px auto;text-align:center;display:none">
 <h3>DISTRIBUTOR LOGIN</h3>
-<input id="dm" placeholder="ID">
-<input id="dp" type="password" placeholder="Password">
-<button class="btn b1" style="width:100%;background:#8b5cf6;color:#fff;margin-top:10px" onclick="doLogin()">LOGIN AS DISTRIBUTOR</button>
+<input id="dm" placeholder="ID"><input id="dp" type="password" placeholder="Password">
+<button class="btn b1" style="width:100%;background:#8b5cf6;color:#fff;margin-top:10px" onclick="doLogin()">LOGIN</button>
 <p onclick="location.href='index.html'" style="color:#94a3b8;text-decoration:underline;cursor:pointer">Go to Home →</p>
 <p id="msg" style="color:#f87171"></p>
 </div>
@@ -33,9 +31,7 @@ table{width:100%;border-collapse:collapse}th,td{padding:9px;border-bottom:1px so
 <div id="dashBox" style="display:none">
 <div class="card">
 <h3>➕ Create Retailer</h3>
-<input id="rName" placeholder="Retailer Name">
-<input id="rId" placeholder="Retailer ID ex: R1">
-<input id="rPass" placeholder="Password">
+<input id="rName" placeholder="Retailer Name"><input id="rId" placeholder="Retailer ID ex: R1"><input id="rPass" placeholder="Password">
 <button class="btn b1" style="width:100%;margin-top:8px" onclick="addRet()">Add Retailer</button>
 </div>
 <div class="card">
@@ -45,6 +41,7 @@ table{width:100%;border-collapse:collapse}th,td{padding:9px;border-bottom:1px so
 </div>
 
 <script>
+// NO AUTO CREATE CODE - REMOVED
 function getD(){return JSON.parse(localStorage.getItem("distributors")||"[]")}
 function getR(){return JSON.parse(localStorage.getItem("retailers")||"[]")}
 function saveR(l){localStorage.setItem("retailers",JSON.stringify(l))}
@@ -64,7 +61,6 @@ function check(){
 }
 function doLogin(){
  let m=document.getElementById('dm').value.trim(), p=document.getElementById('dp').value.trim();
- if(!m||!p){document.getElementById('msg').innerText="ID Pass Dia";return}
  let list=getD(); let f=list.find(x=> (x.id==m||x.mobile==m)&&x.password==p);
  if(f){localStorage.setItem("currentRole","distributor"); localStorage.setItem("distributorLoggedIn",f.id); location.reload();}
  else{document.getElementById('msg').innerText="Wrong ID Pass"}
@@ -75,8 +71,7 @@ function addRet(){
  if(!id||!p){alert("ID Pass Dia");return}
  let list=getR(); if(list.find(x=>x.id==id||x.mobile==id)){alert("Already");return}
  list.push({name:n||id, id:id, mobile:id, password:p, distributorId:cur, balance:0});
- saveR(list); alert("Retailer Created "+id); render();
- document.getElementById('rName').value="";document.getElementById('rId').value="";document.getElementById('rPass').value="";
+ saveR(list); alert("Created "+id); render();
 }
 function delRet(id){
  if(!confirm("Delete "+id+"?"))return;
@@ -91,10 +86,7 @@ function render(){
  });
  document.getElementById('list').innerHTML=h||"<tr><td colspan=4 style='text-align:center;color:#94a3b8'>No Retailer</td></tr>";
 }
-function logout(){
- localStorage.clear(); // Sabu Clear
- location.href="index.html"; // Home Ku Jiba
-}
+function logout(){localStorage.clear(); location.href="index.html";}
 check();
 </script>
 </body>
