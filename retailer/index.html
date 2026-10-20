@@ -1,191 +1,134 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PayQuickPay - Retailer</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayQuickPay Retailer</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-body{background:#0f172a;color:#fff;min-height:100vh}
-.header{background:#1e293b;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0}
-.logo{font-weight:800;font-size:20px;color:#38bdf8}
-.balBox{background:linear-gradient(135deg,#0ea5e9,#6366f1);padding:12px 18px;border-radius:12px;font-weight:700}
-.container{padding:20px;max-width:500px;margin:auto}
-.tabs{display:flex;gap:8px;margin:20px 0;overflow:auto}
-.tab{padding:10px 16px;border-radius:20px;background:#1e293b;cursor:pointer;white-space:nowrap;font-size:14px}
-.tab.active{background:#0ea5e9;color:#fff}
-.card{background:#1e293b;padding:20px;border-radius:16px;margin-bottom:15px}
-label{font-size:13px;color:#94a3b8;display:block;margin:12px 0 6px}
-input,select{width:100%;padding:13px;border-radius:10px;border:1px solid #334155;background:#0f172a;color:#fff;font-size:15px}
-.btn{width:100%;padding:14px;background:linear-gradient(135deg,#0ea5e9,#6366f1);border:none;border-radius:12px;color:#fff;font-weight:800;font-size:16px;margin-top:18px;cursor:pointer}
-.btn:disabled{opacity:.6}
-.msg{margin-top:12px;padding:10px;border-radius:8px;font-size:14px;text-align:center}
-.hist{margin-top:25px}
-.histItem{background:#1e293b;padding:12px;border-radius:10px;margin:8px 0;display:flex;justify-content:space-between;font-size:13px}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:#0f172a;color:white;padding:10px}
+.header{display:flex;justify-content:space-between;align-items:center;padding:15px;background:#1e293b;border-radius:10px;margin-bottom:15px}
+.logo{color:#38bdf8;font-size:22px;font-weight:bold}
+.balance{background:#3b82f6;padding:10px 20px;border-radius:12px;font-weight:bold}
+.tabs{display:flex;gap:8px;overflow:auto;margin-bottom:15px;padding-bottom:5px}
+.tab{padding:10px 20px;background:#1e293b;border-radius:20px;border:none;color:white;cursor:pointer;white-space:nowrap}
+.tab.active{background:#0ea5e9}
+.card{background:#1e293b;padding:20px;border-radius:15px}
+label{color:#94a3b8;font-size:14px;margin:10px 0 5px;display:block}
+select,input{width:100%;padding:14px;background:#0f172a;border:1px solid #334155;border-radius:10px;color:white;font-size:16px;margin-bottom:10px}
+.btn{width:100%;padding:15px;background:linear-gradient(90deg,#0ea5e9,#6366f1);border:none;border-radius:12px;color:white;font-size:16px;font-weight:bold;cursor:pointer;margin-top:10px}
+.btn:disabled{opacity:0.6}
+.history{margin-top:20px}
+.h-item{background:#1e293b;padding:12px;border-radius:10px;margin-top:8px;display:flex;justify-content:space-between}
+.success{color:#22c55e} .failed{color:#ef4444}
 </style>
 </head>
 <body>
 <div class="header">
-  <div class="logo">PayQuickPay</div>
-  <div style="display:flex;gap:10px;align-items:center">
-    <div id="walletId" style="font-size:12px;color:#94a3b8"></div>
-    <div class="balBox" id="bal">Rs 0</div>
-  </div>
+<div class="logo">PayQuickPay</div>
+<div style="display:flex;gap:10px;align-items:center">
+<span id="user">Nilu</span>
+<div class="balance">Rs <span id="bal">4792</span></div>
+</div>
 </div>
 
-<div class="container">
-  <div class="tabs" id="tabs"></div>
-
-  <div class="card">
-    <label>Operator</label>
-    <select id="op">
-      <option value="1">Airtel</option>
-      <option value="2">Jio</option>
-      <option value="3">Vi</option>
-      <option value="4">BSNL</option>
-      <option value="5">Airtel DTH</option>
-      <option value="6">Tata Play</option>
-      <option value="7">Dish TV</option>
-    </select>
-
-    <label id="numLabel">Mobile Number</label>
-    <input id="num" placeholder="10 digit number">
-
-    <label>Amount</label>
-    <input id="amt" type="number" placeholder="Amount">
-
-    <button class="btn" id="payBtn" onclick="doK()">PAY NOW - KwikAPI Live</button>
-    <div class="msg" id="msg"></div>
-  </div>
-
-  <div class="hist">
-    <h3 style="font-size:16px;margin-bottom:10px">Recent Transactions</h3>
-    <div id="histList"></div>
-  </div>
+<div class="tabs">
+<button class="tab active" data-s="MOBILE">MOBILE</button>
+<button class="tab" data-s="DTH">DTH</button>
+<button class="tab" data-s="ELECTRICITY">ELECTRICITY</button>
+<button class="tab" data-s="GAS">GAS</button>
+<button class="tab" data-s="WATER">WATER</button>
 </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getFirestore, collection, addDoc, doc, setDoc, getDoc, getDocs, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+<div class="card">
+<label>Operator</label>
+<select id="op"><option>Jio</option><option>Airtel</option><option>Vi</option><option>BSNL</option></select>
+<label>Mobile Number</label>
+<input id="num" type="tel" placeholder="10 digit number" maxlength="10">
+<label>Amount</label>
+<input id="amt" type="number" placeholder="Amount">
+<button id="payBtn" class="btn">Recharge Now</button>
+<div id="msg" style="text-align:center;margin-top:10px;color:#38bdf8"></div>
+</div>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDUMMY",
-  authDomain: "pay-quick-pay.firebaseapp.com",
-  projectId: "pay-quick-pay",
-  storageBucket: "pay-quick-pay.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abcdef"
-};
+<div class="history">
+<h3>Recent Transactions</h3>
+<div id="list"><div style="text-align:center;color:#64748b;margin-top:20px">No history</div></div>
+</div>
 
-// Tuma Firebase config thile seta diya, nathile same chaliba
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+<script>
+let service = 'MOBILE';
+let balance = 4792;
+let history = JSON.parse(localStorage.getItem('pqp_history')||'[]');
 
-window.db=db;
-window.collection=collection;
-window.addDoc=addDoc;
-window.doc=doc;
-window.setDoc=setDoc;
-
-let walletId = localStorage.getItem('retailerId') || prompt('Retailer Wallet ID diya (ex: Nilu)');
-if(walletId){ localStorage.setItem('retailerId', walletId); }
-let bal = 0;
-let cur = 'MOBILE';
-
-const services = ['MOBILE','DTH','ELECTRICITY','GAS','WATER','FASTAG','BBPS'];
-const tabsEl=document.getElementById('tabs');
-services.forEach(s=>{
-  const d=document.createElement('div');
-  d.className='tab'+(s===cur?' active':'');
-  d.innerText=s;
-  d.onclick=()=>{
-    cur=s;
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    d.classList.add('active');
-    document.getElementById('numLabel').innerText = s==='MOBILE' ? 'Mobile Number' : s+' - Consumer / CA Number';
-  };
-  tabsEl.appendChild(d);
+document.querySelectorAll('.tab').forEach(t=>{
+  t.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    service=t.dataset.s;
+  }
 });
 
-async function init(){
-  document.getElementById('walletId').innerText=walletId;
-  try{
-    const snap=await getDoc(doc(db,"wallets",walletId));
-    if(snap.exists()){ bal=snap.data().balance || 0; }
-    else { bal=4792; await setDoc(doc(db,"wallets",walletId),{balance:bal,retailer:walletId}); }
-  }catch(e){ bal=4792; }
-  document.getElementById('bal').innerText='Rs '+bal;
-  loadHist();
+function renderHistory(){
+  const list=document.getElementById('list');
+  if(history.length==0){list.innerHTML='<div style="text-align:center;color:#64748b;margin-top:20px">No history</div>';return}
+  list.innerHTML=history.map(h=>`
+    <div class="h-item">
+      <div><b>${h.num}</b><br><small>${h.service} - Rs ${h.amt}</small></div>
+      <div class="${h.status=='SUCCESS'?'success':'failed'}"><b>${h.status}</b><br><small>${h.txn}</small></div>
+    </div>
+  `).join('');
 }
-init();
+renderHistory();
 
-window.loadHist=async()=>{
-  const list=document.getElementById('histList');
-  list.innerHTML='Loading...';
-  try{
-    const q=query(collection(db,"transactions"),where("retailer","==",walletId),orderBy("time","desc"),limit(10));
-    const snaps=await getDocs(q);
-    list.innerHTML='';
-    snaps.forEach(s=>{
-      const d=s.data();
-      const el=document.createElement('div');
-      el.className='histItem';
-      el.innerHTML=`<div><b>${d.service}</b> - ${d.number}<br><small>${d.txnid||''}</small></div><div style="text-align:right"><b>Rs ${d.amount}</b><br><small style="color:${d.status==='SUCCESS'?'#22c55e':'#ef4444'}">${d.status}</small></div>`;
-      list.appendChild(el);
-    });
-    if(snaps.empty) list.innerHTML='<div style="color:#64748b;text-align:center">No history</div>';
-  }catch(e){ list.innerHTML='History load error'; }
-}
-
-window.doK=async()=>{
+document.getElementById('payBtn').onclick=async()=>{
   const num=document.getElementById('num').value.trim();
-  const amt=Number(document.getElementById('amt').value);
-  const op=document.getElementById('op').value;
-  const msgEl=document.getElementById('msg');
-  const balEl=document.getElementById('bal');
+  const amt=parseInt(document.getElementById('amt').value);
   const btn=document.getElementById('payBtn');
+  const msg=document.getElementById('msg');
 
-  if(!num || !amt){ msgEl.innerText='❌ Number & Amount diya'; return; }
-  if(bal < amt){ msgEl.innerText='❌ Balance kami achi! Rs '+bal+' achi'; return; }
+  if(num.length!=10){alert('10 digit number dia');return}
+  if(!amt || amt<10){alert('Amount 10+ dia');return}
+  if(amt>balance){alert('Balance kam achi');return}
 
   btn.disabled=true;
-  btn.innerText='⏳ Processing...';
-  msgEl.innerText='⏳ KwikAPI Live re recharge heuchi...';
+  btn.innerHTML='⏳ Processing...';
+  msg.innerHTML='⏳ Processing...';
 
   try{
+    // Call our API
     const res=await fetch('/api/kwik',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({service:cur,number:num,amount:amt,op:op})
+      body:JSON.stringify({number:num,amount:amt,service:service})
     });
-    const result=await res.json();
-    console.log(result);
+    
+    const data=await res.json();
+    console.log('API Response:',data);
 
-    if(result.success){
-      bal-=amt;
-      try{
-        await addDoc(collection(db,"transactions"),{service:cur,number:num,amount:amt,time:new Date(),retailer:walletId,status:'SUCCESS',txnid:result.txnid,operator:op});
-        await setDoc(doc(db,"wallets",walletId),{balance:bal,retailer:walletId,updated:new Date()},{merge:true});
-      }catch(e){ console.log(e); }
-
-      balEl.innerText='Rs '+bal;
-      msgEl.innerText='✅ SUCCESS! TxnID: '+result.txnid+' - Rs '+amt+' recharge heigala!';
-      msgEl.style.background='#052e16';
-      msgEl.style.color='#22c55e';
+    if(data.success){
+      balance-=amt;
+      document.getElementById('bal').innerText=balance;
+      const tx={num:num,amt:amt,service:service,status:'SUCCESS',txn:data.txnid,time:new Date().toLocaleString()};
+      history.unshift(tx);
+      localStorage.setItem('pqp_history',JSON.stringify(history));
+      renderHistory();
+      msg.innerHTML='✅ SUCCESS - '+data.txnid;
+      btn.innerHTML='✅ Success!';
       document.getElementById('num').value='';
       document.getElementById('amt').value='';
-      loadHist();
-    } else {
-      msgEl.innerText='❌ FAILED: '+(result.message || result.error);
-      msgEl.style.background='#450a0a';
-      msgEl.style.color='#ef4444';
+      setTimeout(()=>{btn.innerHTML='Recharge Now';msg.innerHTML=''},2000);
+    }else{
+      msg.innerHTML='❌ FAILED: '+(data.message||'Error');
+      btn.innerHTML='Failed - Retry';
     }
   }catch(e){
-    msgEl.innerText='❌ Error: '+e.message;
+    console.error(e);
+    msg.innerHTML='❌ Error: '+e.message;
+    btn.innerHTML='Failed - Retry';
   }
   btn.disabled=false;
-  btn.innerText='PAY NOW - KwikAPI Live';
-}
+};
 </script>
 </body>
 </html>
