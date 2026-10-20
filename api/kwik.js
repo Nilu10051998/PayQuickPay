@@ -3,46 +3,70 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.json({ success: false, message: 'POST only' });
+  if (req.method !== 'POST') return res.status(405).json({ success: false, message: 'POST only' });
 
   const { number, amount, operator } = req.body || {};
-  if (!number || !amount) return res.json({ success: false, message: 'Number/Amount darkar' });
+  if (!number || !amount) return res.json({ success: false, message: 'Number & Amount darkar' });
 
-  const API_KEY = '9c8e29-96295a-2a8e41-0f7c33-93d9f2a3'; // tuma real key
-  const order_id = 'PQP' + Date.now();
-
-  // Jio=1, Airtel=2, Vi=3, BSNL=4 - KwikAPI standard
-  const opMap = { JIO: 1, AIRTEL: 2, VI: 3, BSNL: 5, Jio: 1, Airtel: 2 };
-  const opid = opMap[operator] || opMap[operator?.toUpperCase()] || 1;
-
-  // CORRECT REAL URL - kwikapi.com
-  const url = `https://kwikapi.com/api/v2/recharge.php?api_key=${API_KEY}&number=${number}&amount=${amount}&opid=${opid}&order_id=${order_id}`;
-
-  console.log('Calling:', url);
+  const API_KEY = '9c8e29-96295a-2a8e41-0f7c33-93d9f2a3';
+  const BASE = 'https://kwikapi.com';
+  const order_id = 'PQP' + Date.now() + Math.floor(Math.random()*1000);
 
   try {
-    const response = await fetch(url);
-    const text = await response.text();
-    console.log('Raw Response:', text);
-    
-    let data;
-    try { data = JSON.parse(text); } catch { data = { message: text }; }
+    // STEP 1: Get correct opid from KwikAPI Detect
+    let opid = null;
+    try {
+      const detectUrl = `${BASE}/api/v2/operator-detect.php?api_key=${API_KEY}&number=${number}`;
+      console.log('Detect URL:', detectUrl);
+      const detRes = await fetch(detectUrl);
+      const detText = await detRes.text();
+      console.log('Detect Raw:', detText);
+      const detData = JSON.parse(detText);
+      opid = detData.opid || detData.operator_id || detData.data?.opid;
+      console.log('Found opid:', opid);
+    } catch (e) {
+      console.log('Detect failed:', e.message);
+    }
 
-    if (data.status === 'SUCCESS' || data.status === 'PENDING' || data.message === 'SUCCESS') {
-      return res.json({ success: true, txnid: data.opr_id || order_id, data: data, message: 'SUCCESS' });
+    // Fallback opid mapping if detect fails
+    if (!opid) {
+      const map = { JIO: 1, AIRTEL: 2, VI: 3, BSNL: 4, Jio: 1, Airtel: 2, Vi: 3, 'Vodafone': 3 };
+      opid = map[operator] || map[operator?.toUpperCase()] || 1;
+      console.log('Using fallback opid:', opid);
+    }
+
+    // STEP 2: Real Recharge Call
+    const rechargeUrl = `${BASE}/api/v2/recharge.php?api_key=${API_KEY}&number=${number}&amount=${amount}&opid=${opid}&order_id=${order_id}`;
+    console.log('Recharge URL:', rechargeUrl);
+
+    const kRes = await fetch(rechargeUrl);
+    const kText = await kRes.text();
+    console.log('Kwik Raw Response:', kText);
+    
+    let kData;
+    try { kData = JSON.parse(kText); } 
+    catch { return res.json({ success: false, message: 'KwikAPI Invalid Response: ' + kText.substring(0,200) }); }
+
+    // Check SUCCESS
+    if (kData.status === 'SUCCESS' || kData.message === 'SUCCESS' || kData.status === 'PENDING') {
+      return res.json({ 
+        success: true, 
+        txnid: kData.opr_id || kData.order_id || order_id, 
+        balance: kData.balance,
+        message: 'Recharge SUCCESS',
+        data: kData 
+      });
     } else {
-      // Agar API error, to original error dikhao
-      return res.json({ success: false, message: data.message || data.error || text.substring(0,100), data: data });
+      return res.json({ 
+        success: false, 
+        message: kData.message || kData.error || 'Recharge Failed', 
+        data: kData,
+        debug: { rechargeUrl, opid, order_id }
+      });
     }
 
   } catch (err) {
-    console.error(err);
-    // Fallback: TEST MODE to keep site working
-    return res.json({ 
-      success: true, 
-      txnid: order_id, 
-      message: 'SUCCESS (Test Mode - KwikAPI Error: '+err.message+')',
-      data: { number, amount, opid, order_id }
-    });
+    console.error('Main Error:', err);
+    return res.json({ success: false, message: 'Server Error: ' + err.message });
   }
 }
