@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   const { number, amount, operator } = req.body || {};
   if (!number || !amount) return res.json({ success: false, message: 'Number & Amount darkar' });
 
-  const API_KEY = '9c8e29-96295a-2a8e41-0f7c33-93d9f2a3';
+  const API_KEY = '9c8e29-96295a-7e7e75-6c2fbe-b45f27';
   const BASE = 'https://kwikapi.com';
   const order_id = 'PQP' + Date.now() + Math.floor(Math.random()*1000);
 
