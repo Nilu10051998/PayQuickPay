@@ -1,16 +1,63 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Distributor - LIVE</title><style>body{margin:0;background:#020617;color:#fff;font-family:system-ui}
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Distributor - LIVE</title>
+<style>body{margin:0;background:#020617;color:#fff;font-family:system-ui}
 .top{background:#0f172a;padding:14px 16px;display:flex;justify-content:space-between;position:sticky;top:0}
 .card{background:#1e293b;padding:14px;border-radius:12px;text-align:center;border:1px solid #334155}
-.stat{background:#1e293b;padding:16px;border-radius:12px;border-left:4px solid #22c55e;margin:10px 12px}</style></head><body>
+.stat{background:#1e293b;padding:16px;border-radius:12px;border-left:4px solid #22c55e;margin:10px 12px}</style></head>
+<body>
 <div class="top"><b>DISTRIBUTOR LIVE</b><span id="bal" style="color:#22c55e;font-weight:900">Loading...</span>
-<button onclick="location.href='/'" style="background:#ef4444;color:#fff;border:none;padding:7px 12px;border-radius:20px">Logout</button></div>
-<div class="stat"><b id="totalT">0</b> Tx | Commission: Rs <span id="comm">0</span></div>
+<button onclick="logout()" style="background:#ef4444;color:#fff;border:none;padding:7px 12px;border-radius:20px">Logout</button></div>
+<div class="stat"><b id="total">0</b> Tx | Commission: Rs <span id="comm">0</span></div>
 <div style="padding:12px"><h4>LIVE TRANSACTIONS</h4><div id="list">Loading...</div></div>
+
 <script type="module">
 import { db } from '../public/firebase.js';
 import { collection, getDocs, query, orderBy, limit, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-async function loadBal(){try{const d=await getDoc(doc(db,"wallets","Nilu"));document.getElementById('bal').innerText='Rs '+(d.exists()?d.data().balance:4792);}catch(e){document.getElementById('bal').innerText='Rs 4792';}}
-async function loadTx(){const box=document.getElementById('list');try{const q=query(collection(db,"transactions"),orderBy("time","desc"),limit(20));const snap=await getDocs(q);let h='',total=0,comm=0;snap.forEach(d=>{const t=d.data();total++;comm+=t.amount*0.02;h+=`<div style="background:#1e293b;padding:10px;border-radius:10px;margin-top:8px;display:flex;justify-content:space-between"><div><b>${t.service}</b><br><small>${t.number}</small></div><div style="color:#22c55e">Rs ${t.amount}</div></div>`;});box.innerHTML=h||'No tx';document.getElementById('totalT').innerText=total;document.getElementById('comm').innerText=comm.toFixed(2);}catch(e){box.innerHTML=e.message;}}
+
+// --- AUTH CHECK - ETEA MAIN FIX ---
+const distId = localStorage.getItem('distributorId') || localStorage.getItem('distributorLoggedIn');
+if(!distId){
+  alert('Please Login First!');
+  window.location.href = '../distributor.html';
+}
+
+function logout(){
+  localStorage.removeItem('distributorId');
+  localStorage.removeItem('distributorLoggedIn');
+  window.location.href = '../distributor.html';
+}
+window.logout = logout;
+
+async function loadBal(){
+  try{
+    const idToUse = localStorage.getItem('distributorId') || 'Nilu';
+    const d = await getDoc(doc(db,"wallets",idToUse));
+    if(d.exists()){
+      document.getElementById('bal').innerText = 'Rs ' + (d.data().balance || 0);
+    } else {
+      document.getElementById('bal').innerText = 'Rs 0';
+    }
+  }catch(e){ document.getElementById('bal').innerText = 'Error'; }
+}
+
+async function loadTx(){
+  const box=document.getElementById('list');
+  try{
+    const q=query(collection(db,"transactions"),orderBy("time","desc"),limit(20));
+    const snap = await getDocs(q);
+    let html = ''; let total=0; let comm=0;
+    snap.forEach(docSnap=>{
+      const t=docSnap.data();
+      html += `<div class="card" style="margin-bottom:8px;text-align:left"><b>${t.mobile || ''}</b> - Rs ${t.amount || 0}<br><small>${t.status || ''}</small></div>`;
+      total++;
+      comm += (t.commission || 0);
+    });
+    box.innerHTML = html || 'No Transactions';
+    document.getElementById('total').innerText = total;
+    document.getElementById('comm').innerText = comm;
+  }catch(e){ box.innerText = 'Error loading: ' + e.message; }
+}
+
 loadBal();loadTx();
 </script></body></html>
