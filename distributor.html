@@ -1,12 +1,101 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Distributor</title><style>body{background:#020617;color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;font-family:sans-serif}.box{background:#1e293b;padding:20px;border-radius:16px;width:360px;border:1px solid #334155}input{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:none;background:#0f172a;color:#fff}button{width:100%;padding:12px;border:none;border-radius:8px;font-weight:800;cursor:pointer}.b1{background:#8b5cf6;color:#fff}.b2{background:#22c55e;color:#000}.it{background:#0f172a;padding:8px;border-radius:8px;margin:5px 0}</style></head><body>
-<div class="box" id="L"><h3 style="text-align:center">DISTRIBUTOR LOGIN</h3><input id="m" value="7008024917"><input id="p" type="password" value="123456"><button class="b1" id="lb">LOGIN AS DISTRIBUTOR</button><p id="e" style="color:#f87171;font-size:12px;text-align:center"></p><div style="margin-top:10px;text-align:center"><a href="admin-full.html" style="color:#94a3b8">Admin Panel →</a></div></div>
-<div class="box" id="D" style="display:none;width:380px"><div style="display:flex;justify-content:space-between"><b id="dn">Dist</b><button style="width:auto;background:#ef4444;color:#fff;padding:5px 10px;border-radius:6px;border:none" onclick="localStorage.removeItem('currentDist');location.reload()">LOGOUT</button></div><h2>₹<span id="db">0</span></h2><small id="dm"></small><hr><h4>Add Retailer</h4><input id="rn" placeholder="Retailer Name"><input id="rm" placeholder="Mobile"><input id="rp" placeholder="Password"><button class="b2" id="ar">ADD RETAILER</button><div id="rl"></div></div>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Distributor</title>
+<style>body{margin:0;background:#020617;color:#fff;font-family:system-ui;padding:12px}
+.card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:15px;margin-bottom:12px}
+input{width:100%;padding:11px;margin:5px 0;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff}
+.btn{padding:10px 14px;border-radius:8px;border:none;font-weight:800;cursor:pointer}
+.b1{background:#22c55e;color:#000}.b4{background:#ef4444;color:#fff}
+table{width:100%;border-collapse:collapse}th,td{padding:9px;border-bottom:1px solid #334155;font-size:13px}
+</style>
+</head>
+<body>
+
+<div style="display:flex;justify-content:space-between;align-items:center;background:#1e293b;padding:12px;border-radius:12px;margin-bottom:12px">
+<div><b id="dTitle">Distributor</b></div>
+<div style="display:flex;gap:8px">
+<button class="btn b1" onclick="location.href='index.html'">Home</button>
+<button class="btn b4" onclick="logout()">Logout</button>
+</div>
+</div>
+
+<div id="loginBox" class="card" style="max-width:400px;margin:80px auto;text-align:center">
+<h3>DISTRIBUTOR LOGIN</h3>
+<input id="dm" placeholder="ID">
+<input id="dp" type="password" placeholder="Password">
+<button class="btn b1" style="width:100%;background:#8b5cf6;color:#fff;margin-top:10px" onclick="doLogin()">LOGIN AS DISTRIBUTOR</button>
+<p onclick="location.href='index.html'" style="color:#94a3b8;text-decoration:underline;cursor:pointer">Go to Home →</p>
+<p id="msg" style="color:#f87171"></p>
+</div>
+
+<div id="dashBox" style="display:none">
+<div class="card">
+<h3>➕ Create Retailer</h3>
+<input id="rName" placeholder="Retailer Name">
+<input id="rId" placeholder="Retailer ID ex: R1">
+<input id="rPass" placeholder="Password">
+<button class="btn b1" style="width:100%;margin-top:8px" onclick="addRet()">Add Retailer</button>
+</div>
+<div class="card">
+<h3>Retailers (<span id="count">0</span>)</h3>
+<table><thead><tr><th>ID</th><th>Name</th><th>Pass</th><th>Del</th></tr></thead><tbody id="list"></tbody></table>
+</div>
+</div>
+
 <script>
-function ensure(){var d=JSON.parse(localStorage.getItem("distributors")||"[]");if(!d.find(x=>x.mobile=="7008024917")){d.push({name:"Main Distributor",mobile:"7008024917",password:"123456",balance:5000});localStorage.setItem("distributors",JSON.stringify(d))}} ensure();
-var $=id=>document.getElementById(id);
-$("lb").onclick=()=>{var m=$("m").value.trim(), p=$("p").value.trim(); var d=JSON.parse(localStorage.getItem("distributors")||"[]"); var f=d.find(x=>x.mobile==m && x.password==p); if(!f){$("e").innerText="❌ ID nahi milila! Admin-full.html re jaiki Distributor add kara. ID:7008024917 Pass:123456"; return;} localStorage.setItem("currentDist",JSON.stringify(f)); show(f);};
-function show(f){$("L").style.display="none";$("D").style.display="block";$("dn").innerText=f.name;$("dm").innerText=f.mobile;$("db").innerText=f.balance||0; loadR(f.mobile)}
-function loadR(dist){var r=JSON.parse(localStorage.getItem("retailers")||"[]");var my=r.filter(x=>x.distributor==dist);var h="";for(var i=0;i<my.length;i++){h+='<div class=it>'+my[i].name+' - '+my[i].mobile+'</div>'}; $("rl").innerHTML=h||"No Retailer"}
-$("ar").onclick=()=>{var cur=JSON.parse(localStorage.getItem("currentDist"));var r=JSON.parse(localStorage.getItem("retailers")||"[]");r.push({name:$("rn").value,mobile:$("rm").value,password:$("rp").value,balance:0,distributor:cur.mobile});localStorage.setItem("retailers",JSON.stringify(r));loadR(cur.mobile);alert("Retailer Added")};
-var cur=JSON.parse(localStorage.getItem("currentDist")||"null");if(cur)show(cur);
-</script></body></html>
+function getD(){return JSON.parse(localStorage.getItem("distributors")||"[]")}
+function getR(){return JSON.parse(localStorage.getItem("retailers")||"[]")}
+function saveR(l){localStorage.setItem("retailers",JSON.stringify(l))}
+
+function check(){
+ let role=localStorage.getItem("currentRole");
+ let cur=localStorage.getItem("distributorLoggedIn");
+ if(role=="distributor" && cur){
+   document.getElementById('loginBox').style.display="none";
+   document.getElementById('dashBox').style.display="block";
+   document.getElementById('dTitle').innerText="Distributor: "+cur;
+   render();
+ } else {
+   document.getElementById('loginBox').style.display="block";
+   document.getElementById('dashBox').style.display="none";
+ }
+}
+function doLogin(){
+ let m=document.getElementById('dm').value.trim(), p=document.getElementById('dp').value.trim();
+ if(!m||!p){document.getElementById('msg').innerText="ID Pass Dia";return}
+ let list=getD(); let f=list.find(x=> (x.id==m||x.mobile==m)&&x.password==p);
+ if(f){localStorage.setItem("currentRole","distributor"); localStorage.setItem("distributorLoggedIn",f.id); location.reload();}
+ else{document.getElementById('msg').innerText="Wrong ID Pass"}
+}
+function addRet(){
+ let cur=localStorage.getItem("distributorLoggedIn");
+ let n=document.getElementById('rName').value.trim(), id=document.getElementById('rId').value.trim(), p=document.getElementById('rPass').value.trim();
+ if(!id||!p){alert("ID Pass Dia");return}
+ let list=getR(); if(list.find(x=>x.id==id||x.mobile==id)){alert("Already");return}
+ list.push({name:n||id, id:id, mobile:id, password:p, distributorId:cur, balance:0});
+ saveR(list); alert("Retailer Created "+id); render();
+ document.getElementById('rName').value="";document.getElementById('rId').value="";document.getElementById('rPass').value="";
+}
+function delRet(id){
+ if(!confirm("Delete "+id+"?"))return;
+ let list=getR().filter(x=>x.id!=id&&x.mobile!=id); saveR(list); render();
+}
+function render(){
+ let cur=localStorage.getItem("distributorLoggedIn");
+ let list=getR().filter(x=>x.distributorId==cur);
+ document.getElementById('count').innerText=list.length;
+ let h=""; list.reverse().forEach(x=>{
+  h+=`<tr><td>${x.id}</td><td>${x.name}</td><td>${x.password}</td><td><button class="btn b4" style="padding:4px 8px" onclick="delRet('${x.id}')">X</button></td></tr>`;
+ });
+ document.getElementById('list').innerHTML=h||"<tr><td colspan=4 style='text-align:center;color:#94a3b8'>No Retailer</td></tr>";
+}
+function logout(){
+ localStorage.clear(); // Sabu Clear
+ location.href="index.html"; // Home Ku Jiba
+}
+check();
+</script>
+</body>
+</html>
