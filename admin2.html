@@ -3,12 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin Panel Full</title>
+<title>Admin Panel Fix</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#020617;color:#fff;font-family:system-ui;padding:12px}
 .h{display:flex;justify-content:space-between;align-items:center;background:#1e293b;padding:12px;border-radius:12px}
 .cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0}
-@media(max-width:700px){.cards{grid-template-columns:1fr}}
 .c{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:15px;text-align:center}
 .c b{font-size:22px;display:block;color:#f59e0b}
 .card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:15px;margin-bottom:12px}
@@ -17,15 +16,17 @@ input,select{width:100%;padding:11px;margin:5px 0;border-radius:8px;border:1px s
 .b1{background:#22c55e;color:#000}.b2{background:#38bdf8;color:#000}.b3{background:#f59e0b}.b4{background:#ef4444;color:#fff}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 table{width:100%;border-collapse:collapse}th,td{padding:9px;border-bottom:1px solid #334155;font-size:13px;text-align:left}
-th{color:#94a3b8;font-size:11px}
-.badge{background:#f59e0b;color:#000;padding:2px 8px;border-radius:20px;font-weight:800;font-size:12px}
+th{color:#94a3b8;font-size:11px}.badge{background:#f59e0b;color:#000;padding:2px 8px;border-radius:20px;font-weight:800;font-size:12px}
 </style>
 </head>
 <body>
 
 <div class="h">
-<div><b>👑 ADMIN</b><br><small style="color:#94a3b8">admin / 1430</small></div>
+<div><b>👑 ADMIN FIX</b></div>
+<div style="display:flex;gap:8px">
+<button class="btn b3" onclick="fixData()">Fix Undefined</button>
 <button class="btn b4" onclick="logout()">Logout</button>
+</div>
 </div>
 
 <div class="cards">
@@ -46,31 +47,14 @@ th{color:#94a3b8;font-size:11px}
 </div>
 <div class="grid2">
 <input id="dComm" type="number" placeholder="Commission % ex: 2">
-<input id="dBal" type="number" placeholder="Opening Balance ex: 1000">
+<input id="dBal" type="number" placeholder="Opening Balance">
 </div>
 <button class="btn b1" style="width:100%;margin-top:8px" onclick="addDist()">Add Distributor</button>
 </div>
 
 <div class="card">
-<h3 style="margin:0 0 10px">💰 Balance / Commission Set</h3>
-<div class="grid2">
-<select id="selDist"></select>
-<input id="addBal" type="number" placeholder="Amount Add">
-</div>
-<div class="grid2">
-<input id="setComm" type="number" placeholder="New Commission %">
-<div style="display:flex;gap:6px">
-<button class="btn b2" style="flex:1" onclick="addBalance()">+ Balance</button>
-<button class="btn b3" style="flex:1" onclick="setCommission()">Set Comm %</button>
-</div>
-</div>
-</div>
-
-<div class="card">
-<div style="display:flex;justify-content:space-between;align-items:center">
 <h3 style="margin:0">📋 Distributors (<span id="count">0</span>)</h3>
-<input id="search" placeholder="Search..." oninput="render()" style="width:140px">
-</div>
+<input id="search" placeholder="Search..." oninput="render()" style="margin-top:8px">
 <div style="overflow:auto;margin-top:10px">
 <table>
 <thead><tr><th>ID</th><th>Name</th><th>Bal</th><th>Comm</th><th>Pass</th><th>Del</th></tr></thead>
@@ -79,69 +63,79 @@ th{color:#94a3b8;font-size:11px}
 </div>
 </div>
 
-<div class="card">
-<h3 style="margin:0 0 10px">📊 Last 10 Recharge Report</h3>
-<div style="overflow:auto">
-<table>
-<thead><tr><th>Date</th><th>Retailer</th><th>Number</th><th>Amt</th></tr></thead>
-<tbody id="report"></tbody>
-</table>
-</div>
-</div>
-
 <script>
 function getD(){return JSON.parse(localStorage.getItem("distributors")||"[]")}
 function saveD(l){localStorage.setItem("distributors",JSON.stringify(l))}
 function getR(){return JSON.parse(localStorage.getItem("retailers")||"[]")}
-function getTx(){return JSON.parse(localStorage.getItem("transactions")||"[]")}
+
+function fixData(){
+ let list=getD();
+ let fixed=0;
+ list=list.map(x=>{
+   if(!x.id || x.id=="undefined" || x.id==undefined){
+     let newId = x.mobile || x.mob || x.name.replace(/\s/g,'') || "D"+Date.now();
+     x.id=newId;
+     x.mobile=newId;
+     fixed++;
+   }
+   if(!x.mobile) x.mobile=x.id;
+   return x;
+ });
+ saveD(list);
+ alert(fixed+" Data Fixed Heigala Bhai! Ebe Delete Heba");
+ render();
+}
 
 function addDist(){
  let n=document.getElementById('dName').value.trim(), id=document.getElementById('dId').value.trim(), p=document.getElementById('dPass').value.trim(), m=document.getElementById('dMob').value.trim()||id, c=document.getElementById('dComm').value.trim()||2, b=document.getElementById('dBal').value.trim()||0;
  if(!id||!p){alert("ID Password Dia");return}
  let list=getD();
- if(list.find(x=>x.id==id||x.mobile==id)){alert("Already Exists");return}
+ if(list.find(x=> (x.id==id || x.mobile==id) )){alert("Already Exists");return}
  list.push({name:n||id, id:id, mobile:id, password:p, mob:m, commission:parseFloat(c), balance:parseFloat(b), created:Date.now()});
  saveD(list);
  ["dName","dId","dPass","dMob","dComm","dBal"].forEach(x=>document.getElementById(x).value="");
  alert("Created "+id); render();
 }
-function delDist(id){
- if(!confirm("Delete "+id+" ?"))return;
- let list=getD().filter(x=>x.id!=id&&x.mobile!=id); saveD(list);
- let rlist=getR().filter(x=>x.distributorId!=id); localStorage.setItem("retailers",JSON.stringify(rlist));
+
+function delDist(idOrIndex){
+ if(!confirm("Delete "+idOrIndex+" ?"))return;
+ let list=getD();
+ // index re delete bhi kama kariba
+ if(!isNaN(idOrIndex) && parseInt(idOrIndex)<list.length){
+   list.splice(parseInt(idOrIndex),1);
+ } else {
+   list=list.filter(x=> x.id!=idOrIndex && x.mobile!=idOrIndex && x.name!=idOrIndex);
+ }
+ saveD(list);
+ // retailers clean
+ let rlist=getR().filter(x=> x.distributorId!=idOrIndex);
+ localStorage.setItem("retailers",JSON.stringify(rlist));
  render();
 }
-function addBalance(){
- let id=document.getElementById('selDist').value, amt=parseFloat(document.getElementById('addBal').value);
- if(!id||!amt){alert("Select & Amount Dia");return}
- let list=getD(); let f=list.find(x=>x.id==id); if(!f)return; f.balance=(f.balance||0)+amt; saveD(list); alert("₹"+amt+" Added to "+id); document.getElementById('addBal').value=""; render();
-}
-function setCommission(){
- let id=document.getElementById('selDist').value, comm=parseFloat(document.getElementById('setComm').value);
- if(!id||isNaN(comm)){alert("Select & Commission Dia");return}
- let list=getD(); let f=list.find(x=>x.id==id); f.commission=comm; saveD(list); alert("Commission "+comm+"% Set"); document.getElementById('setComm').value=""; render();
-}
+
 function render(){
- let d=getD(), r=getR(), tx=getTx();
+ let d=getD();
+ // Auto fix undefined on load
+ let needFix=false;
+ d.forEach(x=>{ if(!x.id || x.id=="undefined") needFix=true; });
+ if(needFix){ fixData(); return; }
+
+ let r=getR();
  document.getElementById('tD').innerText=d.length;
  document.getElementById('tR').innerText=r.length;
- let total=0; tx.forEach(t=>total+=parseFloat(t.amount||0));
- document.getElementById('tT').innerText="₹"+total;
+ document.getElementById('tT').innerText="₹0";
+ document.getElementById('count').innerText=d.length;
 
  let s=document.getElementById('search').value.toLowerCase();
- let f=d; if(s) f=d.filter(x=>(x.id+x.name).toLowerCase().includes(s));
- document.getElementById('count').innerText=f.length;
- let h=""; [...f].reverse().forEach(x=>{
-  h+=`<tr><td><span class=badge>${x.id}</span></td><td>${x.name}</td><td>₹${x.balance||0}</td><td>${x.commission||2}%</td><td>${x.password}</td><td><button class="btn b4" style="padding:5px 8px" onclick="delDist('${x.id}')">X</button></td></tr>`;
+ let f=d; if(s) f=d.filter(x=> (x.id+x.name).toLowerCase().includes(s));
+
+ let h="";
+ [...f].forEach((x,idx)=>{
+  // real index in original array
+  let realIdx = d.indexOf(x);
+  h+=`<tr><td><span class=badge>${x.id||x.mobile}</span></td><td>${x.name}</td><td>₹${x.balance||0}</td><td>${x.commission||2}%</td><td>${x.password}</td><td><button class="btn b4" style="padding:5px 10px" onclick="delDist('${x.id||x.mobile}')">X</button></td></tr>`;
  });
  document.getElementById('list').innerHTML=h||`<tr><td colspan=6 style="text-align:center;color:#94a3b8">No Data</td></tr>`;
-
- let sel=document.getElementById('selDist'); sel.innerHTML=d.map(x=>`<option value="${x.id}">${x.id} - ${x.name} (₹${x.balance||0})</option>`).join('')||"<option>No Distributor</option>";
-
- let rh=""; [...tx].reverse().slice(0,10).forEach(t=>{
-  rh+=`<tr><td>${new Date(t.time||Date.now()).toLocaleDateString()}</td><td>${t.retailer||"-"}</td><td>${t.number||"-"}</td><td>₹${t.amount}</td></tr>`;
- });
- document.getElementById('report').innerHTML=rh||`<tr><td colspan=4 style="text-align:center;color:#94a3b8">No Recharge Yet</td></tr>`;
 }
 function logout(){localStorage.removeItem("currentRole"); location.href="index.html";}
 render();
