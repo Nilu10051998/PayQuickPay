@@ -1,104 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Distributor - PayQuickPay</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-body{background:#020617;color:#fff;min-height:100vh}
-.header{background:#0f172a;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #1e293b;position:sticky;top:0;z-index:10}
-.logo{font-weight:900;color:#f59e0b;font-size:18px}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
-.sbox{background:#1e293b;padding:12px;border-radius:14px;border:1px solid #334155;text-align:center}
-.sbox small{color:#94a3b8;font-size:11px}
-.sbox b{font-size:18px;color:#f59e0b}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px}
-.card{background:#1e293b;border-radius:16px;padding:18px;text-align:center;border:1px solid #334155;cursor:pointer;transition:.2s}
-.card:active{transform:scale(.95)}
-.card .ico{font-size:28px;margin-bottom:6px}
-.card h4{font-size:13px}
-.logout{margin:16px;background:#ef4444;color:#fff;width:calc(100% - 32px);padding:14px;border:none;border-radius:12px;font-weight:900;font-size:14px}
-.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);justify-content:center;align-items:center;z-index:100}
-.mbox{background:#1e293b;padding:20px;border-radius:18px;width:320px;border:1px solid #334155}
-input{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;background:#0f172a;color:#fff}
-.btn{width:100%;padding:12px;background:#f59e0b;color:#000;font-weight:900;border:none;border-radius:10px;margin-top:8px}
-</style>
-</head>
-<body>
-
-<div class="header">
-<div class="logo">PayQuickPay - Distributor</div>
-<div style="font-size:12px" id="distId">6372038233</div>
-</div>
-
-<div class="stats">
-<div class="sbox"><small>MY RETAILERS</small><br><b>24</b></div>
-<div class="sbox"><small>TODAY EARN</small><br><b id="todayEarn">Rs 840</b></div>
-<div class="sbox"><small>WALLET BALANCE</small><br><b>Rs 42,500</b></div>
-<div class="sbox"><small>COMMISSION %</small><br><b id="commShow" style="font-size:12px">2% / 3%</b></div>
-</div>
-
-<div class="grid">
-<div class="card" onclick="alert('My Retailers List')">
-<div class="ico">👥</div><h4>My Retailers</h4></div>
-<div class="card" onclick="openModal()">
-<div class="ico">➕</div><h4>Add Retailer</h4></div>
-<div class="card" onclick="alert('Commission Report')">
-<div class="ico">💰</div><h4>Commission Report</h4></div>
-<div class="card" onclick="alert('Fund Transfer')">
-<div class="ico">💸</div><h4>Fund Transfer</h4></div>
-</div>
-
-<button class="logout" onclick="logout()">LOGOUT</button>
-
-<!-- Add Retailer Modal with Password -->
-<div class="modal" id="addModal">
-<div class="mbox">
-<h3 style="text-align:center;margin-bottom:10px">Add Retailer</h3>
-<input id="r_name" placeholder="Retailer Name">
-<input id="r_mobile" placeholder="Mobile No">
-<input id="r_shop" placeholder="Shop Name">
-<input id="r_pass" type="password" placeholder="Set Password">
-<button class="btn" onclick="addRetailer()">CREATE RETAILER</button>
-<button class="btn" style="background:#334155;color:#fff" onclick="closeModal()">CANCEL</button>
-</div>
-</div>
-
-<script>
-// 1. LOGIN CHECK
-if(!localStorage.getItem('distributor_mobile')){
-window.location.href='/PayQuickPay/login.html';
-}
-
-// 2. COMMISSION UPDATE
-function updateEarn(){
-let m = parseFloat(localStorage.getItem('comm_mobile')||2);
-let d = parseFloat(localStorage.getItem('comm_dth')||3);
-let sale_m=12000, sale_d=8000, sale_e=10000, sale_a=14000;
-let earn = sale_m*m/100 + sale_d*d/100 + sale_e*1.5/100 + sale_a*1.5/100;
-document.getElementById('todayEarn').innerText='Rs '+Math.floor(earn);
-document.getElementById('commShow').innerText=m+'% / '+d+'%';
-}
-updateEarn();
-
-// 3. MODAL
-function openModal(){document.getElementById('addModal').style.display='flex';}
-function closeModal(){document.getElementById('addModal').style.display='none';}
-function addRetailer(){
-let name=document.getElementById('r_name').value;
-let mob=document.getElementById('r_mobile').value;
-let pass=document.getElementById('r_pass').value;
-if(!name || !mob || !pass){alert('Sab fill kara');return;}
-alert('Retailer Created: '+name+' / Pass: '+pass);
-closeModal();
-}
-
-// 4. LOGOUT
-function logout(){
-localStorage.removeItem('distributor_mobile');
-window.location.href='/PayQuickPay/login.html';
-}
-</script>
-</body>
-</html>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Distributor - LIVE</title><style>body{margin:0;background:#020617;color:#fff;font-family:system-ui}
+.top{background:#0f172a;padding:14px 16px;display:flex;justify-content:space-between;position:sticky;top:0}
+.card{background:#1e293b;padding:14px;border-radius:12px;text-align:center;border:1px solid #334155}
+.stat{background:#1e293b;padding:16px;border-radius:12px;border-left:4px solid #22c55e;margin:10px 12px}</style></head><body>
+<div class="top"><b>DISTRIBUTOR LIVE</b><span id="bal" style="color:#22c55e;font-weight:900">Loading...</span>
+<button onclick="location.href='/'" style="background:#ef4444;color:#fff;border:none;padding:7px 12px;border-radius:20px">Logout</button></div>
+<div class="stat"><b id="totalT">0</b> Tx | Commission: Rs <span id="comm">0</span></div>
+<div style="padding:12px"><h4>LIVE TRANSACTIONS</h4><div id="list">Loading...</div></div>
+<script type="module">
+import { db } from '../public/firebase.js';
+import { collection, getDocs, query, orderBy, limit, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+async function loadBal(){try{const d=await getDoc(doc(db,"wallets","Nilu"));document.getElementById('bal').innerText='Rs '+(d.exists()?d.data().balance:4792);}catch(e){document.getElementById('bal').innerText='Rs 4792';}}
+async function loadTx(){const box=document.getElementById('list');try{const q=query(collection(db,"transactions"),orderBy("time","desc"),limit(20));const snap=await getDocs(q);let h='',total=0,comm=0;snap.forEach(d=>{const t=d.data();total++;comm+=t.amount*0.02;h+=`<div style="background:#1e293b;padding:10px;border-radius:10px;margin-top:8px;display:flex;justify-content:space-between"><div><b>${t.service}</b><br><small>${t.number}</small></div><div style="color:#22c55e">Rs ${t.amount}</div></div>`;});box.innerHTML=h||'No tx';document.getElementById('totalT').innerText=total;document.getElementById('comm').innerText=comm.toFixed(2);}catch(e){box.innerHTML=e.message;}}
+loadBal();loadTx();
+</script></body></html>
