@@ -1,93 +1,71 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Distributor</title>
-<style>body{margin:0;background:#020617;color:#fff;font-family:system-ui;padding:12px}
-.card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:15px;margin-bottom:12px}
-input{width:100%;padding:11px;margin:5px 0;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff}
-.btn{padding:10px 14px;border-radius:8px;border:none;font-weight:800;cursor:pointer}
-.b1{background:#22c55e;color:#000}.b4{background:#ef4444;color:#fff}
-table{width:100%;border-collapse:collapse}th,td{padding:9px;border-bottom:1px solid #334155;font-size:13px}
-</style>
-</head>
-<body>
-<div style="display:flex;justify-content:space-between;align-items:center;background:#1e293b;padding:12px;border-radius:12px;margin-bottom:12px">
-<div><b id="dTitle">Distributor Panel</b></div>
-<div style="display:flex;gap:8px">
-<button class="btn b1" onclick="location.href='index.html'">Home</button>
-<button class="btn b4" onclick="logout()">Logout</button>
-</div>
-</div>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DISTRIBUTOR - RETAILER PERMANENT</title>
+<style>body{margin:0;background:#020617;color:#fff;font-family:system-ui;padding:10px}.card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:12px;margin:8px 0}input{width:100%;padding:11px;margin:5px 0;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff}.btn{padding:12px;border:none;border-radius:8px;font-weight:800;width:100%} .h{display:flex;justify-content:space-between;background:#1e293b;padding:12px;border-radius:12px}</style>
+</head><body>
+<div class="h"><div><b id="dName">Distributor</b><br><small id="dIdShow"></small> | Balance: ₹<span id="dBal">0</span></div><button onclick="logout()" style="background:#ef4444;color:#fff;border:none;padding:6px 12px;border-radius:6px">Logout</button></div>
 
-<div id="loginBox" class="card" style="max-width:400px;margin:80px auto;text-align:center;display:none">
-<h3>DISTRIBUTOR LOGIN</h3>
-<input id="dm" placeholder="ID"><input id="dp" type="password" placeholder="Password">
-<button class="btn b1" style="width:100%;background:#8b5cf6;color:#fff;margin-top:10px" onclick="doLogin()">LOGIN</button>
-<p onclick="location.href='index.html'" style="color:#94a3b8;text-decoration:underline;cursor:pointer">Go to Home →</p>
-<p id="msg" style="color:#f87171"></p>
-</div>
+<div class="card"><h3>➕ Create Retailer</h3>
+<input id="rId" placeholder="Retailer ID - R1"><input id="rName" placeholder="Retailer Name"><input id="rPass" placeholder="Password"><input id="rBal" placeholder="Balance - 100" type="number">
+<button onclick="addRetailer()" style="background:#22c55e;color:#000;padding:12px;border:none;border-radius:8px;width:100%;font-weight:800;margin-top:8px">CREATE RETAILER</button><p id="msg"></p></div>
 
-<div id="dashBox" style="display:none">
-<div class="card">
-<h3>➕ Create Retailer</h3>
-<input id="rName" placeholder="Retailer Name"><input id="rId" placeholder="Retailer ID ex: R1"><input id="rPass" placeholder="Password">
-<button class="btn b1" style="width:100%;margin-top:8px" onclick="addRet()">Add Retailer</button>
-</div>
-<div class="card">
-<h3>Retailers (<span id="count">0</span>)</h3>
-<table><thead><tr><th>ID</th><th>Name</th><th>Pass</th><th>Del</th></tr></thead><tbody id="list"></tbody></table>
-</div>
-</div>
+<div class="card"><h3>📋 Retailer List (<span id="cnt">0</span>)</h3><div id="list"></div></div>
 
 <script>
-// NO AUTO CREATE CODE - REMOVED
-function getD(){return JSON.parse(localStorage.getItem("distributors")||"[]")}
-function getR(){return JSON.parse(localStorage.getItem("retailers")||"[]")}
-function saveR(l){localStorage.setItem("retailers",JSON.stringify(l))}
+// GET DISTRIBUTOR ID
+let distId = localStorage.getItem("distributorLoggedIn") || localStorage.getItem("currentDistId") || "D1";
+document.getElementById("dIdShow").innerText = distId;
 
-function check(){
- let role=localStorage.getItem("currentRole");
- let cur=localStorage.getItem("distributorLoggedIn");
- if(role=="distributor" && cur){
-   document.getElementById('loginBox').style.display="none";
-   document.getElementById('dashBox').style.display="block";
-   document.getElementById('dTitle').innerText="Distributor: "+cur;
-   render();
- } else {
-   document.getElementById('loginBox').style.display="block";
-   document.getElementById('dashBox').style.display="none";
- }
+// Load Distributor Info
+let allDist = JSON.parse(localStorage.getItem("distributors")||localStorage.getItem("pq_secret_db")||"[]");
+let me = allDist.find(x=>x.id==distId);
+if(me){ document.getElementById("dName").innerText=me.name; document.getElementById("dBal").innerText=me.balance; }
+
+// ==== RETAILER SAVE SYSTEM - 5 JAGARE SAVE ====
+function getRetailers(){
+  try{
+    let keys = ["retailers", "retailers_"+distId, "retailers_backup", "pq_retailers_secret", "payquick_retailers"];
+    let best = [];
+    keys.forEach(k=>{
+      try{ let v = JSON.parse(localStorage.getItem(k)||"[]"); if(v.length>best.length) best=v; }catch(e){}
+    });
+    return best;
+  }catch(e){ return [] }
 }
-function doLogin(){
- let m=document.getElementById('dm').value.trim(), p=document.getElementById('dp').value.trim();
- let list=getD(); let f=list.find(x=> (x.id==m||x.mobile==m)&&x.password==p);
- if(f){localStorage.setItem("currentRole","distributor"); localStorage.setItem("distributorLoggedIn",f.id); location.reload();}
- else{document.getElementById('msg').innerText="Wrong ID Pass"}
+function saveRetailers(list){
+  let s = JSON.stringify(list);
+  localStorage.setItem("retailers", s);
+  localStorage.setItem("retailers_"+distId, s);
+  localStorage.setItem("retailers_backup", s);
+  localStorage.setItem("pq_retailers_secret", s);
+  localStorage.setItem("payquick_retailers", s);
+  try{ sessionStorage.setItem("pq_retailers_secret", s); }catch(e){}
+  console.log("Retailers Saved:", s);
 }
-function addRet(){
- let cur=localStorage.getItem("distributorLoggedIn");
- let n=document.getElementById('rName').value.trim(), id=document.getElementById('rId').value.trim(), p=document.getElementById('rPass').value.trim();
- if(!id||!p){alert("ID Pass Dia");return}
- let list=getR(); if(list.find(x=>x.id==id||x.mobile==id)){alert("Already");return}
- list.push({name:n||id, id:id, mobile:id, password:p, distributorId:cur, balance:0});
- saveR(list); alert("Created "+id); render();
+
+function addRetailer(){
+  let id=document.getElementById('rId').value.trim(), name=document.getElementById('rName').value.trim(), pass=document.getElementById('rPass').value.trim(), bal=document.getElementById('rBal').value.trim()||"100";
+  if(!id||!pass){ document.getElementById('msg').innerText="❌ ID Pass Dia Bhai"; return; }
+  let list=getRetailers();
+  if(list.find(x=>x.id==id)){ document.getElementById('msg').innerText="❌ "+id+" Already Achhi"; return; }
+  list.push({id:id, name:name||id, password:pass, mobile:id, balance:parseFloat(bal), distId:distId, commission:1.5});
+  saveRetailers(list);
+  document.getElementById('msg').innerText="✅ "+id+" CREATE HEIGALA! Ebe Retailer Login Heijiba!";
+  document.getElementById('msg').style.color="#22c55e";
+  document.getElementById('rId').value=""; document.getElementById('rName').value=""; document.getElementById('rPass').value=""; 
+  render();
 }
-function delRet(id){
- if(!confirm("Delete "+id+"?"))return;
- let list=getR().filter(x=>x.id!=id&&x.mobile!=id); saveR(list); render();
-}
+
+function delRetailer(id){ if(!confirm(id+" Delete?")) return; let list=getRetailers().filter(x=>x.id!=id); saveRetailers(list); render(); }
+
 function render(){
- let cur=localStorage.getItem("distributorLoggedIn");
- let list=getR().filter(x=>x.distributorId==cur);
- document.getElementById('count').innerText=list.length;
- let h=""; list.reverse().forEach(x=>{
-  h+=`<tr><td>${x.id}</td><td>${x.name}</td><td>${x.password}</td><td><button class="btn b4" style="padding:4px 8px" onclick="delRet('${x.id}')">X</button></td></tr>`;
- });
- document.getElementById('list').innerHTML=h||"<tr><td colspan=4 style='text-align:center;color:#94a3b8'>No Retailer</td></tr>";
+  let list=getRetailers().filter(x=>!x.distId || x.distId==distId);
+  document.getElementById('cnt').innerText=list.length;
+  let h=""; list.slice().reverse().forEach(x=>{
+    h+=`<div style="display:flex;justify-content:space-between;background:#0f172a;padding:8px;margin:4px 0;border-radius:6px"><span><b style="background:#38bdf8;color:#000;padding:2px 6px;border-radius:8px">${x.id}</b> ${x.name} - ₹${x.balance} - Pass:${x.password}</span><button onclick="delRetailer('${x.id}')" style="background:#ef4444;border:none;padding:3px 8px;border-radius:4px;color:#fff">X</button></div>`;
+  });
+  document.getElementById('list').innerHTML=h||"No Retailer";
 }
-function logout(){localStorage.clear(); location.href="index.html";}
-check();
+function logout(){ localStorage.removeItem("distributorLoggedIn"); localStorage.removeItem("currentRole"); location.href="index.html"; }
+
+render();
 </script>
-</body>
-</html>
+</body></html>
