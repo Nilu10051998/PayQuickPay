@@ -88,7 +88,25 @@ function loginDist(){
  let m=$('dm').value.trim(), p=$('dp').value.trim();
  if(!m){ $('msg').innerText="Distributor ID Dia"; return; }
  if(!p){ $('msg').innerText="Password Dia"; return; }
- let list = JSON.parse(localStorage.getItem("distributors")||"[]");
+ let list = ;// RETAILER LOGIN - ALL KEYS CHECK
+let retailers = [];
+try{
+  let allKeys = ["retailers","retailers_backup","pq_retailers_secret","payquick_retailers"];
+  // Add all distributor specific keys
+  for(let i=0;i<localStorage.length;i++){
+    let k = localStorage.key(i);
+    if(k && k.startsWith("retailers_")) allKeys.push(k);
+  }
+  let best = [];
+  allKeys.forEach(k=>{
+    try{
+      let v = JSON.parse(localStorage.getItem(k)||"[]");
+      if(v.length>best.length) best=v;
+    }catch(e){}
+  });
+  retailers = best;
+  console.log("Login Check Retailers:", retailers);
+}catch(e){ retailers = []; }
  let f = list.find(x=> (x.mobile===m || x.id===m) && x.password===p);
  if(f){
    localStorage.setItem("currentRole","distributor");
