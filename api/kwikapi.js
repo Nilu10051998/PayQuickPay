@@ -3,7 +3,7 @@ export default async function handler(req, res){
   if(req.method!=='POST') return res.status(405).json({status:false, msg:"POST Only"});
   const {mobile, operator, amount} = req.body;
   const API_KEY = "9c8e29-96295a-7e7e75-6c2fbe-b45f27";
-  const order_id = "PQ"+Date.now();
+  const order_id = Date.now().toString().substring(0,15); // Only Number, Max 20 digit
 
   // Base URL - Tuma Domain Check - kwikapi.com or panel.kwikapi.com
   const BASE = "https://kwikapi.com";
