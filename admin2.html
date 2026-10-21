@@ -1,142 +1,108 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin Panel - FINAL</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ADMIN FINAL - NO DELETE</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#020617;color:#fff;font-family:system-ui;padding:12px}
+body{margin:0;background:#020617;color:#fff;font-family:system-ui;padding:12px}
+.card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:15px;margin:10px 0}
 .h{display:flex;justify-content:space-between;align-items:center;background:#1e293b;padding:12px;border-radius:12px}
-.cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0}
-.c{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:15px;text-align:center}
-.c b{font-size:22px;display:block;color:#f59e0b}
-.card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:15px;margin-bottom:12px}
-input{width:100%;padding:11px;margin:5px 0;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff;outline:none}
-.btn{padding:10px 14px;border-radius:8px;border:none;font-weight:800;cursor:pointer}
-.b1{background:#22c55e;color:#000}.b2{background:#38bdf8;color:#000}.b3{background:#f59e0b}.b4{background:#ef4444;color:#fff}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-table{width:100%;border-collapse:collapse}th,td{padding:9px;border-bottom:1px solid #334155;font-size:13px;text-align:left}
-th{color:#94a3b8;font-size:11px}.badge{background:#f59e0b;color:#000;padding:2px 8px;border-radius:20px;font-weight:800;font-size:12px}
+input{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff;font-size:15px}
+.btn{padding:13px;border-radius:8px;border:none;font-weight:800;width:100%;font-size:16px;cursor:pointer}
+.b1{background:#22c55e;color:#000}.b4{background:#ef4444;color:#fff}
+.item{display:flex;justify-content:space-between;align-items:center;background:#0f172a;padding:12px;margin:6px 0;border-radius:8px;border:1px solid #334155}
 </style>
 </head>
 <body>
 
 <div class="h">
-<div><b>👑 ADMIN FINAL</b></div>
-<div style="display:flex;gap:8px">
-<button class="btn b3" onclick="fixData()">Fix Data</button>
-<button class="btn b4" onclick="logout()">Logout</button>
-</div>
-</div>
-
-<div class="cards">
-<div class="c"><small>Distributors</small><b id="tD">0</b></div>
-<div class="c"><small>Retailers</small><b id="tR">0</b></div>
-<div class="c"><small>Balance</small><b id="tT">₹0</b></div>
+<div><b>👑 ADMIN - PERMANENT</b><br><small style="color:#22c55e">Delete Heba Nahi</small></div>
+<button onclick="logout()" style="background:#ef4444;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-weight:800">Logout</button>
 </div>
 
 <div class="card">
 <h3 style="margin:0 0 10px">➕ Create Distributor</h3>
-<div class="grid2">
-<input id="dName" placeholder="Name ex: Nilu">
-<input id="dId" placeholder="ID ex: D1 (Unique)">
-</div>
-<div class="grid2">
-<input id="dPass" placeholder="Password ex: 12345">
-<input id="dMob" placeholder="Mobile (Optional)">
-</div>
-<div class="grid2">
-<input id="dComm" type="number" placeholder="Commission % ex: 2">
-<input id="dBal" type="number" placeholder="Balance ex: 500">
-</div>
-<button class="btn b1" style="width:100%;margin-top:8px;background:#22c55e;padding:14px;font-size:16px" onclick="addDist()">✅ Add Distributor</button>
-<p id="addMsg" style="text-align:center"></p>
+<input id="dId" placeholder="ID Lekha - Ex: D1">
+<input id="dName" placeholder="Name Lekha - Ex: Nilu">
+<input id="dPass" placeholder="Password Lekha - Ex: 12345">
+<input id="dBal" placeholder="Balance - Ex: 500" type="number">
+<button class="btn b1" onclick="addDist()">✅ CREATE KARA</button>
+<p id="msg" style="text-align:center;font-weight:800;margin-top:10px"></p>
 </div>
 
 <div class="card">
-<h3>📋 Distributors (<span id="count">0</span>)</h3>
-<input id="search" placeholder="Search..." oninput="render()" style="margin-top:8px">
-<div style="overflow:auto;margin-top:10px">
-<table>
-<thead><tr><th>ID</th><th>Name</th><th>Bal</th><th>Comm</th><th>Pass</th><th>Del</th></tr></thead>
-<tbody id="list"></tbody>
-</table>
-</div>
+<h3>📋 Distributor List (<span id="cnt">0</span>)</h3>
+<div id="list"></div>
 </div>
 
 <script>
-// NO AUTO CREATE - NO CLEAR - 100% SAFE
-function getD(){ try{return JSON.parse(localStorage.getItem("distributors")||"[]")}catch(e){return []} }
-function saveD(l){ localStorage.setItem("distributors",JSON.stringify(l)); console.log("Saved",l.length); }
-function getR(){ try{return JSON.parse(localStorage.getItem("retailers")||"[]")}catch(e){return []} }
-
-function fixData(){
- let list=getD(); let fixed=0;
- list=list.map(x=>{
-   if(!x.id || x.id=="undefined"){ x.id=x.mobile||x.name||"D"+Date.now(); fixed++; }
-   if(!x.mobile) x.mobile=x.id;
-   return x;
- });
- saveD(list); alert(fixed+" Fixed"); render();
+// PERMANENT SAVE - KEBE DELETE HEBA NAHI
+function getD(){
+  try{
+    let a = JSON.parse(localStorage.getItem("distributors")||"[]");
+    let b = JSON.parse(localStorage.getItem("distributors_backup")||"[]");
+    if(a.length>=b.length) return a;
+    return b;
+  }catch(e){ return [] }
+}
+function saveD(list){
+  localStorage.setItem("distributors", JSON.stringify(list));
+  localStorage.setItem("distributors_backup", JSON.stringify(list));
+  localStorage.setItem("distributors_v2", JSON.stringify(list));
 }
 
 function addDist(){
- let name=document.getElementById('dName').value.trim();
- let id=document.getElementById('dId').value.trim();
- let pass=document.getElementById('dPass').value.trim();
- let mob=document.getElementById('dMob').value.trim()||id;
- let comm=document.getElementById('dComm').value.trim()||2;
- let bal=document.getElementById('dBal').value.trim()||0;
- let msg=document.getElementById('addMsg');
- 
- if(!id){ msg.innerText="❌ ID Dia Bhai"; msg.style.color="#ef4444"; return; }
- if(!pass){ msg.innerText="❌ Password Dia"; msg.style.color="#ef4444"; return; }
- 
- let list=getD();
- if(list.find(x=> x.id==id)){ msg.innerText="❌ "+id+" Already Achhi"; msg.style.color="#ef4444"; return; }
- 
- let newObj={name:name||id, id:id, mobile:mob, password:pass, commission:parseFloat(comm), balance:parseFloat(bal), created:Date.now()};
- list.push(newObj);
- saveD(list);
- 
- msg.innerText="✅ "+id+" Created Success!"; msg.style.color="#22c55e";
- document.getElementById('dName').value=""; document.getElementById('dId').value=""; document.getElementById('dPass').value=""; document.getElementById('dMob').value=""; document.getElementById('dComm').value=""; document.getElementById('dBal').value="";
- 
- render();
+  let id = document.getElementById('dId').value.trim();
+  let name = document.getElementById('dName').value.trim();
+  let pass = document.getElementById('dPass').value.trim();
+  let bal = document.getElementById('dBal').value.trim()||"500";
+  let msg = document.getElementById('msg');
+  
+  if(!id){ msg.innerText="❌ ID Dia Bhai - D1"; msg.style.color="#ef4444"; return; }
+  if(!pass){ msg.innerText="❌ Password Dia"; msg.style.color="#ef4444"; return; }
+  
+  let list = getD();
+  if(list.find(x=>x.id==id)){ msg.innerText="❌ "+id+" Already Achhi"; msg.style.color="#ef4444"; return; }
+  
+  list.push({id:id, name:name||id, password:pass, mobile:id, balance:parseFloat(bal), commission:2});
+  saveD(list);
+  
+  msg.innerText="✅ "+id+" SAVE HEIGALA! Ebe Delete Heba Nahi!";
+  msg.style.color="#22c55e";
+  
+  document.getElementById('dId').value="";
+  document.getElementById('dName').value="";
+  document.getElementById('dPass').value="";
+  document.getElementById('dBal').value="";
+  
+  render();
 }
 
 function delDist(id){
- if(!confirm("Delete "+id+" ? Pakka?"))return;
- let list=getD();
- let before=list.length;
- list=list.filter(x=> x.id!=id && x.mobile!=id);
- saveD(list);
- // retailers of this distributor delete
- let rlist=getR().filter(x=> x.distributorId!=id);
- localStorage.setItem("retailers",JSON.stringify(rlist));
- alert(id+" Deleted ("+before+"->"+list.length+")");
- render();
+  if(!confirm(id+" Ku Delete Kariba? Pakka?")) return;
+  let list = getD().filter(x=>x.id!=id);
+  saveD(list);
+  render();
 }
 
 function render(){
- let d=getD(); let r=getR();
- document.getElementById('tD').innerText=d.length;
- document.getElementById('tR').innerText=r.length;
- document.getElementById('count').innerText=d.length;
- let s=document.getElementById('search').value.toLowerCase();
- let f=s? d.filter(x=> (x.id+x.name).toLowerCase().includes(s)): d;
- let h="";
- f.slice().reverse().forEach(x=>{
-  h+=`<tr><td><span class=badge>${x.id}</span></td><td>${x.name}</td><td>₹${x.balance||0}</td><td>${x.commission||2}%</td><td>${x.password}</td><td><button class="btn b4" style="padding:5px 10px" onclick="delDist('${x.id}')">X</button></td></tr>`;
- });
- document.getElementById('list').innerHTML=h||`<tr><td colspan=6 style="text-align:center;color:#94a3b8">No Data - Create Karo</td></tr>`;
+  let list = getD();
+  document.getElementById('cnt').innerText=list.length;
+  let h="";
+  list.slice().reverse().forEach(x=>{
+    h+=`<div class="item"><div><b style="background:#f59e0b;color:#000;padding:3px 8px;border-radius:10px">${x.id}</b> ${x.name} - ₹${x.balance} - ${x.password}</div><button onclick="delDist('${x.id}')" style="background:#ef4444;color:#fff;border:none;padding:6px 10px;border-radius:6px;font-weight:800">X</button></div>`;
+  });
+  document.getElementById('list').innerHTML = h || "<div style='text-align:center;color:#94a3b8;padding:20px'>No Data - Upara Create Kara</div>";
 }
+
 function logout(){
- // IMPORTANT: clear() KEBE NAHI - Kebala Session Delete
- localStorage.removeItem("currentRole");
- localStorage.removeItem("distributorLoggedIn");
- localStorage.removeItem("currentDist");
- location.href="index.html";
+  // FIX: clear() NAHI - Kebala Role Delete
+  localStorage.removeItem("currentRole");
+  localStorage.removeItem("distributorLoggedIn");
+  location.href="index.html";
 }
+
 render();
 </script>
 </body>
