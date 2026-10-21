@@ -1,87 +1,97 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ADMIN DEBUG</title>
-<style>body{margin:0;background:#020617;color:#fff;font-family:system-ui;padding:10px}.card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:12px;margin:8px 0}input{width:100%;padding:11px;margin:5px 0;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff}.btn{padding:12px;border:none;border-radius:8px;font-weight:800;width:100%}.debug{background:#000;color:#0f0;padding:10px;border-radius:8px;font-size:12px;white-space:pre-wrap;word-break:break-all}</style>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ADMIN PERMANENT BLOCK</title>
+<style>body{margin:0;background:#020617;color:#fff;font-family:system-ui;padding:10px}.card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:12px;margin:8px 0}input{width:100%;padding:11px;margin:5px 0;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff}.btn{padding:12px;border:none;border-radius:8px;font-weight:800;width:100%}</style>
 </head><body>
-<div class="card" style="display:flex;justify-content:space-between"><b>ADMIN DEBUG MODE</b><button onclick="logout()" style="background:#ef4444;color:#fff;border:none;padding:6px 12px;border-radius:6px">Logout</button></div>
-
+<div class="card" style="display:flex;justify-content:space-between"><b>ADMIN PERMANENT - DELETE BLOCKED</b><button onclick="logout()" style="background:#ef4444;color:#fff;border:none;padding:6px 12px;border-radius:6px">Logout</button></div>
 <div class="card"><h3>Create Distributor</h3>
 <input id="dId" placeholder="ID - D1"><input id="dName" placeholder="Name"><input id="dPass" placeholder="Pass"><input id="dBal" placeholder="Balance">
-<button onclick="addDist()" style="background:#22c55e;color:#000;padding:12px;border:none;border-radius:8px;width:100%;font-weight:800;margin-top:8px">CREATE + DEBUG</button>
-<p id="msg"></p></div>
-
-<div class="card"><h3>List (<span id="cnt">0</span>) <button onclick="hardRestore()" style="background:#38bdf8;border:none;padding:4px 8px;border-radius:5px;font-weight:800;margin-left:10px">FORCE RESTORE</button></h3><div id="list"></div></div>
-
-<div class="card"><h3>🔍 Debug Info - Kouthi Delete Hauchi Dekha:</h3>
-<div id="debug" class="debug">Loading...</div>
-<button onclick="checkStorage()" style="background:#f59e0b;color:#000;padding:8px;border:none;border-radius:6px;margin-top:8px;width:100%;font-weight:800">CHECK STORAGE</button>
-<button onclick="clearAllStorage()" style="background:#ef4444;color:#fff;padding:8px;border:none;border-radius:6px;margin-top:8px;width:100%">SABU DELETE (TEST)</button>
-</div>
-
+<button onclick="addDist()" style="background:#22c55e;color:#000;padding:12px;border:none;border-radius:8px;width:100%;font-weight:800;margin-top:8px">CREATE - PERMANENT</button><p id="msg"></p></div>
+<div class="card"><h3>List (<span id="cnt">0</span>)</h3><div id="list"></div></div>
 <script>
-function getAllKeys(){
- let out="=== LOCAL STORAGE ===\n";
- for(let i=0;i<localStorage.length;i++){let k=localStorage.key(i); out+=k+" = "+localStorage.getItem(k).substring(0,200)+"\n\n";}
- return out||"EMPTY - Sabu Delete Heigala!";
-}
-function checkStorage(){
- let d = localStorage.getItem("distributors");
- let b = localStorage.getItem("distributors_backup");
- let v = localStorage.getItem("distributors_v2");
- let debugText = "Time: "+new Date().toLocaleString()+"\n\n";
- debugText += "distributors: "+(d||"NULL")+"\n\n";
- debugText += "distributors_backup: "+(b||"NULL")+"\n\n";
- debugText += "distributors_v2: "+(v||"NULL")+"\n\n";
- debugText += getAllKeys();
- document.getElementById('debug').innerText=debugText;
- document.getElementById('cnt').innerText = JSON.parse(d||"[]").length;
-}
+// ==== DELETE BLOCK SYSTEM ====
+const PROTECTED_KEYS = ["distributors","distributors_backup","distributors_v2","pq_secret_db","payquick_final","ADMIN_BACKUP"];
+const SECRET_KEY = "pq_secret_db";
+
+// Block any delete attempts from index.html or other files
+(function(){
+  const origRemove = localStorage.removeItem.bind(localStorage);
+  const origClear = localStorage.clear.bind(localStorage);
+  localStorage.removeItem = function(k){
+    if(PROTECTED_KEYS.includes(k) || k.includes("distributor")){
+      console.warn("BLOCKED DELETE ATTEMPT FOR:",k);
+      // Restore immediately
+      let secret = localStorage.getItem(SECRET_KEY);
+      if(secret){ origRemove = origRemove; localStorage.setItem("distributors", secret); localStorage.setItem("distributors_backup", secret); }
+      return;
+    }
+    return origRemove(k);
+  };
+  localStorage.clear = function(){
+    console.warn("BLOCKED CLEAR ATTEMPT");
+    let secret = localStorage.getItem(SECRET_KEY);
+    // Only clear non-protected
+    for(let i=localStorage.length-1;i>=0;i--){
+      let key = localStorage.key(i);
+      if(!key) continue;
+      if(PROTECTED_KEYS.includes(key) || key.includes("distributor") || key==SECRET_KEY) continue;
+      origRemove(key);
+    }
+    // Restore distributors
+    if(secret){
+      localStorage.setItem("distributors", secret);
+      localStorage.setItem("distributors_backup", secret);
+      localStorage.setItem("distributors_v2", secret);
+    }
+  };
+})();
 
 function getD(){
- try{
-   let a = JSON.parse(localStorage.getItem("distributors")||"[]");
-   let b = JSON.parse(localStorage.getItem("distributors_backup")||"[]");
-   let c = JSON.parse(localStorage.getItem("distributors_v2")||"[]");
-   let max = a;
-   if(b.length>max.length) max=b;
-   if(c.length>max.length) max=c;
-   return max;
- }catch(e){ return [] }
+  try{
+    let secret = localStorage.getItem(SECRET_KEY);
+    let a = JSON.parse(localStorage.getItem("distributors")||"null");
+    if((!a || a.length==0) && secret){ a = JSON.parse(secret); saveD(a); return a; }
+    if(a && a.length>0){ localStorage.setItem(SECRET_KEY, JSON.stringify(a)); return a; }
+    let b = JSON.parse(localStorage.getItem("distributors_backup")||"[]");
+    let c = JSON.parse(localStorage.getItem("distributors_v2")||"[]");
+    let best = a||[]; if(b.length>best.length) best=b; if(c.length>best.length) best=c;
+    if(best.length>0) saveD(best);
+    return best;
+  }catch(e){ return [] }
 }
 function saveD(list){
- localStorage.setItem("distributors", JSON.stringify(list));
- localStorage.setItem("distributors_backup", JSON.stringify(list));
- localStorage.setItem("distributors_v2", JSON.stringify(list));
- localStorage.setItem("LAST_SAVE_TIME", new Date().toString());
- console.log("SAVED",list);
+  let s = JSON.stringify(list);
+  localStorage.setItem("distributors", s);
+  localStorage.setItem("distributors_backup", s);
+  localStorage.setItem("distributors_v2", s);
+  localStorage.setItem(SECRET_KEY, s);
+  localStorage.setItem("payquick_final", s);
+  localStorage.setItem("ADMIN_BACKUP", s);
+  try{ sessionStorage.setItem(SECRET_KEY, s); }catch(e){}
 }
 
 function addDist(){
- let id=document.getElementById('dId').value.trim(), name=document.getElementById('dName').value.trim(), pass=document.getElementById('dPass').value.trim(), bal=document.getElementById('dBal').value.trim()||"500";
- if(!id||!pass){document.getElementById('msg').innerText="ID Pass Dia";return;}
- let list=getD();
- if(list.find(x=>x.id==id)){document.getElementById('msg').innerText="Already";return;}
- list.push({id,name:name||id,password:pass,mobile:id,balance:bal,commission:2});
- saveD(list);
- document.getElementById('msg').innerText="SAVE OK! List="+list.length+" - Ebe Check Storage Daba";
- render(); checkStorage();
+  let id=document.getElementById('dId').value.trim(), name=document.getElementById('dName').value.trim(), pass=document.getElementById('dPass').value.trim(), bal=document.getElementById('dBal').value.trim()||"500";
+  if(!id||!pass){document.getElementById('msg').innerText="ID Pass Dia";return;}
+  let list=getD(); if(list.find(x=>x.id==id)){document.getElementById('msg').innerText="Already";return;}
+  list.push({id,name:name||id,password:pass,mobile:id,balance:bal,commission:2});
+  saveD(list);
+  document.getElementById('msg').innerText="✅ "+id+" PERMANENT SAVE! Reload Kale Bi Delete Heba Nahi!";
+  document.getElementById('msg').style.color="#22c55e";
+  render();
 }
-function delDist(id){ let list=getD().filter(x=>x.id!=id); saveD(list); render(); checkStorage(); }
-function hardRestore(){
- let a=JSON.parse(localStorage.getItem("distributors")||"[]");
- let b=JSON.parse(localStorage.getItem("distributors_backup")||"[]");
- let c=JSON.parse(localStorage.getItem("distributors_v2")||"[]");
- let best=a; if(b.length>best.length) best=b; if(c.length>best.length) best=c;
- if(best.length>0){ saveD(best); alert("RESTORED "+best.length+" from backup"); render(); checkStorage(); } else alert("No backup");
-}
+function delDist(id){ if(!confirm(id+" Delete?")) return; let list=getD().filter(x=>x.id!=id); saveD(list); render(); }
 function render(){
- let list=getD(); document.getElementById('cnt').innerText=list.length;
- let h=""; list.slice().reverse().forEach(x=>{h+=`<div style="display:flex;justify-content:space-between;background:#0f172a;padding:8px;margin:4px 0;border-radius:6px"><span><b>${x.id}</b> ${x.name} ₹${x.balance}</span><button onclick="delDist('${x.id}')" style="background:#ef4444;border:none;padding:3px 8px;border-radius:4px">X</button></div>`});
- document.getElementById('list').innerHTML=h||"No Data";
+  let list=getD(); document.getElementById('cnt').innerText=list.length;
+  let h=""; list.slice().reverse().forEach(x=>{h+=`<div style="display:flex;justify-content:space-between;background:#0f172a;padding:8px;margin:4px 0;border-radius:6px"><span><b>${x.id}</b> ${x.name} ₹${x.balance}</span><button onclick="delDist('${x.id}')" style="background:#ef4444;border:none;padding:3px 8px;border-radius:4px">X</button></div>`});
+  document.getElementById('list').innerHTML=h||"No Data";
 }
 function logout(){ localStorage.removeItem("currentRole"); location.href="index.html"; }
-function clearAllStorage(){ if(confirm("Sabu Delete Kariba?")){ localStorage.clear(); checkStorage(); render(); } }
 
-render(); checkStorage();
-// Auto check every 3 sec
-setInterval(checkStorage, 3000);
+// Restore on load
+let saved = localStorage.getItem(SECRET_KEY) || sessionStorage.getItem(SECRET_KEY);
+if(saved && (!localStorage.getItem("distributors") || JSON.parse(localStorage.getItem("distributors")||"[]").length==0)){
+  localStorage.setItem("distributors", saved);
+  localStorage.setItem("distributors_backup", saved);
+}
+render();
 </script>
 </body></html>
