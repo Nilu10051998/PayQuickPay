@@ -1,109 +1,87 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ADMIN FINAL - NO DELETE</title>
-<style>
-body{margin:0;background:#020617;color:#fff;font-family:system-ui;padding:12px}
-.card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:15px;margin:10px 0}
-.h{display:flex;justify-content:space-between;align-items:center;background:#1e293b;padding:12px;border-radius:12px}
-input{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff;font-size:15px}
-.btn{padding:13px;border-radius:8px;border:none;font-weight:800;width:100%;font-size:16px;cursor:pointer}
-.b1{background:#22c55e;color:#000}.b4{background:#ef4444;color:#fff}
-.item{display:flex;justify-content:space-between;align-items:center;background:#0f172a;padding:12px;margin:6px 0;border-radius:8px;border:1px solid #334155}
-</style>
-</head>
-<body>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ADMIN DEBUG</title>
+<style>body{margin:0;background:#020617;color:#fff;font-family:system-ui;padding:10px}.card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:12px;margin:8px 0}input{width:100%;padding:11px;margin:5px 0;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff}.btn{padding:12px;border:none;border-radius:8px;font-weight:800;width:100%}.debug{background:#000;color:#0f0;padding:10px;border-radius:8px;font-size:12px;white-space:pre-wrap;word-break:break-all}</style>
+</head><body>
+<div class="card" style="display:flex;justify-content:space-between"><b>ADMIN DEBUG MODE</b><button onclick="logout()" style="background:#ef4444;color:#fff;border:none;padding:6px 12px;border-radius:6px">Logout</button></div>
 
-<div class="h">
-<div><b>👑 ADMIN - PERMANENT</b><br><small style="color:#22c55e">Delete Heba Nahi</small></div>
-<button onclick="logout()" style="background:#ef4444;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-weight:800">Logout</button>
-</div>
+<div class="card"><h3>Create Distributor</h3>
+<input id="dId" placeholder="ID - D1"><input id="dName" placeholder="Name"><input id="dPass" placeholder="Pass"><input id="dBal" placeholder="Balance">
+<button onclick="addDist()" style="background:#22c55e;color:#000;padding:12px;border:none;border-radius:8px;width:100%;font-weight:800;margin-top:8px">CREATE + DEBUG</button>
+<p id="msg"></p></div>
 
-<div class="card">
-<h3 style="margin:0 0 10px">➕ Create Distributor</h3>
-<input id="dId" placeholder="ID Lekha - Ex: D1">
-<input id="dName" placeholder="Name Lekha - Ex: Nilu">
-<input id="dPass" placeholder="Password Lekha - Ex: 12345">
-<input id="dBal" placeholder="Balance - Ex: 500" type="number">
-<button class="btn b1" onclick="addDist()">✅ CREATE KARA</button>
-<p id="msg" style="text-align:center;font-weight:800;margin-top:10px"></p>
-</div>
+<div class="card"><h3>List (<span id="cnt">0</span>) <button onclick="hardRestore()" style="background:#38bdf8;border:none;padding:4px 8px;border-radius:5px;font-weight:800;margin-left:10px">FORCE RESTORE</button></h3><div id="list"></div></div>
 
-<div class="card">
-<h3>📋 Distributor List (<span id="cnt">0</span>)</h3>
-<div id="list"></div>
+<div class="card"><h3>🔍 Debug Info - Kouthi Delete Hauchi Dekha:</h3>
+<div id="debug" class="debug">Loading...</div>
+<button onclick="checkStorage()" style="background:#f59e0b;color:#000;padding:8px;border:none;border-radius:6px;margin-top:8px;width:100%;font-weight:800">CHECK STORAGE</button>
+<button onclick="clearAllStorage()" style="background:#ef4444;color:#fff;padding:8px;border:none;border-radius:6px;margin-top:8px;width:100%">SABU DELETE (TEST)</button>
 </div>
 
 <script>
-// PERMANENT SAVE - KEBE DELETE HEBA NAHI
+function getAllKeys(){
+ let out="=== LOCAL STORAGE ===\n";
+ for(let i=0;i<localStorage.length;i++){let k=localStorage.key(i); out+=k+" = "+localStorage.getItem(k).substring(0,200)+"\n\n";}
+ return out||"EMPTY - Sabu Delete Heigala!";
+}
+function checkStorage(){
+ let d = localStorage.getItem("distributors");
+ let b = localStorage.getItem("distributors_backup");
+ let v = localStorage.getItem("distributors_v2");
+ let debugText = "Time: "+new Date().toLocaleString()+"\n\n";
+ debugText += "distributors: "+(d||"NULL")+"\n\n";
+ debugText += "distributors_backup: "+(b||"NULL")+"\n\n";
+ debugText += "distributors_v2: "+(v||"NULL")+"\n\n";
+ debugText += getAllKeys();
+ document.getElementById('debug').innerText=debugText;
+ document.getElementById('cnt').innerText = JSON.parse(d||"[]").length;
+}
+
 function getD(){
-  try{
-    let a = JSON.parse(localStorage.getItem("distributors")||"[]");
-    let b = JSON.parse(localStorage.getItem("distributors_backup")||"[]");
-    if(a.length>=b.length) return a;
-    return b;
-  }catch(e){ return [] }
+ try{
+   let a = JSON.parse(localStorage.getItem("distributors")||"[]");
+   let b = JSON.parse(localStorage.getItem("distributors_backup")||"[]");
+   let c = JSON.parse(localStorage.getItem("distributors_v2")||"[]");
+   let max = a;
+   if(b.length>max.length) max=b;
+   if(c.length>max.length) max=c;
+   return max;
+ }catch(e){ return [] }
 }
 function saveD(list){
-  localStorage.setItem("distributors", JSON.stringify(list));
-  localStorage.setItem("distributors_backup", JSON.stringify(list));
-  localStorage.setItem("distributors_v2", JSON.stringify(list));
+ localStorage.setItem("distributors", JSON.stringify(list));
+ localStorage.setItem("distributors_backup", JSON.stringify(list));
+ localStorage.setItem("distributors_v2", JSON.stringify(list));
+ localStorage.setItem("LAST_SAVE_TIME", new Date().toString());
+ console.log("SAVED",list);
 }
 
 function addDist(){
-  let id = document.getElementById('dId').value.trim();
-  let name = document.getElementById('dName').value.trim();
-  let pass = document.getElementById('dPass').value.trim();
-  let bal = document.getElementById('dBal').value.trim()||"500";
-  let msg = document.getElementById('msg');
-  
-  if(!id){ msg.innerText="❌ ID Dia Bhai - D1"; msg.style.color="#ef4444"; return; }
-  if(!pass){ msg.innerText="❌ Password Dia"; msg.style.color="#ef4444"; return; }
-  
-  let list = getD();
-  if(list.find(x=>x.id==id)){ msg.innerText="❌ "+id+" Already Achhi"; msg.style.color="#ef4444"; return; }
-  
-  list.push({id:id, name:name||id, password:pass, mobile:id, balance:parseFloat(bal), commission:2});
-  saveD(list);
-  
-  msg.innerText="✅ "+id+" SAVE HEIGALA! Ebe Delete Heba Nahi!";
-  msg.style.color="#22c55e";
-  
-  document.getElementById('dId').value="";
-  document.getElementById('dName').value="";
-  document.getElementById('dPass').value="";
-  document.getElementById('dBal').value="";
-  
-  render();
+ let id=document.getElementById('dId').value.trim(), name=document.getElementById('dName').value.trim(), pass=document.getElementById('dPass').value.trim(), bal=document.getElementById('dBal').value.trim()||"500";
+ if(!id||!pass){document.getElementById('msg').innerText="ID Pass Dia";return;}
+ let list=getD();
+ if(list.find(x=>x.id==id)){document.getElementById('msg').innerText="Already";return;}
+ list.push({id,name:name||id,password:pass,mobile:id,balance:bal,commission:2});
+ saveD(list);
+ document.getElementById('msg').innerText="SAVE OK! List="+list.length+" - Ebe Check Storage Daba";
+ render(); checkStorage();
 }
-
-function delDist(id){
-  if(!confirm(id+" Ku Delete Kariba? Pakka?")) return;
-  let list = getD().filter(x=>x.id!=id);
-  saveD(list);
-  render();
+function delDist(id){ let list=getD().filter(x=>x.id!=id); saveD(list); render(); checkStorage(); }
+function hardRestore(){
+ let a=JSON.parse(localStorage.getItem("distributors")||"[]");
+ let b=JSON.parse(localStorage.getItem("distributors_backup")||"[]");
+ let c=JSON.parse(localStorage.getItem("distributors_v2")||"[]");
+ let best=a; if(b.length>best.length) best=b; if(c.length>best.length) best=c;
+ if(best.length>0){ saveD(best); alert("RESTORED "+best.length+" from backup"); render(); checkStorage(); } else alert("No backup");
 }
-
 function render(){
-  let list = getD();
-  document.getElementById('cnt').innerText=list.length;
-  let h="";
-  list.slice().reverse().forEach(x=>{
-    h+=`<div class="item"><div><b style="background:#f59e0b;color:#000;padding:3px 8px;border-radius:10px">${x.id}</b> ${x.name} - ₹${x.balance} - ${x.password}</div><button onclick="delDist('${x.id}')" style="background:#ef4444;color:#fff;border:none;padding:6px 10px;border-radius:6px;font-weight:800">X</button></div>`;
-  });
-  document.getElementById('list').innerHTML = h || "<div style='text-align:center;color:#94a3b8;padding:20px'>No Data - Upara Create Kara</div>";
+ let list=getD(); document.getElementById('cnt').innerText=list.length;
+ let h=""; list.slice().reverse().forEach(x=>{h+=`<div style="display:flex;justify-content:space-between;background:#0f172a;padding:8px;margin:4px 0;border-radius:6px"><span><b>${x.id}</b> ${x.name} ₹${x.balance}</span><button onclick="delDist('${x.id}')" style="background:#ef4444;border:none;padding:3px 8px;border-radius:4px">X</button></div>`});
+ document.getElementById('list').innerHTML=h||"No Data";
 }
+function logout(){ localStorage.removeItem("currentRole"); location.href="index.html"; }
+function clearAllStorage(){ if(confirm("Sabu Delete Kariba?")){ localStorage.clear(); checkStorage(); render(); } }
 
-function logout(){
-  // FIX: clear() NAHI - Kebala Role Delete
-  localStorage.removeItem("currentRole");
-  localStorage.removeItem("distributorLoggedIn");
-  location.href="index.html";
-}
-
-render();
+render(); checkStorage();
+// Auto check every 3 sec
+setInterval(checkStorage, 3000);
 </script>
-</body>
-</html>
+</body></html>
