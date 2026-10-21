@@ -101,7 +101,7 @@ let sel=document.getElementById('operator');
 let old=sel.innerHTML;
 sel.innerHTML='<option>🔍 Detecting operator...</option>';
 try{
-let r=await fetch(`/api/detect?number=${m}`);
+let r=await fetch(`/api/detect?number=${m}&t=${Date.now()}`);
 let d=await r.json();
 if(d.status && d.operator){
 sel.innerHTML='<option value="">Select Operator</option><option value="JIO">Jio</option><option value="AIRTEL">Airtel</option><option value="VI">Vi (Vodafone Idea)</option><option value="BSNL">BSNL</option>';
