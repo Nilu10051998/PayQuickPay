@@ -1,97 +1,57 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ADMIN PERMANENT BLOCK</title>
-<style>body{margin:0;background:#020617;color:#fff;font-family:system-ui;padding:10px}.card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:12px;margin:8px 0}input{width:100%;padding:11px;margin:5px 0;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff}.btn{padding:12px;border:none;border-radius:8px;font-weight:800;width:100%}</style>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin Panel - PayQuickPay</title>
+<style>*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}body{background:#020617;color:#fff;padding:10px}.head{background:#1e293b;padding:12px;border-radius:12px;display:flex;justify-content:space-between;border:1px solid #334155}.card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:14px;margin:10px 0}input{width:100%;padding:12px;margin:5px 0;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff}.btn{width:100%;padding:12px;border:none;border-radius:8px;font-weight:800;cursor:pointer}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.list{background:#0f172a;padding:10px;margin:5px 0;border-radius:8px;display:flex;justify-content:space-between}</style>
 </head><body>
-<div class="card" style="display:flex;justify-content:space-between"><b>ADMIN PERMANENT - DELETE BLOCKED</b><button onclick="logout()" style="background:#ef4444;color:#fff;border:none;padding:6px 12px;border-radius:6px">Logout</button></div>
-<div class="card"><h3>Create Distributor</h3>
-<input id="dId" placeholder="ID - D1"><input id="dName" placeholder="Name"><input id="dPass" placeholder="Pass"><input id="dBal" placeholder="Balance">
-<button onclick="addDist()" style="background:#22c55e;color:#000;padding:12px;border:none;border-radius:8px;width:100%;font-weight:800;margin-top:8px">CREATE - PERMANENT</button><p id="msg"></p></div>
-<div class="card"><h3>List (<span id="cnt">0</span>)</h3><div id="list"></div></div>
+
+<div class="head"><div><b>ADMIN PANEL</b><br><small>PayQuickPay.in</small></div><div><button onclick="location.href='index.html'" style="background:#334155;color:#fff;border:none;padding:6px 12px;border-radius:6px">Home</button> <button onclick="logout()" style="background:#ef4444;color:#fff;border:none;padding:6px 12px;border-radius:6px">Logout</button></div></div>
+
+<div class="grid2">
+<div class="card" style="border-color:#22c55e"><small>Admin Wallet</small><br><b style="font-size:22px;color:#22c55e">₹<span id="adminBal">0</span></b><br><small>Total Commission</small></div>
+<div class="card"><small>Total Distributors</small><br><b style="font-size:22px" id="totalDist">0</b><br><small>Total Retailers</small> <b id="totalRet">0</b></div>
+</div>
+
+<div class="card" style="border:1px solid #22c55e">
+<h3 style="color:#22c55e">⚙️ Commission Structure</h3><p style="font-size:11px;color:#94a3b8">API Total 4% - Set Your Distribution</p>
+<div class="grid2" style="margin:10px 0"><div><small>Retailer % (Profit)</small><input id="cRetailer" type="number" step="0.1" value="2"></div><div><small>Distributor %</small><input id="cDist" type="number" step="0.1" value="1"></div></div>
+<div><small>Admin % (Your Profit)</small><input id="cAdmin" type="number" step="0.1" value="1"></div>
+<div style="background:#0f172a;padding:8px;border-radius:6px;margin:8px 0;font-size:12px">Total: <b id="cTotal">4%</b> | Must be ≤4% <span id="cStatus" style="color:#22c55e">✅ OK</span></div>
+<button class="btn" style="background:#22c55e;color:#000" onclick="saveComm()">💾 SAVE COMMISSION</button><p id="cMsg" style="text-align:center;margin-top:6px;font-size:12px"></p>
+</div>
+
+<div class="card">
+<h3>➕ Create Distributor</h3>
+<input id="dId" placeholder="Distributor ID - D1"><input id="dName" placeholder="Name"><input id="dMob" placeholder="Mobile"><input id="dPass" placeholder="Password"><input id="dBal" type="number" placeholder="Balance"><button class="btn" style="background:#38bdf8;color:#000" onclick="addDist()">CREATE DISTRIBUTOR</button><p id="dMsg" style="text-align:center;margin-top:6px"></p>
+</div>
+
+<div class="card"><h3>👥 Distributors List</h3><div id="distList">Loading...</div></div>
+<div class="card"><h3>🏪 All Retailers List</h3><div id="retList">Loading...</div></div>
+
+<div class="card" style="border:1px solid #f59e0b">
+<h3 style="color:#f59e0b">💰 Admin Commission History</h3>
+<div id="adminCommList" style="max-height:300px;overflow:auto;margin-top:8px"></div>
+<button onclick="clearAdminComm()" style="background:#334155;color:#fff;border:none;padding:5px 10px;border-radius:5px;margin-top:8px;font-size:11px">Clear History</button>
+</div>
+
 <script>
-// ==== DELETE BLOCK SYSTEM ====
-const PROTECTED_KEYS = ["distributors","distributors_backup","distributors_v2","pq_secret_db","payquick_final","ADMIN_BACKUP"];
-const SECRET_KEY = "pq_secret_db";
-
-// Block any delete attempts from index.html or other files
-(function(){
-  const origRemove = localStorage.removeItem.bind(localStorage);
-  const origClear = localStorage.clear.bind(localStorage);
-  localStorage.removeItem = function(k){
-    if(PROTECTED_KEYS.includes(k) || k.includes("distributor")){
-      console.warn("BLOCKED DELETE ATTEMPT FOR:",k);
-      // Restore immediately
-      let secret = localStorage.getItem(SECRET_KEY);
-      if(secret){ origRemove = origRemove; localStorage.setItem("distributors", secret); localStorage.setItem("distributors_backup", secret); }
-      return;
-    }
-    return origRemove(k);
-  };
-  localStorage.clear = function(){
-    console.warn("BLOCKED CLEAR ATTEMPT");
-    let secret = localStorage.getItem(SECRET_KEY);
-    // Only clear non-protected
-    for(let i=localStorage.length-1;i>=0;i--){
-      let key = localStorage.key(i);
-      if(!key) continue;
-      if(PROTECTED_KEYS.includes(key) || key.includes("distributor") || key==SECRET_KEY) continue;
-      origRemove(key);
-    }
-    // Restore distributors
-    if(secret){
-      localStorage.setItem("distributors", secret);
-      localStorage.setItem("distributors_backup", secret);
-      localStorage.setItem("distributors_v2", secret);
-    }
-  };
-})();
-
-function getD(){
-  try{
-    let secret = localStorage.getItem(SECRET_KEY);
-    let a = JSON.parse(localStorage.getItem("distributors")||"null");
-    if((!a || a.length==0) && secret){ a = JSON.parse(secret); saveD(a); return a; }
-    if(a && a.length>0){ localStorage.setItem(SECRET_KEY, JSON.stringify(a)); return a; }
-    let b = JSON.parse(localStorage.getItem("distributors_backup")||"[]");
-    let c = JSON.parse(localStorage.getItem("distributors_v2")||"[]");
-    let best = a||[]; if(b.length>best.length) best=b; if(c.length>best.length) best=c;
-    if(best.length>0) saveD(best);
-    return best;
-  }catch(e){ return [] }
-}
-function saveD(list){
-  let s = JSON.stringify(list);
-  localStorage.setItem("distributors", s);
-  localStorage.setItem("distributors_backup", s);
-  localStorage.setItem("distributors_v2", s);
-  localStorage.setItem(SECRET_KEY, s);
-  localStorage.setItem("payquick_final", s);
-  localStorage.setItem("ADMIN_BACKUP", s);
-  try{ sessionStorage.setItem(SECRET_KEY, s); }catch(e){}
-}
-
-function addDist(){
-  let id=document.getElementById('dId').value.trim(), name=document.getElementById('dName').value.trim(), pass=document.getElementById('dPass').value.trim(), bal=document.getElementById('dBal').value.trim()||"500";
-  if(!id||!pass){document.getElementById('msg').innerText="ID Pass Dia";return;}
-  let list=getD(); if(list.find(x=>x.id==id)){document.getElementById('msg').innerText="Already";return;}
-  list.push({id,name:name||id,password:pass,mobile:id,balance:bal,commission:2});
-  saveD(list);
-  document.getElementById('msg').innerText="✅ "+id+" PERMANENT SAVE! Reload Kale Bi Delete Heba Nahi!";
-  document.getElementById('msg').style.color="#22c55e";
-  render();
-}
-function delDist(id){ if(!confirm(id+" Delete?")) return; let list=getD().filter(x=>x.id!=id); saveD(list); render(); }
+function loadDist(){try{let k=["distributors","distributors_backup","pq_secret_db","payquick_final"];for(let i=0;i<localStorage.length;i++){let kk=localStorage.key(i);if(kk&&kk.startsWith("distributors_"))k.push(kk);}let best=[];k.forEach(x=>{try{let v=JSON.parse(localStorage.getItem(x)||"[]");if(v.length>best.length)best=v;}catch(e){}});return best;}catch(e){return[];}}
+function saveDist(l){let s=JSON.stringify(l);localStorage.setItem("distributors",s);localStorage.setItem("distributors_backup",s);localStorage.setItem("pq_secret_db",s);localStorage.setItem("payquick_final",s);for(let i=0;i<localStorage.length;i++){let k=localStorage.key(i);if(k&&k.startsWith("distributors_"))localStorage.setItem(k,s);}}
+function loadRet(){let k=["retailers","retailers_backup","pq_retailers_secret","payquick_retailers"];for(let i=0;i<localStorage.length;i++){let kk=localStorage.key(i);if(kk&&kk.startsWith("retailers_"))k.push(kk);}let best=[];k.forEach(x=>{try{let v=JSON.parse(localStorage.getItem(x)||"[]");if(v.length>best.length)best=v;}catch(e){}});return best;}
 function render(){
-  let list=getD(); document.getElementById('cnt').innerText=list.length;
-  let h=""; list.slice().reverse().forEach(x=>{h+=`<div style="display:flex;justify-content:space-between;background:#0f172a;padding:8px;margin:4px 0;border-radius:6px"><span><b>${x.id}</b> ${x.name} ₹${x.balance}</span><button onclick="delDist('${x.id}')" style="background:#ef4444;border:none;padding:3px 8px;border-radius:4px">X</button></div>`});
-  document.getElementById('list').innerHTML=h||"No Data";
+ let d=loadDist(), r=loadRet();
+ document.getElementById('totalDist').innerText=d.length; document.getElementById('totalRet').innerText=r.length;
+ let h="";d.forEach(x=>{h+=`<div class="list"><span><b>${x.id}</b> ${x.name}<br><small>${x.mobile} | ₹${x.balance}</small></span><span><button onclick="delDist('${x.id}')" style="background:#ef4444;color:#fff;border:none;padding:4px 8px;border-radius:4px;font-size:11px">Del</button></span></div>`});document.getElementById('distList').innerHTML=h||"No Distributors";
+ let rh="";r.forEach(x=>{rh+=`<div class="list"><span><b>${x.id}</b> ${x.name||""} Dist:${x.distId||"-"}<br><small>${x.mobile||""} | ₹${x.balance}</small></span></div>`});document.getElementById('retList').innerHTML=rh||"No Retailers";
+ let ab=localStorage.getItem("admin_balance")||"0";document.getElementById('adminBal').innerText=ab;
+ let ah=JSON.parse(localStorage.getItem("commission_admin")||"[]");let ahh="";ah.slice(0,30).forEach(t=>{ahh+=`<div style="padding:6px 0;border-bottom:1px solid #1e293b"><b>${t.from}</b> (via ${t.via||"-"}) ₹${t.amt} -> You ₹${t.comm} <br><small style="color:#64748b">${t.time} | R:${t.rComm} D:${t.dComm}</small></div>`});document.getElementById('adminCommList').innerHTML=ahh||"No Commission Yet";
+ loadComm();
 }
-function logout(){ localStorage.removeItem("currentRole"); location.href="index.html"; }
-
-// Restore on load
-let saved = localStorage.getItem(SECRET_KEY) || sessionStorage.getItem(SECRET_KEY);
-if(saved && (!localStorage.getItem("distributors") || JSON.parse(localStorage.getItem("distributors")||"[]").length==0)){
-  localStorage.setItem("distributors", saved);
-  localStorage.setItem("distributors_backup", saved);
-}
+function addDist(){let id=document.getElementById('dId').value.trim(), name=document.getElementById('dName').value.trim(), mob=document.getElementById('dMob').value.trim(), pass=document.getElementById('dPass').value.trim(), bal=document.getElementById('dBal').value.trim()||"0";if(!id||!pass){document.getElementById('dMsg').innerText="ID Pass Dia";return;}let all=loadDist();if(all.find(x=>x.id==id)){document.getElementById('dMsg').innerText="ID Already Exists";return;}all.push({id:id,name:name||id,mobile:mob,password:pass,balance:bal});saveDist(all);document.getElementById('dMsg').innerText="✅ Created!";render();document.getElementById('dId').value="";document.getElementById('dName').value="";document.getElementById('dMob').value="";document.getElementById('dPass').value="";document.getElementById('dBal').value="";}
+function delDist(id){if(!confirm("Delete "+id+"?"))return;let all=loadDist();all=all.filter(x=>x.id!=id);saveDist(all);render();}
+function loadComm(){let c=JSON.parse(localStorage.getItem("commission_settings")||'{"retailer":2,"distributor":1,"admin":1}');document.getElementById('cRetailer').value=c.retailer;document.getElementById('cDist').value=c.distributor;document.getElementById('cAdmin').value=c.admin;calcTotal();}
+function calcTotal(){let r=parseFloat(document.getElementById('cRetailer').value||0),d=parseFloat(document.getElementById('cDist').value||0),a=parseFloat(document.getElementById('cAdmin').value||0);let tot=r+d+a;document.getElementById('cTotal').innerText=tot.toFixed(1)+"%";if(tot>4){document.getElementById('cStatus').innerText="❌ >4% Not Allowed";document.getElementById('cStatus').style.color="#ef4444";}else{document.getElementById('cStatus').innerText="✅ OK";document.getElementById('cStatus').style.color="#22c55e";}}
+function saveComm(){let r=parseFloat(document.getElementById('cRetailer').value)||0,d=parseFloat(document.getElementById('cDist').value)||0,a=parseFloat(document.getElementById('cAdmin').value)||0,tot=r+d+a;if(tot>4){document.getElementById('cMsg').innerText="❌ Total 4% Ru Besi Heipariba Nahi!";document.getElementById('cMsg').style.color="#ef4444";return;}localStorage.setItem("commission_settings",JSON.stringify({retailer:r,distributor:d,admin:a}));document.getElementById('cMsg').innerText="✅ Saved! R:"+r+"% D:"+d+"% A:"+a+"%";document.getElementById('cMsg').style.color="#22c55e";}
+function clearAdminComm(){if(confirm("Clear Admin Commission?")){localStorage.removeItem("commission_admin");localStorage.setItem("admin_balance","0");render();}}
+function logout(){localStorage.removeItem("adminLoggedIn");location.href="index.html";}
+document.getElementById('cRetailer').addEventListener('input',calcTotal);document.getElementById('cDist').addEventListener('input',calcTotal);document.getElementById('cAdmin').addEventListener('input',calcTotal);
 render();
 </script>
 </body></html>
