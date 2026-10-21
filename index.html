@@ -113,7 +113,7 @@ function doLogin(){
   if(currentRole=='distributor'){
     let list = loadDistributors();
     console.log("Dist List:", list);
-    let found = list.find(x=> (x.id==id || x.mobile==id) && x.password==pass );
+    let found = list.find(x=> (x.id==id || x.mobile==id) && x.password==pass);
     if(found){
       localStorage.setItem("distributorLoggedIn", found.id);
       localStorage.setItem("currentRole","distributor");
@@ -130,7 +130,7 @@ function doLogin(){
   if(currentRole=='retailer'){
     let list = loadRetailers();
     console.log("Retailer List:", list);
-    let found = list.find(x=> (x.id==id || x.mobile==id) && x.password==pass );
+    let found = list.find(x=> (x.id==id || x.mobile==id) && x.password==pass);
     if(found){
       localStorage.setItem("retailerLoggedIn", found.id);
       localStorage.setItem("currentRole","retailer");
