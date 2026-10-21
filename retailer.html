@@ -1,140 +1,38 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Retailer Recharge - PayQuickPay</title>
-<style>*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}body{background:#020617;color:#fff;padding:10px}.head{display:flex;justify-content:space-between;background:#1e293b;padding:12px;border-radius:12px;border:1px solid #334155}.card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:14px;margin:10px 0}input,select{width:100%;padding:13px;margin:6px 0;border-radius:10px;border:1px solid #334155;background:#0f172a;color:#fff;font-size:15px} .btn{width:100%;padding:14px;border:none;border-radius:10px;font-weight:800;font-size:15px;cursor:pointer} .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px} .s{background:#0f172a;padding:12px;border-radius:10px;text-align:center;border:1px solid #1e293b} .op{padding:8px 12px;border-radius:20px;background:#0f172a;border:1px solid #334155;margin:3px;display:inline-block;font-size:12px;cursor:pointer} .op.active{background:#38bdf8;color:#000;border-color:#38bdf8} .hist{background:#0f172a;padding:8px;margin:4px 0;border-radius:8px;display:flex;justify-content:space-between;font-size:13px}</style>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Retailer Recharge</title>
+<style>*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}body{background:#020617;color:#fff;padding:10px}.head{display:flex;justify-content:space-between;background:#1e293b;padding:12px;border-radius:12px;border:1px solid #334155}.card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:14px;margin:10px 0}input,select{width:100%;padding:13px;margin:6px 0;border-radius:10px;border:1px solid #334155;background:#0f172a;color:#fff} .btn{width:100%;padding:14px;border:none;border-radius:10px;font-weight:800;cursor:pointer} .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.s{background:#0f172a;padding:12px;border-radius:10px;text-align:center} .op{padding:8px 12px;border-radius:20px;background:#0f172a;border:1px solid #334155;margin:3px;display:inline-block;font-size:12px;cursor:pointer} .op.active{background:#38bdf8;color:#000} .hist{background:#0f172a;padding:8px;margin:5px 0;border-radius:8px;display:flex;justify-content:space-between;font-size:13px}</style>
 </head><body>
-
 <div class="head"><div><b id="rName">Retailer</b><br><small id="rId">R1</small> | Bal: ₹<b id="bal">0</b></div><button onclick="logout()" style="background:#ef4444;color:#fff;border:none;padding:6px 12px;border-radius:6px">Logout</button></div>
-
-<div class="grid">
-<div class="s"><small style="color:#94a3b8">Wallet</small><br><b id="bal2" style="font-size:20px">₹0</b></div>
-<div class="s"><small style="color:#94a3b8">Today Profit</small><br><b id="profit" style="font-size:20px;color:#22c55e">₹0</b></div>
-</div>
-
-<div class="card">
-<h3 style="margin-bottom:10px">📱 Mobile Recharge</h3>
-
-<div style="margin-bottom:8px">
-<span class="op active" onclick="setOp('JIO',this)">JIO</span>
-<span class="op" onclick="setOp('AIRTEL',this)">AIRTEL</span>
-<span class="op" onclick="setOp('VI',this)">VI</span>
-<span class="op" onclick="setOp('BSNL',this)">BSNL</span>
-</div>
-
-<input id="mobile" type="tel" maxlength="10" placeholder="Mobile Number - 10 Digit" oninput="detectOp()">
-<select id="operator"><option value="JIO">JIO</option><option value="AIRTEL">Airtel</option><option value="VI">VI</option><option value="BSNL">BSNL</option></select>
-<input id="amount" type="number" placeholder="Amount - 10 to 5000">
-
-<div class="grid" style="margin:8px 0">
-<button class="op" onclick="setAmt(19)">₹19</button><button class="op" onclick="setAmt(49)">₹49</button><button class="op" onclick="setAmt(99)">₹99</button><button class="op" onclick="setAmt(199)">₹199</button>
-</div>
-
-<button class="btn" style="background:#22c55e;color:#000" id="rechargeBtn" onclick="doRecharge()">⚡ RECHARGE NOW</button>
-<p id="msg" style="text-align:center;margin-top:10px;font-weight:700;min-height:22px"></p>
-</div>
-
-<div class="card"><h3>📜 Last Transactions</h3><div id="histList">No History</div><button onclick="clearHist()" style="background:#334155;color:#fff;border:none;padding:5px 10px;border-radius:5px;margin-top:8px;font-size:11px">Clear History</button></div>
-
+<div class="grid"><div class="s"><small>Wallet</small><br><b id="bal2" style="font-size:20px">₹0</b></div><div class="s"><small>My Profit</small><br><b id="profit" style="font-size:20px;color:#22c55e">₹0</b></div></div>
+<div class="card"><h3>📱 Recharge</h3><div style="margin:8px 0"><span class="op active" onclick="setOp('JIO',this)">JIO</span><span class="op" onclick="setOp('AIRTEL',this)">AIRTEL</span><span class="op" onclick="setOp('VI',this)">VI</span><span class="op" onclick="setOp('BSNL',this)">BSNL</span></div><input id="mobile" type="tel" maxlength="10" placeholder="Mobile 10 Digit"><select id="operator"><option value="JIO">JIO</option><option value="AIRTEL">Airtel</option><option value="VI">VI</option><option value="BSNL">BSNL</option></select><input id="amount" type="number" placeholder="Amount"><div class="grid" style="margin:8px 0"><button class="op" onclick="setAmt(19)">₹19</button><button class="op" onclick="setAmt(49)">₹49</button><button class="op" onclick="setAmt(99)">₹99</button><button class="op" onclick="setAmt(199)">₹199</button></div><button class="btn" style="background:#22c55e;color:#000" id="btnRec" onclick="doRecharge()">⚡ RECHARGE NOW</button><p id="msg" style="text-align:center;margin-top:10px;font-weight:700;min-height:22px"></p><p id="commInfo" style="text-align:center;font-size:11px;color:#94a3b8;margin-top:6px"></p></div>
+<div class="card"><h3>📜 Transactions</h3><div id="hist">No Data</div></div>
 <script>
-let selectedOp="JIO";
-let currentRetailer=null;
-
-function loadRetailers(){let ks=["retailers","retailers_backup","pq_retailers_secret","payquick_retailers"];for(let i=0;i<localStorage.length;i++){let k=localStorage.key(i);if(k&&k.startsWith("retailers_"))ks.push(k);}let best=[];ks.forEach(k=>{try{let v=JSON.parse(localStorage.getItem(k)||"[]");if(v.length>best.length)best=v;}catch(e){}});return best;}
-
-function saveRetailers(list){
-  let s=JSON.stringify(list);
-  localStorage.setItem("retailers",s);localStorage.setItem("retailers_backup",s);localStorage.setItem("pq_retailers_secret",s);localStorage.setItem("payquick_retailers",s);
-  for(let i=0;i<localStorage.length;i++){let k=localStorage.key(i);if(k&&k.startsWith("retailers_"))localStorage.setItem(k,s);}
-}
-
-function getMe(){
-  let rid=localStorage.getItem("retailerLoggedIn")||localStorage.getItem("currentRetailerId");
-  if(!rid) return null;
-  return loadRetailers().find(x=>x.id==rid);
-}
-
-function load(){
-  currentRetailer=getMe();
-  if(!currentRetailer){location.href="retailer.html?v=login";return;}
-  document.getElementById('rName').innerText=currentRetailer.name||currentRetailer.id;
-  document.getElementById('rId').innerText=currentRetailer.id;
-  document.getElementById('bal').innerText=currentRetailer.balance;
-  document.getElementById('bal2').innerText="₹"+currentRetailer.balance;
-  renderHist();
-  calcProfit();
-}
-
-function setOp(op,el){selectedOp=op;document.getElementById('operator').value=op;document.querySelectorAll('.op').forEach(o=>o.classList.remove('active'));if(el)el.classList.add('active');}
+let me=null;
+function loadR(){let ks=["retailers","retailers_backup","pq_retailers_secret","payquick_retailers"];for(let i=0;i<localStorage.length;i++){let k=localStorage.key(i);if(k&&k.startsWith("retailers_"))ks.push(k);}let best=[];ks.forEach(k=>{try{let v=JSON.parse(localStorage.getItem(k)||"[]");if(v.length>best.length)best=v;}catch(e){}});return best;}
+function saveR(l){let s=JSON.stringify(l);localStorage.setItem("retailers",s);localStorage.setItem("retailers_backup",s);localStorage.setItem("pq_retailers_secret",s);localStorage.setItem("payquick_retailers",s);for(let i=0;i<localStorage.length;i++){let k=localStorage.key(i);if(k&&k.startsWith("retailers_"))localStorage.setItem(k,s);}}
+function getMe(){let rid=localStorage.getItem("retailerLoggedIn")||localStorage.getItem("currentRetailerId");if(!rid)return null;return loadR().find(x=>x.id==rid);}
+function getComm(){return JSON.parse(localStorage.getItem("commission_settings")||'{"retailer":2,"distributor":1,"admin":1}');}
+function init(){me=getMe();if(!me){location.href="index.html";return;}document.getElementById('rName').innerText=me.name||me.id;document.getElementById('rId').innerText=me.id;document.getElementById('bal').innerText=me.balance;document.getElementById('bal2').innerText="₹"+me.balance;let c=getComm();document.getElementById('commInfo').innerText="Commission: You "+c.retailer+"% | Dist "+c.distributor+"% | Admin "+c.admin+"%";render();calcProfit();}
+function setOp(o,el){document.getElementById('operator').value=o;document.querySelectorAll('.op').forEach(x=>x.classList.remove('active'));if(el)el.classList.add('active');}
 function setAmt(a){document.getElementById('amount').value=a;}
-
-function detectOp(){
-  let m=document.getElementById('mobile').value;
-  if(m.length>=3){
-    // Simple auto logic - you can improve
-    if(m.startsWith('6')||m.startsWith('7')){} // placeholder
-  }
-}
-
 function doRecharge(){
-  let mob=document.getElementById('mobile').value.trim(), amt=parseFloat(document.getElementById('amount').value), op=document.getElementById('operator').value;
-  let msg=document.getElementById('msg'), btn=document.getElementById('rechargeBtn');
-
-  if(mob.length!=10||isNaN(mob)){msg.innerText="❌ 10 Digit Mobile Dia";msg.style.color="#ef4444";return;}
-  if(!amt||amt<10){msg.innerText="❌ Amount 10+ Dia";msg.style.color="#ef4444";return;}
-
-  currentRetailer=getMe();
-  if(amt>parseFloat(currentRetailer.balance)){
-    msg.innerText="❌ Balance Kam Achhi! Bal: ₹"+currentRetailer.balance;msg.style.color="#ef4444";return;
-  }
-
-  btn.innerText="⏳ PROCESSING...";btn.disabled=true;
-
-  // Simulate API call - 1.5 sec
-  setTimeout(()=>{
-    // Deduct Balance + Add Commission 2%
-    let commission = (amt*2/100); // 2% profit
-    let newBal = parseFloat(currentRetailer.balance) - amt + commission;
-    
-    // Update Retailer Balance in ALL storage
-    let all=loadRetailers();
-    let idx=all.findIndex(x=>x.id==currentRetailer.id);
-    if(idx>=0){all[idx].balance=newBal.toFixed(2); saveRetailers(all); currentRetailer=all[idx];}
-
-    // Save Transaction
-    let tx={id:"TX"+Date.now(),mobile:mob,operator:op,amount:amt,commission:commission.toFixed(2),time:new Date().toLocaleString(),status:"SUCCESS"};
-    let hist=JSON.parse(localStorage.getItem("recharge_history_"+currentRetailer.id)||"[]");
-    hist.unshift(tx);
-    localStorage.setItem("recharge_history_"+currentRetailer.id, JSON.stringify(hist));
-    localStorage.setItem("recharge_history", JSON.stringify(hist));
-
-    msg.innerText=`✅ SUCCESS! ${mob} - ₹${amt} - Commission ₹${commission.toFixed(2)}`;
-    msg.style.color="#22c55e";
-    btn.innerText="⚡ RECHARGE NOW";btn.disabled=false;
-    document.getElementById('bal').innerText=newBal.toFixed(2);
-    document.getElementById('bal2').innerText="₹"+newBal.toFixed(2);
-    document.getElementById('mobile').value="";document.getElementById('amount').value="";
-    renderHist();calcProfit();
-
-    // Real API integration - Uncomment when you have API:
-    // fetch('https://your-api.com/recharge', {method:'POST', body:JSON.stringify({mobile, amount:amt, operator:op})})
-
-  },1500);
+ let mob=document.getElementById('mobile').value.trim(), amt=parseFloat(document.getElementById('amount').value), op=document.getElementById('operator').value, msg=document.getElementById('msg'), btn=document.getElementById('btnRec');
+ if(mob.length!=10){msg.innerText="❌ 10 Digit Dia";msg.style.color="#ef4444";return;}
+ if(!amt||amt<10){msg.innerText="❌ Amount Dia";msg.style.color="#ef4444";return;}
+ me=getMe(); if(amt>parseFloat(me.balance)){msg.innerText="❌ Balance Low ₹"+me.balance;msg.style.color="#ef4444";return;}
+ btn.innerText="⏳ PROCESSING...";btn.disabled=true;
+ setTimeout(()=>{
+  let cs=getComm(); let rComm=amt*cs.retailer/100, dComm=amt*cs.distributor/100, aComm=amt*cs.admin/100;
+  let newBal=parseFloat(me.balance)-amt+rComm;
+  let all=loadR(); let idx=all.findIndex(x=>x.id==me.id); if(idx>=0){all[idx].balance=newBal.toFixed(2); saveR(all); me=all[idx];}
+  try{let distId=me.distId; if(distId){let allD=JSON.parse(localStorage.getItem("distributors")||localStorage.getItem("pq_secret_db")||"[]"); let dI=allD.findIndex(x=>x.id==distId); if(dI>=0){allD[dI].balance=(parseFloat(allD[dI].balance||0)+dComm).toFixed(2); let s=JSON.stringify(allD); localStorage.setItem("distributors",s); localStorage.setItem("distributors_backup",s); localStorage.setItem("pq_secret_db",s); localStorage.setItem("payquick_final",s);} let dh=JSON.parse(localStorage.getItem("commission_dist_"+distId)||"[]"); dh.unshift({from:me.id,amt:amt,comm:dComm.toFixed(2),time:new Date().toLocaleString()}); localStorage.setItem("commission_dist_"+distId,JSON.stringify(dh));}}catch(e){}
+  try{let ab=parseFloat(localStorage.getItem("admin_balance")||"0"); ab+=aComm; localStorage.setItem("admin_balance",ab.toFixed(2)); let ah=JSON.parse(localStorage.getItem("commission_admin")||"[]"); ah.unshift({from:me.id,via:me.distId||"",amt:amt,comm:aComm.toFixed(2),rComm:rComm.toFixed(2),dComm:dComm.toFixed(2),time:new Date().toLocaleString()}); localStorage.setItem("commission_admin",JSON.stringify(ah));}catch(e){}
+  let tx={id:"TX"+Date.now(),mobile:mob,operator:op,amount:amt,comm:rComm.toFixed(2),admin:aComm.toFixed(2),dist:dComm.toFixed(2),time:new Date().toLocaleString(),status:"SUCCESS"}; let h=JSON.parse(localStorage.getItem("recharge_history_"+me.id)||"[]"); h.unshift(tx); localStorage.setItem("recharge_history_"+me.id,JSON.stringify(h));
+  msg.innerText="✅ SUCCESS! "+mob+" ₹"+amt+" | You ₹"+rComm.toFixed(2)+" | Admin ₹"+aComm.toFixed(2)+" | Dist ₹"+dComm.toFixed(2); msg.style.color="#22c55e"; btn.innerText="⚡ RECHARGE NOW"; btn.disabled=false; document.getElementById('bal').innerText=newBal.toFixed(2); document.getElementById('bal2').innerText="₹"+newBal.toFixed(2); document.getElementById('mobile').value=""; document.getElementById('amount').value=""; render(); calcProfit();
+ },1200);
 }
-
-function renderHist(){
-  let hist=JSON.parse(localStorage.getItem("recharge_history_"+(currentRetailer?.id||"") )||"[]");
-  if(hist.length==0){document.getElementById('histList').innerHTML="No Transactions";return;}
-  let h="";hist.slice(0,20).forEach(t=>{
-    h+=`<div class="hist"><span><b>${t.mobile}</b> ${t.operator} ₹${t.amount}</span><span style="color:#22c55e">${t.status}<br><small style="color:#94a3b8">${t.time}</small></span></div>`;
-  });
-  document.getElementById('histList').innerHTML=h;
-}
-function calcProfit(){
-  let hist=JSON.parse(localStorage.getItem("recharge_history_"+(currentRetailer?.id||"") )||"[]");
-  let total=0;hist.forEach(t=>{total+=parseFloat(t.commission||0);});
-  document.getElementById('profit').innerText="₹"+total.toFixed(2);
-}
-function clearHist(){if(confirm("History Clear?")){localStorage.removeItem("recharge_history_"+currentRetailer.id);renderHist();calcProfit();}}
+function render(){let h=JSON.parse(localStorage.getItem("recharge_history_"+(me?.id||""))||"[]");if(h.length==0){document.getElementById('hist').innerHTML="No Transactions";return;}let html="";h.slice(0,20).forEach(t=>{html+=`<div class="hist"><span><b>${t.mobile}</b> ${t.operator} ₹${t.amount}<br><small>You ₹${t.comm} Admin ₹${t.admin} Dist ₹${t.dist}</small></span><span style="color:#22c55e">${t.status}<br><small>${t.time}</small></span></div>`});document.getElementById('hist').innerHTML=html;}
+function calcProfit(){let h=JSON.parse(localStorage.getItem("recharge_history_"+(me?.id||""))||"[]");let tot=0;h.forEach(t=>{tot+=parseFloat(t.comm||0);});document.getElementById('profit').innerText="₹"+tot.toFixed(2);}
 function logout(){localStorage.removeItem("retailerLoggedIn");localStorage.removeItem("currentRetailerId");location.href="index.html";}
-
-load();
+init();
 </script>
 </body></html>
