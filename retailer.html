@@ -1,115 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pay Quick Pay - Retailer</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PayQuickPay Retailer - All in One</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
-body{background:#f5f7fb;min-height:100vh}
-.header{background:#0a1931;color:white;padding:15px 20px;display:flex;justify-content:space-between;align-items:center}
-.header h2{font-size:18px;letter-spacing:1px}
-.card{max-width:420px;margin:25px auto;background:white;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,0.08);padding:25px}
-.card h3{text-align:center;color:#0a1931;margin-bottom:20px}
-.input-group{margin-bottom:15px}
-.input-group label{font-size:13px;color:#555;display:block;margin-bottom:5px;font-weight:600}
-.input-group input,.input-group select{width:100%;padding:12px 15px;border:1px solid #ddd;border-radius:10px;font-size:15px;outline:none}
-.input-group input:focus,.input-group select:focus{border-color:#0a1931}
-.btn{width:100%;padding:14px;background:#0a1931;color:white;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;margin-top:10px}
-.btn:active{transform:scale(0.98)}
-.status{margin-top:15px;padding:12px;border-radius:10px;text-align:center;font-size:14px;display:none}
-.status.success{background:#e7f8ef;color:#0a7a3a;display:block}
-.status.error{background:#fde8e8;color:#c0392b;display:block}
-.footer{text-align:center;margin-top:20px;font-size:12px;color:#888}
-.badge{background:#eef2ff;color:#0a1931;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system}
+body{background:#f1f5f9;padding-bottom:20px}
+.head{background:#0f172a;color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:99}
+.head b{letter-spacing:1px}
+.tabs{display:flex;gap:8px;padding:10px 10px 0;overflow-x:auto;scrollbar-width:none}
+.tab{padding:10px 16px;background:#fff;border-radius:12px;white-space:nowrap;font-size:13px;font-weight:700;border:1px solid #e2e8f0;cursor:pointer;transition:.2s}
+.tab.active{background:#0f172a;color:#fff;transform:scale(1.05)}
+.card{background:#fff;margin:10px;border-radius:16px;padding:16px;box-shadow:0 4px 15px rgba(0,0,0,0.05)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{padding:14px;border-radius:14px;text-align:center}
+.input{width:100%;padding:13px 14px;border:1.5px solid #e2e8f0;border-radius:12px;margin:7px 0;font-size:15px;outline:none;background:#fff}
+.input:focus{border-color:#0f172a}
+.btn{width:100%;padding:14px;background:#0f172a;color:#fff;border:none;border-radius:12px;font-weight:800;font-size:15px;margin-top:10px;cursor:pointer}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.6}
+.quick{display:flex;gap:6px;margin:8px 0;flex-wrap:wrap}
+.quick button{padding:7px 14px;border-radius:20px;border:1px solid #e2e8f0;background:#f8fafc;font-size:12px;font-weight:700;cursor:pointer}
+.hist{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:12px}
+.badge{padding:3px 8px;border-radius:20px;font-size:10px;font-weight:800}
+.ok{background:#dcfce7;color:#166534}.wait{background:#fef9c3;color:#854d0e}.fail{background:#fee2e2;color:#991b1b}
+#status{margin-top:12px;padding:12px;border-radius:12px;font-size:13px;display:none;text-align:center;line-height:1.4}
 </style>
 </head>
 <body>
-<div class="header">
-<h2>PAY QUICK PAY</h2>
-<span class="badge">RETAILER PANEL</span>
+
+<div class="head"><div><b style="font-size:16px">PAY QUICK PAY</b><br><small style="opacity:.7;font-size:10px">RETAILER PANEL v3.0</small></div><div style="background:#22c55e;color:#000;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:800" id="retId">R1001</div></div>
+
+<div class="grid2">
+<div class="card stat" style="margin:10px 5px 0 10px;background:#0f172a;color:#fff"><small style="opacity:.7">Today Business</small><b id="todaySale" style="font-size:20px;margin:4px 0;display:block">₹0</b><small id="todayCount" style="opacity:.8">0 Txn</small></div>
+<div class="card stat" style="margin:10px 10px 0 5px;background:#22c55e;color:#000"><small>My Commission</small><b id="myComm" style="font-size:20px;margin:4px 0;display:block">₹0</b><small>Earned Today</small></div>
+</div>
+
+<div class="tabs" id="tabs">
+<div class="tab active" onclick="switchTab('MOBILE',this)">📱 Mobile</div>
+<div class="tab" onclick="switchTab('DTH',this)">📺 DTH</div>
+<div class="tab" onclick="switchTab('ELECTRICITY',this)">💡 Electricity</div>
+<div class="tab" onclick="switchTab('FASTAG',this)">🚗 FASTag</div>
+<div class="tab" onclick="switchTab('GAS',this)">🔥 Gas</div>
 </div>
 
 <div class="card">
-<h3>Mobile Recharge</h3>
+<h3 id="serviceTitle" style="text-align:center;margin-bottom:6px">📱 Mobile Recharge</h3>
+<p id="serviceSub" style="text-align:center;font-size:11px;color:#64748b;margin-bottom:12px">Enter number, auto operator detect</p>
 
-<div class="input-group">
-<label>Mobile Number</label>
-<input type="tel" id="mobile" placeholder="Enter 10 digit number" maxlength="10">
+<div id="mobileFields">
+<input class="input" type="tel" id="mobile" placeholder="Mobile Number (10 Digit)" maxlength="10" oninput="detectOp()">
+<select class="input" id="operator"><option value="">Select Operator</option><option value="JIO">Jio</option><option value="AIRTEL">Airtel</option><option value="VI">Vi</option><option value="BSNL">BSNL</option></select>
 </div>
 
-<div class="input-group">
-<label>Operator</label>
-<select id="operator">
-<option value="">Select Operator</option>
-<option value="JIO">Jio</option>
-<option value="AIRTEL">Airtel</option>
-<option value="VI">Vi (Vodafone Idea)</option>
-<option value="BSNL">BSNL</option>
-</select>
+<div id="dthFields" style="display:none">
+<input class="input" type="text" id="dthNo" placeholder="DTH Customer ID / VC Number">
+<select class="input" id="dthOp"><option value="">Select DTH</option><option value="TATA_SKY">Tata Play</option><option value="AIRTEL_DTH">Airtel DTH</option><option value="DISH_TV">Dish TV</option><option value="SUN_DIRECT">Sun Direct</option><option value="D2H">d2h</option></select>
 </div>
 
-<div class="input-group">
-<label>Amount</label>
-<input type="number" id="amount" placeholder="Enter Amount">
+<div id="billFields" style="display:none">
+<input class="input" type="text" id="billNo" placeholder="Consumer Number">
+<select class="input" id="billOp"><option value="">Select State / Provider</option><option value="ELECTRICITY">Electricity Board</option><option value="GAS">Gas Agency</option><option value="FASTAG">FASTag</option></select>
 </div>
 
-<button class="btn" onclick="doRecharge()" id="btn">RECHARGE NOW</button>
+<div class="quick"><button onclick="setAmt(19)">₹19</button><button onclick="setAmt(49)">₹49</button><button onclick="setAmt(99)">₹99</button><button onclick="setAmt(149)">₹149</button><button onclick="setAmt(199)">₹199</button><button onclick="setAmt(299)">₹299</button></div>
 
-<div id="status" class="status"></div>
+<input class="input" type="number" id="amount" placeholder="Enter Amount (Min ₹10)">
 
-<div class="footer">
-Secure Transaction Powered by KwikAPI<br>
-Support: Pay Quick Pay Helpdesk
+<button class="btn" id="btn" onclick="doRecharge()">RECHARGE / PAY NOW 🔒</button>
+
+<div id="status"></div>
 </div>
+
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center"><h3 style="font-size:14px">🧾 Recent Transactions</h3><small onclick="loadHist()" style="color:#0f172a;font-weight:700;cursor:pointer">↻ Refresh</small></div>
+<div id="histList" style="margin-top:10px"></div>
 </div>
+
+<div style="text-align:center;padding:10px;font-size:11px;color:#94a3b8">Secure & Encrypted by KwikAPI • PayQuickPay v3.0<br>24x7 Support Available</div>
 
 <script>
+let current='MOBILE';
+function switchTab(s,el){
+current=s;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
+document.getElementById('mobileFields').style.display=s=='MOBILE'?'block':'none';
+document.getElementById('dthFields').style.display=s=='DTH'?'block':'none';
+document.getElementById('billFields').style.display=(s!='MOBILE'&&s!='DTH')?'block':'none';
+let t={MOBILE:['📱 Mobile Recharge','Enter number, auto operator detect'],DTH:['📺 DTH Recharge','Enter DTH ID & Select Operator'],ELECTRICITY:['💡 Electricity Bill','Enter Consumer Number'],FASTAG:['🚗 FASTag Recharge','Enter Vehicle / Wallet ID'],GAS:['🔥 Gas Bill','Enter Gas Consumer ID']};
+document.getElementById('serviceTitle').innerText=t[s][0];document.getElementById('serviceSub').innerText=t[s][1];
+if(s=='ELECTRICITY')document.getElementById('billNo').placeholder='Electricity Consumer No';
+if(s=='FASTAG')document.getElementById('billNo').placeholder='Vehicle No / FASTag Wallet ID';
+if(s=='GAS')document.getElementById('billNo').placeholder='Gas Consumer / Booking ID';
+}
+function setAmt(v){document.getElementById('amount').value=v}
+
+async function detectOp(){
+let m=document.getElementById('mobile').value.trim();
+if(m.length===10){
+let sel=document.getElementById('operator');
+let old=sel.innerHTML;
+sel.innerHTML='<option>🔍 Detecting operator...</option>';
+try{
+let r=await fetch(`/api/detect?number=${m}`);
+let d=await r.json();
+if(d.status && d.operator){
+sel.innerHTML='<option value="">Select Operator</option><option value="JIO">Jio</option><option value="AIRTEL">Airtel</option><option value="VI">Vi (Vodafone Idea)</option><option value="BSNL">BSNL</option>';
+sel.value=d.operator;
+show(`✅ Auto Detected: <b>${d.operator}</b> - ${m}`,'#dcfce7','#166534');
+setTimeout(()=>{document.getElementById('status').style.display='none'},3000);
+}else{
+sel.innerHTML=old;
+}
+}catch(e){sel.innerHTML=old}
+}
+}
+
+function saveHist(e){let h=JSON.parse(localStorage.getItem("pq_hist_v3")||"[]");h.unshift(e);localStorage.setItem("pq_hist_v3",JSON.stringify(h.slice(0,100)));localStorage.setItem("pq_sale",(parseInt(localStorage.getItem("pq_sale")||"0")+parseInt(e.amount)));localStorage.setItem("pq_comm",(parseFloat(localStorage.getItem("pq_comm")||"0")+parseFloat(e.comm||0)));loadHist()}
+function loadHist(){let h=JSON.parse(localStorage.getItem("pq_hist_v3")||"[]");let html="";if(!h.length)html='<div style="text-align:center;padding:20px;color:#94a3b8"><div style="font-size:30px">📭</div>No transactions yet<br><small>Start recharging now</small></div>';else h.slice(0,15).forEach(x=>{let c=x.status=='SUCCESS'?'ok':x.status=='PENDING'?'wait':'fail';html+=`<div class="hist"><div><b>${x.service}</b> - ${x.number}<br><small style="color:#64748b">${x.time} • ₹${x.amount}</small></div><div style="text-align:right"><span class="badge ${c}">${x.status}</span><br><small style="color:#16a34a;font-weight:700">+₹${x.comm}</small></div></div>`});document.getElementById('histList').innerHTML=html;document.getElementById('todaySale').innerText='₹'+(localStorage.getItem("pq_sale")||'0');document.getElementById('todayCount').innerText=h.length+' Txn';document.getElementById('myComm').innerText='₹'+(localStorage.getItem("pq_comm")||'0')}
+function show(m,bg,col){let el=document.getElementById('status');el.innerHTML=m;el.style.display='block';el.style.background=bg;el.style.color=col}
+
 async function doRecharge(){
-  const mobile = document.getElementById('mobile').value.trim();
-  const operator = document.getElementById('operator').value;
-  const amount = document.getElementById('amount').value.trim();
-  const status = document.getElementById('status');
-  const btn = document.getElementById('btn');
-
-  if(mobile.length!=10){ show('Please enter valid 10 digit number','error'); return; }
-  if(!operator){ show('Please select operator','error'); return; }
-  if(!amount || amount<10){ show('Enter valid amount min 10','error'); return; }
-
-  btn.innerText="PROCESSING...";
-  btn.disabled=true;
-  show('Processing your recharge, please wait...','success');
-
-  try{
-    const res = await fetch('/api/kwikapi',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({mobile,operator,amount})
-    });
-    const data = await res.json();
-    
-    if(data.status){
-      show(`✅ RECHARGE SUCCESS<br>Txn ID: ${data.txnId}<br>Operator Ref: ${data.opTxnId || 'Pending'}`, 'success');
-    }else{
-      // If service not activated, show professional message
-      if(data.msg && data.msg.includes('Not Activated')){
-        show(`⚠️ Service Activation Pending<br>Please contact admin. Error: ${data.msg}`, 'error');
-      }else{
-        show(`❌ Failed: ${data.msg}`, 'error');
-      }
-    }
-  }catch(e){
-    show('Network error, try again','error');
-  }
-  btn.innerText="RECHARGE NOW";
-  btn.disabled=false;
+let amount=document.getElementById('amount').value.trim();let btn=document.getElementById('btn');
+let number="",operator="";
+if(current=='MOBILE'){number=document.getElementById('mobile').value.trim();operator=document.getElementById('operator').value;if(number.length!=10){show('❌ Enter valid 10 digit mobile','#fee2e2','#991b1b');return}}
+else if(current=='DTH'){number=document.getElementById('dthNo').value.trim();operator=document.getElementById('dthOp').value;if(!number){show('❌ Enter DTH Customer ID','#fee2e2','#991b1b');return}}
+else{number=document.getElementById('billNo').value.trim();operator=current;if(!number){show('❌ Enter Consumer Number','#fee2e2','#991b1b');return}}
+if(!operator){show('❌ Select Operator','#fee2e2','#991b1b');return}
+if(!amount||amount<10){show('❌ Enter amount min ₹10','#fee2e2','#991b1b');return}
+btn.innerText='PROCESSING... SECURE PAY';btn.disabled=true;show('⏳ Processing '+current+'... Please wait',' #dbeafe','#1e40af');
+try{
+let res=await fetch('/api/kwikapi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mobile:number,operator,amount,service:current})});
+let data=await res.json();
+let comm=(amount*0.02).toFixed(2);
+if(data.status){show(`✅ <b>${current} SUCCESS</b><br>Txn: ${data.txnId}<br>Operator Ref: ${data.opTxnId||'Pending'}<br>Commission: ₹${comm}`,'#dcfce7','#166534');saveHist({service:current,number,amount,status:'SUCCESS',time:new Date().toLocaleString(),comm,txnId:data.txnId})}
+else{if(data.msg&&data.msg.includes('Not Activated')){show(`⚠️ <b>Service Activation Pending</b><br>${current} will be activated by admin soon.<br>Your request saved as PENDING.`,'#fef9c3','#854d0e');saveHist({service:current,number,amount,status:'PENDING',time:new Date().toLocaleString(),comm:'0',txnId:'PENDING'})}else{show(`❌ Failed: ${data.msg}`,'#fee2e2','#991b1b');saveHist({service:current,number,amount,status:'FAILED',time:new Date().toLocaleString(),comm:'0',txnId:'FAILED'})}}
+}catch(e){show('❌ Network error, try again','#fee2e2','#991b1b')}
+btn.innerText='RECHARGE / PAY NOW 🔒';btn.disabled=false
 }
-
-function show(msg,type){
-  const el=document.getElementById('status');
-  el.innerHTML=msg;
-  el.className='status '+type;
-}
+document.getElementById('retId').innerText=localStorage.getItem("retailer_id")||'R-1001';loadHist();
 </script>
 </body>
 </html>
