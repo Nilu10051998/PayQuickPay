@@ -1,66 +1,127 @@
 <!DOCTYPE html>
-<html>
+<html lang="or">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PayQuickPay ROBOT</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayQuickPay - ROBOT</title>
 <style>
-body{font-family:sans-serif;background:#0f172a;color:white;padding:15px;text-align:center}
-.card{background:white;color:black;padding:20px;border-radius:15px;margin-top:15px}
-.btn{width:100%;padding:15px;border:none;border-radius:12px;font-weight:bold;margin-top:10px;font-size:16px}
-.green{background:#22c55e;color:white}
-.black{background:#111;color:white}
-#log{background:#f1f5f9;padding:10px;height:150px;overflow:auto;text-align:left;font-size:12px;border-radius:10px;margin-top:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;color:#fff;font-family:Arial;text-align:center;padding:20px}
+.card{background:#111;border:2px solid #0f0;border-radius:20px;padding:20px;margin-top:20px}
+.mob{font-size:42px;font-weight:bold;color:#0f0;margin:15px 0;letter-spacing:2px}
+.amt{font-size:28px;color:#ff0}
+.btn{width:100%;padding:18px;font-size:20px;font-weight:bold;border:none;border-radius:12px;margin-top:15px}
+.btn-jio{background:#0f62fe;color:#fff}
+.btn-done{background:#0f0;color:#000}
+.log{background:#222;padding:10px;border-radius:10px;margin-top:20px;height:150px;overflow:auto;text-align:left;font-size:13px}
+.status{padding:8px;background:#0a0;border-radius:20px;display:inline-block;margin:10px}
 </style>
 </head>
 <body>
-<h2>🤖 ROBOT - Same Mobile</h2>
-<p id="status" style="color:#22c55e">🟢 ROBOT ACTIVE</p>
-<button class="btn black" onclick="ask()">🔔 NOTIFICATION ON KARO</button>
+<h2>🤖 PAYQUICKPAY ROBOT</h2>
+<div class="status" id="st">🟢 ACTIVE - Same Mobile</div>
+<button onclick="ask()" style="padding:10px;border-radius:10px">🔔 Notification ON Kara</button>
 
 <div class="card">
-<h3 id="mob">Order Apekshya...</h3>
-<p id="amt"></p>
-<button class="btn green" onclick="openJio()">📲 JIO POS KHOLA</button>
-<button class="btn black" onclick="done()">✅ HOIGALA</button>
+<div>NEW ORDER</div>
+<div class="mob" id="mob">Order Apekshya...</div>
+<div class="amt" id="amt">Rs 0</div>
+<button class="btn btn-jio" onclick="openJio()">🚀 JIO POS LITE KHOLA</button>
+<button class="btn btn-done" onclick="done()">HOIGALA ✅</button>
 </div>
 
-<div class="card">
-<h4>Log:</h4>
-<div id="log">Robot Start Heichi...<br></div>
-</div>
+<div class="log" id="log">Log:<br></div>
 
 <script>
-let last = "";
+let lastMob = "";
+let audioLoop = null;
+
 function ask(){
- Notification.requestPermission();
- document.getElementById('log').innerHTML += "Notification ON<br>";
+  Notification.requestPermission().then(p=>{
+    if(p=="granted"){ alert("Notification ON!"); new Notification("Robot Ready!"); }
+  });
 }
-function check(){
- let data = JSON.parse(localStorage.getItem('pq_hist_v3') || "[]");
- if(data.length > 0){
-   let o = data[0];
-   if(o.mob != last){
-     last = o.mob;
-     document.getElementById('mob').innerText = o.mob;
-     document.getElementById('amt').innerText = "Rs " + o.amt + " - " + (o.op || "JIO");
-     document.getElementById('log').innerHTML += "NEW ORDER: " + o.mob + " Rs" + o.amt + "<br>";
-     navigator.vibrate && navigator.vibrate([500,200,500]);
-     if(Notification.permission == "granted"){
-       new Notification("PayQuickPay Order!", {body: o.mob + " ku Rs" + o.amt + " kara"});
-     }
-   }
- }
+
+function beep(){
+  try{
+    let a = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
+    a.play();
+    if(!audioLoop){
+      audioLoop = setInterval(()=>{ let b = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg'); b.play().catch(()=>{}); }, 2000);
+    }
+  }catch(e){}
 }
+
+function stopBeep(){
+  if(audioLoop){ clearInterval(audioLoop); audioLoop=null; }
+}
+
+function checkOrder(){
+  // Retailer saves in multiple keys - check all
+  let keys = ['payquickpay_txns','pq_hist_v3','txns','recentTxns'];
+  let data = [];
+  for(let k of keys){
+    let v = localStorage.getItem(k);
+    if(v){ try{ let d = JSON.parse(v); if(Array.isArray(d) && d.length>0){ data = d; break; } if(d.mob || d.mobile){ data=[d]; break; } }catch(e){} }
+  }
+  
+  if(data.length > 0){
+    let o = data[0];
+    let mob = o.mob || o.mobile || o.number || "";
+    let amt = o.amt || o.amount || "";
+    let op = o.op || o.operator || "JIO";
+    
+    if(mob && mob != lastMob){
+      lastMob = mob;
+      document.getElementById('mob').innerText = mob;
+      document.getElementById('amt').innerText = "Rs " + amt + " - " + op;
+      document.getElementById('log').innerHTML += "<br>🔥 NEW: " + mob + " Rs" + amt + " @ " + new Date().toLocaleTimeString();
+      
+      // Auto Copy
+      navigator.clipboard.writeText(mob).then(()=>{ console.log("Copied"); }).catch(()=>{});
+      
+      // Vibration + Sound
+      if(navigator.vibrate) navigator.vibrate([500,200,500,200,500]);
+      beep();
+      
+      // Notification
+      if(Notification.permission == "granted"){
+        new Notification("Nua Order! " + mob, {body:"Rs " + amt + " - " + op + " - Copy Heigala!"});
+      }
+    }
+  }
+}
+
 function openJio(){
- window.location.href = "intent://#Intent;package=com.jio.myjio;end";
+  let m = document.getElementById('mob').innerText;
+  if(m.includes("Apekshya")){ alert("Pahile Order Asiba Pain Apekshya Kara!"); return; }
+  navigator.clipboard.writeText(m);
+  // Direct Jio POS Lite App Open
+  window.location.href = "intent://#Intent;package=com.jio.poslite;end";
+  setTimeout(()=>{
+    // Fallback if app not installed - open play store
+    // window.location.href = "market://details?id=com.jio.poslite";
+  }, 1500);
 }
+
 function done(){
- document.getElementById('log').innerHTML += "DONE<br>";
- document.getElementById('mob').innerText = "Order Apekshya...";
+  stopBeep();
+  if(navigator.vibrate) navigator.vibrate(100);
+  document.getElementById('mob').innerText = "Order Apekshya...";
+  document.getElementById('amt').innerText = "Rs 0";
+  document.getElementById('log').innerHTML += "<br>✅ DONE: " + lastMob;
+  lastMob = "";
+  // Clear recent to avoid repeat
+  localStorage.removeItem('payquickpay_txns');
 }
-setInterval(check, 2000);
-check();
+
+setInterval(checkOrder, 1000);
+checkOrder();
+
+// Wake lock to keep alive
+if('wakeLock' in navigator){
+  navigator.wakeLock.request('screen').catch(()=>{});
+}
 </script>
 </body>
 </html>
