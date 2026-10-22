@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PayQuickPay ROBOT</title>
+<style>
+body{font-family:sans-serif;background:#0f172a;color:white;padding:15px;text-align:center}
+.card{background:white;color:black;padding:20px;border-radius:15px;margin-top:15px}
+.btn{width:100%;padding:15px;border:none;border-radius:12px;font-weight:bold;margin-top:10px;font-size:16px}
+.green{background:#22c55e;color:white}
+.black{background:#111;color:white}
+#log{background:#f1f5f9;padding:10px;height:150px;overflow:auto;text-align:left;font-size:12px;border-radius:10px;margin-top:10px}
+</style>
+</head>
+<body>
+<h2>🤖 ROBOT - Same Mobile</h2>
+<p id="status" style="color:#22c55e">🟢 ROBOT ACTIVE</p>
+<button class="btn black" onclick="ask()">🔔 NOTIFICATION ON KARO</button>
+
+<div class="card">
+<h3 id="mob">Order Apekshya...</h3>
+<p id="amt"></p>
+<button class="btn green" onclick="openJio()">📲 JIO POS KHOLA</button>
+<button class="btn black" onclick="done()">✅ HOIGALA</button>
+</div>
+
+<div class="card">
+<h4>Log:</h4>
+<div id="log">Robot Start Heichi...<br></div>
+</div>
+
+<script>
+let last = "";
+function ask(){
+ Notification.requestPermission();
+ document.getElementById('log').innerHTML += "Notification ON<br>";
+}
+function check(){
+ let data = JSON.parse(localStorage.getItem('pq_hist_v3') || "[]");
+ if(data.length > 0){
+   let o = data[0];
+   if(o.mob != last){
+     last = o.mob;
+     document.getElementById('mob').innerText = o.mob;
+     document.getElementById('amt').innerText = "Rs " + o.amt + " - " + (o.op || "JIO");
+     document.getElementById('log').innerHTML += "NEW ORDER: " + o.mob + " Rs" + o.amt + "<br>";
+     navigator.vibrate && navigator.vibrate([500,200,500]);
+     if(Notification.permission == "granted"){
+       new Notification("PayQuickPay Order!", {body: o.mob + " ku Rs" + o.amt + " kara"});
+     }
+   }
+ }
+}
+function openJio(){
+ window.location.href = "intent://#Intent;package=com.jio.myjio;end";
+}
+function done(){
+ document.getElementById('log').innerHTML += "DONE<br>";
+ document.getElementById('mob').innerText = "Order Apekshya...";
+}
+setInterval(check, 2000);
+check();
+</script>
+</body>
+</html>
