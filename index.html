@@ -1,151 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pay Quick Pay - Login</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-body{background:#020617;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:15px}
-.box{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:20px;width:100%;max-width:380px}
-h1{text-align:center;margin-bottom:5px} .sub{text-align:center;color:#94a3b8;font-size:13px;margin-bottom:15px}
-.tabs{display:flex;gap:6px;margin-bottom:15px} .tab{flex:1;padding:10px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#94a3b8;font-weight:700;cursor:pointer}
-.tab.active{background:#38bdf8;color:#000;border-color:#38bdf8}
-input{width:100%;padding:13px;margin:7px 0;border-radius:10px;border:1px solid #334155;background:#0f172a;color:#fff;font-size:15px}
-.btn{width:100%;padding:14px;border:none;border-radius:10px;background:#22c55e;color:#000;font-weight:800;font-size:16px;margin-top:10px;cursor:pointer}
-.msg{text-align:center;margin-top:10px;font-weight:700;min-height:20px}
-</style>
-</head>
-<body>
-<div class="box">
-<h1>⚡ Pay Quick Pay</h1>
-<p class="sub">Fast & Secure Recharge Portal</p>
+CREATE TABLE distributors (
+  id TEXT PRIMARY KEY,
+  password TEXT NOT NULL,
+  name TEXT,
+  balance NUMERIC DEFAULT 0,
+  created_at TIMESTAMP DEFAULT NOW()
+);
 
-<div class="tabs">
-<button class="tab active" id="tab-admin" onclick="setRole('admin')">Admin</button>
-<button class="tab" id="tab-dist" onclick="setRole('distributor')">Distributor</button>
-<button class="tab" id="tab-ret" onclick="setRole('retailer')">Retailer</button>
-</div>
+CREATE TABLE retailers (
+  id TEXT PRIMARY KEY,
+  password TEXT NOT NULL,
+  distributor_id TEXT,
+  name TEXT,
+  balance NUMERIC DEFAULT 0,
+  created_at TIMESTAMP DEFAULT NOW()
+);
 
-<input id="userId" placeholder="Enter ID">
-<input id="password" type="password" placeholder="Enter Password">
-<button class="btn" onclick="doLogin()">LOGIN</button>
-<p id="msg" class="msg"></p>
+CREATE TABLE transactions (
+  id SERIAL PRIMARY KEY,
+  from_id TEXT,
+  to_id TEXT,
+  amount NUMERIC,
+  type TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
 
+ALTER TABLE distributors ENABLE ROW LEVEL SECURITY;
+ALTER TABLE retailers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
 
-</div>
-
-<script>
-let currentRole = "admin";
-
-function setRole(role){
-  currentRole = role;
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  if(role=='admin') document.getElementById('tab-admin').classList.add('active');
-  if(role=='distributor') document.getElementById('tab-dist').classList.add('active');
-  if(role=='retailer') document.getElementById('tab-ret').classList.add('active');
-  document.getElementById('msg').innerText = role.toUpperCase() + " Selected";
-}
-
-// === LOAD ALL DATA - WITH BACKUP ===
-function loadDistributors(){
-  try{
-    let keys = ["distributors","distributors_backup","distributors_v2","pq_secret_db","payquick_final","ADMIN_BACKUP"];
-    let best = [];
-    keys.forEach(k=>{
-      try{ let v = JSON.parse(localStorage.getItem(k)||"[]"); if(v && v.length>best.length) best=v; }catch(e){}
-    });
-    // restore if needed
-    if(best.length>0){
-      localStorage.setItem("distributors", JSON.stringify(best));
-      localStorage.setItem("pq_secret_db", JSON.stringify(best));
-    }
-    return best;
-  }catch(e){ return [] }
-}
-
-function loadRetailers(){
-  try{
-    let keys = ["retailers","retailers_backup","pq_retailers_secret","payquick_retailers"];
-    // Add all retailers_Dx keys
-    for(let i=0;i<localStorage.length;i++){
-      let k = localStorage.key(i);
-      if(k && k.startsWith("retailers_")) keys.push(k);
-    }
-    let best = [];
-    keys.forEach(k=>{
-      try{ let v = JSON.parse(localStorage.getItem(k)||"[]"); if(v && v.length>best.length) best=v; }catch(e){}
-    });
-    // restore
-    if(best.length>0){
-      localStorage.setItem("retailers", JSON.stringify(best));
-      localStorage.setItem("pq_retailers_secret", JSON.stringify(best));
-    }
-    return best;
-  }catch(e){ return [] }
-}
-
-function doLogin(){
-  let id = document.getElementById('userId').value.trim();
-  let pass = document.getElementById('password').value.trim();
-  let msg = document.getElementById('msg');
-
-  if(!id || !pass){ msg.innerText="❌ ID Password Dia"; msg.style.color="#ef4444"; return; }
-
-  // ADMIN LOGIN
-  if(currentRole=='admin'){
-    if(id.toLowerCase()=='admin' && (pass=='admin123' || pass=='admin' || pass=='123')){
-      localStorage.setItem("currentRole","admin");
-      msg.innerText="✅ Admin Login Success"; msg.style.color="#22c55e";
-      setTimeout(()=>{ location.href="admin2.html?v=final"; },500);
-      return;
-    } else {
-      msg.innerText="❌ Admin ID: admin / Pass: admin123"; msg.style.color="#ef4444"; return;
-    }
-  }
-
-  // DISTRIBUTOR LOGIN
-  if(currentRole=='distributor'){
-    let list = loadDistributors();
-    console.log("Dist List:", list);
-    let found = list.find(x=> (x.id==id || x.mobile==id) && x.password==pass);
-    if(found){
-      localStorage.setItem("distributorLoggedIn", found.id);
-      localStorage.setItem("currentRole","distributor");
-      localStorage.setItem("currentDistId", found.id);
-      msg.innerText="✅ Dist Login: "+found.id; msg.style.color="#22c55e";
-      setTimeout(()=>{ location.href="distributor.html?v=final"; },500);
-      return;
-    } else {
-      msg.innerText="❌ Dist Not Found! Total Dist: "+list.length+" - Check ID/Pass"; msg.style.color="#ef4444"; return;
-    }
-  }
-
-  // RETAILER LOGIN
-  if(currentRole=='retailer'){
-    let list = loadRetailers();
-    console.log("Retailer List:", list);
-    let found = list.find(x=> (x.id==id || x.mobile==id) && x.password==pass);
-    if(found){
-      localStorage.setItem("retailerLoggedIn", found.id);
-      localStorage.setItem("currentRole","retailer");
-      localStorage.setItem("currentRetailerId", found.id);
-      localStorage.setItem("currentDistId", found.distId||"");
-      msg.innerText="✅ Retailer Login: "+found.id; msg.style.color="#22c55e";
-      setTimeout(()=>{ location.href="retailer.html?v=final"; },500);
-      // If retailer.html not exist, go to index of retailer
-      return;
-    } else {
-      msg.innerText="❌ Retailer Not Found! Total: "+list.length; msg.style.color="#ef4444"; return;
-    }
-  }
-}
-
-// Auto fill for test
-window.onload = ()=>{
-  console.log("Distributors:", loadDistributors().length);
-  console.log("Retailers:", loadRetailers().length);
-}
-</script>
-</body>
-</html>
+CREATE POLICY "Allow all" ON distributors FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all" ON retailers FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all" ON transactions FOR ALL USING (true) WITH CHECK (true);
