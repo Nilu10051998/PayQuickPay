@@ -1,50 +1,106 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PAYQUICKPAY ADMIN - PERMANENT FREE</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PAYQUICKPAY ADMIN - PERMANENT</title>
 <style>
 body{margin:0;font-family:Arial;background:#020617;color:#fff;padding:15px}
 .card{background:#0f172a;padding:18px;border-radius:16px;margin-bottom:15px;border:1px solid #1e293b}
 input{width:100%;padding:12px;margin:6px 0;background:#1e293b;border:1px solid #334155;color:#fff;border-radius:10px;box-sizing:border-box}
-button{width:100%;padding:14px;background:#22c55e;color:#000;border:none;border-radius:12px;font-weight:900;cursor:pointer}
+button{width:100%;padding:14px;background:#22c55e;color:#000;border:none;border-radius:12px;font-weight:900;cursor:pointer;font-size:16px}
 .item{background:#1e293b;padding:12px;border-radius:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
-.del{background:#ef4444;color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer}
+.del{background:#ef4444;color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;width:auto}
 #msg{margin-top:10px;font-weight:bold;color:#22c55e}
-</style></head><body>
-<div class="card"><h3>🚀 CREATE DISTRIBUTOR - PERMANENT SERVER</h3>
+</style>
+</head>
+<body>
+<div class="card">
+<h3>🚀 CREATE DISTRIBUTOR - PERMANENT FREE</h3>
 <input id="uid" placeholder="User ID - puja">
 <input id="pwd" placeholder="Password - 12345">
-<input id="nm" placeholder="Name - Puja">
+<input id="nm" placeholder="Name - puja">
 <button onclick="createUser()">✅ CREATE - NEVER DELETE</button>
-<div id="msg"></div></div>
-<div class="card"><h3>📋 All Distributors - Supabase Permanent</h3><div id="list">Loading...</div>
-<button onclick="load()" style="background:#334155;color:#fff;margin-top:10px">🔄 Refresh</button></div>
+<div id="msg"></div>
+</div>
+<div class="card">
+<h3>📋 All Distributors</h3>
+<div id="list">Loading...</div>
+<button onclick="load()" style="background:#334155;color:#fff;margin-top:10px">🔄 Refresh</button>
+</div>
+
 <script>
-const SUPABASE_URL = "https://mojdysebckbodadjctj.supabase.co";
-const SUPABASE_KEY = "sb_publishable_D35DfvBe5XtgITTnKLWSwg_R0Qqsday";
-const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const URL = "https://mojdysebckbodadjctj.supabase.co/rest/v1/distributors";
+const KEY = "sb_publishable_D35DfvBe5XtgITTnKLWSwg_R0Qqsday";
 
 async function load(){
  document.getElementById("list").innerHTML="Loading...";
- const {data, error} = await client.from("distributors").select("*").order("user_id");
- if(error){ document.getElementById("list").innerHTML="❌ "+error.message; return; }
- if(!data||data.length==0){ document.getElementById("list").innerHTML="No distributors - Create kara"; return; }
- document.getElementById("list").innerHTML = data.map(x=><div class="item"><div><b>${x.user_id}</b><br><small>${x.name} | ${x.password} | ₹${x.wallet_balance}</small></div><button class="del" onclick="delUser('${x.user_id}')">Delete</button></div>).join("");
+ try{
+  let res = await fetch(URL+"?select=*&order=user_id", {
+    headers:{apikey:KEY,Authorization:"Bearer "+KEY}
+  });
+  let data = await res.json();
+  if(!Array.isArray(data)){
+    document.getElementById("list").innerHTML="❌ "+JSON.stringify(data);
+    return;
+  }
+  if(data.length==0){
+    document.getElementById("list").innerHTML="No distributors - puja create kara";
+    return;
+  }
+  document.getElementById("list").innerHTML = data.map(x=>
+    <div class="item"><div><b>${x.user_id}</b><br><small>${x.name} | ${x.password} | ₹${x.wallet_balance}</small></div><button class="del" onclick="delUser('${x.user_id}')">Delete</button></div>
+  ).join("");
+ }catch(e){
+  document.getElementById("list").innerHTML="❌ "+e.message;
+ }
 }
+
 async function createUser(){
- const user_id=document.getElementById("uid").value.trim();
- const password=document.getElementById("pwd").value.trim();
- const name=document.getElementById("nm").value.trim()||user_id;
- if(!user_id||!password){ document.getElementById("msg").innerHTML="❌ ID Password deba"; return; }
+ let user_id=document.getElementById("uid").value.trim();
+ let password=document.getElementById("pwd").value.trim();
+ let name=document.getElementById("nm").value.trim()||user_id;
+ if(!user_id||!password){
+  document.getElementById("msg").innerHTML="❌ ID Password darkar";
+  return;
+ }
  document.getElementById("msg").innerHTML="⏳ Creating...";
- const {error} = await client.from("distributors").insert([{user_id,password,name,wallet_balance:500}]);
- if(error){ document.getElementById("msg").innerHTML="❌ "+error.message; }
- else{ document.getElementById("msg").innerHTML="✅ "+user_id+" - PERMANENT SAVE - KEBE DELETE HEBA NAHI!"; document.getElementById("uid").value="";document.getElementById("pwd").value="";document.getElementById("nm").value=""; load(); }
+ try{
+  let res = await fetch(URL, {
+   method:"POST",
+   headers:{
+     apikey:KEY,
+     Authorization:"Bearer "+KEY,
+     "Content-Type":"application/json",
+     Prefer:"return=minimal"
+   },
+   body: JSON.stringify({user_id,password,name,wallet_balance:500})
+  });
+  if(res.ok){
+   document.getElementById("msg").innerHTML="✅ "+user_id+" SAVE - Permanent!";
+   document.getElementById("uid").value="";
+   document.getElementById("pwd").value="";
+   document.getElementById("nm").value="";
+   load();
+  } else {
+   let txt=await res.text();
+   document.getElementById("msg").innerHTML="❌ "+txt;
+  }
+ }catch(e){
+  document.getElementById("msg").innerHTML="❌ "+e.message;
+ }
 }
+
 async function delUser(id){
- if(!confirm("Delete "+id+"?"))return;
- const {error}=await client.from("distributors").delete().eq("user_id",id);
- if(error) alert(error.message); else load();
+ if(!confirm("Delete "+id+"?")) return;
+ await fetch(URL+"?user_id=eq."+id, {
+   method:"DELETE",
+   headers:{apikey:KEY,Authorization:"Bearer "+KEY}
+ });
+ load();
 }
+
 load();
-</script></body></html>
+</script>
+</body>
+</html>
