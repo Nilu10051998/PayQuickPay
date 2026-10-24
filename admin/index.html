@@ -1,62 +1,61 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>REAL ADMIN - FIXED</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>REAL ADMIN - DIRECT FIX</title>
 <style>
 body{font-family:Arial;background:#0f172a;color:white;padding:20px}
 .card{background:#1e293b;padding:20px;border-radius:12px;max-width:520px;margin:auto}
 input{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:none;box-sizing:border-box}
-button{width:100%;padding:14px;background:#10b981;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer;margin-top:10px}
-.success{color:#10b981} .error{color:#ef4444}
-.item{background:#334155;padding:8px;margin:5px 0;border-radius:6px;font-size:14px}
+button{width:100%;padding:14px;background:#10b981;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer}
+.item{background:#334155;padding:8px;margin:5px 0;border-radius:6px}
 </style></head><body>
 <div class="card">
-<h2>🚀 PAYQUICKPAY REAL ADMIN</h2>
-<p>Total: <b id="count">Loading...</b><br>Status: <span id="status">Connecting...</span></p>
-<h3>Quick Create Distributor (REAL API)</h3>
+<h2>🚀 REAL ADMIN - CLICK FIX</h2>
+<p>Total: <b id="count">0</b> | <span id="status">Ready</span></p>
 <input id="user_id" value="puja">
 <input id="pass" value="12345">
 <input id="name" value="puja phula">
 <input id="bal" type="number" value="500">
 <button id="btn" onclick="createDist()">CREATE PERMANENT IN SUPABASE</button>
 <p id="msg"></p>
-<h3>Existing</h3><div id="list"></div>
+<div id="list"></div>
 </div>
 <script>
-const SUPABASE_URL = "https://mojdysebckbodadjcty.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vamR5c2ViY2tib2RhZGpkY3RqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0NjMyNjUsImV4cCI6MjEwNTAzOTI2NX0.aoK0cXDCsKZigLUNHXQV6eFClqf7_i91zpw8zrRu0ic";
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const URL = "https://mojdysebckbodadjcty.supabase.co/rest/v1/distributors";
+const KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vamR5c2ViY2tib2RhZGpkY3RqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0NjMyNjUsImV4cCI6MjEwNTAzOTI2NX0.aoK0cXDCsKZigLUNHXQV6eFClqf7_i91zpw8zrRu0ic";
 
 async function load(){
  try{
-  const {data,error} = await supabaseClient.from("distributors").select("*").order("created_at",{ascending:false});
-  if(error) throw error;
-  document.getElementById("count").innerText = data.length;
-  document.getElementById("status").innerText = "✅ Connected";
-  document.getElementById("list").innerHTML = data.map(d=><div class=item><b>${d.user_id}</b> / ${d.password} - ${d.name} - Rs.${d.wallet_balance}</div>).join("") || "No data";
- }catch(e){
-  document.getElementById("status").innerText = "❌ "+e.message;
- }
+  let r = await fetch(URL+"?select=*", {headers:{apikey:KEY, Authorization:"Bearer "+KEY}});
+  let d = await r.json();
+  document.getElementById("count").innerText = d.length;
+  document.getElementById("status").innerText = "✅ Connected "+d.length;
+  document.getElementById("list").innerHTML = d.map(x=><div class=item>${x.user_id} / ${x.password} - ${x.name}</div>).join("");
+ }catch(e){ document.getElementById("status").innerText="❌ "+e.message; }
 }
 load();
 
 async function createDist(){
  const btn=document.getElementById("btn");
- const user_id=document.getElementById("user_id").value.trim();
- const password=document.getElementById("pass").value.trim();
- const name=document.getElementById("name").value.trim();
+ const user_id=document.getElementById("user_id").value;
+ const password=document.getElementById("pass").value;
+ const name=document.getElementById("name").value;
  const bal=parseInt(document.getElementById("bal").value)||0;
- if(!user_id||!password){alert("ID Pass lekha");return;}
- btn.disabled=true; btn.innerText="Saving to Supabase...";
+ btn.innerText="Saving..."; btn.disabled=true;
  try{
-  const {data,error} = await supabaseClient.from("distributors").insert([{user_id:user_id,username:user_id,password:password,name:name,wallet_balance:bal}]).select();
-  if(error) throw error;
-  document.getElementById("msg").innerHTML="<span class=success>✅ SUCCESS! "+data[0].user_id+" save hela!</span>";
+  let res = await fetch(URL, {
+    method:"POST",
+    headers:{apikey:KEY, Authorization:"Bearer "+KEY, "Content-Type":"application/json", Prefer:"return=representation"},
+    body: JSON.stringify({user_id:user_id, username:user_id, password:password, name:name, wallet_balance:bal})
+  });
+  let j = await res.json();
+  if(!res.ok) throw new Error(JSON.stringify(j));
+  document.getElementById("msg").innerText="✅ SUCCESS! "+j[0].user_id+" save hela!";
+  btn.innerText="✅ Saved!";
   setTimeout(()=>location.reload(),1000);
  }catch(e){
-  document.getElementById("msg").innerHTML="<span class=error>❌ Error: "+e.message+"</span>";
+  document.getElementById("msg").innerText="❌ Error: "+e.message;
   btn.disabled=false; btn.innerText="CREATE PERMANENT IN SUPABASE";
-  alert("Error: "+e.message);
+  alert(e.message);
  }
 }
 </script></body></html>
