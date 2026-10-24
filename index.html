@@ -1,1 +1,59 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PayQuickPay Login</title><script src="https://cdn.tailwindcss.com"></script></head><body class="bg-slate-900 flex items-center justify-center min-h-screen p-4"><div class="bg-white p-6 rounded-2xl w-full max-w-sm shadow-2xl"><h1 class="font-black text-xl text-center">⚡ PAYQUICKPAY</h1><p class="text-xs text-center text-slate-500 mb-4">MUMBAI SERVER - PERMANENT LOGIN</p><input id="uid" placeholder="User ID - puja / D2" class="w-full border p-3 rounded-xl mb-2"><input id="pwd" type="password" placeholder="Password - 12345" class="w-full border p-3 rounded-xl mb-3"><button onclick="login()" class="w-full bg-black text-white py-3 rounded-xl font-bold">LOGIN - MUMBAI</button><div id="msg" class="text-sm font-bold mt-3 text-center"></div><p class="text-[11px] text-center mt-3 text-slate-500">Admin? <a href="/admin/index.html" class="text-blue-600">Admin Panel</a></p><p class="text-[10px] text-center mt-2 text-green-600">● Permanent DB - D2, puja live</p></div><script>var URL="https://hiyjowfyszctvhljsdgx.supabase.co";var KEY="sb_publishable_Qn7F0hoIeGD-q6nzO1HvzA_SFrFuNE2";async function login(){let u=document.getElementById("uid").value.trim(),p=document.getElementById("pwd").value.trim(),m=document.getElementById("msg");if(!u||!p){m.innerHTML="ID Pass de";return;}m.innerHTML="Checking Mumbai Permanent...";if(u=="admin"&&p=="admin123"){localStorage.setItem("adminLogged","yes");location.href="/admin/index.html";return;}try{let r=await fetch(URL+"/rest/v1/distributors?user_id=eq."+u+"&password=eq."+p+"&select=*",{headers:{"apikey":KEY,"Authorization":"Bearer "+KEY}});let d=await r.json();if(d.length>0){localStorage.setItem("distributor",JSON.stringify(d[0]));m.innerHTML="✅ Login Success!";location.href="/distributor/index.html";}else{m.innerHTML="❌ Wrong ID Pass - D2 / 12345 try kara";}}catch(e){m.innerHTML="Error: "+e.message;}}</script></body></html>
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PayQuickPay - Login</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="min-h-screen bg-[#0B1220] flex items-center justify-center p-4">
+<div class="w-full max-w-[420px] bg-white rounded-[24px] p-8">
+
+<div class="text-center mb-6">
+<div class="w-12 h-12 bg-slate-900 rounded-2xl mx-auto flex items-center justify-center"><i class="fa-solid fa-bolt text-white"></i></div>
+<h1 class="font-extrabold mt-3">PAYQUICKPAY</h1>
+<p class="text-xs text-slate-500">Secure Payment Network</p>
+</div>
+
+<!-- 3 TAB -->
+<div class="grid grid-cols-3 gap-2 bg-slate-100 p-1.5 rounded-xl mb-6">
+<button id="t1" onclick="setRole('distributor')" class="bg-white shadow text-xs font-bold py-2.5 rounded-lg">Distributor</button>
+<button id="t2" onclick="setRole('retailer')" class="text-xs font-bold py-2.5 rounded-lg text-slate-500">Retailer</button>
+<button id="t3" onclick="setRole('admin')" class="text-xs font-bold py-2.5 rounded-lg text-slate-500">Admin</button>
+</div>
+
+<label class="text-[11px] font-bold">USER ID</label>
+<input id="uid" placeholder="Enter User ID" class="w-full border rounded-xl p-3.5 text-sm mt-1 mb-3">
+
+<label class="text-[11px] font-bold">PASSWORD</label>
+<input id="pwd" type="password" placeholder="Enter Password" class="w-full border rounded-xl p-3.5 text-sm mt-1 mb-5">
+
+<button onclick="doLogin()" id="btn" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold text-sm">Secure Login</button>
+<p id="msg" class="text-xs text-center mt-3 font-bold"></p>
+
+<p class="text-[11px] text-center text-slate-400 mt-6">🔒 256-bit Secured • Trusted by 500+ users</p>
+</div>
+
+<script>
+let role="distributor";
+const URL="https://hiyjowfyszctvhljsdgx.supabase.co";const KEY="sb_publishable_Qn7F0hoIeGD-q6nzO1HvzA_SFrFuNE2";
+function setRole(r){
+ role=r;
+ document.getElementById('t1').className=r=='distributor'?'bg-white shadow text-xs font-bold py-2.5 rounded-lg':'text-xs font-bold py-2.5 rounded-lg text-slate-500';
+ document.getElementById('t2').className=r=='retailer'?'bg-white shadow text-xs font-bold py-2.5 rounded-lg':'text-xs font-bold py-2.5 rounded-lg text-slate-500';
+ document.getElementById('t3').className=r=='admin'?'bg-white shadow text-xs font-bold py-2.5 rounded-lg':'text-xs font-bold py-2.5 rounded-lg text-slate-500';
+}
+async function doLogin(){
+ let u=uid.value.trim(), p=pwd.value.trim();
+ if(!u||!p){msg.innerText="Enter ID & Password";return;}
+ if(role=="admin"){
+   if(u=="admin"&&p=="admin123"){localStorage.setItem("admin","true");location.href="/admin/";}
+   else{msg.innerText="❌ Wrong Admin";}
+   return;
+ }
+ let table=role=="retailer"?"retailers":"distributors";
+ let res=await fetch(URL+"/rest/v1/"+table+"?user_id=eq."+u+"&password=eq."+p,{headers:{apikey:KEY,Authorization:"Bearer "+KEY}});
+ let d=await res.json();
+ if(d.length>0){localStorage.setItem(role+"_id",d[0].user_id);location.href="/"+role+"/";}
+ else{msg.innerText="❌ Invalid "+role+" ID";}
+}
+</script>
+</body></html>
