@@ -1,28 +1,62 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ADMIN - PAYQUICKPAY</title>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ADMIN - PAYQUICKPAY REAL</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
-<style>body{margin:0;background:#020617;color:#fff;font-family:Arial;padding:15px}.card{background:#0f172a;padding:18px;border-radius:15px;max-width:500px;margin:15px auto;border:1px solid #1e293b}input{width:100%;padding:13px;margin:6px 0;background:#1e293b;border:1px solid #334155;color:#fff;border-radius:10px;box-sizing:border-box}button{width:100%;padding:13px;background:#22c55e;color:#000;border:none;border-radius:10px;font-weight:900;cursor:pointer}.item{background:#1e293b;padding:10px;border-radius:8px;margin-top:6px;display:flex;justify-content:space-between;align-items:center}</style>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#020617;color:#fff;font-family:system-ui;padding:12px}
+.top{background:#0f172a;padding:14px 16px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;border:1px solid #1e293b;margin-bottom:12px}
+.card{background:#0f172a;padding:16px;border-radius:14px;border:1px solid #1e293b;margin-bottom:12px}
+input,select{width:100%;padding:11px;margin:6px 0;background:#1e293b;border:1px solid #334155;color:#fff;border-radius:8px}
+button{padding:10px 14px;border:none;border-radius:8px;font-weight:800;cursor:pointer}
+.btn-green{background:#22c55e;color:#000;width:100%} .btn-blue{background:#3b82f6;color:#fff} .btn-red{background:#ef4444;color:#fff} .btn-gray{background:#334155;color:#fff}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.item{background:#1e293b;padding:12px;border-radius:10px;margin-top:8px;border-left:4px solid #22c55e}
+.flex{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.badge{background:#22c55e;color:#000;padding:2px 8px;border-radius:10px;font-size:12px;font-weight:900}
+</style>
 </head><body>
-<div class="card"><h3 style="margin-top:0">🚀 CREATE DISTRIBUTOR - MUMBAI LIVE</h3><input id="uid" placeholder="User ID"><input id="pwd" placeholder="Password"><input id="nm" placeholder="Name"><input id="wal" value="500" type="number"><button onclick="createUser()">CREATE NOW</button><div id="msg" style="margin-top:10px;text-align:center;font-weight:bold"></div></div>
-<div class="card"><h3>All Distributors - <span id="cnt">0</span></h3><div id="list">Loading Mumbai...</div><button onclick="load()" style="background:#334155;color:#fff;margin-top:10px">🔄 Refresh</button><div id="debug" style="margin-top:10px;font-size:11px;color:#22c55e"></div></div>
+<div class="top"><div><b>🔥 ADMIN REAL</b> <span class="badge" id="status">MUMBAI LIVE</span></div><div><span id="cnt">0</span> Users <button class="btn-red" style="margin-left:10px;padding:6px 10px" onclick="logout()">Logout</button></div></div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+<div class="card"><h3 style="margin:0 0 10px 0">➕ Create Distributor</h3>
+<input id="uid" placeholder="User ID - ex: RAHUL123"><input id="pwd" placeholder="Password"><input id="nm" placeholder="Full Name"><input id="wal" type="number" placeholder="Wallet - 500" value="500">
+<button class="btn-green" onclick="createUser()">CREATE DISTRIBUTOR</button><div id="msg" style="margin-top:8px;font-weight:bold;text-align:center"></div></div>
+
+<div class="card"><h3 style="margin:0 0 10px 0">💰 Wallet Control</h3>
+<input id="w_uid" placeholder="User ID"><input id="w_amt" type="number" placeholder="Amount - ex: 1000">
+<div class="grid"><button class="btn-blue" onclick="addWallet()">+ ADD</button><button class="btn-red" onclick="minusWallet()">- CUT</button></div><div id="w_msg" style="margin-top:8px;font-weight:bold;text-align:center"></div></div>
+</div>
+
+<div class="card"><div style="display:flex;justify-content:space-between"><h3 style="margin:0">👥 All Distributors - Permanent</h3><div><input id="search" placeholder="Search..." style="width:140px;padding:6px" onkeyup="filterList()"><button class="btn-gray" onclick="load()" style="padding:6px 10px">🔄 Refresh</button></div></div><div id="list">Loading Mumbai...</div><div id="debug" style="margin-top:8px;font-size:11px;color:#22c55e"></div></div>
+
+<div class="card"><h3 style="margin:0 0 10px 0">📜 Recent Transactions</h3><div id="txlist">Loading...</div></div>
+
 <script>
 var _supabase = supabase.createClient("https://hiyjowfyszctvhljsdgx.supabase.co","sb_publishable_Qn7F0hoIeGD-q6nzO1HvzA_SFrFuNE2");
+var allData=[];
+function check(){if(!localStorage.getItem("adminLogged")){location.href="/";}}
+check();
 async function load(){
- let el=document.getElementById("list"); let dbg=document.getElementById("debug"); el.innerHTML="Loading from Mumbai...";
+ let el=document.getElementById("list"), dbg=document.getElementById("debug"); el.innerHTML="Loading Mumbai Permanent...";
  try{
   const {data,error}=await _supabase.from("distributors").select("*").order("user_id",{ascending:false});
   if(error){el.innerHTML="Error: "+error.message; return;}
-  document.getElementById("cnt").innerText=data.length;
-  let h=""; for(let i=0;i<data.length;i++){h+="<div class=item><span><b>"+data[i].user_id+"</b> - "+data[i].name+"</span><span>Rs "+data[i].wallet_balance+"</span></div>";}
-  el.innerHTML=h||"No data"; dbg.innerHTML="✅ MUMBAI Connected! "+data.length+" found - No Block!";
+  allData=data; document.getElementById("cnt").innerText=data.length; render(data);
+  dbg.innerHTML="✅ MUMBAI PERMANENT - "+data.length+" distributors - Never Deletes! "+new Date().toLocaleTimeString();
+  loadTx();
  }catch(e){el.innerHTML="Failed: "+e.message;}
 }
+function render(data){
+ let el=document.getElementById("list"); let h=""; 
+ for(let i=0;i<data.length;i++){let d=data[i]; h+=<div class="item"><div style="display:flex;justify-content:space-between"><div><b>${d.user_id}</b> - ${d.name||''}<br><small>Pass: ${d.password} | Wallet: <b style="color:#22c55e">Rs ${d.wallet_balance}</b></small></div><div class="flex"><button class="btn-blue" onclick="quickAdd('${d.user_id}')">+500</button><button class="btn-red" onclick="delUser('${d.user_id}')">Delete</button></div></div></div>;}
+ el.innerHTML=h||"No data - Create first!";
+}
+function filterList(){let q=document.getElementById("search").value.toLowerCase(); let f=allData.filter(d=>d.user_id.toLowerCase().includes(q)||(d.name||'').toLowerCase().includes(q)); render(f);}
 async function createUser(){
  let u=document.getElementById("uid").value.trim(), p=document.getElementById("pwd").value.trim(), n=document.getElementById("nm").value.trim()||u, w=parseInt(document.getElementById("wal").value)||500;
- let m=document.getElementById("msg"); if(!u||!p){m.innerHTML="ID Pass de"; return;} m.innerHTML="Creating...";
- try{
-  const {data,error}=await _supabase.from("distributors").insert([{user_id:u,password:p,name:n,wallet_balance:w}]).select();
-  if(error){m.innerHTML="❌ "+error.message;} else{m.innerHTML="✅ "+u+" Created in Mumbai!"; load();}
- }catch(e){m.innerHTML="❌ "+e.message;}
+ let m=document.getElementById("msg"); if(!u||!p){m.innerHTML="ID Pass de"; return;} m.innerHTML="Creating in Mumbai Permanent...";
+ try{const {data,error}=await _supabase.from("distributors").insert([{user_id:u,password:p,name:n,wallet_balance:w}]).select(); if(error){m.innerHTML="❌ "+error.message;} else{m.innerHTML="✅ "+u+" Permanent Created!"; document.getElementById("uid").value=""; document.getElementById("pwd").value=""; load();}}catch(e){m.innerHTML="❌ "+e.message;}
 }
-load();
-</script></body></html>
+async function delUser(id){if(!confirm(id+" Delete kariba? Permanent delete heba!"))return; const {error}=await _supabase.from("distributors").delete().eq("user_id",id); if(error){alert(error.message);} else{load();}}
+async function addWallet(){let id=document.getElementById("w_uid").value.trim(), amt=parseInt(document.getElementById("w_amt").value); if(!id||!amt){alert("ID Amount de"); return;} let cur=allData.find(d=>d.user_id==id); if(!cur){alert("User miluni"); return;} let nw=cur.wallet_balance+amt; const {error}=await _supabase.from("distributors").update({wallet_balance:nw}).eq("user_id",id); if(error){alert(error.message);} else{document.getElementById("w_msg").innerHTML="✅ Rs "+amt+" Added!"; load();}}
+async function minusWallet(){let id=document.getElementById("w_uid").value.trim(), amt=parseInt(document.getElementById("w_amt").value); if(!id||!amt){alert("ID Amount de"); return;} let cur=allData.find(d=>d.user_id==id); if(!cur){alert("User miluni"); return;} let nw=cur.wallet_balance-amt; const {error}=await _supabase.from("distributors").update({wallet_balance:nw}).eq("user_id",id); if(error){alert(error.message);} else{document.getElementById("w_msg").innerHTML="✅ Rs "+amt+" Cut!"; load();}}
+async function quickAdd(id){let cur=allData.find(d=>d.user_id==id); let nw=cur.wallet_balance+500; const {error}=await _supabase.from("distributors").update({wallet_balance:nw}).eq("user_id",id); if(!error)load();}
+async function loadTx(){let el=document.getElementB…
