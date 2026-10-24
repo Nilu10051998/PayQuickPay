@@ -1,61 +1,7 @@
-<!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>REAL ADMIN - DIRECT FIX</title>
-<style>
-body{font-family:Arial;background:#0f172a;color:white;padding:20px}
-.card{background:#1e293b;padding:20px;border-radius:12px;max-width:520px;margin:auto}
-input{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:none;box-sizing:border-box}
-button{width:100%;padding:14px;background:#10b981;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer}
-.item{background:#334155;padding:8px;margin:5px 0;border-radius:6px}
-</style></head><body>
-<div class="card">
-<h2>🚀 REAL ADMIN - CLICK FIX</h2>
-<p>Total: <b id="count">0</b> | <span id="status">Ready</span></p>
-<input id="user_id" value="puja">
-<input id="pass" value="12345">
-<input id="name" value="puja phula">
-<input id="bal" type="number" value="500">
-<button id="btn" onclick="createDist()">CREATE PERMANENT IN SUPABASE</button>
-<p id="msg"></p>
-<div id="list"></div>
-</div>
-<script>
-const URL = "https://mojdysebckbodadjcty.supabase.co/rest/v1/distributors";
-const KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vamR5c2ViY2tib2RhZGpkY3RqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0NjMyNjUsImV4cCI6MjEwNTAzOTI2NX0.aoK0cXDCsKZigLUNHXQV6eFClqf7_i91zpw8zrRu0ic";
-
-async function load(){
- try{
-  let r = await fetch(URL+"?select=*", {headers:{apikey:KEY, Authorization:"Bearer "+KEY}});
-  let d = await r.json();
-  document.getElementById("count").innerText = d.length;
-  document.getElementById("status").innerText = "✅ Connected "+d.length;
-  document.getElementById("list").innerHTML = d.map(x=><div class=item>${x.user_id} / ${x.password} - ${x.name}</div>).join("");
- }catch(e){ document.getElementById("status").innerText="❌ "+e.message; }
-}
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PAYQUICKPAY ADMIN - FINAL</title><style>body{font-family:Arial;background:#0f172a;color:white;padding:15px} .card{background:#1e293b;padding:20px;border-radius:12px;max-width:500px;margin:auto} input{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:none;box-sizing:border-box} button{width:100%;padding:14px;background:#10b981;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer;margin-top:8px} button:disabled{background:#555} .item{background:#334155;padding:8px;margin:4px 0;border-radius:6px}</style></head><body><div class="card"><h2>🚀 PAYQUICKPAY ADMIN - FINAL</h2><p>Total: <b id="count">0</b> | <span id="status">Ready...</span></p><label>User ID</label><input id="user_id" value="puja"><label>Password</label><input id="pass" value="12345"><label>Name</label><input id="name" value="puja phula"><label>Balance</label><input id="bal" type="number" value="500"><button id="btn" onclick="createDist()">CREATE PERMANENT - CLICK KARA</button><p id="msg"></p><h4>Existing Distributors</h4><div id="list">Loading...</div></div><script>
+const URL="https://mojdysebckbodadjcty.supabase.co/rest/v1/distributors";
+const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vamR5c2ViY2tib2RhZGpkY3RqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0NjMyNjUsImV4cCI6MjEwNTAzOTI2NX0.aoK0cXDCsKZigLUNHXQV6eFClqf7_i91zpw8zrRu0ic";
+async function load(){try{let r=await fetch(URL+"?select=*",{headers:{apikey:KEY,Authorization:"Bearer "+KEY}});let d=await r.json();document.getElementById("count").innerText=d.length;document.getElementById("status").innerText="✅ Connected";document.getElementById("list").innerHTML=d.map(x=><div class=item><b>${x.user_id}</b> / ${x.password} - ${x.name} - Rs${x.wallet_balance}</div>).join("")||"Empty";}catch(e){document.getElementById("status").innerText="❌ "+e.message}}
 load();
-
-async function createDist(){
- const btn=document.getElementById("btn");
- const user_id=document.getElementById("user_id").value;
- const password=document.getElementById("pass").value;
- const name=document.getElementById("name").value;
- const bal=parseInt(document.getElementById("bal").value)||0;
- btn.innerText="Saving..."; btn.disabled=true;
- try{
-  let res = await fetch(URL, {
-    method:"POST",
-    headers:{apikey:KEY, Authorization:"Bearer "+KEY, "Content-Type":"application/json", Prefer:"return=representation"},
-    body: JSON.stringify({user_id:user_id, username:user_id, password:password, name:name, wallet_balance:bal})
-  });
-  let j = await res.json();
-  if(!res.ok) throw new Error(JSON.stringify(j));
-  document.getElementById("msg").innerText="✅ SUCCESS! "+j[0].user_id+" save hela!";
-  btn.innerText="✅ Saved!";
-  setTimeout(()=>location.reload(),1000);
- }catch(e){
-  document.getElementById("msg").innerText="❌ Error: "+e.message;
-  btn.disabled=false; btn.innerText="CREATE PERMANENT IN SUPABASE";
-  alert(e.message);
- }
-}
+async function createDist(){let btn=document.getElementById("btn");let uid=document.getElementById("user_id").value.trim();let pwd=document.getElementById("pass").value.trim();let nm=document.getElementById("name").value.trim();let bl=parseInt(document.getElementById("bal").value)||0;if(!uid||!pwd){alert("ID Pass dia");return}btn.disabled=true;btn.innerText="Saving to Supabase...";try{let res=await fetch(URL,{method:"POST",headers:{apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json",Prefer:"return=representation"},body:JSON.stringify({user_id:uid,username:uid,password:pwd,name:nm,wallet_balance:bl})});let j=await res.json();if(!res.ok)throw new Error(JSON.stringify(j));document.getElementById("msg").innerText="✅ SUCCESS! "+j[0].user_id+" created!";btn.innerText="✅ Done!";setTimeout(()=>location.reload(),1200)}catch(e){document.getElementById("msg").innerText="❌ "+e.message;btn.disabled=false;btn.innerText="CREATE PERMANENT - CLICK KARA";alert(e.message)}}
 </script></body></html>
