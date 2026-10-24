@@ -1,7 +1,59 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PAYQUICKPAY ADMIN - FINAL</title><style>body{font-family:Arial;background:#0f172a;color:white;padding:15px} .card{background:#1e293b;padding:20px;border-radius:12px;max-width:500px;margin:auto} input{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:none;box-sizing:border-box} button{width:100%;padding:14px;background:#10b981;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer;margin-top:8px} button:disabled{background:#555} .item{background:#334155;padding:8px;margin:4px 0;border-radius:6px}</style></head><body><div class="card"><h2>🚀 PAYQUICKPAY ADMIN - FINAL</h2><p>Total: <b id="count">0</b> | <span id="status">Ready...</span></p><label>User ID</label><input id="user_id" value="puja"><label>Password</label><input id="pass" value="12345"><label>Name</label><input id="name" value="puja phula"><label>Balance</label><input id="bal" type="number" value="500"><button id="btn" onclick="createDist()">CREATE PERMANENT - CLICK KARA</button><p id="msg"></p><h4>Existing Distributors</h4><div id="list">Loading...</div></div><script>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PAYQUICKPAY ADMIN</title>
+<style>
+body{font-family:Arial;background:#0f172a;color:white;padding:12px}
+.box{background:#1e293b;padding:20px;border-radius:12px;max-width:400px;margin:auto}
+input{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:none;box-sizing:border-box}
+button{width:100%;padding:15px;background:#10b981;color:white;border:none;border-radius:10px;font-weight:bold;font-size:16px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="box">
+<h2>PAYQUICKPAY ADMIN</h2>
+<p id="st">✅ Ready - Button Click Heba</p>
+<input id="uid" placeholder="User ID" value="puja">
+<input id="pwd" placeholder="Password" value="12345">
+<input id="nm" placeholder="Name" value="puja phula">
+<input id="bal" type="number" placeholder="Balance" value="500">
+<button onclick="createNow()">CREATE DISTRIBUTOR</button>
+<div id="msg" style="margin-top:10px"></div>
+<div id="list" style="margin-top:15px"></div>
+</div>
+<script>
 const URL="https://mojdysebckbodadjcty.supabase.co/rest/v1/distributors";
 const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vamR5c2ViY2tib2RhZGpkY3RqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0NjMyNjUsImV4cCI6MjEwNTAzOTI2NX0.aoK0cXDCsKZigLUNHXQV6eFClqf7_i91zpw8zrRu0ic";
-async function load(){try{let r=await fetch(URL+"?select=*",{headers:{apikey:KEY,Authorization:"Bearer "+KEY}});let d=await r.json();document.getElementById("count").innerText=d.length;document.getElementById("status").innerText="✅ Connected";document.getElementById("list").innerHTML=d.map(x=><div class=item><b>${x.user_id}</b> / ${x.password} - ${x.name} - Rs${x.wallet_balance}</div>).join("")||"Empty";}catch(e){document.getElementById("status").innerText="❌ "+e.message}}
-load();
-async function createDist(){let btn=document.getElementById("btn");let uid=document.getElementById("user_id").value.trim();let pwd=document.getElementById("pass").value.trim();let nm=document.getElementById("name").value.trim();let bl=parseInt(document.getElementById("bal").value)||0;if(!uid||!pwd){alert("ID Pass dia");return}btn.disabled=true;btn.innerText="Saving to Supabase...";try{let res=await fetch(URL,{method:"POST",headers:{apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json",Prefer:"return=representation"},body:JSON.stringify({user_id:uid,username:uid,password:pwd,name:nm,wallet_balance:bl})});let j=await res.json();if(!res.ok)throw new Error(JSON.stringify(j));document.getElementById("msg").innerText="✅ SUCCESS! "+j[0].user_id+" created!";btn.innerText="✅ Done!";setTimeout(()=>location.reload(),1200)}catch(e){document.getElementById("msg").innerText="❌ "+e.message;btn.disabled=false;btn.innerText="CREATE PERMANENT - CLICK KARA";alert(e.message)}}
-</script></body></html>
+
+async function createNow(){
+ alert("Click Hela Bhai!");
+ let uid=document.getElementById("uid").value;
+ let pwd=document.getElementById("pwd").value;
+ let nm=document.getElementById("nm").value;
+ let bal=document.getElementById("bal").value;
+ 
+ if(!uid||!pwd){alert("ID Pass dia");return}
+ 
+ // Local save
+ let a=JSON.parse(localStorage.getItem("d")||"[]");
+ a.push({user_id:uid,password:pwd,name:nm});
+ localStorage.setItem("d",JSON.stringify(a));
+ document.getElementById("msg").innerHTML="✅ Local Save Hela: "+uid;
+ document.getElementById("list").innerHTML=a.map(x=>"<div style='background:#334155;padding:5px;margin:3px;border-radius:5px'>"+x.user_id+" / "+x.password+"</div>").join("");
+ 
+ // Supabase try
+ try{
+  let r=await fetch(URL,{method:"POST",headers:{apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json",Prefer:"return=representation"},body:JSON.stringify({user_id:uid,username:uid,password:pwd,name:nm,wallet_balance:parseInt(bal)||0})});
+  let d=await r.json();
+  if(r.ok){document.getElementById("msg").innerHTML+=" <br>✅ Supabase Save Hela!";}else{document.getElementById("msg").innerHTML+="<br>⚠️ Supabase Error: "+JSON.stringify(d)+"<br>Supabase SQL Editor re: ALTER TABLE distributors DISABLE ROW LEVEL SECURITY; RUN kara";}
+ }catch(e){document.getElementById("msg").innerHTML+="<br>⚠️ Supabase Block: "+e.message}
+}
+window.onload=()=>{
+ let a=JSON.parse(localStorage.getItem("d")||"[]");
+ document.getElementById("list").innerHTML=a.map(x=>"<div style='background:#334155;padding:5px;margin:3px;border-radius:5px'>"+x.user_id+" / "+x.password+"</div>").join("");
+}
+</script>
+</body>
+</html>
