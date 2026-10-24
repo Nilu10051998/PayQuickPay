@@ -1,54 +1,49 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PAYQUICKPAY ADMIN - FREE</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>PAYQUICKPAY ADMIN - PERMANENT FREE</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
 <style>
 body{margin:0;font-family:Arial;background:#020617;color:#fff;padding:15px}
 .card{background:#0f172a;padding:18px;border-radius:16px;margin-bottom:15px;border:1px solid #1e293b}
 input{width:100%;padding:12px;margin:6px 0;background:#1e293b;border:1px solid #334155;color:#fff;border-radius:10px;box-sizing:border-box}
-button{width:100%;padding:14px;background:#22c55e;color:#000;border:none;border-radius:12px;font-weight:900;cursor:pointer;font-size:15px}
+button{width:100%;padding:14px;background:#22c55e;color:#000;border:none;border-radius:12px;font-weight:900;cursor:pointer}
 .item{background:#1e293b;padding:12px;border-radius:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
 .del{background:#ef4444;color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer}
-#msg{margin-top:10px;font-weight:bold}
+#msg{margin-top:10px;font-weight:bold;color:#22c55e}
 </style></head><body>
-<div class="card"><h3>🚀 CREATE - 100% FREE & PERMANENT</h3>
-<input id="uid" placeholder="User ID (puja)">
-<input id="pwd" placeholder="Password (12345)">
-<input id="nm" placeholder="Name (Puja)">
-<button onclick="createUser()">✅ CREATE DISTRIBUTOR</button>
+<div class="card"><h3>🚀 CREATE DISTRIBUTOR - PERMANENT SERVER</h3>
+<input id="uid" placeholder="User ID - puja">
+<input id="pwd" placeholder="Password - 12345">
+<input id="nm" placeholder="Name - Puja">
+<button onclick="createUser()">✅ CREATE - NEVER DELETE</button>
 <div id="msg"></div></div>
-<div class="card"><h3>📋 List - Supabase Healthy Server</h3><div id="list">Loading...</div>
+<div class="card"><h3>📋 All Distributors - Supabase Permanent</h3><div id="list">Loading...</div>
 <button onclick="load()" style="background:#334155;color:#fff;margin-top:10px">🔄 Refresh</button></div>
-
 <script>
 const SUPABASE_URL = "https://mojdysebckbodadjctj.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vamR5c2ViY2tib2RhZGpkY3RqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0NjMyNjUsImV4cCI6MjEwNTAzOTI2NX0.aoK0cXDCsKZigLUNHXQV6eFClqf7_i91zpw8zrRu0ic";
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_KEY = "sb_publishable_D35DfvBe5XtgITTnKLWSwg_R0Qqsday";
+const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 async function load(){
  document.getElementById("list").innerHTML="Loading...";
- const {data, error} = await supabaseClient.from("distributors").select("*").order("user_id");
- if(error){ document.getElementById("list").innerHTML="❌ Error: "+error.message; return; }
- if(!data || data.length==0){ document.getElementById("list").innerHTML="No distributors yet"; return; }
- document.getElementById("list").innerHTML = data.map(x=>`
-  <div class="item">
-    <div><b>${x.user_id}</b><br><small>${x.name} | Pass: ${x.password} | ₹${x.wallet_balance}</small></div>
-    <button class="del" onclick="delUser('${x.user_id}')">Delete</button>
-  </div>`).join("");
+ const {data, error} = await client.from("distributors").select("*").order("user_id");
+ if(error){ document.getElementById("list").innerHTML="❌ "+error.message; return; }
+ if(!data||data.length==0){ document.getElementById("list").innerHTML="No distributors - Create kara"; return; }
+ document.getElementById("list").innerHTML = data.map(x=><div class="item"><div><b>${x.user_id}</b><br><small>${x.name} | ${x.password} | ₹${x.wallet_balance}</small></div><button class="del" onclick="delUser('${x.user_id}')">Delete</button></div>).join("");
 }
 async function createUser(){
  const user_id=document.getElementById("uid").value.trim();
  const password=document.getElementById("pwd").value.trim();
  const name=document.getElementById("nm").value.trim()||user_id;
- if(!user_id||!password){ document.getElementById("msg").innerHTML="❌ User ID & Password darkar"; return; }
+ if(!user_id||!password){ document.getElementById("msg").innerHTML="❌ ID Password deba"; return; }
  document.getElementById("msg").innerHTML="⏳ Creating...";
- const {error} = await supabaseClient.from("distributors").insert([{user_id,password,name,wallet_balance:500}]);
+ const {error} = await client.from("distributors").insert([{user_id,password,name,wallet_balance:500}]);
  if(error){ document.getElementById("msg").innerHTML="❌ "+error.message; }
- else{ document.getElementById("msg").innerHTML="✅ "+user_id+" permanent save hela!"; uid.value=""; pwd.value=""; nm.value=""; load(); }
+ else{ document.getElementById("msg").innerHTML="✅ "+user_id+" - PERMANENT SAVE - KEBE DELETE HEBA NAHI!"; document.getElementById("uid").value="";document.getElementById("pwd").value="";document.getElementById("nm").value=""; load(); }
 }
 async function delUser(id){
- if(!confirm("Delete "+id+"?")) return;
- const {error} = await supabaseClient.from("distributors").delete().eq("user_id", id);
+ if(!confirm("Delete "+id+"?"))return;
+ const {error}=await client.from("distributors").delete().eq("user_id",id);
  if(error) alert(error.message); else load();
 }
 load();
