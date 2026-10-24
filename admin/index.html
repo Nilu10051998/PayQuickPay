@@ -1,1 +1,98 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ADMIN PRO - PayQuickPay</title><script src="https://cdn.tailwindcss.com"></script></head><body class="bg-slate-50"><div class="flex min-h-screen"><div class="w-64 bg-slate-900 text-white p-5"><h2 class="font-black text-lg">⚡ PAYQUICKPAY</h2><p class="text-xs text-green-400 mt-2">● MUMBAI LIVE<br>● RLS OFF<br>● PERMANENT</p><div class="mt-8 bg-blue-600 p-3 rounded-lg text-sm font-bold">Dashboard</div></div><div class="flex-1"><div class="bg-white p-4 border-b flex justify-between"><h1 class="font-bold">Admin Panel - Professional <span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">2 Users Live</span></h1><button onclick="load()" class="bg-black text-white text-xs px-4 py-2 rounded-lg">Reload</button></div><div class="p-4 grid grid-cols-3 gap-4"><div class="bg-white p-4 rounded-xl border shadow"><p class="text-xs text-slate-500">Total Distributors</p><h2 class="text-3xl font-black" id="cnt">2</h2></div><div class="bg-white p-4 rounded-xl border shadow"><p class="text-xs text-slate-500">Total Wallet</p><h2 class="text-2xl font-black" id="tw">Rs 1000</h2></div><div class="bg-white p-4 rounded-xl border shadow"><p class="text-xs">Server</p><h2 class="text-sm font-bold text-green-600">MUMBAI PERMANENT ✅</h2></div></div><div class="p-4 grid lg:grid-cols-3 gap-4"><div class="bg-white p-5 rounded-xl border"><h3 class="font-bold mb-3">+ Create</h3><input id="uid" placeholder="User ID" class="w-full border p-2.5 rounded-lg mb-2 text-sm"><input id="pwd" placeholder="Password" class="w-full border p-2.5 rounded-lg mb-2 text-sm"><input id="nm" placeholder="Name" class="w-full border p-2.5 rounded-lg mb-2 text-sm"><input id="wal" type="number" value="500" class="w-full border p-2.5 rounded-lg mb-3 text-sm"><button onclick="createUser()" class="w-full bg-slate-900 text-white py-3 rounded-lg font-bold">CREATE PERMANENT</button><div id="msg" class="text-xs font-bold mt-2 text-center"></div></div><div class="bg-white p-5 rounded-xl border lg:col-span-2"><h3 class="font-bold mb-3">All Distributors - Live from Supabase (D2, puja)</h3><div id="list">Loading...</div></div></div></div></div><script>var URL="https://hiyjowfyszctvhljsdgx.supabase.co";var KEY="sb_publishable_Qn7F0hoIeGD-q6nzO1HvzA_SFrFuNE2";var all=[];async function load(){let el=document.getElementById("list");try{let r=await fetch(URL+"/rest/v1/distributors?select=*",{headers:{"apikey":KEY,"Authorization":"Bearer "+KEY}});let d=await r.json();all=d;document.getElementById("cnt").innerText=d.length;let t=0;d.forEach(x=>t+=x.wallet_balance);document.getElementById("tw").innerText="Rs "+t;let h="";for(let x of d){h+=<div class="flex justify-between p-3 border rounded-lg mb-2"><div><b>${x.user_id}</b> - ${x.name} - <span class="text-green-600 font-bold">Rs ${x.wallet_balance}</span><br><small class="text-slate-500">Pass: ${x.password}</small></div><div><button onclick="qa('${x.user_id}')" class="bg-blue-600 text-white text-xs px-3 py-1 rounded">+500</button> <button onclick="del('${x.user_id}')" class="bg-red-100 text-red-600 text-xs px-3 py-1 rounded">Del</button></div></div>;}el.innerHTML=h;}catch(e){el.innerHTML=e.message;}}async function createUser(){let u=uid.value.trim(),p=pwd.value.trim(),n=nm.value.trim()||u,w=parseInt(wal.value)||500;let m=document.getElementById("msg");if(!u||!p){m.innerHTML="ID Pass de";return;}m.innerHTML="Creating...";let r=await fetch(URL+"/rest/v1/distributors",{method:"POST",headers:{"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":"application/json","Prefer":"return=representation"},body:JSON.stringify({user_id:u,password:p,name:n,wallet_balance:w})});if(r.ok){m.innerHTML="✅ Created!";uid.value="";pwd.value="";load();}else{m.innerHTML="❌ "+await r.text();}}async function del(id){if(!confirm(id+" Delete?"))return;await fetch(URL+"/rest/v1/distributors?user_id=eq."+id,{method:"DELETE",headers:{"apikey":KEY,"Authorization":"Bearer "+KEY}});load();}async function qa(id){let c=all.find(x=>x.user_id==id);let nw=c.wallet_balance+500;await fetch(URL+"/rest/v1/distributors?user_id=eq."+id,{method:"PATCH",headers:{"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":"application/json"},body:JSON.stringify({wallet_balance:nw})});load();}load();</script></body></html>
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PayQuickPay | Admin Console</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>body{font-family:Inter}</style>
+</head>
+<body class="bg-[#f6f8fb]">
+<div class="flex min-h-screen">
+<div class="w-[260px] bg-[#0B1220] text-white p-6 hidden md:flex flex-col">
+<div class="flex items-center gap-3"><div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center"><i class="fa-solid fa-bolt"></i></div><div><h2 class="font-extrabold text-[15px]">PAYQUICKPAY</h2><p class="text-[10px] text-slate-400 tracking-widest">ADMIN CONSOLE</p></div></div>
+<div class="mt-8 space-y-2 flex-1">
+<div class="bg-[#1a2744] p-3.5 rounded-xl flex items-center gap-3"><i class="fa-solid fa-chart-pie text-blue-400"></i><span class="text-sm font-semibold">Dashboard</span><span class="ml-auto text-[10px] bg-blue-600 px-2 py-0.5 rounded-full">LIVE</span></div>
+<div class="p-3.5 rounded-xl flex items-center gap-3 text-slate-400"><i class="fa-solid fa-users"></i><span class="text-sm">Distributors</span><span class="ml-auto text-xs" id="sideCnt">2</span></div>
+<div class="p-3.5 rounded-xl flex items-center gap-3 text-slate-400"><i class="fa-solid fa-shield-halved"></i><span class="text-sm">Secure System</span><span class="ml-auto w-2 h-2 bg-green-500 rounded-full animate-pulse"></span></div>
+</div>
+<div>
+<div class="bg-[#111c32] p-4 rounded-xl border border-slate-800 mb-3"><p class="text-[11px] text-slate-400">SYSTEM STATUS</p><p class="text-xs font-mono text-green-400 mt-1">● ONLINE<br>● SECURE<br>● CLOUD BACKUP</p></div>
+<button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl text-sm font-bold"><i class="fa-solid fa-right-from-bracket mr-2"></i>Logout</button>
+</div>
+</div>
+
+<div class="flex-1">
+<div class="bg-white border-b sticky top-0 z-10">
+<div class="px-6 py-4 flex justify-between items-center">
+<div><h1 class="font-bold text-[18px]">Distributor Management</h1><p class="text-xs text-slate-500">Manage all distributors • Real-time Dashboard</p></div>
+<div class="flex items-center gap-2">
+<button onclick="load()" class="bg-slate-900 text-white text-xs px-4 py-2.5 rounded-xl font-semibold"><i class="fa-solid fa-rotate mr-1"></i> Refresh</button>
+<button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-white text-xs px-4 py-2.5 rounded-xl font-semibold md:hidden"><i class="fa-solid fa-right-from-bracket"></i></button>
+<button onclick="logout()" class="hidden md:block bg-white border border-red-200 text-red-600 hover:bg-red-50 text-xs px-4 py-2.5 rounded-xl font-semibold"><i class="fa-solid fa-right-from-bracket mr-1"></i> Logout</button>
+</div>
+</div>
+</div>
+
+<div class="p-6">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+<div class="bg-white p-5 rounded-2xl border shadow-sm"><div class="flex justify-between"><div><p class="text-[11px] text-slate-500 font-semibold">TOTAL DISTRIBUTORS</p><h2 class="text-3xl font-extrabold mt-1" id="cnt">2</h2><p class="text-xs text-green-600 mt-1">Active Accounts</p></div><div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center"><i class="fa-solid fa-users text-blue-600"></i></div></div></div>
+<div class="bg-white p-5 rounded-2xl border shadow-sm"><div class="flex justify-between"><div><p class="text-[11px] text-slate-500 font-semibold">TOTAL WALLET BALANCE</p><h2 class="text-2xl font-extrabold mt-1" id="tw">Rs 1,000</h2><p class="text-xs text-slate-500 mt-1">Across all accounts</p></div><div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center"><i class="fa-solid fa-wallet text-green-600"></i></div></div></div>
+<div class="bg-white p-5 rounded-2xl border shadow-sm"><div class="flex justify-between"><div><p class="text-[11px] text-slate-500 font-semibold">SYSTEM</p><h2 class="text-sm font-bold mt-2 text-green-700">SECURE • ONLINE</h2><p class="text-[11px] text-slate-500 mt-1">Encrypted • Cloud Sync Enabled</p></div><div class="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center"><i class="fa-solid fa-shield-halved text-white"></i></div></div></div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-6">
+<div class="bg-white p-6 rounded-2xl border shadow-sm h-fit">
+<h3 class="font-bold text-sm">Create Distributor</h3><p class="text-xs text-slate-500 mb-4">Add new distributor to system</p>
+<label class="text-[11px] font-semibold text-slate-600">USER ID</label><input id="uid" placeholder="Ex: distributor03" class="w-full border p-3 rounded-xl text-sm mt-1 mb-3 outline-none focus:ring-2 focus:ring-blue-500">
+<label class="text-[11px] font-semibold text-slate-600">PASSWORD</label><input id="pwd" placeholder="Set password" class="w-full border p-3 rounded-xl text-sm mt-1 mb-3 outline-none focus:ring-2 focus:ring-blue-500">
+<label class="text-[11px] font-semibold text-slate-600">FULL NAME</label><input id="nm" placeholder="Ex: Rahul Kumar" class="w-full border p-3 rounded-xl text-sm mt-1 mb-3">
+<label class="text-[11px] font-semibold text-slate-600">WALLET</label><input id="wal" type="number" value="500" class="w-full border p-3 rounded-xl text-sm mt-1 mb-5">
+<button onclick="createUser()" class="w-full bg-[#0B1220] text-white py-3.5 rounded-xl font-bold text-sm"><i class="fa-solid fa-plus mr-2"></i>CREATE ACCOUNT</button>
+<p id="msg" class="text-xs font-bold mt-3 text-center"></p>
+</div>
+
+<div class="bg-white rounded-2xl border shadow-sm">
+<div class="p-6 border-b flex justify-between items-center">
+<div><h3 class="font-bold text-sm">Distributors</h3><p class="text-xs text-slate-500">All registered accounts</p></div>
+<div class="flex gap-2"><input id="search" oninput="search()" placeholder="Search..." class="border text-xs px-4 py-2 rounded-xl w-32 sm:w-40"><span class="bg-green-100 text-green-700 text-xs px-3 py-2 rounded-xl font-bold">● LIVE</span></div>
+</div>
+<div class="overflow-auto"><table class="w-full"><thead class="bg-slate-50 text-[11px] text-slate-500"><tr><th class="text-left p-4">DISTRIBUTOR</th><th class="text-left p-4">WALLET</th><th class="text-left p-4">STATUS</th><th class="text-right p-4">ACTIONS</th></tr></thead><tbody id="list"></tbody></table></div>
+<div class="p-4 border-t bg-slate-50 rounded-b-2xl flex justify-between text-[11px] text-slate-500"><span id="foot">Loading...</span><span>© PayQuickPay</span></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+const URL="https://hiyjowfyszctvhljsdgx.supabase.co";const KEY="sb_publishable_Qn7F0hoIeGD-q6nzO1HvzA_SFrFuNE2";let all=[];
+
+function logout(){
+ if(!confirm("Logout from Admin?")) return;
+ localStorage.clear();
+ sessionStorage.clear();
+ location.href="/index.html";
+}
+
+async function load(){
+ const el=document.getElementById("list"), foot=document.getElementById("foot");
+ el.innerHTML=<tr><td colspan="4" class="p-10 text-center">Loading...</td></tr>;
+ try{
+  const res=await fetch(URL+"/rest/v1/distributors?select=*&order=user_id.desc",{headers:{"apikey":KEY,"Authorization":"Bearer "+KEY}});
+  const data=await res.json(); all=data;
+  document.getElementById("cnt").innerText=data.length; document.getElementById("sideCnt").innerText=data.length;
+  let total=0; data.forEach(d=>total+=d.wallet_balance||0); document.getElementById("tw").innerText="Rs "+total.toLocaleString("en-IN");
+  foot.innerText=data.length+" accounts • Rs "+total+" total • "+new Date().toLocaleTimeString();
+  let html=""; data.forEach(d=>{
+   html+=<tr class="border-b hover:bg-slate-50"><td class="p-4"><div class="flex items-center gap-3"><div class="w-9 h-9 bg-slate-900 text-white rounded-full flex items-center justify-center font-bold text-xs">${d.user_id.charAt(0).toUpperCase()}</div><div><p class="font-bold">${d.user_id}</p><p class="text-xs text-slate-500">${d.name||"-"}</p></div></div></td><td class="p-4"><span class="bg-green-50 text-green-700 border px-3 py-1 rounded-full font-bold text-xs">Rs ${d.wallet_balance}</span><p class="text-[11px] text-slate-400 mt-1">Pass: ${d.password}</p></td><td class="p-4"><span class="bg-green-100 text-green-700 text-[11px] px-2 py-1 rounded-full font-bold">● ACTIVE</span></td><td class="p-4 text-right"><button onclick="add500('${d.user_id}')" class="bg-blue-600 text-white text-xs px-3 py-2 rounded-lg">+ Rs 500</button><button onclick="delUser('${d.user_id}')" class="bg-white border text-xs px-3 py-2 rounded-lg ml-1"><i class="fa-solid fa-trash"></i></button></td></tr>;
+  });
+  el.innerHTML=html||<tr><td colspan="4" class="p-8 text-center text-slate-400">No distributors</td></tr>;
+ }catch(e){el.innerHTML=<tr><td colspan="4" class="p-10 text-center text-red-500">${e.message}</td></tr>;}
+}
+function search(){let q=document.getElementById("search").value.toLowerCase();let f=all.filter(d=>d.user_id.toLowerCase().includes(q)||(d.name||"").toLowerCase().includes(q));let el=document.getElementById("list");let html="";f.forEach(d=>{html+=<tr class="border-b"><td class="p-4 font-bold">${d.user_id}</td><td class="p-4">Rs ${d.wallet_balance}</td><td class="p-4">ACTIVE</td><td class="p-4 text-right"><button onclick="add500('${d.user_id}')" class="bg-blue-600 text-white text-xs px-3 py-2 rounded-lg">+500</button></td></tr>;});el.innerHTML=html||<tr><td colspan="4" class="p-8 text-center">No match</td></tr>;}
+async function createUser(){let u=uid.value.trim(),p=pwd.value.trim(),n=nm.value.trim()||u,w=parseInt(wal.value)||500,m=document.getElementById("msg");if(!u||!p){m.innerText="❌ ID & Password required";m.className="text-xs font-bold mt-3 text-center text-red-600";return;}m.innerText="⏳ Creating...";m.className="text-xs font-bold mt-3 text-center text-slate-600";const res=await fetch(URL+"/rest/v1/distributors",{method:"POST",headers:{"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":"application/json"},body:JSON.stringify({user_id:u,password:p,name:n,wallet_balance:w})});if(res.ok){m.innerText="✅ "+u+" created!";m.className="text-xs font-bold mt-3 text-center text-green-600";uid.value="";pwd.value="";nm.value="";load();}else{m.innerText="❌ "+await res.text();m.className="text-xs font-bold mt-3 text-center text-red-600";}}
+async function delUser(id){if(!confirm(id+" delete?"))return;await fetch(URL+"/rest/v1/distributors?user_id=eq."+id,{method:"DELETE",headers:{"apikey":KEY,"Authorization":"Bearer "+KEY}});load();}
+async function add500(id){let cur=all.find(x=>x.user_id==id);let nw=(cur.wallet_balance||0)+500;await fetch(URL+"/rest/v1/distributors?user_id=eq."+id,{method:"PATCH",headers:{"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":"application/json"},body:JSON.stringify({wallet_balance:nw})});load();}
+load();
+</script>
+</body></html>
