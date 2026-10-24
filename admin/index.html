@@ -1,29 +1,28 @@
 <!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ADMIN - PAYQUICKPAY</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
-<style>body{margin:0;background:#020617;color:#fff;font-family:Arial;padding:15px}.card{background:#0f172a;padding:18px;border-radius:15px;max-width:500px;margin:15px auto;border:1px solid #1e293b}input{width:100%;padding:13px;margin:6px 0;background:#1e293b;border:1px solid #334155;color:#fff;border-radius:10px;box-sizing:border-box}button{width:100%;padding:13px;background:#22c55e;color:#000;border:none;border-radius:10px;font-weight:900;cursor:pointer}.item{background:#1e293b;padding:10px;border-radius:8px;margin-top:6px}</style>
+<style>body{margin:0;background:#020617;color:#fff;font-family:Arial;padding:15px}.card{background:#0f172a;padding:18px;border-radius:15px;max-width:500px;margin:15px auto;border:1px solid #1e293b}input{width:100%;padding:13px;margin:6px 0;background:#1e293b;border:1px solid #334155;color:#fff;border-radius:10px;box-sizing:border-box}button{width:100%;padding:13px;background:#22c55e;color:#000;border:none;border-radius:10px;font-weight:900;cursor:pointer}.item{background:#1e293b;padding:10px;border-radius:8px;margin-top:6px;display:flex;justify-content:space-between;align-items:center}</style>
 </head><body>
-<div class="card"><h3>🚀 CREATE DISTRIBUTOR</h3><input id="uid" placeholder="User ID"><input id="pwd" placeholder="Password"><input id="nm" placeholder="Name"><input id="wal" value="500" type="number"><button onclick="createUser()">CREATE NOW</button><div id="msg" style="margin-top:10px;text-align:center;font-weight:bold"></div></div>
-<div class="card"><h3>All - <span id="cnt">0</span></h3><div id="list">Loading...</div><button onclick="load()" style="background:#334155;color:#fff;margin-top:10px">🔄 Refresh</button><div id="debug" style="margin-top:10px;font-size:11px;color:#94a3b8"></div></div>
+<div class="card"><h3 style="margin-top:0">🚀 CREATE DISTRIBUTOR - MUMBAI LIVE</h3><input id="uid" placeholder="User ID"><input id="pwd" placeholder="Password"><input id="nm" placeholder="Name"><input id="wal" value="500" type="number"><button onclick="createUser()">CREATE NOW</button><div id="msg" style="margin-top:10px;text-align:center;font-weight:bold"></div></div>
+<div class="card"><h3>All Distributors - <span id="cnt">0</span></h3><div id="list">Loading Mumbai...</div><button onclick="load()" style="background:#334155;color:#fff;margin-top:10px">🔄 Refresh</button><div id="debug" style="margin-top:10px;font-size:11px;color:#22c55e"></div></div>
 <script>
-var _supabase = supabase.createClient("https://mojdysebckbodadjctj.supabase.co","sb_publishable_D35DfvBe5XtgITTnKLWSwg_R0Qqsday");
+var _supabase = supabase.createClient("https://hiyjowfyszctvhljsdgx.supabase.co","sb_publishable_Qn7F0hoIeGD-q6nzO1HvzA_SFrFuNE2");
 async function load(){
- let el=document.getElementById("list"); let dbg=document.getElementById("debug");
- el.innerHTML="Loading from Supabase..."; dbg.innerHTML="Connecting to Tokyo...";
+ let el=document.getElementById("list"); let dbg=document.getElementById("debug"); el.innerHTML="Loading from Mumbai...";
  try{
   const {data,error}=await _supabase.from("distributors").select("*").order("user_id",{ascending:false});
-  if(error){el.innerHTML="Error: "+error.message; dbg.innerHTML=JSON.stringify(error); return;}
+  if(error){el.innerHTML="Error: "+error.message; return;}
   document.getElementById("cnt").innerText=data.length;
-  let h=""; for(let i=0;i<data.length;i++){h+="<div class=item><b>"+data[i].user_id+"</b> - "+data[i].name+" - Rs "+data[i].wallet_balance+"</div>";}
-  el.innerHTML=h||"No data"; dbg.innerHTML="✅ Connected! Found "+data.length+" distributors";
- }catch(e){el.innerHTML="Fetch failed: "+e.message; dbg.innerHTML="Tip: Phone Mobile Data re try kara - WiFi block karuchi";}
+  let h=""; for(let i=0;i<data.length;i++){h+="<div class=item><span><b>"+data[i].user_id+"</b> - "+data[i].name+"</span><span>Rs "+data[i].wallet_balance+"</span></div>";}
+  el.innerHTML=h||"No data"; dbg.innerHTML="✅ MUMBAI Connected! "+data.length+" found - No Block!";
+ }catch(e){el.innerHTML="Failed: "+e.message;}
 }
 async function createUser(){
  let u=document.getElementById("uid").value.trim(), p=document.getElementById("pwd").value.trim(), n=document.getElementById("nm").value.trim()||u, w=parseInt(document.getElementById("wal").value)||500;
  let m=document.getElementById("msg"); if(!u||!p){m.innerHTML="ID Pass de"; return;} m.innerHTML="Creating...";
  try{
   const {data,error}=await _supabase.from("distributors").insert([{user_id:u,password:p,name:n,wallet_balance:w}]).select();
-  if(error){m.innerHTML="❌ "+error.message;} else{m.innerHTML="✅ "+u+" Created!"; load(); document.getElementById("uid").value="";}
- }catch(e){m.innerHTML="❌ "+e.message+" - Mobile Data re try kara";}
+  if(error){m.innerHTML="❌ "+error.message;} else{m.innerHTML="✅ "+u+" Created in Mumbai!"; load();}
+ }catch(e){m.innerHTML="❌ "+e.message;}
 }
 load();
 </script></body></html>
