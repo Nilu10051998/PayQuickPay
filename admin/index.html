@@ -1,98 +1,108 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PayQuickPay | Admin Console</title>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PAYQUICKPAY - Admin Console</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-<style>body{font-family:Inter}</style>
 </head>
-<body class="bg-[#f6f8fb]">
-<div class="flex min-h-screen">
-<div class="w-[260px] bg-[#0B1220] text-white p-6 hidden md:flex flex-col">
-<div class="flex items-center gap-3"><div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center"><i class="fa-solid fa-bolt"></i></div><div><h2 class="font-extrabold text-[15px]">PAYQUICKPAY</h2><p class="text-[10px] text-slate-400 tracking-widest">ADMIN CONSOLE</p></div></div>
-<div class="mt-8 space-y-2 flex-1">
-<div class="bg-[#1a2744] p-3.5 rounded-xl flex items-center gap-3"><i class="fa-solid fa-chart-pie text-blue-400"></i><span class="text-sm font-semibold">Dashboard</span><span class="ml-auto text-[10px] bg-blue-600 px-2 py-0.5 rounded-full">LIVE</span></div>
-<div class="p-3.5 rounded-xl flex items-center gap-3 text-slate-400"><i class="fa-solid fa-users"></i><span class="text-sm">Distributors</span><span class="ml-auto text-xs" id="sideCnt">2</span></div>
-<div class="p-3.5 rounded-xl flex items-center gap-3 text-slate-400"><i class="fa-solid fa-shield-halved"></i><span class="text-sm">Secure System</span><span class="ml-auto w-2 h-2 bg-green-500 rounded-full animate-pulse"></span></div>
-</div>
-<div>
-<div class="bg-[#111c32] p-4 rounded-xl border border-slate-800 mb-3"><p class="text-[11px] text-slate-400">SYSTEM STATUS</p><p class="text-xs font-mono text-green-400 mt-1">● ONLINE<br>● SECURE<br>● CLOUD BACKUP</p></div>
-<button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl text-sm font-bold"><i class="fa-solid fa-right-from-bracket mr-2"></i>Logout</button>
+<body class="bg-[#F5F7FB] min-h-screen">
+<!-- TOP BAR - SINGLE LOGOUT ONLY -->
+<div class="bg-white p-4 flex justify-between items-center shadow sticky top-0 z-10">
+<h1 class="font-extrabold text-sm tracking-wide">Distributor Management</h1>
+<div class="flex gap-2">
+<button onclick="loadData()" class="bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-lg text-xs font-bold"><i class="fa-solid fa-rotate mr-1"></i> Refresh</button>
+<button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-xs font-bold">Logout</button>
 </div>
 </div>
 
-<div class="flex-1">
-<div class="bg-white border-b sticky top-0 z-10">
-<div class="px-6 py-4 flex justify-between items-center">
-<div><h1 class="font-bold text-[18px]">Distributor Management</h1><p class="text-xs text-slate-500">Manage all distributors • Real-time Dashboard</p></div>
-<div class="flex items-center gap-2">
-<button onclick="load()" class="bg-slate-900 text-white text-xs px-4 py-2.5 rounded-xl font-semibold"><i class="fa-solid fa-rotate mr-1"></i> Refresh</button>
-<button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-white text-xs px-4 py-2.5 rounded-xl font-semibold md:hidden"><i class="fa-solid fa-right-from-bracket"></i></button>
-<button onclick="logout()" class="hidden md:block bg-white border border-red-200 text-red-600 hover:bg-red-50 text-xs px-4 py-2.5 rounded-xl font-semibold"><i class="fa-solid fa-right-from-bracket mr-1"></i> Logout</button>
-</div>
-</div>
+<!-- CARDS -->
+<div class="p-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+<div class="bg-white p-4 rounded-xl border"><p class="text-[10px] text-slate-500 font-bold tracking-widest">TOTAL DISTRIBUTORS</p><h2 id="totalD" class="text-2xl font-extrabold mt-1">--</h2></div>
+<div class="bg-white p-4 rounded-xl border"><p class="text-[10px] text-slate-500 font-bold tracking-widest">TOTAL WALLET BALANCE</p><h2 id="totalW" class="text-2xl font-extrabold mt-1">--</h2></div>
+<div class="bg-white p-4 rounded-xl border"><p class="text-[10px] text-slate-500 font-bold tracking-widest">SYSTEM</p><h2 class="text-sm font-bold mt-1 text-green-600"><i class="fa-solid fa-circle text-[8px] mr-1"></i> SECURE • ONLINE</h2></div>
 </div>
 
-<div class="p-6">
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-<div class="bg-white p-5 rounded-2xl border shadow-sm"><div class="flex justify-between"><div><p class="text-[11px] text-slate-500 font-semibold">TOTAL DISTRIBUTORS</p><h2 class="text-3xl font-extrabold mt-1" id="cnt">2</h2><p class="text-xs text-green-600 mt-1">Active Accounts</p></div><div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center"><i class="fa-solid fa-users text-blue-600"></i></div></div></div>
-<div class="bg-white p-5 rounded-2xl border shadow-sm"><div class="flex justify-between"><div><p class="text-[11px] text-slate-500 font-semibold">TOTAL WALLET BALANCE</p><h2 class="text-2xl font-extrabold mt-1" id="tw">Rs 1,000</h2><p class="text-xs text-slate-500 mt-1">Across all accounts</p></div><div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center"><i class="fa-solid fa-wallet text-green-600"></i></div></div></div>
-<div class="bg-white p-5 rounded-2xl border shadow-sm"><div class="flex justify-between"><div><p class="text-[11px] text-slate-500 font-semibold">SYSTEM</p><h2 class="text-sm font-bold mt-2 text-green-700">SECURE • ONLINE</h2><p class="text-[11px] text-slate-500 mt-1">Encrypted • Cloud Sync Enabled</p></div><div class="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center"><i class="fa-solid fa-shield-halved text-white"></i></div></div></div>
+<div class="p-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
+<!-- CREATE -->
+<div class="bg-white p-6 rounded-xl border h-fit">
+<h3 class="font-bold text-sm mb-1">Create Distributor</h3><p class="text-[11px] text-slate-500 mb-4">Create new distributor with full access</p>
+<input id="uid" placeholder="User ID Ex: distributor03" class="w-full border rounded-lg p-3 text-sm outline-none focus:border-slate-900">
+<input id="pwd" placeholder="Password" class="w-full border rounded-lg p-3 text-sm mt-3 outline-none focus:border-slate-900">
+<input id="name" placeholder="Full Name Ex: Rahul Kumar" class="w-full border rounded-lg p-3 text-sm mt-3 outline-none focus:border-slate-900">
+<input id="wallet" type="number" placeholder="Wallet Amount" value="0" class="w-full border rounded-lg p-3 text-sm mt-3 outline-none focus:border-slate-900">
+<button onclick="createDist()" class="w-full bg-slate-900 hover:bg-black text-white py-3 rounded-lg font-bold text-sm mt-5">Create Distributor</button>
+<p id="cmsg" class="text-xs text-center mt-3 font-bold"></p>
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-6">
-<div class="bg-white p-6 rounded-2xl border shadow-sm h-fit">
-<h3 class="font-bold text-sm">Create Distributor</h3><p class="text-xs text-slate-500 mb-4">Add new distributor to system</p>
-<label class="text-[11px] font-semibold text-slate-600">USER ID</label><input id="uid" placeholder="Ex: distributor03" class="w-full border p-3 rounded-xl text-sm mt-1 mb-3 outline-none focus:ring-2 focus:ring-blue-500">
-<label class="text-[11px] font-semibold text-slate-600">PASSWORD</label><input id="pwd" placeholder="Set password" class="w-full border p-3 rounded-xl text-sm mt-1 mb-3 outline-none focus:ring-2 focus:ring-blue-500">
-<label class="text-[11px] font-semibold text-slate-600">FULL NAME</label><input id="nm" placeholder="Ex: Rahul Kumar" class="w-full border p-3 rounded-xl text-sm mt-1 mb-3">
-<label class="text-[11px] font-semibold text-slate-600">WALLET</label><input id="wal" type="number" value="500" class="w-full border p-3 rounded-xl text-sm mt-1 mb-5">
-<button onclick="createUser()" class="w-full bg-[#0B1220] text-white py-3.5 rounded-xl font-bold text-sm"><i class="fa-solid fa-plus mr-2"></i>CREATE ACCOUNT</button>
-<p id="msg" class="text-xs font-bold mt-3 text-center"></p>
-</div>
-
-<div class="bg-white rounded-2xl border shadow-sm">
-<div class="p-6 border-b flex justify-between items-center">
-<div><h3 class="font-bold text-sm">Distributors</h3><p class="text-xs text-slate-500">All registered accounts</p></div>
-<div class="flex gap-2"><input id="search" oninput="search()" placeholder="Search..." class="border text-xs px-4 py-2 rounded-xl w-32 sm:w-40"><span class="bg-green-100 text-green-700 text-xs px-3 py-2 rounded-xl font-bold">● LIVE</span></div>
-</div>
-<div class="overflow-auto"><table class="w-full"><thead class="bg-slate-50 text-[11px] text-slate-500"><tr><th class="text-left p-4">DISTRIBUTOR</th><th class="text-left p-4">WALLET</th><th class="text-left p-4">STATUS</th><th class="text-right p-4">ACTIONS</th></tr></thead><tbody id="list"></tbody></table></div>
-<div class="p-4 border-t bg-slate-50 rounded-b-2xl flex justify-between text-[11px] text-slate-500"><span id="foot">Loading...</span><span>© PayQuickPay</span></div>
-</div>
-</div>
+<!-- LIST -->
+<div class="lg:col-span-2 bg-white p-6 rounded-xl border">
+<h3 class="font-bold text-sm">Distributors</h3>
+<div class="mt-4 overflow-auto">
+<table class="w-full text-sm">
+<thead><tr class="text-[10px] text-slate-500 border-b"><th class="text-left py-3">DISTRIBUTOR</th><th class="text-left">WALLET</th><th class="text-left">STATUS</th><th class="text-right">ACTIONS</th></tr></thead>
+<tbody id="list"><tr><td colspan="4" class="py-10 text-center text-slate-400 text-xs">Loading distributors... Please wait</td></tr></tbody>
+</table>
 </div>
 </div>
 </div>
 
 <script>
-const URL="https://hiyjowfyszctvhljsdgx.supabase.co";const KEY="sb_publishable_Qn7F0hoIeGD-q6nzO1HvzA_SFrFuNE2";let all=[];
+const SUPA_URL="https://hiyjowfyszctvhljsdgx.supabase.co";
+const SUPA_KEY="sb_publishable_Qn7F0hoIeGD-q6nzO1HvzA_SFrFuNE2";
+const HEADERS={apikey:SUPA_KEY,Authorization:"Bearer "+SUPA_KEY,"Content-Type":"application/json"};
 
-function logout(){
- if(!confirm("Logout from Admin?")) return;
- localStorage.clear();
- sessionStorage.clear();
- location.href="/index.html";
-}
+if(!localStorage.getItem("admin")){location.href="/admin/login.html";}
+function logout(){localStorage.removeItem("admin");location.href="/admin/login.html";}
 
-async function load(){
- const el=document.getElementById("list"), foot=document.getElementById("foot");
- el.innerHTML=<tr><td colspan="4" class="p-10 text-center">Loading...</td></tr>;
+async function loadData(){
+ const tbody=document.getElementById("list");
+ tbody.innerHTML="<tr><td colspan=4 class='py-10 text-center text-slate-400 text-xs'><i class='fa-solid fa-spinner fa-spin'></i> Loading...</td></tr>";
  try{
-  const res=await fetch(URL+"/rest/v1/distributors?select=*&order=user_id.desc",{headers:{"apikey":KEY,"Authorization":"Bearer "+KEY}});
-  const data=await res.json(); all=data;
-  document.getElementById("cnt").innerText=data.length; document.getElementById("sideCnt").innerText=data.length;
-  let total=0; data.forEach(d=>total+=d.wallet_balance||0); document.getElementById("tw").innerText="Rs "+total.toLocaleString("en-IN");
-  foot.innerText=data.length+" accounts • Rs "+total+" total • "+new Date().toLocaleTimeString();
-  let html=""; data.forEach(d=>{
-   html+=<tr class="border-b hover:bg-slate-50"><td class="p-4"><div class="flex items-center gap-3"><div class="w-9 h-9 bg-slate-900 text-white rounded-full flex items-center justify-center font-bold text-xs">${d.user_id.charAt(0).toUpperCase()}</div><div><p class="font-bold">${d.user_id}</p><p class="text-xs text-slate-500">${d.name||"-"}</p></div></div></td><td class="p-4"><span class="bg-green-50 text-green-700 border px-3 py-1 rounded-full font-bold text-xs">Rs ${d.wallet_balance}</span><p class="text-[11px] text-slate-400 mt-1">Pass: ${d.password}</p></td><td class="p-4"><span class="bg-green-100 text-green-700 text-[11px] px-2 py-1 rounded-full font-bold">● ACTIVE</span></td><td class="p-4 text-right"><button onclick="add500('${d.user_id}')" class="bg-blue-600 text-white text-xs px-3 py-2 rounded-lg">+ Rs 500</button><button onclick="delUser('${d.user_id}')" class="bg-white border text-xs px-3 py-2 rounded-lg ml-1"><i class="fa-solid fa-trash"></i></button></td></tr>;
+  let res=await fetch(SUPA_URL+"/rest/v1/distributors?select=*&order=user_id.asc",{headers:HEADERS});
+  let txt=await res.text();
+  let data;
+  try{data=JSON.parse(txt);}catch{data=[];}
+
+  if(!res.ok){
+    tbody.innerHTML=<tr><td colspan=4 class='py-6 text-center'><b class='text-red-600 text-xs'>API Error ${res.status}</b><br><div class='text-[10px] bg-red-50 p-2 mt-2 rounded text-left'>${txt.slice(0,400)}</div><br><span class='text-[11px]'>Supabase -> SQL Editor -> RUN: ALTER TABLE distributors DISABLE ROW LEVEL SECURITY;</span></td></tr>;
+    return;
+  }
+  if(!Array.isArray(data) || data.length===0){
+    document.getElementById("totalD").innerText="0";
+    document.getElementById("totalW").innerText="Rs 0";
+    tbody.innerHTML="<tr><td colspan=4 class='py-10 text-center text-slate-500 text-xs'>No distributors found. Create one on left side.</td></tr>";
+    return;
+  }
+  document.getElementById("totalD").innerText=data.length;
+  let total=0; data.forEach(d=>total+=Number(d.wallet||0));
+  document.getElementById("totalW").innerText="Rs "+total.toLocaleString();
+  let html="";
+  data.forEach(d=>{
+   html+=<tr class="border-t hover:bg-slate-50"><td class="py-4"><b class="text-slate-900">${d.user_id}</b><br><span class="text-[11px] text-slate-500">${d.full_name||'-'}</span></td><td class="font-bold">Rs ${Number(d.wallet||0).toLocaleString()}</td><td><span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-full text-[10px] font-bold">ACTIVE</span></td><td class="text-right"><button onclick="delDist('${d.user_id}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs font-bold">Delete</button></td></tr>;
   });
-  el.innerHTML=html||<tr><td colspan="4" class="p-8 text-center text-slate-400">No distributors</td></tr>;
- }catch(e){el.innerHTML=<tr><td colspan="4" class="p-10 text-center text-red-500">${e.message}</td></tr>;}
+  tbody.innerHTML=html;
+ }catch(e){
+  tbody.innerHTML=<tr><td colspan=4 class='py-6 text-center text-red-600 text-xs'>Network Error: ${e.message}<br>Internet check kara</td></tr>;
+ }
 }
-function search(){let q=document.getElementById("search").value.toLowerCase();let f=all.filter(d=>d.user_id.toLowerCase().includes(q)||(d.name||"").toLowerCase().includes(q));let el=document.getElementById("list");let html="";f.forEach(d=>{html+=<tr class="border-b"><td class="p-4 font-bold">${d.user_id}</td><td class="p-4">Rs ${d.wallet_balance}</td><td class="p-4">ACTIVE</td><td class="p-4 text-right"><button onclick="add500('${d.user_id}')" class="bg-blue-600 text-white text-xs px-3 py-2 rounded-lg">+500</button></td></tr>;});el.innerHTML=html||<tr><td colspan="4" class="p-8 text-center">No match</td></tr>;}
-async function createUser(){let u=uid.value.trim(),p=pwd.value.trim(),n=nm.value.trim()||u,w=parseInt(wal.value)||500,m=document.getElementById("msg");if(!u||!p){m.innerText="❌ ID & Password required";m.className="text-xs font-bold mt-3 text-center text-red-600";return;}m.innerText="⏳ Creating...";m.className="text-xs font-bold mt-3 text-center text-slate-600";const res=await fetch(URL+"/rest/v1/distributors",{method:"POST",headers:{"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":"application/json"},body:JSON.stringify({user_id:u,password:p,name:n,wallet_balance:w})});if(res.ok){m.innerText="✅ "+u+" created!";m.className="text-xs font-bold mt-3 text-center text-green-600";uid.value="";pwd.value="";nm.value="";load();}else{m.innerText="❌ "+await res.text();m.className="text-xs font-bold mt-3 text-center text-red-600";}}
-async function delUser(id){if(!confirm(id+" delete?"))return;await fetch(URL+"/rest/v1/distributors?user_id=eq."+id,{method:"DELETE",headers:{"apikey":KEY,"Authorization":"Bearer "+KEY}});load();}
-async function add500(id){let cur=all.find(x=>x.user_id==id);let nw=(cur.wallet_balance||0)+500;await fetch(URL+"/rest/v1/distributors?user_id=eq."+id,{method:"PATCH",headers:{"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":"application/json"},body:JSON.stringify({wallet_balance:nw})});load();}
-load();
+
+async function createDist(){
+ let u=document.getElementById("uid").value.trim(), p=document.getElementById("pwd").value.trim(), n=document.getElementById("name").value.trim(), w=document.getElementById("wallet").value||0;
+ let msg=document.getElementById("cmsg");
+ if(!u||!p){msg.className="text-xs text-center mt-3 font-bold text-red-600"; msg.innerText="❌ User ID & Password darkar"; return;}
+ msg.className="text-xs text-center mt-3 font-bold text-slate-500"; msg.innerText="Creating...";
+ try{
+  let res=await fetch(SUPA_URL+"/rest/v1/distributors",{method:"POST",headers:HEADERS,body:JSON.stringify({user_id:u,password:p,full_name:n,wallet:parseInt(w),status:"active"})});
+  let txt=await res.text();
+  if(res.ok){msg.className="text-xs text-center mt-3 font-bold text-green-600"; msg.innerText="✅ Distributor Created!"; uid.value=""; pwd.value=""; name.value=""; wallet.value="0"; loadData();}
+  else{msg.className="text-xs text-center mt-3 font-bold text-red-600"; msg.innerText="❌ "+txt.slice(0,150);}
+ }catch(e){msg.innerText="❌ "+e.message;}
+}
+
+async function delDist(id){
+ if(!confirm("Delete "+id+"?"))return;
+ await fetch(SUPA_URL+"/rest/v1/distributors?user_id=eq."+id,{method:"DELETE",headers:HEADERS});
+ loadData();
+}
+loadData();
 </script>
 </body></html>
