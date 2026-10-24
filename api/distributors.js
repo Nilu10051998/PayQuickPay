@@ -7,7 +7,7 @@ export default async function handler(req, res){
   const KEY="sb_publishable_D35DfvBe5XtgITTnKLWSwg_R0Qqsday";
   try{
     if(req.method==='GET'){
-      const r=await fetch(SUPA_URL+"?select=*&order=user_id",{headers:{apikey:KEY,Authorization:"Bearer "+KEY}});
+      const r=await fetch(SUPA_URL+"?select=*&order=user_id.desc",{headers:{apikey:KEY,Authorization:"Bearer "+KEY}});
       const d=await r.text(); return res.status(r.status).send(d);
     }
     if(req.method==='POST'){
