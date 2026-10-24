@@ -1,33 +1,69 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><title>ADMIN FIXED</title>
-<style>body{background:#020617;color:#fff;padding:20px;font-family:Arial}input,button{width:100%;padding:12px;margin:6px 0;border-radius:8px;box-sizing:border-box}button{background:#22c55e;font-weight:900}</style>
-</head><body>
-<h3>CREATE PUJA</h3>
-<input id="uid" value="puja">
-<input id="pwd" value="12345">
-<input id="nm" value="puja">
-<button onclick="createUser()">CREATE</button>
-<div id="msg"></div>
-<div id="list" style="margin-top:20px;background:#1e293b;padding:10px;border-radius:10px"></div>
-<button onclick="load()" style="background:#334155;color:#fff">Refresh</button>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ADMIN - PAYQUICKPAY</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+body{margin:0;background:#020617;color:#fff;font-family:Arial;padding:15px}
+.card{background:#0f172a;padding:18px;border-radius:15px;margin-bottom:15px;border:1px solid #1e293b;max-width:500px;margin:15px auto}
+input{width:100%;padding:13px;margin:6px 0;background:#1e293b;border:1px solid #334155;color:#fff;border-radius:10px;box-sizing:border-box}
+button{width:100%;padding:14px;border:none;border-radius:10px;font-weight:900;font-size:15px;cursor:pointer}
+.btn-green{background:#22c55e;color:#000}
+.btn-dark{background:#334155;color:#fff;margin-top:10px}
+.item{background:#1e293b;padding:12px;border-radius:10px;margin-top:8px;display:flex;justify-content:space-between}
+</style>
+</head>
+<body>
+
+<div class="card">
+<h3 style="margin-top:0">🚀 CREATE DISTRIBUTOR</h3>
+<input id="uid" placeholder="User ID - ex: raja">
+<input id="pwd" placeholder="Password">
+<input id="nm" placeholder="Name">
+<input id="wal" placeholder="Wallet - 500" value="500" type="number">
+<button class="btn-green" onclick="createUser()">CREATE NOW</button>
+<div id="msg" style="margin-top:12px;font-weight:bold;text-align:center"></div>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">All Distributors - <span id="count">0</span></h3>
+<div id="list">Loading...</div>
+<button class="btn-dark" onclick="load()">🔄 Refresh</button>
+</div>
+
 <script>
-var API="https://mojdysebckbodadjctj.supabase.co/rest/v1/distributors";
-var KEY="sb_publishable_D35DfvBe5XtgITTnKLWSwg_R0Qqsday";
-function load(){
- document.getElementById("list").innerHTML="Loading...";
- fetch(API+"?select=*",{headers:{apikey:KEY,Authorization:"Bearer "+KEY}})
- .then(function(r){return r.text();})
- .then(function(t){document.getElementById("list").innerText=t;})
- .catch(function(e){document.getElementById("list").innerText="Error: "+e.message;});
+var supa = supabase.createClient("https://mojdysebckbodadjctj.supabase.co","sb_publishable_D35DfvBe5XtgITTnKLWSwg_R0Qqsday");
+
+async function load(){
+ var el=document.getElementById("list");
+ el.innerHTML="Loading...";
+ var {data,error}=await supa.from("distributors").select("*").order("user_id");
+ if(error){el.innerHTML="❌ Error: "+error.message; return;}
+ document.getElementById("count").innerText=data.length;
+ if(data.length==0){el.innerHTML="No data"; return;}
+ var html="";
+ for(var i=0;i<data.length;i++){
+  var d=data[i];
+  html+='<div class=item><div><b>'+d.user_id+'</b><br><small>'+d.name+' | Rs '+d.wallet_balance+'</small></div><div>'+d.password+'</div></div>';
+ }
+ el.innerHTML=html;
 }
-function createUser(){
- var u=document.getElementById("uid").value;
- var p=document.getElementById("pwd").value;
- var n=document.getElementById("nm").value;
- document.getElementById("msg").innerText="Creating...";
- fetch(API,{method:"POST",headers:{apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json"},body:JSON.stringify({user_id:u,password:p,name:n,wallet_balance:500})})
- .then(function(r){return r.text().then(function(t){return r.status+" "+t;});})
- .then(function(x){document.getElementById("msg").innerText=x;load();})
- .catch(function(e){document.getElementById("msg").innerText=e.message;});
+
+async function createUser(){
+ var uid=document.getElementById("uid").value.trim();
+ var pwd=document.getElementById("pwd").value.trim();
+ var nm=document.getElementById("nm").value.trim()||uid;
+ var wal=parseInt(document.getElementById("wal").value)||500;
+ var msg=document.getElementById("msg");
+ if(!uid||!pwd){msg.innerHTML="❌ ID Password de"; return;}
+ msg.innerHTML="⏳ Creating...";
+ var {data,error}=await supa.from("distributors").insert([{user_id:uid,password:pwd,name:nm,wallet_balance:wal}]).select();
+ if(error){msg.innerHTML="❌ "+error.message; if(error.message.includes("duplicate")){msg.innerHTML="❌ ID already exists!";}}
+ else{msg.innerHTML="✅ "+uid+" Created!"; load(); document.getElementById("uid").value=""; document.getElementById("pwd").value=""; document.getElementById("nm").value="";}
 }
 load();
-</script></body></html>
+</script>
+</body>
+</html>
