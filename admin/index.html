@@ -1,20 +1,20 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ADMIN</title>
-<style>body{margin:0;background:#020617;color:#fff;font-family:Arial;padding:15px}.card{background:#0f172a;padding:18px;border-radius:15px;max-width:500px;margin:15px auto}input,button{width:100%;padding:13px;margin:6px 0;border-radius:10px;box-sizing:border-box}button{background:#22c55e;font-weight:900;border:none}</style>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ADMIN - ONLINE</title>
+<style>body{margin:0;background:#020617;color:#fff;font-family:Arial;padding:15px}.card{background:#0f172a;padding:18px;border-radius:15px;max-width:500px;margin:15px auto;border:1px solid #1e293b}input{width:100%;padding:13px;margin:6px 0;background:#1e293b;border:1px solid #334155;color:#fff;border-radius:10px;box-sizing:border-box}button{width:100%;padding:13px;background:#22c55e;color:#000;border:none;border-radius:10px;font-weight:900;cursor:pointer}.item{background:#1e293b;padding:10px;border-radius:8px;margin-top:6px}</style>
 </head><body>
-<div class="card"><h3>CREATE DISTRIBUTOR</h3><input id="uid" placeholder="User ID"><input id="pwd" placeholder="Password"><input id="nm" placeholder="Name"><input id="wal" value="500" type="number"><button onclick="createUser()">CREATE NOW</button><div id="msg" style="margin-top:10px;text-align:center"></div></div>
-<div class="card"><h3>All - <span id="cnt">0</span></h3><div id="list">Loading...</div><button onclick="load()" style="background:#334155;color:#fff;margin-top:10px">Refresh</button></div>
+<div class="card"><h3>🚀 CREATE DISTRIBUTOR - ONLINE</h3><input id="uid" placeholder="User ID"><input id="pwd" placeholder="Password"><input id="nm" placeholder="Name"><input id="wal" value="500" type="number"><button onclick="createUser()">CREATE NOW</button><div id="msg" style="margin-top:10px;text-align:center;font-weight:bold"></div></div>
+<div class="card"><h3>All Distributors - <span id="cnt">0</span></h3><div id="list">Loading via Vercel Proxy...</div><button onclick="load()" style="background:#334155;color:#fff;margin-top:10px">🔄 Refresh</button></div>
 <script>
 async function load(){
  let el=document.getElementById("list"); el.innerHTML="Loading via Proxy...";
  try{let r=await fetch("/api/distributors"); let t=await r.text(); let d=JSON.parse(t);
- document.getElementById("cnt").innerText=d.length; let h=""; for(let i=0;i<d.length;i++){h+=<div style='background:#1e293b;padding:10px;border-radius:8px;margin-top:6px'><b>${d[i].user_id}</b> - ${d[i].name} - Rs ${d[i].wallet_balance}</div>;} el.innerHTML=h||"No data";
- }catch(e){el.innerHTML="Error: "+e.message;}
+ document.getElementById("cnt").innerText=d.length; let h=""; for(let i=0;i<d.length;i++){h+="<div class=item><b>"+d[i].user_id+"</b> - "+d[i].name+" - Rs "+d[i].wallet_balance+" - Pass: "+d[i].password+"</div>";} el.innerHTML=h||"No data";
+ }catch(e){el.innerHTML="Error: "+e.message+"<br>"+e.stack;}
 }
 async function createUser(){
  let u=document.getElementById("uid").value.trim(), p=document.getElementById("pwd").value.trim(), n=document.getElementById("nm").value.trim()||u, w=parseInt(document.getElementById("wal").value)||500;
- let m=document.getElementById("msg"); if(!u||!p){m.innerHTML="ID Pass de"; return;} m.innerHTML="Creating...";
+ let m=document.getElementById("msg"); if(!u||!p){m.innerHTML="ID Pass de"; return;} m.innerHTML="Creating via Proxy...";
  try{let r=await fetch("/api/distributors",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({user_id:u,password:p,name:n,wallet_balance:w})}); let t=await r.text();
- if(r.ok){m.innerHTML="✅ "+u+" Created!"; load();} else{m.innerHTML="❌ "+t;}}catch(e){m.innerHTML="❌ "+e.message;}
+ if(r.ok){m.innerHTML="✅ "+u+" Created ONLINE!"; document.getElementById("uid").value=""; document.getElementById("pwd").value=""; load();} else{m.innerHTML="❌ "+t;}}catch(e){m.innerHTML="❌ "+e.message;}
 }
 load();
 </script></body></html>
