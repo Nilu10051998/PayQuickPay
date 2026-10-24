@@ -5,7 +5,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-[#F5F7FB] min-h-screen">
-<!-- TOP BAR - SINGLE LOGOUT ONLY -->
 <div class="bg-white p-4 flex justify-between items-center shadow sticky top-0 z-10">
 <h1 class="font-extrabold text-sm tracking-wide">Distributor Management</h1>
 <div class="flex gap-2">
@@ -14,7 +13,6 @@
 </div>
 </div>
 
-<!-- CARDS -->
 <div class="p-4 grid grid-cols-1 md:grid-cols-3 gap-3">
 <div class="bg-white p-4 rounded-xl border"><p class="text-[10px] text-slate-500 font-bold tracking-widest">TOTAL DISTRIBUTORS</p><h2 id="totalD" class="text-2xl font-extrabold mt-1">--</h2></div>
 <div class="bg-white p-4 rounded-xl border"><p class="text-[10px] text-slate-500 font-bold tracking-widest">TOTAL WALLET BALANCE</p><h2 id="totalW" class="text-2xl font-extrabold mt-1">--</h2></div>
@@ -22,7 +20,6 @@
 </div>
 
 <div class="p-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
-<!-- CREATE -->
 <div class="bg-white p-6 rounded-xl border h-fit">
 <h3 class="font-bold text-sm mb-1">Create Distributor</h3><p class="text-[11px] text-slate-500 mb-4">Create new distributor with full access</p>
 <input id="uid" placeholder="User ID Ex: distributor03" class="w-full border rounded-lg p-3 text-sm outline-none focus:border-slate-900">
@@ -33,13 +30,12 @@
 <p id="cmsg" class="text-xs text-center mt-3 font-bold"></p>
 </div>
 
-<!-- LIST -->
 <div class="lg:col-span-2 bg-white p-6 rounded-xl border">
 <h3 class="font-bold text-sm">Distributors</h3>
 <div class="mt-4 overflow-auto">
 <table class="w-full text-sm">
 <thead><tr class="text-[10px] text-slate-500 border-b"><th class="text-left py-3">DISTRIBUTOR</th><th class="text-left">WALLET</th><th class="text-left">STATUS</th><th class="text-right">ACTIONS</th></tr></thead>
-<tbody id="list"><tr><td colspan="4" class="py-10 text-center text-slate-400 text-xs">Loading distributors... Please wait</td></tr></tbody>
+<tbody id="list"><tr><td colspan="4" class="py-10 text-center text-slate-400 text-xs">Loading...</td></tr></tbody>
 </table>
 </div>
 </div>
@@ -47,7 +43,7 @@
 
 <script>
 const SUPA_URL="https://hiyjowfyszctvhljsdgx.supabase.co";
-const SUPA_KEY="sb_publishable_Qn7F0hoIeGD-q6nzO1HvzA_SFrFuNE2";
+const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpeWpvd2Z5c3pjdHZobGpzZGd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI4NTIwMTgsImV4cCI6MjEwODQyODAxOH0.0cuMZjNAQQSnLIlnuxlsr4yRTgsekLliD1Qxu_3awWw";
 const HEADERS={apikey:SUPA_KEY,Authorization:"Bearer "+SUPA_KEY,"Content-Type":"application/json"};
 
 if(!localStorage.getItem("admin")){location.href="/admin/login.html";}
@@ -55,21 +51,18 @@ function logout(){localStorage.removeItem("admin");location.href="/admin/login.h
 
 async function loadData(){
  const tbody=document.getElementById("list");
- tbody.innerHTML="<tr><td colspan=4 class='py-10 text-center text-slate-400 text-xs'><i class='fa-solid fa-spinner fa-spin'></i> Loading...</td></tr>";
+ tbody.innerHTML="<tr><td colspan=4 class='py-10 text-center text-slate-400 text-xs'><i class='fa-solid fa-spinner fa-spin'></i> Loading distributors...</td></tr>";
  try{
   let res=await fetch(SUPA_URL+"/rest/v1/distributors?select=*&order=user_id.asc",{headers:HEADERS});
-  let txt=await res.text();
-  let data;
-  try{data=JSON.parse(txt);}catch{data=[];}
-
+  let data=await res.json();
   if(!res.ok){
-    tbody.innerHTML=<tr><td colspan=4 class='py-6 text-center'><b class='text-red-600 text-xs'>API Error ${res.status}</b><br><div class='text-[10px] bg-red-50 p-2 mt-2 rounded text-left'>${txt.slice(0,400)}</div><br><span class='text-[11px]'>Supabase -> SQL Editor -> RUN: ALTER TABLE distributors DISABLE ROW LEVEL SECURITY;</span></td></tr>;
+    tbody.innerHTML=`<tr><td colspan=4 class='py-6 text-center text-red-600 text-xs'>❌ ${JSON.stringify(data).slice(0,300)}<br><br>Supabase SQL Editor re RUN kara:<br><b>ALTER TABLE distributors DISABLE ROW LEVEL SECURITY;</b></td></tr>`;
     return;
   }
-  if(!Array.isArray(data) || data.length===0){
+  if(!data || data.length===0){
     document.getElementById("totalD").innerText="0";
     document.getElementById("totalW").innerText="Rs 0";
-    tbody.innerHTML="<tr><td colspan=4 class='py-10 text-center text-slate-500 text-xs'>No distributors found. Create one on left side.</td></tr>";
+    tbody.innerHTML="<tr><td colspan=4 class='py-10 text-center text-slate-500 text-xs'>No distributors found. Create one.</td></tr>";
     return;
   }
   document.getElementById("totalD").innerText=data.length;
@@ -77,11 +70,11 @@ async function loadData(){
   document.getElementById("totalW").innerText="Rs "+total.toLocaleString();
   let html="";
   data.forEach(d=>{
-   html+=<tr class="border-t hover:bg-slate-50"><td class="py-4"><b class="text-slate-900">${d.user_id}</b><br><span class="text-[11px] text-slate-500">${d.full_name||'-'}</span></td><td class="font-bold">Rs ${Number(d.wallet||0).toLocaleString()}</td><td><span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-full text-[10px] font-bold">ACTIVE</span></td><td class="text-right"><button onclick="delDist('${d.user_id}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs font-bold">Delete</button></td></tr>;
+   html+=`<tr class="border-t hover:bg-slate-50"><td class="py-4"><b class="text-slate-900">${d.user_id}</b><br><span class="text-[11px] text-slate-500">${d.full_name||'-'}</span></td><td class="font-bold">Rs ${Number(d.wallet||0).toLocaleString()}</td><td><span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-full text-[10px] font-bold">ACTIVE</span></td><td class="text-right"><button onclick="delDist('${d.user_id}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs font-bold">Delete</button></td></tr>`;
   });
   tbody.innerHTML=html;
  }catch(e){
-  tbody.innerHTML=<tr><td colspan=4 class='py-6 text-center text-red-600 text-xs'>Network Error: ${e.message}<br>Internet check kara</td></tr>;
+  tbody.innerHTML=`<tr><td colspan=4 class='py-6 text-center text-red-600 text-xs'>Network Error: ${e.message}</td></tr>`;
  }
 }
 
@@ -90,19 +83,12 @@ async function createDist(){
  let msg=document.getElementById("cmsg");
  if(!u||!p){msg.className="text-xs text-center mt-3 font-bold text-red-600"; msg.innerText="❌ User ID & Password darkar"; return;}
  msg.className="text-xs text-center mt-3 font-bold text-slate-500"; msg.innerText="Creating...";
- try{
-  let res=await fetch(SUPA_URL+"/rest/v1/distributors",{method:"POST",headers:HEADERS,body:JSON.stringify({user_id:u,password:p,full_name:n,wallet:parseInt(w),status:"active"})});
-  let txt=await res.text();
-  if(res.ok){msg.className="text-xs text-center mt-3 font-bold text-green-600"; msg.innerText="✅ Distributor Created!"; uid.value=""; pwd.value=""; name.value=""; wallet.value="0"; loadData();}
-  else{msg.className="text-xs text-center mt-3 font-bold text-red-600"; msg.innerText="❌ "+txt.slice(0,150);}
- }catch(e){msg.innerText="❌ "+e.message;}
+ let res=await fetch(SUPA_URL+"/rest/v1/distributors",{method:"POST",headers:HEADERS,body:JSON.stringify({user_id:u,password:p,full_name:n,wallet:parseInt(w),status:"active"})});
+ let txt=await res.text();
+ if(res.ok){msg.className="text-xs text-center mt-3 font-bold text-green-600"; msg.innerText="✅ Created!"; uid.value=""; pwd.value=""; name.value=""; wallet.value="0"; loadData();}
+ else{msg.className="text-xs text-center mt-3 font-bold text-red-600"; msg.innerText="❌ "+txt.slice(0,200);}
 }
-
-async function delDist(id){
- if(!confirm("Delete "+id+"?"))return;
- await fetch(SUPA_URL+"/rest/v1/distributors?user_id=eq."+id,{method:"DELETE",headers:HEADERS});
- loadData();
-}
+async function delDist(id){ if(!confirm("Delete "+id+"?"))return; await fetch(SUPA_URL+"/rest/v1/distributors?user_id=eq."+id,{method:"DELETE",headers:HEADERS}); loadData(); }
 loadData();
 </script>
 </body></html>
