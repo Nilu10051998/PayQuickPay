@@ -1,10 +1,14 @@
 export default async function handler(req,res){
-  const {username="505942",pwd="605254"} = req.query;
+  res.setHeader('Access-Control-Allow-Origin','*');
+  const USERID="505942";
+  const PASS="605254";
+  const MOBILE="7908824917"; // TUMA REAL MOBILE
+  const PIN="605254";
   try{
-    const r = await fetch(https://business.aitopup.com/recharge/api/balance?username=${username}&pwd=${pwd}&format=json);
-    const data = await r.text();
-    res.status(200).json({balance:data});
-  }catch(e){
-    res.status(200).json({balance:"Error: "+e.message});
-  }
+    const msg=BAL$${PIN};
+    const url=https://business.aitopup.com/Admin/RechargeAPI.aspx?UserID=${USERID}&Password=${PASS}&MobileNo=${MOBILE}&Message=${encodeURIComponent(msg)};
+    const r=await fetch(url);
+    const t=await r.text();
+    return res.status(200).json({balance:t, live_url:url, mobile:MOBILE});
+  }catch(e){ return res.status(200).json({balance:"Error: "+e.message}); }
 }
