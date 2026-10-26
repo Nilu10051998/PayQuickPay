@@ -1,21 +1,73 @@
 <!DOCTYPE html>
 <html>
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin</title><script src="https://cdn.tailwindcss.com"></script></head>
-<body class="bg-slate-50 p-4">
-<div class="bg-white max-w-4xl mx-auto p-6 rounded-xl border">
-<h1 class="font-extrabold text-xl">PAYQUICKPAY ADMIN - Permanent</h1>
-<p class="text-sm">Logged: <span id="aid" class="font-bold text-green-600"></span> | <button onclick="logout()" class="bg-black text-white px-4 py-1 rounded-full text-xs">Logout</button></p>
-<div class="mt-6 bg-blue-50 p-4 rounded-xl border"><h3 class="font-bold">Create Distributor (Permanent)</h3><input id="dId" placeholder="ID ex: dist01" class="border p-3 w-full mt-2 rounded"><input id="dPass" placeholder="Pass" class="border p-3 w-full mt-2 rounded"><input id="dName" placeholder="Name" class="border p-3 w-full mt-2 rounded"><input id="dMobile" placeholder="Mobile" class="border p-3 w-full mt-2 rounded"><button onclick="createDist()" class="bg-black text-white w-full py-3 rounded mt-3">Create - Permanent Save</button><p id="msg" class="text-sm font-bold mt-2"></p></div>
-<div id="list" class="mt-6 bg-white border rounded-xl p-4"></div>
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin - PAYQUICKPAY Professional</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-[#F8FAFC] min-h-screen">
+<nav class="bg-white border-b sticky top-0 z-20">
+<div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+<div class="flex items-center gap-3"><div class="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center"><i class="fa fa-shield-halved text-white"></i></div>
+<div><h1 class="font-extrabold">PAYQUICKPAY ADMIN</h1><p class="text- font-bold text-slate-400">REAL APP • SECURE • PERMANENT</p></div></div>
+<button onclick="logout()" class="bg-slate-900 text-white px-5 py-2.5 rounded-full text-xs font-bold"><i class="fa fa-sign-out"></i> Logout</button>
 </div>
+</nav>
+
+<div class="max-w-7xl mx-auto p-6">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+<div class="bg-white p-5 rounded-2xl border shadow-sm"><p class="text- font-bold text-slate-400">TOTAL DISTRIBUTORS</p><h2 id="totalDist" class="text-3xl font-extrabold mt-1">0</h2></div>
+<div class="bg-slate-900 p-5 rounded-2xl text-white"><p class="text- font-bold text-slate-400">TOTAL WALLET</p><h2 id="totalWallet" class="text-3xl font-extrabold mt-1">Rs 0</h2></div>
+<div class="bg-green-600 p-5 rounded-2xl text-white"><p class="text- font-bold text-green-100">COMMISSION STRUCTURE</p><h2 class="text-xl font-extrabold mt-1">2% - 5% Active</h2></div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-6">
+<div class="bg-white rounded-2xl border p-6 shadow-sm h-fit">
+<h3 class="font-extrabold flex items-center gap-2"><i class="fa fa-user-plus bg-blue-600 text-white w-8 h-8 rounded-lg flex items-center justify-center text-xs"></i> Create Distributor</h3>
+<p class="text- font-bold text-slate-400 mt-1">Typical fields - Permanent Save</p>
+<input id="dId" placeholder="Distributor ID ex: dist01" class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl p-3.5 mt-4 text-sm font-bold focus:border-slate-900 focus:outline-none">
+<input id="dPass" type="password" placeholder="Password" class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl p-3.5 mt-3 text-sm font-bold">
+<input id="dName" placeholder="Full Name" class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl p-3.5 mt-3 text-sm font-bold">
+<input id="dMobile" placeholder="Mobile Number" class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl p-3.5 mt-3 text-sm font-bold">
+<input id="dWallet" type="number" placeholder="Initial Wallet ex: 10000" class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl p-3.5 mt-3 text-sm font-bold">
+<button onclick="createDist()" class="w-full bg-slate-900 hover:bg-black text-white py-4 rounded-xl font-bold mt-5">Create Distributor - Secure</button>
+<p id="msg" class="text-xs font-bold text-center mt-3"></p>
+<div class="mt-4 bg-green-50 border border-green-200 rounded-xl p-3 text- font-bold text-green-800"><i class="fa fa-shield-halved"></i> Permanent: Supabase re save heba - delete heba nahi</div>
+</div>
+
+<div class="bg-white rounded-2xl border shadow-sm overflow-hidden">
+<div class="p-6 border-b flex justify-between items-center"><div><h3 class="font-extrabold">All Distributors - Permanent Data</h3><p class="text- text-slate-400 font-bold">Real Recharge App Data</p></div><button onclick="load()" class="bg-slate-50 border w-9 h-9 rounded-full"><i class="fa fa-rotate text-xs"></i></button></div>
+<div class="overflow-auto"><table class="w-full text-sm"><thead class="bg-slate-50"><tr class="text- font-bold text-slate-500"><th class="text-left p-4">DISTRIBUTOR ID / PASS</th><th>NAME</th><th>MOBILE</th><th>WALLET</th></tr></thead><tbody id="list"></tbody></table></div>
+</div>
+</div>
+</div>
+
 <script>
-const URL="https://hiyjowfyszctvhljsdgx.supabase.co";const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.[STRIPPED 127 bytes].0cuMZjNAQQSnLIlnuxlsr4yRTgsekLliD1Qxu_3awWw";const H={apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json"};
-// FIX - No auto redirect to main page!
-let admin=localStorage.getItem('admin')||localStorage.getItem('role');
-document.getElementById('aid').innerText=admin||'admin (direct)';
-function logout(){localStorage.clear();location.href='index.html';}
-async function createDist(){let id=dId.value, pw=dPass.value;if(!id||!pw){msg.innerText='ID Pass darkar';return;}let r=await fetch(URL+"/rest/v1/distributors",{method:"POST",headers:H,body:JSON.stringify({user_id:id,password:pw,wallet:0})});if(r.ok){msg.innerText='✅ Saved Permanent: '+id;load();}else msg.innerText='ID exists or error';}
-async function load(){let r=await fetch(URL+"/rest/v1/distributors?select=*",{headers:H});let d=await r.json();list.innerHTML='<b>All Distributors (Permanent):</b><br>'+d.map(x=>x.user_id+' - '+x.password).join('<br>');}
+const SUPA_URL="https://hiyjowfyszctvhljsdgx.supabase.co";const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.[STRIPPED 127 bytes].0cuMZjNAQQSnLIlnuxlsr4yRTgsekLliD1Qxu_3awWw";const H={apikey:SUPA_KEY,Authorization:"Bearer "+SUPA_KEY,"Content-Type":"application/json"};
+let admin=localStorage.getItem('admin');
+document.getElementById('totalDist');
+function logout(){localStorage.clear();sessionStorage.clear();location.href='index.html';}
+async function load(){
+  let r=await fetch(SUPA_URL+"/rest/v1/distributors?select=*&order=user_id.asc",{headers:H});
+  let data=await r.json();
+  let html="";let total=0;
+  data.forEach(d=>{
+    total+=Number(d.wallet||0);
+    html+=`<tr class="border-t hover:bg-slate-50"><td class="p-4"><p class="font-extrabold">${d.user_id}</p><p class="text- text-slate-500 font-bold">Pass: ${d.password||''}</p><p class="text- text-green-600 font-bold">Permanent</p></td><td class="text-xs font-bold">${d.name||'-'}</td><td class="text-xs font-bold">${d.mobile||'-'}</td><td class="font-extrabold">Rs ${Number(d.wallet||0).toLocaleString()}</td></tr>`;
+  });
+  document.getElementById('list').innerHTML=html||"<tr><td colspan=4 class='p-8 text-center text-slate-400'>No distributors - Create one</td></tr>";
+  document.getElementById('totalDist').innerText=data.length;
+  document.getElementById('totalWallet').innerText='Rs '+total.toLocaleString();
+}
+async function createDist(){
+  let id=document.getElementById('dId').value.trim(),pw=document.getElementById('dPass').value.trim(),name=document.getElementById('dName').value.trim(),mob=document.getElementById('dMobile').value.trim(),wal=Number(document.getElementById('dWallet').value||0);
+  if(!id||!pw){document.getElementById('msg').innerText='ID Pass darkar';document.getElementById('msg').className='text-xs font-bold text-center mt-3 text-red-600';return;}
+  let body={user_id:id,password:pw,wallet:wal};if(name)body.name=name;if(mob)body.mobile=mob;
+  let res=await fetch(SUPA_URL+"/rest/v1/distributors",{method:"POST",headers:H,body:JSON.stringify(body)});
+  if(res.ok){document.getElementById('msg').innerText='✅ Permanent Saved! '+id+' - Now login in Distributor Panel (dist01/123)';document.getElementById('msg').className='text-xs font-bold text-center mt-3 text-green-600';document.getElementById('dId').value='';document.getElementById('dPass').value='';document.getElementById('dName').value='';document.getElementById('dMobile').value='';document.getElementById('dWallet').value='';load();}
+  else{let t=await res.text();document.getElementById('msg').innerText=t.includes('duplicate')?'ID already exists - Permanent':t.slice(0,120);document.getElementById('msg').className='text-xs font-bold text-center mt-3 text-red-600';}
+}
 load();
 </script>
 </body>
