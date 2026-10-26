@@ -1,0 +1,14 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Distributor</title><script src="https://cdn.tailwindcss.com"></script></head>
+<body class="bg-slate-50 p-4">
+<h1 class="font-bold">DISTRIBUTOR - PAYQUICKPAY</h1>
+<p>ID: <span id="dId"></span> | <button onclick="logout()" class="bg-black text-white px-4 py-2 rounded">Logout</button></p>
+<div class="bg-white p-4 rounded-xl mt-4 border"><h3>Create Retailer (Permanent)</h3><input id="retId" placeholder="Retailer ID" class="border p-2 w-full mt-2"><input id="retPass" placeholder="Password" class="border p-2 w-full mt-2"><button onclick="createRet()" class="bg-black text-white w-full py-2 mt-2 rounded">Create</button></div>
+<div id="retList" class="mt-4 bg-white p-4 rounded-xl border"></div>
+<script>
+const SUPA_URL="https://hiyjowfyszctvhljsdgx.supabase.co";const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.[STRIPPED 127 bytes].0cuMZjNAQQSnLIlnuxlsr4yRTgsekLliD1Qxu_3awWw";const H={apikey:SUPA_KEY,Authorization:"Bearer "+SUPA_KEY,"Content-Type":"application/json"};
+function getDid(){return localStorage.getItem("distributor");}function check(){let d=getDid();if(!d)location.href="../";document.getElementById("dId").innerText=d;}function logout(){localStorage.clear();location.href="../";}
+async function createRet(){let id=document.getElementById("retId").value, pw=document.getElementById("retPass").value, did=getDid();let res=await fetch(SUPA_URL+"/rest/v1/retailers",{method:"POST",headers:H,body:JSON.stringify({user_id:id,password:pw,distributor_id:did,wallet:0})});if(res.ok)alert("Retailer Created - Permanent");load();}
+async function load(){let did=getDid();let r=await fetch(SUPA_URL+"/rest/v1/retailers?distributor_id=eq."+did,{headers:H});let data=await r.json();document.getElementById("retList").innerHTML=data.map(d=>d.user_id).join("<br>");}
+check();load();
+</script>
+</body></html>
