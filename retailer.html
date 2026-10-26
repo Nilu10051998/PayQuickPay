@@ -3,24 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Retailer Panel - PAYQUICKPAY</title>
+<title>Retailer Panel - REAL A1TOPUP</title>
 <style>
-*{box-sizing:border-box}
-body{font-family:Arial;background:#f2f2f2;margin:0}
-nav{background:#0F172A;color:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
+*{box-sizing:border-box}body{font-family:Arial;background:#f2f2f2;margin:0}
+nav{background:#0F172A;color:#fff;padding:12px 20px;display:flex;justify-content:space-between}
 .box{max-width:1100px;margin:15px auto;padding:0 15px}
 .card{background:#fff;padding:15px;border-radius:10px;margin-bottom:15px;border:1px solid #ddd}
 input,select{width:100%;padding:10px;margin:5px 0;border:1px solid #ccc;border-radius:6px}
 button{width:100%;padding:10px;background:#0F172A;color:#fff;border:none;border-radius:6px;cursor:pointer;margin-top:5px}
 button.small{width:auto;padding:6px 12px;font-size:12px}
 table{width:100%;border-collapse:collapse;margin-top:10px}
-th,td{border:1px solid #ddd;padding:8px;text-align:left;font-size:12px}
+th,td{border:1px solid #ddd;padding:8px;text-align:left;font-size:11px}
 th{background:#f5f5f5}
 .stats{display:flex;gap:10px;flex-wrap:wrap}
-.stat{flex:1;min-width:140px;background:#fff;padding:12px;border-radius:8px;border:1px solid #ddd;text-align:center}
-.services{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
-.service{border:1px solid #ddd;padding:12px;border-radius:8px;text-align:center;cursor:pointer;background:#fff}
-.service:hover{background:#f0f7ff}
+.stat{flex:1;min-width:130px;background:#fff;padding:10px;border-radius:8px;border:1px solid #ddd;text-align:center}
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -28,50 +24,85 @@ th{background:#f5f5f5}
 const firebaseConfig={apiKey:"AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",authDomain:"payquickpay-487ef.firebaseapp.com",projectId:"payquickpay-487ef",storageBucket:"payquickpay-487ef.firebasestorage.app",messagingSenderId:"368108778411",appId:"1:368108778411:web:03dcbc47e46568d51b58ee"};
 firebase.initializeApp(firebaseConfig);
 const db=firebase.firestore();
+
+// A1TOPUP CONFIG -
+  const A1_CONFIG={
+  username:'505942', // 
+  pwd:'605254', // 
+  base:'https://business.a1topup.com/recharge/'
+};
+
+const OPERATOR_MAP={
+  '【entity-AIRTEL¦canonical_name=AIRTEL】':'A','【entity-JIO¦canonical_name=JIO】':'RC','【entity-VODAFONE¦canonical_name=VODAFONE】':'V','IDEA':'I','BSNL':'BT',
+  '【entity-AIRTEL¦canonical_name=AIRTEL】 DTH':'ATV','DISH TV':'DTV','TATA SKY':'TTV','VIDEOCON':'VTV','SUN DIRECT':'STV',
+  'ELECTRICITY TPCODL':'TPCODL','ELECTRICITY NESCO':'NESCO','ELECTRICITY SOUTHCO':'SOUTHCO'
+};
+
+const CIRCLE_MAP={'ODISHA':'23','WEST BENGAL':'2','BIHAR':'17','JHARKHAND':'22','KOLKATA':'6'};
 </script>
 </head>
 <body>
-<nav><div><b>PAYQUICKPAY - RETAILER</b><br><small id="retailerId"></small></div><div><button onclick="logout()" class="small" style="background:#fff;color:#000;width:auto">Logout</button></div></nav>
+<nav><div><b>PAYQUICKPAY - RETAILER - REAL A1TOPUP</b><br><small id="retailerId"></small></div><div><button onclick="logout()" class="small" style="background:#fff;color:#000;width:auto">Logout</button> <button onclick="checkBalance()" class="small" style="background:#fff;color:#000;width:auto">Check A1 Balance</button></div></nav>
 
 <div class="box">
 <div class="stats">
-<div class="stat"><b>Wallet</b><br><span id="wallet">Rs 0</span></div>
-<div class="stat"><b>Commission Earned</b><br><span id="commEarned">Rs 0</span></div>
-<div class="stat"><b>Total Recharge</b><br><span id="totalRecharge">0</span></div>
-<div class="stat"><b>Commission Structure</b><br><small>Mobile 2%<br>DTH 3%<br>Bill 1.5%<br>AEPS 0.5%</small></div>
+<div class="stat"><b>My Wallet</b><br><span id="wallet">Rs 0</span></div>
+<div class="stat"><b>A1Topup Balance</b><br><span id="a1balance">Check...</span></div>
+<div class="stat"><b>Commission</b><br><span id="commEarned">Rs 0</span></div>
+<div class="stat"><b>Today Recharge</b><br><span id="todayCount">0</span></div>
 </div>
 
 <div class="card">
-<h3>Recharge Services</h3>
-<div class="services">
-<div class="service" onclick="openService('MOBILE')"><b>📱 Mobile</b><br><small>2% Commission</small></div>
-<div class="service" onclick="openService('DTH')"><b>📺 DTH</b><br><small>3% Commission</small></div>
-<div class="service" onclick="openService('ELECTRICITY')"><b>💡 Electricity</b><br><small>1.5% Commission</small></div>
-<div class="service" onclick="openService('BROADBAND')"><b>🌐 Broadband</b><br><small>1.5% Commission</small></div>
-<div class="service" onclick="openService('GAS')"><b>⛽ Gas</b><br><small>1.5% Commission</small></div>
-<div class="service" onclick="openService('AEPS')"><b>💳 AEPS</b><br><small>0.5% Commission</small></div>
-</div>
-</div>
-
-<div class="card" id="rechargeCard" style="display:none">
-<h3 id="serviceTitle">Recharge</h3>
-<input id="customerNo" placeholder="Customer Number / Mobile Number">
-<input id="amount" type="number" placeholder="Amount">
-<input id="operator" placeholder="Operator (Optional)">
-<button onclick="doRecharge()">Recharge</button>
-<p id="rechargeMsg" style="text-align:center;font-size:12px"></p>
+<h3>Real Recharge - A1Topup API</h3>
+<select id="service" onchange="setOperator()">
+<option value="">Select Service</option>
+<option value="MOBILE">Mobile Recharge</option>
+<option value="DTH">DTH Recharge</option>
+<option value="ELECTRICITY">Electricity - TPCODL Odisha</option>
+<option value="ELECTRICITY">Electricity - NESCO Odisha</option>
+</select>
+<select id="operatorCode">
+<option value="">Operator Code - Auto</option>
+<option value="A">【entity-Airtel¦canonical_name=AIRTEL】 - A</option>
+<option value="RC">【entity-Jio¦canonical_name=JIO】 - RC</option>
+<option value="V">【entity-Vodafone¦canonical_name=VODAFONE】 - V</option>
+<option value="I">Idea - I</option>
+<option value="BT">BSNL TOPUP - BT</option>
+<option value="ATV">Airtel DTH - ATV</option>
+<option value="DTV">Dish TV - DTV</option>
+<option value="TTV">Tata Sky - TTV</option>
+<option value="TPCODL">TPCODL Odisha - TPCODL</option>
+<option value="NESCO">NESCO Odisha - NESCO</option>
+<option value="SOUTHCO">SOUTHCO Odisha - SOUTHCO</option>
+</select>
+<select id="circleCode">
+<option value="23">Odisha - 23</option>
+<option value="2">West Bengal - 2</option>
+<option value="17">Bihar - 17</option>
+<option value="6">Kolkata - 6</option>
+<option value="13">Andhra Pradesh - 13</option>
+</select>
+<input id="customerNo" placeholder="Mobile No / Customer ID - 10 Digit">
+<input id="amount" type="number" placeholder="Amount - Rs">
+<button onclick="doRealRecharge()" style="background:green">REAL RECHARGE - A1TOPUP</button>
+<p id="msg" style="text-align:center;font-size:12px;font-weight:bold"></p>
 </div>
 
 <div class="card">
-<h3>History <button onclick="loadHistory()" class="small" style="background:#eee;color:#000">Refresh</button></h3>
-<table><tr><th>Date</th><th>Service</th><th>Number</th><th>Amount</th><th>Commission</th><th>Debit</th><th>Status</th></tr><tbody id="history"></tbody></table>
+<h3>Recharge History - Real A1Topup</h3>
+<table><tr><th>Date</th><th>Service</th><th>Number</th><th>Amt</th><th>Operator ID</th><th>Status</th><th>Comm</th></tr><tbody id="history"></tbody></table>
 </div>
 </div>
 
 <script>
-let currentService='';
+let currentOrderId=null;
 function logout(){localStorage.removeItem('retailer');location.href='index.html';}
-function openService(s){currentService=s;document.getElementById('serviceTitle').innerText=s+' Recharge';document.getElementById('rechargeCard').style.display='block';document.getElementById('customerNo').value='';document.getElementById('amount').value='';document.getElementById('rechargeMsg').innerText='';}
+function setOperator(){
+  let s=document.getElementById('service').value;
+  if(s=='MOBILE')document.getElementById('operatorCode').value='RC';
+  else if(s=='DTH')document.getElementById('operatorCode').value='ATV';
+  else if(s=='ELECTRICITY')document.getElementById('operatorCode').value='TPCODL';
+}
 
 async function loadData(){
   let retailerId=localStorage.getItem('retailer');
@@ -81,74 +112,123 @@ async function loadData(){
     let snap=await db.collection('retailers').where('user_id','==',retailerId).get();
     let wallet=0; snap.forEach(doc=>{wallet=doc.data().wallet||0;});
     document.getElementById('wallet').innerText='Rs '+wallet;
-    localStorage.setItem('retailer_wallet',wallet);
   }catch(e){}
   loadHistory();
+  checkBalance();
 }
 
-async function getCommissionPercent(service){
+async function checkBalance(){
+  document.getElementById('a1balance').innerText='Checking...';
   try{
-    let doc=await db.collection('commission_setup').doc('setup').get();
-    if(doc.exists){
-      let s=doc.data();
-      if(service=='MOBILE') return s.mobile;
-      if(service=='DTH') return s.dth;
-      if(service=='ELECTRICITY'||service=='BROADBAND'||service=='GAS') return s.bill;
-      if(service=='AEPS') return s.aeps;
+    let url=`${A1_CONFIG.base}balance?username=${A1_CONFIG.username}&pwd=${A1_CONFIG.pwd}&format=json`;
+    let res=await fetch(url);
+    let data=await res.json();
+    // Response may be {balance:...} or text
+    if(typeof data==='object' && data.balance!==undefined){
+      document.getElementById('a1balance').innerText='Rs '+data.balance;
+    } else {
+      // Try text
+      let text=await res.text();
+      document.getElementById('a1balance').innerText=text.substring(0,30);
     }
-  }catch(e){}
-  let local=JSON.parse(localStorage.getItem('commission_setup')||'{"mobile":2,"dth":3,"bill":1.5,"aeps":0.5}');
-  if(service=='MOBILE') return local.mobile;
-  if(service=='DTH') return local.dth;
-  if(service=='ELECTRICITY'||service=='BROADBAND'||service=='GAS') return local.bill;
-  if(service=='AEPS') return local.aeps;
-  return 1;
+  }catch(e){
+    document.getElementById('a1balance').innerText='Error: '+e.message;
+  }
 }
 
-async function doRecharge(){
+async function doRealRecharge(){
   let retailerId=localStorage.getItem('retailer');
   let cust=document.getElementById('customerNo').value.trim();
   let amt=Number(document.getElementById('amount').value||0);
-  let oper=document.getElementById('operator').value.trim();
-  if(!cust||!amt){document.getElementById('rechargeMsg').innerText='Enter Number and Amount';return;}
+  let opCode=document.getElementById('operatorCode').value.trim();
+  let circle=document.getElementById('circleCode').value.trim();
+  let service=document.getElementById('service').value;
   
-  let percent=await getCommissionPercent(currentService);
-  let commission=(amt*percent/100);
-  let debit=amt-commission;
+  if(!cust||!amt||!opCode){document.getElementById('msg').innerText='Enter Number, Amount, Operator';return;}
+  
+  let orderId='PAY'+Date.now();
+  currentOrderId=orderId;
+  document.getElementById('msg').innerText='Processing Real Recharge A1Topup... OrderID: '+orderId;
+  document.getElementById('msg').style.color='blue';
   
   try{
+    // Check retailer wallet
     let snap=await db.collection('retailers').where('user_id','==',retailerId).get();
     let docId=null,wallet=0; snap.forEach(doc=>{docId=doc.id;wallet=doc.data().wallet||0;});
-    if(wallet<amt){document.getElementById('rechargeMsg').innerText='Low Balance: Rs '+wallet;document.getElementById('rechargeMsg').style.color='red';return;}
+    if(wallet<amt){document.getElementById('msg').innerText='Low Wallet: Rs '+wallet+' Need Rs '+amt;document.getElementById('msg').style.color='red';return;}
     
-    await db.collection('retailers').doc(docId).update({wallet:wallet-amt+commission});
+    // Real A1Topup API call
+    let apiUrl=`${A1_CONFIG.base}api?username=${A1_CONFIG.username}&pwd=${A1_CONFIG.pwd}&circlecode=${circle}&operatorcode=${opCode}&number=${cust}&amount=${amt}&orderid=${orderId}&format=json`;
     
-    let historyData={retailer_id:retailerId,service:currentService,customer_no:cust,amount:amt,commission_percent:percent,commission:commission.toFixed(2),debit:debit.toFixed(2),operator:oper,date:new Date().toLocaleString(),status:'Success'};
+    console.log('A1Topup URL:',apiUrl);
+    let res=await fetch(apiUrl);
+    let resultText=await res.text();
+    console.log('A1Topup Response:',resultText);
     
-    let localHistory=JSON.parse(localStorage.getItem('recharge_history')||'[]');
-    localHistory.push(historyData);
-    localStorage.setItem('recharge_history',JSON.stringify(localHistory));
+    let result;
+    try{result=JSON.parse(resultText);}catch(e){result={raw:resultText};}
     
-    try{await db.collection('recharge_history').add(historyData);}catch(e){}
+    // Parse response - CSV or JSON
+    let status='Failed',txid='',opid='';
+    if(result.status){
+      status=result.status;
+      txid=result.txid||'';
+      opid=result.opid||'';
+    } else if(result.raw){
+      // CSV: txid,status,opid,number,amount,orderid
+      let parts=result.raw.split(',');
+      if(parts.length>=6){
+        txid=parts[0];status=parts[1];opid=parts[2];
+      } else {
+        status=result.raw.includes('Success')?'Success':'Failed';
+      }
+    }
     
-    document.getElementById('rechargeMsg').innerText='Success: '+currentService+' Rs '+amt+' - Commission Rs '+commission.toFixed(2)+' - Wallet Rs '+(wallet-amt+commission).toFixed(2);
-    document.getElementById('rechargeMsg').style.color='green';
-    loadData();
-  }catch(e){document.getElementById('rechargeMsg').innerText=e.message;document.getElementById('rechargeMsg').style.color='red';}
+    if(status.toLowerCase().includes('success')){
+      // Commission
+      let percent=service=='MOBILE'?2:service=='DTH'?3:1.5;
+      let commission=(amt*percent/100);
+      await db.collection('retailers').doc(docId).update({wallet:wallet-amt+commission});
+      
+      let historyData={
+        retailer_id:retailerId,service:service,operator_code:opCode,circle_code:circle,
+        customer_no:cust,amount:amt,commission_percent:percent,commission:commission.toFixed(2),
+        debit:(amt-commission).toFixed(2),orderid:orderId,txid:txid,opid:opid,
+        status:'Success - Real A1Topup - TxID: '+txid+' OpID: '+opid,
+        date:new Date().toLocaleString(),real_api:true
+      };
+      
+      let localHistory=JSON.parse(localStorage.getItem('recharge_history')||'[]');
+      localHistory.push(historyData);
+      localStorage.setItem('recharge_history',JSON.stringify(localHistory));
+      try{await db.collection('recharge_history').add(historyData);}catch(e){}
+      
+      document.getElementById('msg').innerText='✅ REAL SUCCESS - A1Topup - TxID: '+txid+' OpID: '+opid+' OrderID: '+orderId+' Amount Rs '+amt+' Commission Rs '+commission.toFixed(2);
+      document.getElementById('msg').style.color='green';
+      loadData();
+    } else {
+      document.getElementById('msg').innerText='❌ FAILED - A1Topup - Status: '+status+' TxID: '+txid+' Raw: '+JSON.stringify(result).substring(0,200);
+      document.getElementById('msg').style.color='red';
+    }
+  }catch(e){
+    document.getElementById('msg').innerText='API Error: '+e.message;
+    document.getElementById('msg').style.color='red';
+  }
 }
 
 function loadHistory(){
   let retailerId=localStorage.getItem('retailer');
   let reports=JSON.parse(localStorage.getItem('recharge_history')||'[]');
   let myReports=reports.filter(r=>r.retailer_id==retailerId);
-  let total=0,earned=0; myReports.forEach(r=>{total++;earned+=Number(r.commission||0);});
-  document.getElementById('totalRecharge').innerText=total;
+  let total=0,earned=0; myReports.forEach(r=>{earned+=Number(r.commission||0);});
   document.getElementById('commEarned').innerText='Rs '+earned.toFixed(2);
+  document.getElementById('todayCount').innerText=myReports.length;
   let html=''; [...myReports].reverse().slice(0,30).forEach(r=>{
-    html+=`<tr><td><small>${r.date}</small></td><td>${r.service}</td><td>${r.customer_no}</td><td>Rs ${r.amount}</td><td>Rs ${r.commission} (${r.commission_percent}%)</td><td>Rs ${r.debit}</td><td>${r.status}</td></tr>`;
+    html+=`<tr><td><small>${r.date}</small></td><td>${r.service}<br>${r.operator_code}</td><td>${r.customer_no}</td><td>Rs ${r.amount}</td><td><small>${r.opid||''}<br>Tx:${r.txid||''}</small></td><td><small>${r.status}</small></td><td>Rs ${r.commission}</td></tr>`;
   });
   document.getElementById('history').innerHTML=html||'<tr><td colspan=7>No history</td></tr>';
 }
+
 loadData();
 </script>
 </body>
