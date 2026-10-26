@@ -1,14 +1,17 @@
 <!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Distributor</title><script src="https://cdn.tailwindcss.com"></script></head>
 <body class="bg-slate-50 p-4">
-<h1 class="font-bold">DISTRIBUTOR - PAYQUICKPAY</h1>
-<p>ID: <span id="dId"></span> | <button onclick="logout()" class="bg-black text-white px-4 py-2 rounded">Logout</button></p>
-<div class="bg-white p-4 rounded-xl mt-4 border"><h3>Create Retailer (Permanent)</h3><input id="retId" placeholder="Retailer ID" class="border p-2 w-full mt-2"><input id="retPass" placeholder="Password" class="border p-2 w-full mt-2"><button onclick="createRet()" class="bg-black text-white w-full py-2 mt-2 rounded">Create</button></div>
-<div id="retList" class="mt-4 bg-white p-4 rounded-xl border"></div>
+<div class="bg-white max-w-3xl mx-auto p-6 rounded-xl border">
+<h1 class="font-bold">DISTRIBUTOR PANEL - Secure</h1>
+<p>ID: <span id="did" class="font-bold text-blue-600"></span> | <button onclick="logout()" class="bg-black text-white px-3 py-1 rounded-full text-xs">Logout</button></p>
+<div class="mt-4 border p-4 rounded-xl"><input id="rId" placeholder="Retailer ID" class="border p-2 w-full rounded"><input id="rPass" placeholder="Pass" class="border p-2 w-full mt-2 rounded"><button onclick="createR()" class="bg-black text-white w-full py-2 mt-2 rounded">Create Retailer - Permanent</button><p id="msg" class="text-sm font-bold mt-2"></p></div>
+<div id="list" class="mt-4"></div>
+</div>
 <script>
-const SUPA_URL="https://hiyjowfyszctvhljsdgx.supabase.co";const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.[STRIPPED 127 bytes].0cuMZjNAQQSnLIlnuxlsr4yRTgsekLliD1Qxu_3awWw";const H={apikey:SUPA_KEY,Authorization:"Bearer "+SUPA_KEY,"Content-Type":"application/json"};
-function getDid(){return localStorage.getItem("distributor");}function check(){let d=getDid();if(!d)location.href="../";document.getElementById("dId").innerText=d;}function logout(){localStorage.clear();location.href="../";}
-async function createRet(){let id=document.getElementById("retId").value, pw=document.getElementById("retPass").value, did=getDid();let res=await fetch(SUPA_URL+"/rest/v1/retailers",{method:"POST",headers:H,body:JSON.stringify({user_id:id,password:pw,distributor_id:did,wallet:0})});if(res.ok)alert("Retailer Created - Permanent");load();}
-async function load(){let did=getDid();let r=await fetch(SUPA_URL+"/rest/v1/retailers?distributor_id=eq."+did,{headers:H});let data=await r.json();document.getElementById("retList").innerHTML=data.map(d=>d.user_id).join("<br>");}
-check();load();
+const URL="https://hiyjowfyszctvhljsdgx.supabase.co";const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.[STRIPPED 127 bytes].0cuMZjNAQQSnLIlnuxlsr4yRTgsekLliD1Qxu_3awWw";const H={apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json"};
+document.getElementById('did').innerText=localStorage.getItem('distributor')||'dist01';
+function logout(){localStorage.clear();location.href='index.html';}
+async function createR(){let id=rId.value, pw=rPass.value, did=localStorage.getItem('distributor')||'dist01';let r=await fetch(URL+"/rest/v1/retailers",{method:"POST",headers:H,body:JSON.stringify({user_id:id,password:pw,distributor_id:did,wallet:0})});if(r.ok){msg.innerText='✅ Retailer Saved Permanent';load();}else msg.innerText='Error';}
+async function load(){let r=await fetch(URL+"/rest/v1/retailers?select=*",{headers:H});let d=await r.json();list.innerHTML=d.map(x=>x.user_id).join('<br>');}
+load();
 </script>
 </body></html>
