@@ -1,35 +1,72 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin - PAYQUICKPAY</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta charset="UTF-8">
+<title>Admin - PAYQUICKPAY REAL</title>
+<style>
+body{font-family:Arial; background:#f5f7fb; margin:0;}
+nav{background:white; padding:15px 20px; display:flex; justify-content:space-between; border-bottom:1px solid #ddd;}
+.box{max-width:1100px; margin:20px auto; display:flex; gap:20px; padding:0 20px;}
+.left{background:white; width:350px; padding:20px; border-radius:15px; border:1px solid #ddd;}
+.right{background:white; flex:1; padding:20px; border-radius:15px; border:1px solid #ddd;}
+input{width:100%; padding:10px; margin:6px 0; border-radius:8px; border:1px solid #ddd; box-sizing:border-box;}
+button{width:100%; background:#0F172A; color:white; padding:12px; border:none; border-radius:10px; font-weight:bold; cursor:pointer; margin-top:10px;}
+table{width:100%; border-collapse:collapse; margin-top:10px;}
+th,td{border-bottom:1px solid #eee; padding:10px; text-align:left; font-size:13px;}
+</style>
 </head>
-<body class="bg-[#F8FAFC] min-h-screen">
-<nav class="bg-white border-b sticky top-0"><div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center"><div class="flex items-center gap-3"><div class="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center"><i class="fa fa-shield-halved text-white"></i></div><div><h1 class="font-extrabold">PAYQUICKPAY ADMIN</h1><p class="text- font-bold text-slate-400">REAL APP • SECURE • PERMANENT</p></div></div><button onclick="logout()" class="bg-slate-900 text-white px-5 py-2.5 rounded-full text-xs font-bold">Logout</button></div></nav>
-<div class="max-w-7xl mx-auto p-6">
-<div class="grid grid-cols-3 gap-4 mb-6"><div class="bg-white p-5 rounded-2xl border"><p class="text- font-bold text-slate-400">TOTAL DISTRIBUTORS</p><h2 id="totalDist" class="text-3xl font-extrabold">0</h2></div><div class="bg-slate-900 p-5 rounded-2xl text-white"><p class="text- font-bold text-slate-400">TOTAL WALLET</p><h2 id="totalWallet" class="text-3xl font-extrabold">Rs 0</h2></div><div class="bg-green-600 p-5 rounded-2xl text-white"><p class="text- font-bold">COMMISSION</p><h2 class="text-xl font-bold">2% - 5% Active</h2></div></div>
-<div class="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-6">
-<div class="bg-white rounded-2xl border p-6 shadow-sm h-fit">
-<h3 class="font-extrabold">Create Distributor - Typical Fields - Permanent</h3>
-<input id="dId" placeholder="Distributor ID ex: dist01" class="w-full bg-slate-50 border rounded-xl p-3.5 mt-4 text-sm font-bold">
-<input id="dPass" type="password" placeholder="Password" class="w-full bg-slate-50 border rounded-xl p-3.5 mt-3 text-sm font-bold">
-<input id="dName" placeholder="Full Name" class="w-full bg-slate-50 border rounded-xl p-3.5 mt-3 text-sm font-bold">
-<input id="dMobile" placeholder="Mobile Number" class="w-full bg-slate-50 border rounded-xl p-3.5 mt-3 text-sm font-bold">
-<input id="dWallet" type="number" placeholder="Initial Wallet ex: 10000" class="w-full bg-slate-50 border rounded-xl p-3.5 mt-3 text-sm font-bold">
-<button onclick="createDist()" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold mt-5">Create Distributor - Permanent</button>
-<p id="msg" class="text-xs font-bold text-center mt-3"></p>
+<body>
+<nav><div><b>PAYQUICKPAY ADMIN - REAL APP</b><br><small>Secure Permanent Real Money</small></div><button onclick="logout()" style="width:auto; padding:8px 15px; border-radius:20px;">Logout</button></nav>
+
+<div class="box">
+<div class="left">
+<h3>Create Distributor - Real Permanent</h3>
+<p style="font-size:11px; color:gray;">Typical Fields - Permanent Save</p>
+<input id="dId" placeholder="Distributor ID ex: dist01">
+<input id="dPass" placeholder="Password">
+<input id="dName" placeholder="Full Name">
+<input id="dMobile" placeholder="Mobile Number">
+<input id="dWallet" type="number" placeholder="Wallet ex: 10000">
+<button onclick="createDist()">Create Distributor - Real</button>
+<p id="msg" style="text-align:center; font-size:12px; font-weight:bold;"></p>
 </div>
-<div class="bg-white rounded-2xl border shadow-sm"><div class="p-6 border-b flex justify-between"><h3 class="font-extrabold">All Distributors - Permanent Data</h3><button onclick="load()" class="bg-slate-50 border w-9 h-9 rounded-full"><i class="fa fa-rotate"></i></button></div><div class="overflow-auto"><table class="w-full text-sm"><thead class="bg-slate-50"><tr class="text- font-bold text-slate-500"><th class="text-left p-4">ID / PASS</th><th>NAME</th><th>MOBILE</th><th>WALLET</th></tr></thead><tbody id="list"></tbody></table></div></div>
+
+<div class="right">
+<h3>All Distributors - Real Permanent Data <button onclick="load()" style="width:auto; float:right; padding:5px 10px;">Refresh</button></h3>
+<table><thead><tr><th>ID / PASS</th><th>NAME</th><th>MOBILE</th><th>WALLET</th></tr></thead><tbody id="list"></tbody></table>
 </div>
 </div>
+
 <script>
-const SUPA_URL="https://hiyjowfyszctvhljsdgx.supabase.co";const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.[STRIPPED 127 bytes].0cuMZjNAQQSnLIlnuxlsr4yRTgsekLliD1Qxu_3awWw";const H={apikey:SUPA_KEY,Authorization:"Bearer "+SUPA_KEY,"Content-Type":"application/json"};
-function logout(){localStorage.clear();location.href='index.html';}
-async function load(){try{let r=await fetch(SUPA_URL+"/rest/v1/distributors?select=*",{headers:H});let data=await r.json();let html="";let total=0;data.forEach(d=>{total+=Number(d.wallet||0);html+=`<tr class="border-t"><td class="p-4 font-bold">${d.user_id}<br><span class="text- text-slate-500">${d.password}</span><br><span class="text- text-green-600">Permanent</span></td><td class="font-bold">${d.name||'-'}</td><td>${d.mobile||'-'}</td><td class="font-bold">Rs ${d.wallet||0}</td></tr>`;});list.innerHTML=html||"<tr><td colspan=4 class='p-8 text-center'>No data</td></tr>";totalDist.innerText=data.length;totalWallet.innerText='Rs '+total;}catch(e){list.innerHTML='<tr><td colspan=4 class="p-4 text-red-600">Supabase Key Invalid - Use local test: dist01/123 | Error: '+e.message+'</td></tr>';}}
-async function createDist(){let id=dId.value.trim(),pw=dPass.value.trim(),name=dName.value.trim(),mob=dMobile.value.trim(),wal=Number(dWallet.value||0);if(!id||!pw){msg.innerText='ID Pass darkar';return;}try{let res=await fetch(SUPA_URL+"/rest/v1/distributors",{method:"POST",headers:H,body:JSON.stringify({user_id:id,password:pw,name:name,mobile:mob,wallet:wal})});if(res.ok){msg.innerText='✅ Permanent Saved: '+id+' - Distributor Login: '+id+'/'+pw;load();}else{let t=await res.text();msg.innerText=t;}}catch(e){let all=JSON.parse(localStorage.getItem('PAYQUICKPAY_DISTS')||'[]');all.push({user_id:id,password:pw,name:name,mobile:mob,wallet:wal});localStorage.setItem('PAYQUICKPAY_DISTS',JSON.stringify(all));msg.innerText='✅ Local Permanent Saved (Key Invalid): '+id;loadLocal();}}
-function loadLocal(){let all=JSON.parse(localStorage.getItem('PAYQUICKPAY_DISTS')||'[]');let html='';all.forEach(d=>{html+=`<tr class="border-t"><td class="p-4 font-bold">${d.user_id}<br><span class="text-">${d.password}</span><br><span class="text- text-green-600">Local Permanent</span></td><td>${d.name||'-'}</td><td>${d.mobile||'-'}</td><td>Rs ${d.wallet||0}</td></tr>`;});list.innerHTML=html;totalDist.innerText=all.length;}
+const SUPA_URL = "https://mojdysebckbodadjctj.supabase.co";
+const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.[STRIPPED 127 bytes].aoK0cXDCsKZigLUNHXQV6eFClqf7_i91zpw8zrRu0ic";
+const HEAD = {apikey:SUPA_KEY, Authorization:"Bearer "+SUPA_KEY, "Content-Type":"application/json"};
+function logout(){ localStorage.clear(); location.href='index.html'; }
+
+async function load(){
+ let res = await fetch(SUPA_URL+"/rest/v1/distributors?select=*&order=user_id.asc", {headers:HEAD});
+ let data = await res.json();
+ let html = "";
+ data.forEach(d=>{
+  html+=`<tr><td><b>${d.user_id}</b><br><small>Pass: ${d.password}</small><br><small style="color:green;">Permanent Real</small></td><td>${d.name||'-'}</td><td>${d.mobile||'-'}</td><td><b>Rs ${d.wallet||0}</b></td></tr>`;
+ });
+ document.getElementById('list').innerHTML = html || "<tr><td colspan=4>No data</td></tr>";
+}
+
+async function createDist(){
+ let id=document.getElementById('dId').value.trim(), pw=document.getElementById('dPass').value.trim();
+ let name=document.getElementById('dName').value.trim(), mob=document.getElementById('dMobile').value.trim(), wal=Number(document.getElementById('dWallet').value||0);
+ if(!id||!pw){ document.getElementById('msg').innerText='ID Pass darkar'; return; }
+ try{
+  let body={user_id:id, password:pw, wallet:wal};
+  if(name) body.name=name; if(mob) body.mobile=mob;
+  let res=await fetch(SUPA_URL+"/rest/v1/distributors", {method:"POST", headers:HEAD, body:JSON.stringify(body)});
+  if(!res.ok){ let t=await res.text(); throw new Error(t); }
+  document.getElementById('msg').innerText='Saved Real Permanent: '+id;
+  document.getElementById('msg').style.color='green';
+  load();
+ }catch(e){ document.getElementById('msg').innerText='Error: '+e.message.slice(0,150); document.getElementById('msg').style.color='red'; }
+}
 load();
 </script>
 </body>
