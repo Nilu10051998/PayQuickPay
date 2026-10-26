@@ -1,0 +1,10 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Retailer</title><script src="https://cdn.tailwindcss.com"></script></head>
+<body class="bg-slate-50 p-4">
+<h1 class="font-bold">RETAILER - All Recharge + Commission</h1>
+<p>ID: <span id="rId"></span> | <button onclick="logout()" class="bg-black text-white px-3 py-1 rounded">Logout</button></p>
+<div class="grid grid-cols-3 gap-2 mt-4"><div class="bg-white p-4 rounded border"><p>Wallet</p><h2 id="wBal">Rs 0</h2></div><div class="bg-black text-white p-4 rounded"><p>Commission Structure</p><h2>Mobile 2% | DTH 3% | Bill 1.5%</h2></div><div class="bg-white p-4 rounded border">All Recharge Services - Permanent</div></div>
+<script>
+const SUPA_URL="https://hiyjowfyszctvhljsdgx.supabase.co";const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.[STRIPPED 127 bytes].0cuMZjNAQQSnLIlnuxlsr4yRTgsekLliD1Qxu_3awWw";const H={apikey:SUPA_KEY,Authorization:"Bearer "+SUPA_KEY};
+function getId(){return localStorage.getItem("retailer");}function check(){let id=getId();if(!id)location.href="../";document.getElementById("rId").innerText=id;}function logout(){localStorage.clear();location.href="../";}check();
+</script>
+</body></html>
