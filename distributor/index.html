@@ -1,125 +1,87 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Distributor - PAYQUICKPAY</title>
+<title>Distributor</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-<style>*{font-family:'Inter',sans-serif}</style>
 </head>
-<body class="bg-[#F5F7FB] min-h-screen">
-
-<div class="bg-white border-b sticky top-0 z-20">
-<div class="max-w-7xl mx-auto px-4 py-3.5 flex justify-between items-center">
-<div class="flex items-center gap-3">
-<div class="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center"><i class="fa fa-bolt text-white text-sm"></i></div>
-<div>
-<h1 class="font-extrabold text-">PAYQUICKPAY <span class="text- bg-blue-600 text-white px-2 py-0.5 rounded-full ml-1">DISTRIBUTOR</span></h1>
-<p class="text- font-bold text-slate-500">ID: <span id="dId" class="text-blue-600">---</span></p>
+<body class="bg-slate-50 min-h-screen">
+<div class="bg-white border-b p-4 flex justify-between">
+<h1 class="font-extrabold">PAYQUICKPAY - <span id="dId"></span></h1>
+<button onclick="logout()" class="bg-slate-900 text-white px-4 py-2 rounded-full text-xs font-bold">Logout</button>
 </div>
+<div class="p-4 max-w-5xl mx-auto">
+<div class="grid grid-cols-3 gap-3">
+<div class="bg-white p-5 rounded-xl border"><p class="text-xs text-slate-500">WALLET</p><h2 id="wBal" class="text-2xl font-extrabold">Rs 0</h2></div>
+<div class="bg-slate-900 p-5 rounded-xl text-white"><p class="text-xs text-slate-400">COMMISSION</p><h2 id="cBal" class="text-2xl font-extrabold">Rs 0</h2></div>
+<div class="bg-white p-5 rounded-xl border"><p class="text-xs text-slate-500">RETAILERS</p><h2 id="rCount" class="text-2xl font-extrabold">0</h2></div>
 </div>
-<button onclick="logout()" class="bg-white border hover:bg-slate-50 px-4 py-2 rounded-full text-xs font-bold">Logout</button>
+<div class="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-4 mt-4">
+<div class="bg-white p-5 rounded-xl border h-fit">
+<h3 class="font-bold">Create Retailer</h3>
+<input id="retId" placeholder="Retailer ID" class="w-full border rounded-xl p-3 mt-3 text-sm font-bold">
+<input id="retPass" placeholder="Password" class="w-full border rounded-xl p-3 mt-3 text-sm font-bold">
+<button onclick="createRet()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold mt-3">Create</button>
+<p id="msg" class="text-xs font-bold text-center mt-2"></p>
 </div>
+<div class="bg-white rounded-xl border">
+<div class="p-4 border-b font-bold">My Retailers</div>
+<table class="w-full text-sm"><tbody id="list"></tbody></table>
 </div>
-
-<div class="max-w-7xl mx-auto p-4">
-<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-<div class="bg-white p-5 rounded- border"><p class="text- font-bold text-slate-400">MY WALLET</p><h2 id="wBal" class="text-3xl font-extrabold mt-1">Rs 0</h2></div>
-<div class="bg-slate-900 p-5 rounded- text-white"><p class="text- font-bold text-slate-400">COMMISSION</p><h2 id="cBal" class="text-3xl font-extrabold mt-1 text-green-400">Rs 0</h2></div>
-<div class="bg-white p-5 rounded- border"><p class="text- font-bold text-slate-400">MY RETAILERS</p><h2 id="rCount" class="text-3xl font-extrabold mt-1">0</h2></div>
-</div>
-
-<div class="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-4 mt-4">
-<div class="bg-white p-6 rounded- border h-fit">
-<h3 class="font-bold text-sm">Create Retailer</h3>
-<input id="retId" placeholder="Retailer ID ex: retail01" class="w-full bg-slate-50 border rounded-xl p-3.5 text-sm font-bold mt-4">
-<input id="retPass" type="password" placeholder="Password" class="w-full bg-slate-50 border rounded-xl p-3.5 text-sm font-bold mt-3">
-<button onclick="createRet()" id="createBtn" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold text-sm mt-4">Create Retailer</button>
-<p id="msg" class="text-xs font-bold text-center mt-3"></p>
-</div>
-
-<div class="bg-white rounded- border overflow-hidden">
-<div class="p-5 border-b flex justify-between items-center">
-<h3 class="font-bold text-sm">My Retailers</h3>
-<input id="searchBox" onkeyup="filterRetailers()" placeholder="Search..." class="bg-slate-50 border rounded-full px-4 py-2 text-xs font-bold w-32">
-</div>
-<table class="w-full text-sm">
-<thead class="bg-slate-50"><tr class="text- font-bold text-slate-500"><th class="text-left p-4">RETAILER</th><th>WALLET</th><th class="text-right pr-4">ACTION</th></tr></thead>
-<tbody id="retList"><tr><td colspan="3" class="py-12 text-center text-slate-400 text-xs font-bold">Loading...</td></tr></tbody>
-</table>
-</div>
-</div>
-</div>
-
-<div id="modal" class="fixed inset-0 bg-black/40 hidden z-50 flex items-center justify-center p-4">
-<div class="bg-white rounded- p-6 w-full max-w-sm">
-<h3 class="font-bold text-center">Transfer to <span id="modalId" class="text-blue-600"></span></h3>
-<input id="amtInput" type="number" placeholder="Amount Rs" class="w-full bg-slate-50 border rounded-xl p-4 text-center text-xl font-extrabold mt-4">
-<div class="grid grid-cols-3 gap-2 mt-3"><button onclick="setAmt(500)" class="bg-slate-50 border rounded-full py-2 text-xs font-bold">500</button><button onclick="setAmt(1000)" class="bg-slate-50 border rounded-full py-2 text-xs font-bold">1000</button><button onclick="setAmt(5000)" class="bg-slate-50 border rounded-full py-2 text-xs font-bold">5000</button></div>
-<div class="flex gap-2 mt-5"><button onclick="closeModal()" class="flex-1 bg-slate-100 py-3 rounded-xl font-bold text-sm">Cancel</button><button onclick="doTransfer()" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold text-sm">Transfer</button></div>
 </div>
 </div>
 
 <script>
-const SUPA_URL="https://hiyjowfyszctvhljsdgx.supabase.co";
-const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.[STRIPPED 127 bytes].0cuMZjNAQQSnLIlnuxlsr4yRTgsekLliD1Qxu_3awWw";
-const H={apikey:SUPA_KEY,Authorization:"Bearer "+SUPA_KEY,"Content-Type":"application/json"};
+const URL="https://hiyjowfyszctvhljsdgx.supabase.co";
+const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.[STRIPPED 127 bytes].0cuMZjNAQQSnLIlnuxlsr4yRTgsekLliD1Qxu_3awWw";
+const H={apikey:KEY,Authorization:"Bearer "+KEY};
 
-function getDid(){ return (localStorage.getItem("distributor")||sessionStorage.getItem("distributor")||"").trim()||null; }
-function checkLogin(){
-  const did=getDid();
-  if(!did){ location.href="/"; return false; }
-  document.getElementById("dId").innerText=did;
-  return true;
+function getId(){
+  return localStorage.getItem("distributor") || localStorage.getItem("distributor_id") || sessionStorage.getItem("distributor");
 }
-function logout(){ localStorage.removeItem("distributor"); sessionStorage.removeItem("distributor"); location.href="/"; }
-function setAmt(v){ document.getElementById("amtInput").value=v; }
-let selId=null;
-function transferRet(id){ selId=id; document.getElementById("modalId").innerText=id; document.getElementById("amtInput").value=""; document.getElementById("modal").classList.remove("hidden"); }
-function closeModal(){ document.getElementById("modal").classList.add("hidden"); selId=null; }
-function filterRetailers(){ let q=document.getElementById("searchBox").value.toLowerCase(); document.querySelectorAll("#retList tr").forEach(tr=>{ tr.style.display=tr.innerText.toLowerCase().includes(q)?"":"none"; }); }
+function check(){
+  let id=getId();
+  if(!id){ location.href="index.html"; return null; }
+  document.getElementById("dId").innerText=id;
+  return id;
+}
+function logout(){ localStorage.clear(); sessionStorage.clear(); location.href="index.html"; }
 
 async function load(){
-  const did=getDid(); if(!did) return;
-  let r1=await fetch(SUPA_URL+"/rest/v1/distributors?user_id=eq."+encodeURIComponent(did),{headers:H});
-  let d1=await r1.json(); if(d1[0]) document.getElementById("wBal").innerText="Rs "+Number(d1[0].wallet||0).toLocaleString("en-IN");
-  let r2=await fetch(SUPA_URL+"/rest/v1/retailers?distributor_id=eq."+encodeURIComponent(did)+"&select=*&order=user_id.asc",{headers:H});
-  let rets=await r2.json(); if(!Array.isArray(rets)) rets=[];
-  document.getElementById("rCount").innerText=rets.length;
-  let html=""; rets.forEach(r=>{
-    html+=`<tr class="border-t"><td class="p-4"><b>${r.user_id}</b></td><td class="font-bold">Rs ${Number(r.wallet||0).toLocaleString()}</td><td class="text-right pr-4"><button onclick="transferRet('${r.user_id}')" class="bg-slate-900 text-white px-4 py-2 rounded-full text-xs font-bold">+ Balance</button></td></tr>`;
-  });
-  document.getElementById("retList").innerHTML=html||"<tr><td colspan=3 class='py-10 text-center text-slate-400 text-xs'>No Retailers</td></tr>";
-  let r3=await fetch(SUPA_URL+"/rest/v1/commission_earned?user_id=eq."+encodeURIComponent(did),{headers:H});
-  let comms=await r3.json(); let tot=0; comms.forEach(c=>tot+=Number(c.commission_amount||0)); document.getElementById("cBal").innerText="Rs "+tot.toLocaleString("en-IN");
+  let id=check(); if(!id) return;
+  let r1=await fetch(`${URL}/rest/v1/distributors?user_id=eq.${id}`,{headers:H});
+  let d1=await r1.json(); if(d1[0]) document.getElementById("wBal").innerText="Rs "+(d1[0].wallet||0);
+  let r2=await fetch(`${URL}/rest/v1/retailers?distributor_id=eq.${id}&select=*`,{headers:H});
+  let rets=await r2.json(); document.getElementById("rCount").innerText=rets.length;
+  let h=""; rets.forEach(r=>{ h+=`<tr class="border-t"><td class="p-3 font-bold">${r.user_id}</td><td>Rs ${r.wallet||0}</td><td class="text-right pr-3"><button onclick="transfer('${r.user_id}')" class="bg-slate-900 text-white px-3 py-1 rounded-full text-xs">+ Balance</button></td></tr>`; });
+  document.getElementById("list").innerHTML=h||"<tr><td class='p-4 text-center text-slate-400'>No retailers</td></tr>";
 }
 
 async function createRet(){
-  let id=document.getElementById("retId").value.trim(), pw=document.getElementById("retPass").value.trim();
-  let did=getDid(); let msg=document.getElementById("msg");
-  if(!id||!pw){ msg.innerText="❌ ID Pass darkar"; return; }
-  let res=await fetch(SUPA_URL+"/rest/v1/retailers",{method:"POST",headers:H,body:JSON.stringify({user_id:id,password:pw,distributor_id:did,wallet:0})});
-  if(res.ok){ msg.innerText="✅ Created!"; document.getElementById("retId").value=""; document.getElementById("retPass").value=""; load(); }
-  else{ let t=await res.text(); msg.innerText=t.includes("duplicate")?"❌ ID exists":t.slice(0,80); }
+  let rid=document.getElementById("retId").value.trim();
+  let pw=document.getElementById("retPass").value.trim();
+  let did=getId();
+  if(!rid||!pw){ document.getElementById("msg").innerText="ID Pass darkar"; return; }
+  let r=await fetch(`${URL}/rest/v1/retailers`,{method:"POST",headers:H,body:JSON.stringify({user_id:rid,password:pw,distributor_id:did,wallet:0})});
+  if(r.ok){ document.getElementById("msg").innerText="Created!"; document.getElementById("retId").value=""; document.getElementById("retPass").value=""; load(); }
+  else{ document.getElementById("msg").innerText="ID exists"; }
 }
 
-async function doTransfer(){
-  let amt=Number(document.getElementById("amtInput").value); if(!amt||amt<=0) return;
-  let did=getDid(); closeModal();
-  let r1=await fetch(SUPA_URL+"/rest/v1/distributors?user_id=eq."+encodeURIComponent(did),{headers:H});
-  let d=await r1.json(); let cur=Number(d[0]?.wallet||0);
-  if(cur<amt){ alert("Wallet kam achi! Rs "+cur); return; }
-  await fetch(SUPA_URL+"/rest/v1/distributors?user_id=eq."+encodeURIComponent(did),{method:"PATCH",headers:H,body:JSON.stringify({wallet:cur-amt})});
-  let r2=await fetch(SUPA_URL+"/rest/v1/retailers?user_id=eq."+encodeURIComponent(selId),{headers:H});
-  let ret=await r2.json(); let rcur=Number(ret[0]?.wallet||0);
-  await fetch(SUPA_URL+"/rest/v1/retailers?user_id=eq."+encodeURIComponent(selId),{method:"PATCH",headers:H,body:JSON.stringify({wallet:rcur+amt})});
-  await fetch(SUPA_URL+"/rest/v1/balance_transfers",{method:"POST",headers:H,body:JSON.stringify({from_id:did,to_id:selId,amount:amt})});
-  alert("✅ Rs "+amt+" Transferred to "+selId); load();
+async function transfer(rid){
+  let amt=prompt("Amount?"); if(!amt) return; amt=Number(amt);
+  let did=getId();
+  let r1=await fetch(`${URL}/rest/v1/distributors?user_id=eq.${did}`,{headers:H});
+  let d=await r1.json(); let cur=d[0].wallet||0;
+  if(cur<amt){ alert("Low balance Rs "+cur); return; }
+  await fetch(`${URL}/rest/v1/distributors?user_id=eq.${did}`,{method:"PATCH",headers:H,body:JSON.stringify({wallet:cur-amt})});
+  let r2=await fetch(`${URL}/rest/v1/retailers?user_id=eq.${rid}`,{headers:H});
+  let ret=await r2.json(); let rc=ret[0].wallet||0;
+  await fetch(`${URL}/rest/v1/retailers?user_id=eq.${rid}`,{method:"PATCH",headers:H,body:JSON.stringify({wallet:rc+amt})});
+  alert("Sent Rs "+amt+" to "+rid); load();
 }
 
-if(checkLogin()) load();
+check(); load();
 </script>
 </body>
 </html>
