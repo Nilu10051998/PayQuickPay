@@ -2,50 +2,84 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PAYQUICKPAY</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PAYQUICKPAY - Login</title>
 <style>
-body{background:#0F172A; font-family:Arial; display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0; padding:20px;}
-.box{background:white; width:100%; max-width:850px; border-radius:20px; padding:30px;}
-.btn{border:2px solid #ddd; padding:18px; border-radius:14px; width:140px; cursor:pointer; text-align:center; background:white; display:inline-block; margin:5px;}
-.btn.active{background:#0F172A; color:white;}
-.login{max-width:350px; margin:20px auto; background:#f5f5f5; padding:20px; border-radius:14px;}
-input{width:100%; padding:12px; margin:8px 0; border-radius:10px; border:1px solid #ddd; box-sizing:border-box;}
-.loginBtn{width:100%; background:#0F172A; color:white; padding:12px; border:none; border-radius:10px; cursor:pointer;}
+*{box-sizing:border-box}
+body{font-family:Arial;background:#0F172A;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}
+.card{background:#fff;padding:25px;border-radius:12px;width:90%;max-width:380px}
+h2{text-align:center;margin:0 0 15px}
+input,select{width:100%;padding:12px;margin:6px 0;border:1px solid #ccc;border-radius:6px}
+button{width:100%;padding:12px;background:#0F172A;color:#fff;border:none;border-radius:6px;cursor:pointer;margin-top:10px}
+p{text-align:center;font-size:12px;margin-top:10px}
 </style>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig={apiKey:"AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",authDomain:"payquickpay-487ef.firebaseapp.com",projectId:"payquickpay-487ef",storageBucket:"payquickpay-487ef.firebasestorage.app",messagingSenderId:"368108778411",appId:"1:368108778411:web:03dcbc47e46568d51b58ee"};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore();
+</script>
 </head>
 <body>
-<div class="box">
-<h1 style="text-align:center;">PAYQUICKPAY</h1>
-<p style="text-align:center; font-size:12px; color:gray;">RECHARGE PLATFORM</p>
-<div style="text-align:center;">
-<div onclick="setRole('admin')" id="b1" class="btn"><b>ADMIN</b></div>
-<div onclick="setRole('distributor')" id="b2" class="btn active"><b>DISTRIBUTOR</b></div>
-<div onclick="setRole('retailer')" id="b3" class="btn"><b>RETAILER</b></div>
-</div>
-<div class="login">
-<p style="text-align:center; font-size:12px;"><b id="roleName">DISTRIBUTOR</b> LOGIN</p>
+<div class="card">
+<h2>PAYQUICKPAY</h2>
+<select id="role">
+<option value="ADMIN">ADMIN</option>
+<option value="DISTRIBUTOR">DISTRIBUTOR</option>
+<option value="RETAILER">RETAILER</option>
+</select>
 <input id="userId" placeholder="User ID">
-<input id="password" type="password" placeholder="Password">
-<button class="loginBtn" onclick="login()">Login</button>
-<p id="msg" style="text-align:center; font-size:12px;"></p>
+<input id="pass" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+<p id="msg"></p>
 </div>
-</div>
+
 <script>
-let role='distributor';
-function setRole(r){role=r; document.getElementById('roleName').innerText=r.toUpperCase(); document.querySelectorAll('.btn').forEach(b=>b.classList.remove('active')); document.getElementById(r=='admin'?'b1':r=='distributor'?'b2':'b3').classList.add('active');}
-function login(){
- let id=document.getElementById('userId').value.trim(); let pw=document.getElementById('password').value.trim();
- if(!id||!pw){document.getElementById('msg').innerText='Enter ID Password'; return;}
- let key=role+'s'; let data=JSON.parse(localStorage.getItem(key)||'[]');
- if(data.length==0){
-  if(role=='admin') data=[{user_id:'admin',password:'admin123'}];
-  if(role=='distributor') data=[{user_id:'dist01',password:'123',name:'Nilu',mobile:'9999999999',wallet:10000}];
-  if(role=='retailer') data=[{user_id:'retail01',password:'123',name:'My Shop',mobile:'8888888888',wallet:5000,distributor_id:'dist01'}];
- }
- let found=data.find(d=>d.user_id==id&&d.password==pw);
- if(found){localStorage.setItem(role,id); localStorage.setItem('distributor',id); localStorage.setItem('admin',id); localStorage.setItem('retailer',id); location.href=role+'.html';}
- else{document.getElementById('msg').innerText='Invalid ID Password';}
+async function login(){
+  let id=document.getElementById('userId').value.trim();
+  let pass=document.getElementById('pass').value.trim();
+  let role=document.getElementById('role').value;
+  let msg=document.getElementById('msg');
+  if(!id||!pass){msg.innerText='Enter ID Password';return;}
+  msg.innerText='Checking...';
+  
+  if(role=='ADMIN'){
+    if(id=='admin' && pass=='admin123'){
+      localStorage.setItem('admin',id);
+      location.href='admin.html';
+    } else {
+      msg.innerText='Invalid Admin ID Password';
+    }
+    return;
+  }
+  
+  if(role=='DISTRIBUTOR'){
+    try{
+      let snap=await db.collection('distributors').where('user_id','==',id).where('password','==',pass).get();
+      if(!snap.empty){
+        localStorage.setItem('distributor',id);
+        msg.innerText='Login Success';
+        location.href='distributor.html';
+      } else {
+        msg.innerText='Invalid Distributor ID Password - Firebase Check';
+      }
+    }catch(e){msg.innerText=e.message;}
+    return;
+  }
+  
+  if(role=='RETAILER'){
+    try{
+      let snap=await db.collection('retailers').where('user_id','==',id).where('password','==',pass).get();
+      if(!snap.empty){
+        localStorage.setItem('retailer',id);
+        msg.innerText='Login Success';
+        location.href='retailer.html';
+      } else {
+        msg.innerText='Invalid Retailer ID Password';
+      }
+    }catch(e){msg.innerText=e.message;}
+  }
 }
 </script>
 </body>
