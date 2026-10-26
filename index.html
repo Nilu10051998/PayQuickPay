@@ -1,98 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PAYQUICKPAY</title>
+<title>PAYQUICKPAY - Professional</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-[#0F172A] min-h-screen flex items-center justify-center p-4">
-<div class="bg-white p-8 rounded-2xl max-w-md w-full">
-<h1 class="text-2xl font-extrabold text-center">PAYQUICKPAY</h1>
-<p class="text-xs text-center font-bold text-slate-500">PROFESSIONAL RECHARGE</p>
-
-<div class="grid grid-cols-3 gap-2 my-6">
-<button onclick="setRole('admin')" id="b1" class="border-2 p-3 rounded-xl font-bold text-sm">ADMIN</button>
-<button onclick="setRole('distributor')" id="b2" class="bg-black text-white border-2 border-black p-3 rounded-xl font-bold text-sm">DISTRIBUTOR</button>
-<button onclick="setRole('retailer')" id="b3" class="border-2 p-3 rounded-xl font-bold text-sm">RETAILER</button>
+<div class="bg-white w-full max-w-5xl rounded- p-8 shadow-2xl">
+<div class="text-center mb-8">
+<div class="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center mx-auto mb-3"><i class="fa fa-bolt text-white text-2xl"></i></div>
+<h1 class="text-3xl font-extrabold">PAYQUICKPAY</h1>
+<p class="text-xs font-bold text-slate-500 tracking-widest">PROFESSIONAL RECHARGE • SECURE • PERMANENT</p>
+<div class="mt-3 inline-flex bg-green-50 border border-green-200 px-3 py-1 rounded-full text- font-bold text-green-700"><i class="fa fa-shield-halved mr-1"></i> REAL APP - SECURE</div>
 </div>
-
-<input id="uid" placeholder="User ID" class="border-2 p-4 w-full rounded-xl font-bold text-sm">
-<input id="pass" type="password" placeholder="Password" class="border-2 p-4 w-full rounded-xl font-bold text-sm mt-3">
-
-<button onclick="doLogin()" class="bg-black text-white w-full py-4 rounded-xl font-bold mt-4">SECURE LOGIN - <span id="roleName">DISTRIBUTOR</span></button>
-<p id="msg" class="text-center font-bold text-sm mt-3"></p>
-
-<div class="bg-yellow-50 border p-3 rounded-xl mt-4 text- font-bold">
-Test Login:<br>
-Admin: admin / admin123<br>
-Dist: dist01 / 123<br>
-Retail: retail01 / 123
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+<button onclick="setRole('admin')" id="b1" class="border-2 border-slate-100 rounded-2xl p-6 hover:border-slate-900 bg-white"><div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center mx-auto"><i class="fa fa-user-shield text-red-600"></i></div><p class="font-extrabold text-sm mt-3">ADMIN</p><p class="text- text-slate-500">Full Control</p></button>
+<button onclick="setRole('distributor')" id="b2" class="border-2 border-slate-900 bg-slate-900 text-white rounded-2xl p-6"><div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mx-auto"><i class="fa fa-users"></i></div><p class="font-extrabold text-sm mt-3">DISTRIBUTOR</p><p class="text- text-slate-400">Manage Retailers</p></button>
+<button onclick="setRole('retailer')" id="b3" class="border-2 border-slate-100 rounded-2xl p-6 hover:border-slate-900 bg-white"><div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mx-auto"><i class="fa fa-store text-green-600"></i></div><p class="font-extrabold text-sm mt-3">RETAILER</p><p class="text- text-slate-500">All Recharge</p></button>
+</div>
+<div class="max-w-sm mx-auto bg-slate-50 rounded-2xl p-6 border">
+<p class="text-xs font-bold text-slate-500 text-center mb-4">LOGIN TO <span id="rName" class="text-slate-900">DISTRIBUTOR</span></p>
+<input id="uid" placeholder="User ID" class="w-full bg-white border-2 border-slate-100 rounded-xl p-4 text-sm font-bold focus:border-slate-900 outline-none">
+<input id="pass" type="password" placeholder="Password" class="w-full bg-white border-2 border-slate-100 rounded-xl p-4 text-sm font-bold mt-3 focus:border-slate-900 outline-none">
+<button onclick="login()" class="w-full bg-slate-900 text-white py-4 rounded-xl font-extrabold mt-4">SECURE LOGIN</button>
+<p id="msg" class="text-xs font-bold text-center mt-3 text-red-600"></p>
+<div class="mt-4 bg-yellow-50 border p-2 rounded text- font-bold">Admin: admin / admin123 | Dist: dist01 / 123 | Retail: retail01 / 123</div>
 </div>
 </div>
-
 <script>
 let role='distributor';
-function setRole(r){
-  role=r;
-  document.getElementById('roleName').innerText=r.toUpperCase();
-  document.getElementById('b1').className='border-2 p-3 rounded-xl font-bold text-sm';
-  document.getElementById('b2').className='border-2 p-3 rounded-xl font-bold text-sm';
-  document.getElementById('b3').className='border-2 p-3 rounded-xl font-bold text-sm';
-  if(r==='admin') document.getElementById('b1').className='bg-black text-white border-2 border-black p-3 rounded-xl font-bold text-sm';
-  if(r==='distributor') document.getElementById('b2').className='bg-black text-white border-2 border-black p-3 rounded-xl font-bold text-sm';
-  if(r==='retailer') document.getElementById('b3').className='bg-black text-white border-2 border-black p-3 rounded-xl font-bold text-sm';
-}
-
-async function doLogin(){
-  let id=document.getElementById('uid').value.trim();
-  let pw=document.getElementById('pass').value.trim();
-  let msg=document.getElementById('msg');
-  msg.innerText='Checking...';
-
-  // HARDCODED - 100% WORKING (Supabase bina bi)
-  if(role==='admin' && id==='admin' && pw==='admin123'){
-    localStorage.setItem('admin','admin');
-    localStorage.setItem('role','admin');
-    msg.innerText='✅ Admin Login Success - Redirecting';
-    setTimeout(()=>{ location.href='admin.html'; }, 500);
-    return;
-  }
-  if(role==='distributor' && id==='dist01' && pw==='123'){
-    localStorage.setItem('distributor','dist01');
-    localStorage.setItem('role','distributor');
-    msg.innerText='✅ Distributor Login Success';
-    setTimeout(()=>{ location.href='distributor.html'; }, 500);
-    return;
-  }
-  if(role==='retailer' && id==='retail01' && pw==='123'){
-    localStorage.setItem('retailer','retail01');
-    localStorage.setItem('role','retailer');
-    msg.innerText='✅ Retailer Login Success';
-    setTimeout(()=>{ location.href='retailer.html'; }, 500);
-    return;
-  }
-
-  // SUPABASE CHECK (Permanent)
-  try{
-    const URL="https://hiyjowfyszctvhljsdgx.supabase.co";
-    const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.[STRIPPED 127 bytes].0cuMZjNAQQSnLIlnuxlsr4yRTgsekLliD1Qxu_3awWw";
-    let table=role==='admin'?'admins':role==='distributor'?'distributors':'retailers';
-    let res=await fetch(`${URL}/rest/v1/${table}?user_id=eq.${id}&password=eq.${pw}`,{headers:{apikey:KEY,Authorization:"Bearer "+KEY}});
-    let data=await res.json();
-    if(data.length>0){
-      localStorage.setItem(role, data[0].user_id);
-      localStorage.setItem('distributor', data[0].user_id);
-      msg.innerText='✅ Success - Redirecting';
-      setTimeout(()=>{ location.href=role+'.html'; }, 500);
-    }else{
-      msg.innerText='❌ Invalid ID/Pass - Use Test Login';
-      msg.className='text-center font-bold text-sm mt-3 text-red-600';
-    }
-  }catch(e){
-    msg.innerText='Error: '+e.message;
-  }
-}
-</script>
-</body>
-</html>
+function setRole(r){role=r;document.getElementById('rName').innerText=r.toUpperCase();['b1','b2','b3'].forEach(id=>{document.getElementById(id).className='border-2 border-slate-100 rounded-2xl p-6 hover:border-slate-900 bg-white'});document.getElementById(r==='admin'?'b1':r==='distributor'?'b2':'b3').className='border-2 border-slate-900 bg-slate-900 text-white rounded-2xl p-6';}
+const SUPA_URL="https://hiyjowfyszctvhljsdgx.supabase.co";
+const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpeWpvd2Z5c3pjdHZobGpzZGd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI4NTIwMTgsImV4cCI6MjEwODQyODAxOH0.0cuMZjNAQQSnLIlnuxlsr4yRTgsekLliD1Qxu_3awWw";
+const H={apikey:SUPA_KEY,Authorization:"Bearer "+SUPA_KEY,"Content-Type":"application/json"};
+async function login(){
+  let id=uid.value.trim(), pw=pass.value.trim();
+  if(!id||!pw){msg.innerText='ID Pass darkar';return;}
+  if(role==='admin'&&id==='admin'&&pw==='admin123'){localStorage.setItem('admin','admin');location.href='admin.html';return;}
+  if(role==='distributor'&&id==='dist01'&&pw==='123'){localStorage.setItem
