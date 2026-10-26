@@ -1,21 +1,126 @@
 <!DOCTYPE html>
 <html>
-<head><meta charset="UTF-8"><title>Distributor - PAYQUICKPAY</title>
-<style>body{font-family:Arial; background:#f5f7fb; margin:0;} nav{background:white; padding:12px 20px; display:flex; justify-content:space-between; border-bottom:1px solid #ddd;} .box{max-width:1100px; margin:15px auto; display:flex; gap:15px; padding:0 15px;} .left{width:340px; background:white; padding:20px; border-radius:14px; border:1px solid #ddd;} .right{flex:1; background:white; padding:20px; border-radius:14px; border:1px solid #ddd;} input{width:100%; padding:10px; margin:5px 0; border:1px solid #ddd; border-radius:8px; box-sizing:border-box;} button{width:100%; background:#0F172A; color:white; padding:10px; border:none; border-radius:8px; cursor:pointer; margin-top:8px;} table{width:100%; border-collapse:collapse;} th,td{padding:10px; border-bottom:1px solid #eee; text-align:left; font-size:13px;}</style>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Distributor - PAYQUICKPAY - FIREBASE PERMANENT</title>
+<style>
+body{font-family:Arial; background:#f2f2f2; margin:0;}
+nav{background:#0F172A; color:white; padding:12px 20px; display:flex; justify-content:space-between;}
+.box{max-width:1100px; margin:15px auto; padding:0 15px;}
+.card{background:white; padding:15px; border-radius:10px; margin-bottom:15px; border:1px solid #ddd;}
+input{width:100%; padding:10px; margin:5px 0; border:1px solid #ccc; border-radius:6px;}
+button{width:100%; padding:10px; background:#0F172A; color:white; border:none; border-radius:6px; cursor:pointer; margin-top:5px;}
+button.small{width:auto; padding:6px 12px; font-size:12px;}
+table{width:100%; border-collapse:collapse; margin-top:10px;}
+th,td{border:1px solid #ddd; padding:8px; text-align:left; font-size:13px;}
+th{background:#f5f5f5;}
+.stats{display:flex; gap:10px; flex-wrap:wrap;}
+.stat{flex:1; min-width:150px; background:white; padding:12px; border-radius:8px; border:1px solid #ddd; text-align:center;}
+.modal{display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;}
+.modal-box{background:white; padding:20px; border-radius:10px; width:90%; max-width:400px;}
+</style>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",
+  authDomain: "payquickpay-487ef.firebaseapp.com",
+  projectId: "payquickpay-487ef",
+  storageBucket: "payquickpay-487ef.firebasestorage.app",
+  messagingSenderId: "368108778411",
+  appId: "1:368108778411:web:03dcbc47e46568d51b58ee"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+</script>
 </head>
 <body>
-<nav><div><b>DISTRIBUTOR</b> - ID: <span id="dId">---</span></div><button onclick="logout()" style="width:auto; padding:6px 12px; border-radius:20px;">Logout</button></nav>
+<nav><div><b>PAYQUICKPAY - DISTRIBUTOR - FIREBASE PERMANENT</b><br><small id="distId" style="font-size:10px;">Loading...</small></div><div><button onclick="logout()" class="small" style="background:white; color:black; width:auto;">Logout</button></div></nav>
+
 <div class="box">
-<div class="left"><h3>Create Retailer</h3><input id="retId" placeholder="Retailer ID"><input id="retPass" placeholder="Password"><input id="retName" placeholder="Name"><input id="retMobile" placeholder="Mobile"><button onclick="createRet()">Create Retailer</button><p id="msg" style="text-align:center; font-size:12px;"></p></div>
-<div class="right"><h3>My Retailers <button onclick="load()" style="width:auto; float:right;">Refresh</button></h3><table><thead><tr><th>ID / Pass</th><th>Wallet</th><th>Action</th></tr></thead><tbody id="retList"></tbody></table></div>
+<div class="stats">
+<div class="stat"><b>My Wallet - Permanent Firebase</b><br><span id="myWallet">Rs 0 - Loading Firebase...</span></div>
+<div class="stat"><b>My Retailers - Permanent Firebase</b><br><span id="retailerCount">0</span></div>
+<div class="stat"><b>Total Commission - Permanent</b><br><span id="totalComm">Rs 0</span></div>
 </div>
+
+<div style="display:flex; gap:15px; flex-wrap:wrap;">
+<div class="card" style="flex:1; min-width:300px;">
+<h3>Create Retailer - Firebase Permanent</h3>
+<input id="rId" placeholder="Retailer ID - Permanent">
+<input id="rPass" placeholder="Password - Permanent">
+<input id="rName" placeholder="Name">
+<input id="rMobile" placeholder="Mobile">
+<button onclick="createRetailer()">Create Retailer - Permanent Firebase</button>
+<button onclick="clearForm()" style="background:#eee; color:black;">Clear</button>
+<p id="msg" style="text-align:center; font-size:12px; font-weight:bold;"></p>
+<div style="background:#f0fdf4; padding:8px; border-radius:6px; font-size:11px; margin-top:8px; border:1px solid #bbf7d0;">
+<b>Full Functions:</b><br>✓ Create Retailer - Permanent Firebase<br>✓ Transfer Wallet - Permanent<br>✓ Add Wallet - Permanent<br>✓ Edit - Permanent<br>✓ Delete - Permanent<br>✓ Total Retailers - Permanent
+</div>
+</div>
+
+<div class="card" style="flex:2; min-width:400px;">
+<h3>My Retailers - Firebase Permanent <button onclick="load()" class="small" style="background:#eee; color:black;">Refresh Firebase</button></h3>
+<table><tr><th>ID - Permanent</th><th>Name - Permanent</th><th>Wallet - Permanent</th><th>Action - Full Function</th></tr><tbody id="list"><tr><td colspan=4>Loading Firebase - Permanent...</td></tr></tbody></table>
+</div>
+</div>
+
+<div class="card">
+<h3>Commission Report - My Retailers - Firebase Permanent</h3>
+<table><tr><th>Date</th><th>Retailer</th><th>Service</th><th>Amount</th><th>%</th><th>Earned</th></tr><tbody id="commissionReport"></tbody></table>
+</div>
+</div>
+
+<div id="transferModal" class="modal">
+<div class="modal-box">
+<h3>Transfer to <span id="transferTo"></span> - Permanent Firebase</h3>
+<input id="transferAmt" type="number" placeholder="Amount - Permanent Firebase">
+<div style="display:flex; gap:10px; margin-top:10px;">
+<button onclick="closeTransferModal()" style="background:#eee; color:black; flex:1;">Cancel</button>
+<button onclick="confirmTransfer()" style="flex:1; background:green;">Transfer - Permanent Firebase</button>
+</div>
+</div>
+</div>
+
+<div id="editModal" class="modal">
+<div class="modal-box">
+<h3>Edit Retailer - Permanent Firebase</h3>
+<input id="editId" placeholder="ID"><input id="editPass" placeholder="Password"><input id="editName" placeholder="Name"><input id="editMobile" placeholder="Mobile"><input id="editWallet" type="number" placeholder="Wallet">
+<div style="display:flex; gap:10px;"><button onclick="closeEditModal()" style="background:#eee; color:black; flex:1;">Cancel</button><button onclick="saveEdit()" style="flex:1; background:green;">Save - Permanent</button></div>
+</div>
+</div>
+
 <script>
-function getDid(){return localStorage.getItem('distributor')||'dist01';}
-function logout(){localStorage.clear(); location.href='index.html';}
-function load(){let did=getDid(); document.getElementById('dId').innerText=did; let data=JSON.parse(localStorage.getItem('retailers')||'[]').filter(r=>r.distributor_id==did); if(data.length==0 && did=='dist01'){data=[{user_id:'retail01',password:'123',name:'My Shop',mobile:'8888888888',wallet:5000,distributor_id:'dist01'}]; let all=JSON.parse(localStorage.getItem('retailers')||'[]'); if(all.length==0) localStorage.setItem('retailers',JSON.stringify(data));} let html=""; data.forEach(d=>{html+=`<tr><td><b>${d.user_id}</b><br><small>${d.password}</small></td><td>Rs ${d.wallet||0}</td><td><button onclick="transfer('${d.user_id}')" style="width:auto; padding:5px 10px; background:green;">Transfer</button></td></tr>`;}); document.getElementById('retList').innerHTML=html||"<tr><td colspan=3>No retailers</td></tr>";}
-function createRet(){let id=document.getElementById('retId').value.trim(), pw=document.getElementById('retPass').value.trim(), name=document.getElementById('retName').value.trim(), mob=document.getElementById('retMobile').value.trim(), did=getDid(); if(!id||!pw){document.getElementById('msg').innerText='ID Pass required'; return;} let data=JSON.parse(localStorage.getItem('retailers')||'[]'); if(data.find(d=>d.user_id==id)){document.getElementById('msg').innerText='ID exists'; return;} data.push({user_id:id,password:pw,name:name,mobile:mob,wallet:0,distributor_id:did}); localStorage.setItem('retailers',JSON.stringify(data)); document.getElementById('msg').innerText='Created: '+id; load();}
-function transfer(retId){let amt=prompt("Amount to transfer to "+retId); amt=Number(amt); if(!amt)return; let did=getDid(); let dists=JSON.parse(localStorage.getItem('distributors')||'[]'); let myDist=dists.find(d=>d.user_id==did); let cur=myDist?myDist.wallet:10000; if(cur<amt){alert("Low balance: Rs "+cur); return;} if(myDist){myDist.wallet=cur-amt; localStorage.setItem('distributors',JSON.stringify(dists));} let rets=JSON.parse(localStorage.getItem('retailers')||'[]'); let ret=rets.find(r=>r.user_id==retId); if(ret){ret.wallet=(ret.wallet||0)+amt; localStorage.setItem('retailers',JSON.stringify(rets));} alert("Transferred Rs "+amt+" to "+retId); load();}
-load();
-</script>
-</body>
-</html>
+let selectedRetailerDocId=null; let selectedRetailerId=null; let editDocId=null;
+function logout(){ localStorage.removeItem('distributor'); location.href='index.html'; }
+function clearForm(){ ['rId','rPass','rName','rMobile'].forEach(id=>document.getElementById(id).value=''); }
+
+async function load(){
+  let distId = localStorage.getItem('distributor')||'dist01';
+  document.getElementById('distId').innerText='Distributor: '+distId+' - Firebase Permanent';
+  
+  try{
+    // Load my wallet from Firebase
+    let distSnap = await db.collection('distributors').where('user_id','==',distId).get();
+    let myWallet = 0;
+    if(!distSnap.empty){
+      distSnap.forEach(doc=>{ myWallet = doc.data().wallet||0; });
+    }
+    document.getElementById('myWallet').innerText='Rs '+myWallet+' - Permanent Firebase';
+    
+    // Load my retailers from Firebase
+    let snap = await db.collection('retailers').where('distributor_id','==',distId).get();
+    let data=[]; snap.forEach(doc=>{ data.push({docId:doc.id, ...doc.data()}); });
+    
+    let html=''; let totalRetailers = data.length;
+    data.forEach(d=>{
+      html+=`<tr><td>${d.user_id}<br><small>${d.password}</small><br><small style="color:green;">Permanent Firebase</small></td><td>${d.name||''}<br><small>${d.mobile||''}</small></td><td>Rs ${d.wallet||0}<br><button onclick="openTransferModal('${d.docId}', '${d.user_id}', ${d.wallet||0})" class="small" style="background:green;">Transfer Permanent</button><br><button onclick="addWallet('${d.docId}', ${d.wallet||0})" class="small" style="background:#ddf; margin-top:4px;">+Add Permanent</button></td><td><button onclick="deleteRetailer('${d.docId}')" class="small" style="background:#ffdddd; color:red;">Delete Permanent</button> <button onclick="openEditModal('${d.docId}')" class="small" style="background:#ddf; margin-top:4px;">Edit Permanent</button></td></tr>`;
+    });
+    document.getElementById('list').innerHTML=html||'<tr><td colspan=4>No retailers - Firebase Permanent - Create first - No Error</td></tr>';
+    document.getElementById('retailerCount').innerText=totalRetailers+' - Permanent Firebase';
+    
+    // Save to localStorage for login
+    localStorage.setItem('retailers', JSON.stringify(data.map(d=>({user_id:d.user_id, password:d.password, name:d.name, mobile:d.mobile, wallet:d.wallet, distributor_id:d.distributor_id}))));
+    
+    loadCommissionReport(data.map(d=>d.user_id));
+  }catch(e){
+    document.getElementById('list').innerHTML='<tr><td colspan=4>Firebase Error
