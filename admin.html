@@ -1,17 +1,22 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PAYQUICKPAY</title><script src="https://cdn.tailwindcss.com"></script></head>
-<body class="bg-[#0F172A] min-h-screen flex items-center justify-center p-4">
-<div class="bg-white p-8 rounded-2xl max-w-md w-full text-center">
-<h1 class="text-2xl font-extrabold">PAYQUICKPAY</h1><p class="text-xs">PROFESSIONAL RECHARGE</p>
-<div class="grid grid-cols-3 gap-2 my-6">
-<button onclick="sel='admin'" class="border p-3 rounded">ADMIN</button>
-<button onclick="sel='distributor'" class="bg-black text-white p-3 rounded">DISTRIBUTOR</button>
-<button onclick="sel='retailer'" class="border p-3 rounded">RETAILER</button>
-</div>
-<input id="uid" placeholder="ID" class="border p-3 w-full rounded"><input id="pass" type="password" placeholder="Pass" class="border p-3 w-full rounded mt-2">
-<button onclick="login()" class="bg-black text-white w-full py-3 rounded mt-3">LOGIN</button><p id="msg" class="text-red-600 text-xs mt-2"></p>
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin</title><script src="https://cdn.tailwindcss.com"></script></head>
+<body class="bg-slate-50 p-4">
+<div class="bg-white max-w-4xl mx-auto p-6 rounded-xl border">
+<h1 class="font-extrabold text-xl">PAYQUICKPAY ADMIN - Permanent</h1>
+<p class="text-sm">Logged: <span id="aid" class="font-bold text-green-600"></span> | <button onclick="logout()" class="bg-black text-white px-4 py-1 rounded-full text-xs">Logout</button></p>
+<div class="mt-6 bg-blue-50 p-4 rounded-xl border"><h3 class="font-bold">Create Distributor (Permanent)</h3><input id="dId" placeholder="ID ex: dist01" class="border p-3 w-full mt-2 rounded"><input id="dPass" placeholder="Pass" class="border p-3 w-full mt-2 rounded"><input id="dName" placeholder="Name" class="border p-3 w-full mt-2 rounded"><input id="dMobile" placeholder="Mobile" class="border p-3 w-full mt-2 rounded"><button onclick="createDist()" class="bg-black text-white w-full py-3 rounded mt-3">Create - Permanent Save</button><p id="msg" class="text-sm font-bold mt-2"></p></div>
+<div id="list" class="mt-6 bg-white border rounded-xl p-4"></div>
 </div>
 <script>
-let sel='distributor';const URL="https://hiyjowfyszctvhljsdgx.supabase.co";const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.[STRIPPED 127 bytes].0cuMZjNAQQSnLIlnuxlsr4yRTgsekLliD1Qxu_3awWw";const H={apikey:KEY,Authorization:"Bearer "+KEY};
-async function login(){let id=uid.value, pw=pass.value; if(sel==='admin'&&id==='admin'&&pw==='admin123'){localStorage.setItem('admin',id);location.href='admin.html';return;}let t=sel==='admin'?'admins':sel==='distributor'?'distributors':'retailers';let r=await fetch(`${URL}/rest/v1/${t}?user_id=eq.${id}&password=eq.${pw}`,{headers:H});let d=await r.json();if(d.length){localStorage.setItem(sel,d[0].user_id);localStorage.setItem('distributor',d[0].user_id);location.href=sel+'.html';}else msg.innerText='Invalid';}
+const URL="https://hiyjowfyszctvhljsdgx.supabase.co";const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.[STRIPPED 127 bytes].0cuMZjNAQQSnLIlnuxlsr4yRTgsekLliD1Qxu_3awWw";const H={apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json"};
+// FIX - No auto redirect to main page!
+let admin=localStorage.getItem('admin')||localStorage.getItem('role');
+document.getElementById('aid').innerText=admin||'admin (direct)';
+function logout(){localStorage.clear();location.href='index.html';}
+async function createDist(){let id=dId.value, pw=dPass.value;if(!id||!pw){msg.innerText='ID Pass darkar';return;}let r=await fetch(URL+"/rest/v1/distributors",{method:"POST",headers:H,body:JSON.stringify({user_id:id,password:pw,wallet:0})});if(r.ok){msg.innerText='✅ Saved Permanent: '+id;load();}else msg.innerText='ID exists or error';}
+async function load(){let r=await fetch(URL+"/rest/v1/distributors?select=*",{headers:H});let d=await r.json();list.innerHTML='<b>All Distributors (Permanent):</b><br>'+d.map(x=>x.user_id+' - '+x.password).join('<br>');}
+load();
 </script>
-</body></html>
+</body>
+</html>
