@@ -113,11 +113,19 @@ function loadOperators(){
 loadOperators();
 
 // A1 Balance - Fixed
-function checkBalance(){
-  document.getElementById('a1Bal').innerText = "LIVE - " + A1_CONFIG.username;
-  document.getElementById('walletBal').innerText = "Rs " + (localStorage.getItem("wallet") || "0");
+<input id="mobile" onblur="autoDetect()" ...>
+
+<script>
+async function autoDetect(){
+  let mob=document.getElementById('mobile').value;
+  if(mob.length==10){
+    let r=await fetch('/api/detect?mobile='+mob);
+    let d=await r.json();
+    // Auto select operator
+    document.getElementById('operator').value=d.operator;
+  }
 }
-checkBalance();
+</script>
 
 // Recharge Function
 async function doRecharge(){
