@@ -1,34 +1,98 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Distributor - LIVE MUMBAI</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
-<style>body{margin:0;background:#020617;color:#fff;font-family:system-ui}.top{background:#0f172a;padding:14px 16px;display:flex;justify-content:space-between;position:sticky;top:0;border-bottom:1px solid #1e293b}.card{background:#1e293b;padding:14px;border-radius:12px;text-align:center;border:1px solid #334155;margin:10px 12px}.stat{background:#1e293b;padding:16px;border-radius:12px;border-left:4px solid #22c55e;margin:10px 12px}.login{max-width:360px;margin:80px auto;padding:20px;background:#0f172a;border-radius:15px;border:1px solid #1e293b}input{width:100%;padding:13px;margin:8px 0;background:#1e293b;border:1px solid #334155;color:#fff;border-radius:10px;box-sizing:border-box}button{width:100%;padding:13px;background:#22c55e;color:#000;border:none;border-radius:10px;font-weight:900;cursor:pointer}</style>
-</head><body>
-<div id="loginBox" class="login"><h3 style="margin-top:0;text-align:center">DISTRIBUTOR LOGIN - MUMBAI</h3><input id="uid" placeholder="User ID - ex: puja"><input id="pwd" type="password" placeholder="Password"><button onclick="login()">LOGIN</button><div id="msg" style="margin-top:10px;text-align:center;font-weight:bold"></div><div style="margin-top:12px;font-size:12px;color:#94a3b8;text-align:center">Mumbai Server - No Block ✅</div></div>
-<div id="mainBox" style="display:none"><div class="top"><b>DISTRIBUTOR LIVE</b><span><span id="bal" style="color:#22c55e;font-weight:900">Loading...</span> <button onclick="logout()" style="background:#ef4444;color:#fff;border:none;padding:7px 12px;border-radius:20px;margin-left:10px">Logout</button></span></div><div class="stat"><b id="total">0</b> Tx | Commission: Rs <span id="comm">0</span></div><div style="padding:12px"><h4>LIVE TRANSACTIONS</h4><div id="list">Loading...</div><button onclick="loadTx()" style="background:#334155;color:#fff;margin-top:10px">🔄 Refresh</button></div></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Distributor - PAYQUICKPAY</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-[#F5F7FB] min-h-screen">
+
+<div class="bg-white p-4 flex justify-between items-center shadow sticky top-0 z-10">
+<h1 class="font-bold text-sm">Distributor: <span id="dId" class="text-blue-600"></span></h1>
+<button onclick="logout()" class="bg-red-600 text-white px-4 py-2 rounded-lg text-xs font-bold">Logout → Main</button>
+</div>
+
+<div class="p-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+<div class="bg-white p-4 rounded-xl border"><p class="text-[10px] text-slate-500 font-bold">MY WALLET</p><h2 id="wBal" class="text-2xl font-extrabold">Rs 0</h2></div>
+<div class="bg-white p-4 rounded-xl border"><p class="text-[10px] text-slate-500 font-bold">COMMISSION EARNED</p><h2 id="cBal" class="text-2xl font-extrabold text-green-600">Rs 0</h2></div>
+<div class="bg-white p-4 rounded-xl border"><p class="text-[10px] text-slate-500 font-bold">MY RETAILERS</p><h2 id="rCount" class="text-2xl font-extrabold">0</h2></div>
+</div>
+
+<div class="p-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
+<div class="bg-white p-6 rounded-xl border h-fit">
+<h3 class="font-bold text-sm">Create Retailer</h3>
+<input id="retId" placeholder="Retailer ID ex: retail01" class="w-full border rounded-lg p-3 text-sm mt-3">
+<input id="retPass" placeholder="Password" class="w-full border rounded-lg p-3 text-sm mt-3">
+<button onclick="createRet()" class="w-full bg-slate-900 text-white py-3 rounded-lg font-bold text-sm mt-4">Create Retailer</button>
+<p id="msg" class="text-xs text-center mt-2 font-bold"></p>
+</div>
+
+<div class="lg:col-span-2 bg-white p-6 rounded-xl border">
+<h3 class="font-bold text-sm">My Retailers</h3>
+<table class="w-full text-sm mt-4">
+<thead><tr class="text-[10px] text-slate-500 border-b"><th class="text-left py-2">RETAILER</th><th>WALLET</th><th class="text-right">ACTION</th></tr></thead>
+<tbody id="retList"><tr><td colspan="3" class="py-8 text-center text-slate-400">Loading...</td></tr></tbody>
+</table>
+</div>
+</div>
+
 <script>
-var _supabase = supabase.createClient("https://hiyjowfyszctvhljsdgx.supabase.co","sb_publishable_Qn7F0hoIeGD-q6nzO1HvzA_SFrFuNE2");
-var currentUser=null;
-function checkLogin(){var id=localStorage.getItem("distributorId"); if(id){currentUser=id; showMain();}}
-async function login(){
- var u=document.getElementById("uid").value.trim(), p=document.getElementById("pwd").value.trim(), m=document.getElementById("msg");
- if(!u||!p){m.innerHTML="ID Pass de"; return;} m.innerHTML="Checking Mumbai...";
- try{
-  const {data,error}=await _supabase.from("distributors").select("*").eq("user_id",u).eq("password",p).single();
-  if(error||!data){m.innerHTML="❌ Wrong ID/Password - Table re puja achi ki check kara"; return;}
-  localStorage.setItem("distributorId",u); currentUser=u; m.innerHTML="✅ Login Success!"; showMain();
- }catch(e){m.innerHTML="❌ "+e.message;}
+const SUPA_URL="https://hiyjowfyszctvhljsdgx.supabase.co";
+const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpeWpvd2Z5c3pjdHZobGpzZGd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI4NTIwMTgsImV4cCI6MjEwODQyODAxOH0.0cuMZjNAQQSnLIlnuxlsr4yRTgsekLliD1Qxu_3awWw";
+const H={apikey:SUPA_KEY,Authorization:"Bearer "+SUPA_KEY,"Content-Type":"application/json"};
+
+// FIX: Distributor check - NOT admin
+if(!localStorage.getItem("distributor")){location.href="/";}
+document.getElementById("dId").innerText=localStorage.getItem("distributor");
+
+function logout(){localStorage.removeItem("distributor");location.href="/";}
+
+async function load(){
+ let did=localStorage.getItem("distributor");
+ let res=await fetch(SUPA_URL+"/rest/v1/distributors?user_id=eq."+did,{headers:H});
+ let data=await res.json();
+ if(data[0]){document.getElementById("wBal").innerText="Rs "+Number(data[0].wallet||0).toLocaleString();}
+ 
+ let r2=await fetch(SUPA_URL+"/rest/v1/retailers?distributor_id=eq."+did+"&select=*&order=user_id.asc",{headers:H});
+ let rets=await r2.json();
+ document.getElementById("rCount").innerText=rets.length;
+ let html=""; rets.forEach(r=>{
+  html+=`<tr class="border-t"><td class="py-3"><b>${r.user_id}</b></td><td>Rs ${Number(r.wallet||0).toLocaleString()}</td><td class="text-right"><button onclick="transferRet('${r.user_id}')" class="bg-green-50 hover:bg-green-100 text-green-700 px-3 py-1.5 rounded-lg text-xs font-bold">+ Balance</button></td></tr>`;
+ });
+ document.getElementById("retList").innerHTML=html||"<tr><td colspan=3 class='py-8 text-center text-slate-400 text-xs'>No Retailers</td></tr>";
+
+ let r3=await fetch(SUPA_URL+"/rest/v1/commission_earned?user_id=eq."+did,{headers:H});
+ let comms=await r3.json(); let tot=0; comms.forEach(c=>tot+=Number(c.commission_amount||0));
+ document.getElementById("cBal").innerText="Rs "+tot.toLocaleString();
 }
-function showMain(){document.getElementById("loginBox").style.display="none"; document.getElementById("mainBox").style.display="block"; loadBalance(); loadTx();}
-async function loadBalance(){
- try{const {data}=await _supabase.from("distributors").select("*").eq("user_id",currentUser).single(); if(data){document.getElementById("bal").innerText="Rs "+data.wallet_balance;}}catch(e){}
+
+async function createRet(){
+ let id=document.getElementById("retId").value.trim(), pw=document.getElementById("retPass").value.trim();
+ let did=localStorage.getItem("distributor");
+ if(!id||!pw){document.getElementById("msg").innerText="❌ ID Pass darkar"; return;}
+ let res=await fetch(SUPA_URL+"/rest/v1/retailers",{method:"POST",headers:H,body:JSON.stringify({user_id:id,password:pw,distributor_id:did,wallet:0})});
+ if(res.ok){document.getElementById("msg").innerText="✅ Created!"; document.getElementById("retId").value=""; document.getElementById("retPass").value=""; load();}
+ else{let t=await res.text(); document.getElementById("msg").innerText="❌ "+t.slice(0,80);}
 }
-async function loadTx(){
- var l=document.getElementById("list"); l.innerHTML="Loading...";
- try{const {data}=await _supabase.from("transactions").select("*").eq("user_id",currentUser).order("created_at",{ascending:false}).limit(20);
-  if(!data||data.length==0){l.innerHTML="No transactions yet"; document.getElementById("total").innerText="0"; return;}
-  document.getElementById("total").innerText=data.length; let h=""; for(let i=0;i<data.length;i++){h+="<div style='background:#1e293b;padding:10px;border-radius:8px;margin-top:8px'><b>"+data[i].type+"</b> - Rs "+data[i].amount+"<br><small>"+new Date(data[i].created_at).toLocaleString()+"</small></div>";}
-  l.innerHTML=h;
- }catch(e){l.innerHTML="Error: "+e.message;}
+
+async function transferRet(rid){
+ let amt=prompt("Kitte Rs transfer kariba "+rid+" ku?");
+ if(!amt) return; amt=Number(amt);
+ let did=localStorage.getItem("distributor");
+ let r1=await fetch(SUPA_URL+"/rest/v1/distributors?user_id=eq."+did,{headers:H});
+ let d=await r1.json(); let cur=Number(d[0].wallet||0);
+ if(cur<amt){alert("Wallet kam achi! Current: Rs "+cur); return;}
+ await fetch(SUPA_URL+"/rest/v1/distributors?user_id=eq."+did,{method:"PATCH",headers:H,body:JSON.stringify({wallet:cur-amt})});
+ let r2=await fetch(SUPA_URL+"/rest/v1/retailers?user_id=eq."+rid,{headers:H});
+ let ret=await r2.json(); let rcur=Number(ret[0].wallet||0);
+ await fetch(SUPA_URL+"/rest/v1/retailers?user_id=eq."+rid,{method:"PATCH",headers:H,body:JSON.stringify({wallet:rcur+amt})});
+ await fetch(SUPA_URL+"/rest/v1/balance_transfers",{method:"POST",headers:H,body:JSON.stringify({from_id:did,to_id:rid,amount:amt})});
+ alert("✅ Rs "+amt+" Transferred to "+rid);
+ load();
 }
-function logout(){localStorage.removeItem("distributorId"); location.reload();}
-checkLogin();
-</script></body></html>
+load();
+</script>
+</body>
+</html>
