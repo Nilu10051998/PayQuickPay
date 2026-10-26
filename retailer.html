@@ -1,23 +1,155 @@
 <!DOCTYPE html>
 <html>
-<head><meta charset="UTF-8"><title>Retailer - PAYQUICKPAY</title>
-<style>body{font-family:Arial; background:#f5f7fb; margin:0;} nav{background:white; padding:12px 20px; display:flex; justify-content:space-between; border-bottom:1px solid #ddd;} .box{max-width:1100px; margin:15px auto; display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:0 15px;} .card{background:white; padding:20px; border-radius:14px; border:1px solid #ddd;} input{width:100%; padding:10px; margin:6px 0; border:1px solid #ddd; border-radius:8px; box-sizing:border-box;} button{width:100%; background:#0F172A; color:white; padding:10px; border:none; border-radius:8px; cursor:pointer;}</style>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Retailer Panel - PAYQUICKPAY</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:Arial;background:#f2f2f2;margin:0}
+nav{background:#0F172A;color:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
+.box{max-width:1100px;margin:15px auto;padding:0 15px}
+.card{background:#fff;padding:15px;border-radius:10px;margin-bottom:15px;border:1px solid #ddd}
+input,select{width:100%;padding:10px;margin:5px 0;border:1px solid #ccc;border-radius:6px}
+button{width:100%;padding:10px;background:#0F172A;color:#fff;border:none;border-radius:6px;cursor:pointer;margin-top:5px}
+button.small{width:auto;padding:6px 12px;font-size:12px}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{border:1px solid #ddd;padding:8px;text-align:left;font-size:12px}
+th{background:#f5f5f5}
+.stats{display:flex;gap:10px;flex-wrap:wrap}
+.stat{flex:1;min-width:140px;background:#fff;padding:12px;border-radius:8px;border:1px solid #ddd;text-align:center}
+.services{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.service{border:1px solid #ddd;padding:12px;border-radius:8px;text-align:center;cursor:pointer;background:#fff}
+.service:hover{background:#f0f7ff}
+</style>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig={apiKey:"AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",authDomain:"payquickpay-487ef.firebaseapp.com",projectId:"payquickpay-487ef",storageBucket:"payquickpay-487ef.firebasestorage.app",messagingSenderId:"368108778411",appId:"1:368108778411:web:03dcbc47e46568d51b58ee"};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore();
+</script>
 </head>
 <body>
-<nav><div><b>RETAILER</b> - ID: <span id="rId">---</span></div><button onclick="logout()" style="width:auto; padding:6px 12px; border-radius:20px;">Logout</button></nav>
-<div style="max-width:1100px; margin:15px auto; padding:0 15px; display:flex; gap:15px;">
-<div style="background:white; padding:15px; border-radius:12px; border:1px solid #ddd; flex:1;"><small>WALLET</small><h2 id="wBal">Rs 0</h2></div>
-<div style="background:#0F172A; color:white; padding:15px; border-radius:12px; flex:1;"><small>COMMISSION</small><h3>2% - 5%</h3><small>Mobile 2% | DTH 3% | Bill 1.5%</small></div>
-</div>
+<nav><div><b>PAYQUICKPAY - RETAILER</b><br><small id="retailerId"></small></div><div><button onclick="logout()" class="small" style="background:#fff;color:#000;width:auto">Logout</button></div></nav>
+
 <div class="box">
-<div class="card"><h3>Recharge Services</h3><div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:15px;"><div style="background:#e0f2fe; padding:15px; border-radius:10px; text-align:center;"><b>Mobile</b><br><small style="color:green;">2% Commission</small></div><div style="background:#f3e8ff; padding:15px; border-radius:10px; text-align:center;"><b>DTH</b><br><small style="color:green;">3% Commission</small></div><div style="background:#ffedd5; padding:15px; border-radius:10px; text-align:center;"><b>Electric</b><br><small style="color:green;">1.5% Commission</small></div></div><div style="margin-top:20px; background:#f5f5f5; padding:15px; border-radius:10px;"><input placeholder="Mobile Number"><div style="display:flex; gap:5px; margin-top:10px;"><button style="background:white; color:black; border:1px solid #ddd;">Rs 149</button><button style="background:white; color:black; border:1px solid #ddd;">Rs 299</button><button style="background:white; color:black; border:1px solid #ddd;">Rs 599</button></div><button style="margin-top:10px; background:green;">Recharge Now</button></div></div>
-<div class="card"><h3>Commission Structure</h3><table style="width:100%; border-collapse:collapse; margin-top:10px;"><tr style="background:#f5f5f5;"><th style="padding:8px; text-align:left; font-size:12px;">SERVICE</th><th style="font-size:12px;">COMMISSION</th><th style="font-size:12px;">STATUS</th></tr><tr><td style="padding:10px;"><b>Mobile</b></td><td style="color:green;">2.0%</td><td><small style="background:#dcfce7; color:green; padding:3px 8px; border-radius:10px;">Active</small></td></tr><tr><td style="padding:10px;"><b>DTH</b></td><td style="color:green;">3.0%</td><td><small style="background:#dcfce7; color:green; padding:3px 8px; border-radius:10px;">Active</small></td></tr><tr><td style="padding:10px;"><b>Electricity</b></td><td style="color:green;">1.5%</td><td><small style="background:#dcfce7; color:green; padding:3px 8px; border-radius:10px;">Active</small></td></tr><tr><td style="padding:10px;"><b>AEPS</b></td><td style="color:green;">0.5%</td><td><small style="background:#dcfce7; color:green; padding:3px 8px; border-radius:10px;">Active</small></td></tr></table></div>
+<div class="stats">
+<div class="stat"><b>Wallet</b><br><span id="wallet">Rs 0</span></div>
+<div class="stat"><b>Commission Earned</b><br><span id="commEarned">Rs 0</span></div>
+<div class="stat"><b>Total Recharge</b><br><span id="totalRecharge">0</span></div>
+<div class="stat"><b>Commission Structure</b><br><small>Mobile 2%<br>DTH 3%<br>Bill 1.5%<br>AEPS 0.5%</small></div>
 </div>
+
+<div class="card">
+<h3>Recharge Services</h3>
+<div class="services">
+<div class="service" onclick="openService('MOBILE')"><b>📱 Mobile</b><br><small>2% Commission</small></div>
+<div class="service" onclick="openService('DTH')"><b>📺 DTH</b><br><small>3% Commission</small></div>
+<div class="service" onclick="openService('ELECTRICITY')"><b>💡 Electricity</b><br><small>1.5% Commission</small></div>
+<div class="service" onclick="openService('BROADBAND')"><b>🌐 Broadband</b><br><small>1.5% Commission</small></div>
+<div class="service" onclick="openService('GAS')"><b>⛽ Gas</b><br><small>1.5% Commission</small></div>
+<div class="service" onclick="openService('AEPS')"><b>💳 AEPS</b><br><small>0.5% Commission</small></div>
+</div>
+</div>
+
+<div class="card" id="rechargeCard" style="display:none">
+<h3 id="serviceTitle">Recharge</h3>
+<input id="customerNo" placeholder="Customer Number / Mobile Number">
+<input id="amount" type="number" placeholder="Amount">
+<input id="operator" placeholder="Operator (Optional)">
+<button onclick="doRecharge()">Recharge</button>
+<p id="rechargeMsg" style="text-align:center;font-size:12px"></p>
+</div>
+
+<div class="card">
+<h3>History <button onclick="loadHistory()" class="small" style="background:#eee;color:#000">Refresh</button></h3>
+<table><tr><th>Date</th><th>Service</th><th>Number</th><th>Amount</th><th>Commission</th><th>Debit</th><th>Status</th></tr><tbody id="history"></tbody></table>
+</div>
+</div>
+
 <script>
-function getId(){return localStorage.getItem('retailer')||'retail01';}
-function logout(){localStorage.clear(); location.href='index.html';}
-function load(){let id=getId(); document.getElementById('rId').innerText=id; let rets=JSON.parse(localStorage.getItem('retailers')||'[]'); let myRet=rets.find(r=>r.user_id==id); if(myRet) document.getElementById('wBal').innerText="Rs "+(myRet.wallet||0); else document.getElementById('wBal').innerText="Rs 5000";}
-load();
+let currentService='';
+function logout(){localStorage.removeItem('retailer');location.href='index.html';}
+function openService(s){currentService=s;document.getElementById('serviceTitle').innerText=s+' Recharge';document.getElementById('rechargeCard').style.display='block';document.getElementById('customerNo').value='';document.getElementById('amount').value='';document.getElementById('rechargeMsg').innerText='';}
+
+async function loadData(){
+  let retailerId=localStorage.getItem('retailer');
+  if(!retailerId){location.href='index.html';return;}
+  document.getElementById('retailerId').innerText=retailerId;
+  try{
+    let snap=await db.collection('retailers').where('user_id','==',retailerId).get();
+    let wallet=0; snap.forEach(doc=>{wallet=doc.data().wallet||0;});
+    document.getElementById('wallet').innerText='Rs '+wallet;
+    localStorage.setItem('retailer_wallet',wallet);
+  }catch(e){}
+  loadHistory();
+}
+
+async function getCommissionPercent(service){
+  try{
+    let doc=await db.collection('commission_setup').doc('setup').get();
+    if(doc.exists){
+      let s=doc.data();
+      if(service=='MOBILE') return s.mobile;
+      if(service=='DTH') return s.dth;
+      if(service=='ELECTRICITY'||service=='BROADBAND'||service=='GAS') return s.bill;
+      if(service=='AEPS') return s.aeps;
+    }
+  }catch(e){}
+  let local=JSON.parse(localStorage.getItem('commission_setup')||'{"mobile":2,"dth":3,"bill":1.5,"aeps":0.5}');
+  if(service=='MOBILE') return local.mobile;
+  if(service=='DTH') return local.dth;
+  if(service=='ELECTRICITY'||service=='BROADBAND'||service=='GAS') return local.bill;
+  if(service=='AEPS') return local.aeps;
+  return 1;
+}
+
+async function doRecharge(){
+  let retailerId=localStorage.getItem('retailer');
+  let cust=document.getElementById('customerNo').value.trim();
+  let amt=Number(document.getElementById('amount').value||0);
+  let oper=document.getElementById('operator').value.trim();
+  if(!cust||!amt){document.getElementById('rechargeMsg').innerText='Enter Number and Amount';return;}
+  
+  let percent=await getCommissionPercent(currentService);
+  let commission=(amt*percent/100);
+  let debit=amt-commission;
+  
+  try{
+    let snap=await db.collection('retailers').where('user_id','==',retailerId).get();
+    let docId=null,wallet=0; snap.forEach(doc=>{docId=doc.id;wallet=doc.data().wallet||0;});
+    if(wallet<amt){document.getElementById('rechargeMsg').innerText='Low Balance: Rs '+wallet;document.getElementById('rechargeMsg').style.color='red';return;}
+    
+    await db.collection('retailers').doc(docId).update({wallet:wallet-amt+commission});
+    
+    let historyData={retailer_id:retailerId,service:currentService,customer_no:cust,amount:amt,commission_percent:percent,commission:commission.toFixed(2),debit:debit.toFixed(2),operator:oper,date:new Date().toLocaleString(),status:'Success'};
+    
+    let localHistory=JSON.parse(localStorage.getItem('recharge_history')||'[]');
+    localHistory.push(historyData);
+    localStorage.setItem('recharge_history',JSON.stringify(localHistory));
+    
+    try{await db.collection('recharge_history').add(historyData);}catch(e){}
+    
+    document.getElementById('rechargeMsg').innerText='Success: '+currentService+' Rs '+amt+' - Commission Rs '+commission.toFixed(2)+' - Wallet Rs '+(wallet-amt+commission).toFixed(2);
+    document.getElementById('rechargeMsg').style.color='green';
+    loadData();
+  }catch(e){document.getElementById('rechargeMsg').innerText=e.message;document.getElementById('rechargeMsg').style.color='red';}
+}
+
+function loadHistory(){
+  let retailerId=localStorage.getItem('retailer');
+  let reports=JSON.parse(localStorage.getItem('recharge_history')||'[]');
+  let myReports=reports.filter(r=>r.retailer_id==retailerId);
+  let total=0,earned=0; myReports.forEach(r=>{total++;earned+=Number(r.commission||0);});
+  document.getElementById('totalRecharge').innerText=total;
+  document.getElementById('commEarned').innerText='Rs '+earned.toFixed(2);
+  let html=''; [...myReports].reverse().slice(0,30).forEach(r=>{
+    html+=`<tr><td><small>${r.date}</small></td><td>${r.service}</td><td>${r.customer_no}</td><td>Rs ${r.amount}</td><td>Rs ${r.commission} (${r.commission_percent}%)</td><td>Rs ${r.debit}</td><td>${r.status}</td></tr>`;
+  });
+  document.getElementById('history').innerHTML=html||'<tr><td colspan=7>No history</td></tr>';
+}
+loadData();
 </script>
 </body>
 </html>
