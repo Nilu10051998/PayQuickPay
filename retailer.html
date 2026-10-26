@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Retailer - LIVE A1TOPUP 505942</title>
+<title>Retailer LIVE</title>
 <style>
 body{font-family:Arial;background:#f2f2f2;margin:0}
 nav{background:#0F172A;color:#fff;padding:12px 20px;display:flex;justify-content:space-between}
@@ -13,10 +13,8 @@ input,select{width:100%;padding:10px;margin:5px 0;border:1px solid #ccc;border-r
 button{width:100%;padding:10px;background:#0F172A;color:#fff;border:none;border-radius:6px;cursor:pointer;margin-top:5px}
 button.small{width:auto;padding:6px 12px;font-size:11px}
 table{width:100%;border-collapse:collapse;margin-top:10px}
-th,td{border:1px solid #ddd;padding:6px;text-align:left;font-size:11px}
+th,td{border:1px solid #ddd;padding:6px;font-size:11px}
 th{background:#f5f5f5}
-.stats{display:flex;gap:8px;flex-wrap:wrap}
-.stat{flex:1;min-width:120px;background:#fff;padding:10px;border-radius:8px;border:1px solid #ddd;text-align:center}
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -24,35 +22,45 @@ th{background:#f5f5f5}
 var firebaseConfig={apiKey:"AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",authDomain:"payquickpay-487ef.firebaseapp.com",projectId:"payquickpay-487ef",storageBucket:"payquickpay-487ef.firebasestorage.app",messagingSenderId:"368108778411",appId:"1:368108778411:web:03dcbc47e46568d51b58ee"};
 firebase.initializeApp(firebaseConfig);
 var db=firebase.firestore();
-var A1={username:'505942',pwd:'605254',base:'https://business.a1topup.com/recharge/'};
 </script>
 </head>
 <body>
-<nav><div><b>PAYQUICKPAY - RETAILER - 505942 LIVE</b><br><small id="rid"></small></div><div><button onclick="logout()" class="small" style="background:#fff;color:#000;width:auto">Logout</button> <button onclick="checkBal()" class="small" style="background:#fff;color:#000;width:auto">Check Balance</button></div></nav>
+<nav><div><b>RETAILER LIVE 505942</b><br><small id="rid"></small></div><div><button onclick="logout()" class="small" style="background:#fff;color:#000;width:auto">Logout</button> <button onclick="checkBal()" class="small" style="background:#fff;color:#000;width:auto">Check Balance</button></div></nav>
 <div class="box">
-<div class="stats">
-<div class="stat"><b>Wallet</b><br><span id="wallet">Rs 0</span></div>
-<div class="stat"><b>A1 Balance</b><br><span id="a1bal">Click Check</span></div>
-<div class="stat"><b>Commission</b><br><span id="comm">Rs 0</span></div>
-<div class="stat"><b>Count</b><br><span id="cnt">0</span></div>
+<div class="card">
+<b>Wallet: <span id="wallet">Rs 0</span></b> | <b>A1 Balance: <span id="a1bal">Click Check</span></b> | <b>Comm: <span id="comm">Rs 0</span></b>
 </div>
 <div class="card">
-<h3>REAL RECHARGE - A1TOPUP LIVE 505942</h3>
-<select id="svc"><option value="MOBILE">Mobile</option><option value="DTH">DTH</option><option value="ELECTRICITY">Electricity</option></select>
-<select id="op"><option value="RC" selected>【entity-Jio¦canonical_name=Jio】 RC</option><option value="A">【entity-Airtel¦canonical_name=Airtel】 A</option><option value="V">【entity-Vodafone¦canonical_name=Vodafone】 V</option><option value="I">Idea I</option><option value="BT">BSNL BT</option><option value="ATV">【entity-Airtel¦canonical_name=Airtel】 DTH ATV</option><option value="DTV">Dish TV DTV</option><option value="TTV">Tata Sky TTV</option><option value="TPCODL">TPCODL TPCODL</option></select>
-<select id="circle"><option value="23" selected>Odisha 23</option><option value="2">WB 2</option><option value="17">Bihar 17</option><option value="6">Kolkata 6</option></select>
+<h3>REAL RECHARGE LIVE 505942</h3>
+<select id="op">
+<option value="RC" selected>【entity-Jio¦canonical_name=Jio】 RC - Odisha 23</option>
+<option value="A">【entity-Airtel¦canonical_name=Airtel】 A - Odisha 23</option>
+<option value="V">【entity-Vodafone¦canonical_name=Vodafone】 V</option>
+<option value="I">Idea I</option>
+<option value="BT">BSNL BT</option>
+<option value="ATV">【entity-Airtel¦canonical_name=Airtel】 DTH ATV</option>
+<option value="DTV">Dish TV DTV</option>
+<option value="TTV">Tata Sky TTV</option>
+<option value="TPCODL">TPCODL Electricity</option>
+</select>
+<select id="circle"><option value="23" selected>Odisha 23</option><option value="2">WB 2</option><option value="17">Bihar 17</option></select>
 <input id="num" placeholder="Mobile No 10 Digit">
 <input id="amt" type="number" placeholder="Amount 10">
-<button onclick="doRecharge()" style="background:green">REAL RECHARGE - LIVE A1TOPUP</button>
-<p id="msg" style="text-align:center;font-size:12px;font-weight:bold;word-break:break-all"></p>
+<button onclick="doRecharge()" style="background:green">REAL RECHARGE LIVE</button>
+<p id="msg" style="text-align:center;font-weight:bold;word-break:break-all"></p>
 </div>
 <div class="card">
 <h3>History</h3>
-<table><tr><th>Date</th><th>Service</th><th>Number</th><th>Amt</th><th>TxID</th><th>Status</th><th>Comm</th></tr><tbody id="hist"></tbody></table>
+<table><tr><th>Date</th><th>Number</th><th>Amt</th><th>TxID</th><th>Status</th></tr><tbody id="hist"></tbody></table>
 </div>
 </div>
 <script>
+var USERNAME='505942';
+var PWD='605254';
+var BASE='https://business.a1topup.com/recharge/';
+
 function logout(){localStorage.removeItem('retailer');location.href='index.html';}
+
 async function load(){
   var id=localStorage.getItem('retailer');
   if(!id){location.href='index.html';return;}
@@ -65,31 +73,31 @@ async function load(){
   var h=JSON.parse(localStorage.getItem('recharge_history')||'[]').filter(function(r){return r.retailer_id==id;});
   var c=0; h.forEach(function(r){c+=Number(r.commission||0);});
   document.getElementById('comm').innerText='Rs '+c.toFixed(2);
-  document.getElementById('cnt').innerText=h.length;
-  var html=''; h.slice(-30).reverse().forEach(function(r){
-    html+='<tr><td><small>'+r.date+'</small></td><td>'+r.service+'<br>'+(r.operator_code||'')+'</td><td>'+r.customer_no+'</td><td>Rs '+r.amount+'</td><td><small>'+(r.txid||'')+'</small></td><td><small>'+(r.status||'').substring(0,20)+'</small></td><td>Rs '+(r.commission||0)+'</td></tr>';
+  var html=''; h.slice(-20).reverse().forEach(function(r){
+    html+='<tr><td><small>'+r.date+'</small></td><td>'+r.customer_no+'</td><td>Rs '+r.amount+'</td><td><small>'+(r.txid||'')+'</small></td><td><small>'+(r.status||'').substring(0,20)+'</small></td></tr>';
   });
-  document.getElementById('hist').innerHTML=html||'<tr><td colspan=7>No history</td></tr>';
+  document.getElementById('hist').innerHTML=html||'<tr><td colspan=5>No history</td></tr>';
 }
+
 async function checkBal(){
   document.getElementById('a1bal').innerText='Checking 505942...';
   try{
-    var apiUrl=A.base+'balance?username='+A.username+'&pwd='+A.pwd+'&format=json';
+    var apiUrl=BASE+'balance?username='+USERNAME+'&pwd='+PWD+'&format=json';
     var proxy='https://api.allorigins.win/raw?url='+encodeURIComponent(apiUrl);
     var res=await fetch(proxy);
     var text=await res.text();
-    document.getElementById('a1bal').innerText=text.substring(0,120)+' - LIVE';
+    document.getElementById('a1bal').innerText=text.substring(0,100);
   }catch(e){
     document.getElementById('a1bal').innerText='Error: '+e.message;
   }
 }
+
 async function doRecharge(){
   var id=localStorage.getItem('retailer');
   var num=document.getElementById('num').value.trim();
-  var amt=Number(document.getElementById('amt').value||0);
+  var amt=document.getElementById('amt').value.trim();
   var op=document.getElementById('op').value;
   var circle=document.getElementById('circle').value;
-  var svc=document.getElementById('svc').value;
   if(!num||!amt){document.getElementById('msg').innerText='Enter Number Amount';return;}
   var orderId='PAY'+Date.now();
   document.getElementById('msg').innerText='Processing LIVE OrderID: '+orderId;
@@ -97,12 +105,11 @@ async function doRecharge(){
   try{
     var s=await db.collection('retailers').where('user_id','==',id).get();
     var docId=null,w=0; s.forEach(function(d){docId=d.id;w=d.data().wallet||0;});
-    if(w<amt){document.getElementById('msg').innerText='Low Wallet Rs '+w;document.getElementById('msg').style.color='red';return;}
-    var apiUrl=A.base+'api?username='+A.username+'&pwd='+A.pwd+'&circlecode='+circle+'&operatorcode='+op+'&number='+num+'&amount='+amt+'&orderid='+orderId+'&format=json';
+    if(w<Number(amt)){document.getElementById('msg').innerText='Low Wallet Rs '+w;document.getElementById('msg').style.color='red';return;}
+    var apiUrl=BASE+'api?username='+USERNAME+'&pwd='+PWD+'&circlecode='+circle+'&operatorcode='+op+'&number='+num+'&amount='+amt+'&orderid='+orderId+'&format=json';
     var proxy='https://api.allorigins.win/raw?url='+encodeURIComponent(apiUrl);
     var res=await fetch(proxy);
     var text=await res.text();
-    console.log(text);
     var status='Failed',txid='',opid='';
     try{
       var j=JSON.parse(text);
@@ -113,9 +120,9 @@ async function doRecharge(){
       else if(text.toLowerCase().indexOf('success')>-1)status='Success';
     }
     if(status.toLowerCase().indexOf('success')>-1){
-      var comm=amt*0.02;
-      await db.collection('retailers').doc(docId).update({wallet:w-amt+comm});
-      var data={retailer_id:id,service:svc,operator_code:op,customer_no:num,amount:amt,commission:comm.toFixed(2),orderid:orderId,txid:txid,opid:opid,status:'Success LIVE Tx:'+txid,date:new Date().toLocaleString()};
+      var comm=Number(amt)*0.02;
+      await db.collection('retailers').doc(docId).update({wallet:w-Number(amt)+comm});
+      var data={retailer_id:id,customer_no:num,amount:amt,commission:comm.toFixed(2),orderid:orderId,txid:txid,opid:opid,status:'Success Tx:'+txid,date:new Date().toLocaleString()};
       var hist=JSON.parse(localStorage.getItem('recharge_history')||'[]'); hist.push(data); localStorage.setItem('recharge_history',JSON.stringify(hist));
       document.getElementById('msg').innerText='SUCCESS Tx:'+txid+' Op:'+opid+' Order:'+orderId;
       document.getElementById('msg').style.color='green';
