@@ -44,10 +44,16 @@ const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 const H={apikey:SUPA_KEY,Authorization:"Bearer "+SUPA_KEY,"Content-Type":"application/json"};
 
 // FIX: Distributor check - NOT admin
-if(!localStorage.getItem("distributor")){location.href="/";}
-document.getElementById("dId").innerText=localStorage.getItem("distributor");
 
-function logout(){localStorage.removeItem("distributor");location.href="/";}
+document.getElementById("dId").innerText=localStorage.getItem("distributor");
+let did = localStorage.getItem("distributor") || sessionStorage.getItem("distributor");
+if(!did){
+  console.log("No login found, going to main");
+  location.href="/";
+} else {
+  localStorage.setItem("distributor", did); // Re-save
+  document.getElementById("dId").innerText = did;
+}function logout(){localStorage.removeItem("distributor");location.href="/";}
 
 async function load(){
  let did=localStorage.getItem("distributor");
