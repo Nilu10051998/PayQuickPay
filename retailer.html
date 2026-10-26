@@ -1,50 +1,22 @@
 <!DOCTYPE html>
 <html>
-<head><meta charset="UTF-8"><title>Retailer - REAL</title>
-<style>body{font-family:Arial; background:#f5f7fb; margin:0;} nav{background:white; padding:12px 20px; display:flex; justify-content:space-between; border-bottom:1px solid #ddd;} .box{max-width:1100px; margin:15px auto; display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:0 15px;} .card{background:white; padding:20px; border-radius:15px; border:1px solid #ddd;} input{width:100%; padding:10px; margin:6px 0; border:1px solid #ddd; border-radius:8px; box-sizing:border-box;} button{width:100%; background:green; color:white; padding:12px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;}</style>
+<head><meta charset="UTF-8"><title>Retailer - PAYQUICKPAY</title>
+<style>body{font-family:Arial; background:#f5f7fb; margin:0;} nav{background:white; padding:12px 20px; display:flex; justify-content:space-between; border-bottom:1px solid #ddd;} .box{max-width:1100px; margin:15px auto; display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:0 15px;} .card{background:white; padding:20px; border-radius:14px; border:1px solid #ddd;} input{width:100%; padding:10px; margin:6px 0; border:1px solid #ddd; border-radius:8px; box-sizing:border-box;} button{width:100%; background:#0F172A; color:white; padding:10px; border:none; border-radius:8px; cursor:pointer;}</style>
 </head>
 <body>
-<nav><div><b>RETAILER - REAL APP - All Recharge</b><br><small>ID: <span id="rId">---</span> • Real Money • Permanent</small></div><button onclick="logout()" style="width:auto; background:#0F172A; color:white; padding:6px 12px; border:none; border-radius:20px; cursor:pointer;">Logout</button></nav>
-
+<nav><div><b>RETAILER</b> - ID: <span id="rId">---</span></div><button onclick="logout()" style="width:auto; padding:6px 12px; border-radius:20px;">Logout</button></nav>
 <div style="max-width:1100px; margin:15px auto; padding:0 15px; display:flex; gap:15px;">
-<div style="background:white; padding:15px; border-radius:12px; border:1px solid #ddd; flex:1;"><small>WALLET - REAL</small><h2 id="wBal">Rs 0</h2><small style="color:green; font-weight:bold;">Permanent Real Balance</small></div>
-<div style="background:#0F172A; color:white; padding:15px; border-radius:12px; flex:1;"><small>COMMISSION STRUCTURE - REAL</small><h3 style="color:#4ade80;">2% - 5% Active Real</h3><small>Mobile 2% | DTH 3% | Bill 1.5% | AEPS 0.5%</small></div>
+<div style="background:white; padding:15px; border-radius:12px; border:1px solid #ddd; flex:1;"><small>WALLET</small><h2 id="wBal">Rs 0</h2></div>
+<div style="background:#0F172A; color:white; padding:15px; border-radius:12px; flex:1;"><small>COMMISSION</small><h3>2% - 5%</h3><small>Mobile 2% | DTH 3% | Bill 1.5%</small></div>
 </div>
-
 <div class="box">
-<div class="card">
-<h3>All Recharge Services - REAL APP</h3>
-<p style="font-size:11px; color:gray;">Real Money Transactions - Secure</p>
-<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:15px;">
-<div style="background:#e0f2fe; padding:15px; border-radius:10px; text-align:center;"><b>Mobile</b><br><small style="color:green;">2% Comm - Real</small></div>
-<div style="background:#f3e8ff; padding:15px; border-radius:10px; text-align:center;"><b>DTH</b><br><small style="color:green;">3% Comm - Real</small></div>
-<div style="background:#ffedd5; padding:15px; border-radius:10px; text-align:center;"><b>Electric</b><br><small style="color:green;">1.5% Comm - Real</small></div>
+<div class="card"><h3>Recharge Services</h3><div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:15px;"><div style="background:#e0f2fe; padding:15px; border-radius:10px; text-align:center;"><b>Mobile</b><br><small style="color:green;">2% Commission</small></div><div style="background:#f3e8ff; padding:15px; border-radius:10px; text-align:center;"><b>DTH</b><br><small style="color:green;">3% Commission</small></div><div style="background:#ffedd5; padding:15px; border-radius:10px; text-align:center;"><b>Electric</b><br><small style="color:green;">1.5% Commission</small></div></div><div style="margin-top:20px; background:#f5f5f5; padding:15px; border-radius:10px;"><input placeholder="Mobile Number"><div style="display:flex; gap:5px; margin-top:10px;"><button style="background:white; color:black; border:1px solid #ddd;">Rs 149</button><button style="background:white; color:black; border:1px solid #ddd;">Rs 299</button><button style="background:white; color:black; border:1px solid #ddd;">Rs 599</button></div><button style="margin-top:10px; background:green;">Recharge Now</button></div></div>
+<div class="card"><h3>Commission Structure</h3><table style="width:100%; border-collapse:collapse; margin-top:10px;"><tr style="background:#f5f5f5;"><th style="padding:8px; text-align:left; font-size:12px;">SERVICE</th><th style="font-size:12px;">COMMISSION</th><th style="font-size:12px;">STATUS</th></tr><tr><td style="padding:10px;"><b>Mobile</b></td><td style="color:green;">2.0%</td><td><small style="background:#dcfce7; color:green; padding:3px 8px; border-radius:10px;">Active</small></td></tr><tr><td style="padding:10px;"><b>DTH</b></td><td style="color:green;">3.0%</td><td><small style="background:#dcfce7; color:green; padding:3px 8px; border-radius:10px;">Active</small></td></tr><tr><td style="padding:10px;"><b>Electricity</b></td><td style="color:green;">1.5%</td><td><small style="background:#dcfce7; color:green; padding:3px 8px; border-radius:10px;">Active</small></td></tr><tr><td style="padding:10px;"><b>AEPS</b></td><td style="color:green;">0.5%</td><td><small style="background:#dcfce7; color:green; padding:3px 8px; border-radius:10px;">Active</small></td></tr></table></div>
 </div>
-<div style="margin-top:20px; background:#f5f5f5; padding:15px; border-radius:10px;">
-<p><b>Quick Recharge - Real</b></p>
-<input placeholder="Mobile Number">
-<div style="display:flex; gap:5px; margin-top:10px;"><button style="background:white; color:black; border:1px solid #ddd;">Rs 149</button><button style="background:white; color:black; border:1px solid #ddd;">Rs 299</button><button style="background:white; color:black; border:1px solid #ddd;">Rs 599</button></div>
-<button style="margin-top:10px;">Recharge Now - Real Secure</button>
-</div>
-</div>
-
-<div class="card">
-<h3>Commission Structure - Real - Permanent</h3>
-<table style="width:100%; border-collapse:collapse; margin-top:10px;"><tr style="background:#f5f5f5;"><th style="padding:8px; text-align:left; font-size:12px;">SERVICE - REAL</th><th style="font-size:12px;">COMMISSION - REAL</th><th style="font-size:12px;">STATUS</th></tr>
-<tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-size:13px;"><b>Mobile - Real</b></td><td style="color:green; font-weight:bold;">2.0% Real</td><td><small style="background:#dcfce7; color:green; padding:3px 8px; border-radius:10px;">Active Real</small></td></tr>
-<tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-size:13px;"><b>DTH - Real</b></td><td style="color:green; font-weight:bold;">3.0% Real</td><td><small style="background:#dcfce7; color:green; padding:3px 8px; border-radius:10px;">Active Real</small></td></tr>
-<tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-size:13px;"><b>Electricity - Real</b></td><td style="color:green; font-weight:bold;">1.5% Real</td><td><small style="background:#dcfce7; color:green; padding:3px 8px; border-radius:10px;">Active Real</small></td></tr>
-<tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-size:13px;"><b>AEPS - Real Money</b></td><td style="color:green; font-weight:bold;">0.5% Real</td><td><small style="background:#dcfce7; color:green; padding:3px 8px; border-radius:10px;">Active Real</small></td></tr>
-</table>
-<div style="margin-top:15px; background:#dbeafe; padding:10px; border-radius:8px; font-size:11px; font-weight:bold; color:#1e40af;">✓ Real App: All data permanent in Supabase - Secure Real Transactions - Permanent Never Deleted</div>
-</div>
-</div>
-
 <script>
-const SUPA_URL="https://mojdysebckbodadjctj.supabase.co"; const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.[STRIPPED 127 bytes].aoK0cXDCsKZigLUNHXQV6eFClqf7_i91zpw8zrRu0ic"; const HEAD={apikey:SUPA_KEY, Authorization:"Bearer "+SUPA_KEY, "Content-Type":"application/json"};
 function getId(){return localStorage.getItem('retailer')||'retail01';}
 function logout(){localStorage.clear(); location.href='index.html';}
-async function load(){let id=getId(); document.getElementById('rId').innerText=id; let r=await fetch(SUPA_URL+"/rest/v1/retailers?user_id=eq."+id, {headers:HEAD}); let d=await r.json(); if(d[0]) document.getElementById('wBal').innerText="Rs "+(d[0].wallet||0);}
+function load(){let id=getId(); document.getElementById('rId').innerText=id; let rets=JSON.parse(localStorage.getItem('retailers')||'[]'); let myRet=rets.find(r=>r.user_id==id); if(myRet) document.getElementById('wBal').innerText="Rs "+(myRet.wallet||0); else document.getElementById('wBal').innerText="Rs 5000";}
 load();
 </script>
 </body>
