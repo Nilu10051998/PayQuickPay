@@ -1,17 +1,22 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Distributor</title><script src="https://cdn.tailwindcss.com"></script></head>
-<body class="bg-slate-50 p-4">
-<div class="bg-white max-w-3xl mx-auto p-6 rounded-xl border">
-<h1 class="font-bold">DISTRIBUTOR PANEL - Secure</h1>
-<p>ID: <span id="did" class="font-bold text-blue-600"></span> | <button onclick="logout()" class="bg-black text-white px-3 py-1 rounded-full text-xs">Logout</button></p>
-<div class="mt-4 border p-4 rounded-xl"><input id="rId" placeholder="Retailer ID" class="border p-2 w-full rounded"><input id="rPass" placeholder="Pass" class="border p-2 w-full mt-2 rounded"><button onclick="createR()" class="bg-black text-white w-full py-2 mt-2 rounded">Create Retailer - Permanent</button><p id="msg" class="text-sm font-bold mt-2"></p></div>
-<div id="list" class="mt-4"></div>
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Distributor - REAL</title>
+<style>body{font-family:Arial; background:#f5f7fb; margin:0;} nav{background:white; padding:12px 20px; display:flex; justify-content:space-between; border-bottom:1px solid #ddd;} .box{max-width:1100px; margin:15px auto; display:flex; gap:15px; padding:0 15px;} .left{width:340px; background:white; padding:20px; border-radius:15px; border:1px solid #ddd;} .right{flex:1; background:white; padding:20px; border-radius:15px; border:1px solid #ddd;} input{width:100%; padding:10px; margin:5px 0; border:1px solid #ddd; border-radius:8px; box-sizing:border-box;} button{width:100%; background:#0F172A; color:white; padding:10px; border:none; border-radius:8px; font-weight:bold; cursor:pointer; margin-top:8px;} table{width:100%; border-collapse:collapse;} th,td{padding:10px; border-bottom:1px solid #eee; text-align:left; font-size:13px;}</style>
+</head>
+<body>
+<nav><div><b>DISTRIBUTOR - REAL APP</b><br><small>ID: <span id="dId">---</span> • Permanent Real</small></div><button onclick="logout()" style="width:auto; padding:6px 12px; border-radius:20px;">Logout</button></nav>
+<div class="box">
+<div class="left"><h3>Create Retailer - Real Permanent</h3><input id="retId" placeholder="Retailer ID ex: retail01"><input id="retPass" placeholder="Password"><input id="retName" placeholder="Name"><input id="retMobile" placeholder="Mobile"><button onclick="createRet()">Create Retailer - Real</button><p id="msg" style="text-align:center; font-size:12px; font-weight:bold;"></p></div>
+<div class="right"><h3>My Retailers - Real <button onclick="load()" style="width:auto; float:right;">Refresh</button></h3><table><thead><tr><th>ID / PASS</th><th>WALLET</th><th>ACTION</th></tr></thead><tbody id="retList"></tbody></table></div>
 </div>
 <script>
-const URL="https://hiyjowfyszctvhljsdgx.supabase.co";const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.[STRIPPED 127 bytes].0cuMZjNAQQSnLIlnuxlsr4yRTgsekLliD1Qxu_3awWw";const H={apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json"};
-document.getElementById('did').innerText=localStorage.getItem('distributor')||'dist01';
-function logout(){localStorage.clear();location.href='index.html';}
-async function createR(){let id=rId.value, pw=rPass.value, did=localStorage.getItem('distributor')||'dist01';let r=await fetch(URL+"/rest/v1/retailers",{method:"POST",headers:H,body:JSON.stringify({user_id:id,password:pw,distributor_id:did,wallet:0})});if(r.ok){msg.innerText='✅ Retailer Saved Permanent';load();}else msg.innerText='Error';}
-async function load(){let r=await fetch(URL+"/rest/v1/retailers?select=*",{headers:H});let d=await r.json();list.innerHTML=d.map(x=>x.user_id).join('<br>');}
+const SUPA_URL="https://mojdysebckbodadjctj.supabase.co"; const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.[STRIPPED 127 bytes].aoK0cXDCsKZigLUNHXQV6eFClqf7_i91zpw8zrRu0ic"; const HEAD={apikey:SUPA_KEY, Authorization:"Bearer "+SUPA_KEY, "Content-Type":"application/json"};
+function getDid(){return localStorage.getItem('distributor')||'dist01';}
+function logout(){localStorage.clear(); location.href='index.html';}
+async function load(){let did=getDid(); document.getElementById('dId').innerText=did; let r=await fetch(SUPA_URL+"/rest/v1/retailers?distributor_id=eq."+did+"&select=*", {headers:HEAD}); let data=await r.json(); let html=""; data.forEach(d=>{html+=`<tr><td><b>${d.user_id}</b><br><small>Pass:${d.password}</small><br><small style="color:green;">Permanent</small></td><td>Rs ${d.wallet||0}</td><td><button onclick="transfer('${d.user_id}')" style="width:auto; padding:6px 12px; background:green;">+ Balance Real</button></td></tr>`;}); document.getElementById('retList').innerHTML=html||"<tr><td colspan=3>No retailers</td></tr>";}
+async function createRet(){let id=document.getElementById('retId').value.trim(), pw=document.getElementById('retPass').value.trim(), name=document.getElementById('retName').value.trim(), mob=document.getElementById('retMobile').value.trim(), did=getDid(); if(!id||!pw){document.getElementById('msg').innerText='ID Pass darkar'; return;} let body={user_id:id, password:pw, distributor_id:did, wallet:0}; if(name)body.name=name; if(mob)body.mobile=mob; let res=await fetch(SUPA_URL+"/rest/v1/retailers", {method:"POST", headers:HEAD, body:JSON.stringify(body)}); if(res.ok){document.getElementById('msg').innerText='Saved Real: '+id; document.getElementById('msg').style.color='green'; load();}else{let t=await res.text(); document.getElementById('msg').innerText=t.slice(0,150);}}
+async function transfer(retId){let amt=prompt("Amount to transfer to "+retId+" - Real Money"); amt=Number(amt); if(!amt)return; let did=getDid(); let r1=await fetch(SUPA_URL+"/rest/v1/distributors?user_id=eq."+did, {headers:HEAD}); let d=await r1.json(); let cur=Number(d[0].wallet||0); if(cur<amt){alert("Low balance Rs "+cur); return;} await fetch(SUPA_URL+"/rest/v1/distributors?user_id=eq."+did, {method:"PATCH", headers:HEAD, body:JSON.stringify({wallet:cur-amt})}); let r2=await fetch(SUPA_URL+"/rest/v1/retailers?user_id=eq."+retId, {headers:HEAD}); let ret=await r2.json(); let rc=Number(ret[0].wallet||0); await fetch(SUPA_URL+"/rest/v1/retailers?user_id=eq."+retId, {method:"PATCH", headers:HEAD, body:JSON.stringify({wallet:rc+amt})}); alert("Transfer Real Rs "+amt+" to "+retId+" - Permanent"); load();}
 load();
 </script>
-</body></html>
+</body>
+</html>
