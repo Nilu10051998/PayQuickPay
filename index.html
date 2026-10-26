@@ -3,39 +3,75 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PAYQUICKPAY Login</title>
+<title>PAYQUICKPAY - Professional Recharge</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-900 min-h-screen flex items-center justify-center p-4">
-<div class="bg-white w-full max-w-sm rounded-2xl p-7">
-<h1 class="text-xl font-extrabold text-center">PAYQUICKPAY</h1>
-<p class="text-xs text-center text-slate-500 font-bold mt-1">LOGIN</p>
-<input id="uid" placeholder="User ID" class="w-full border rounded-xl p-3.5 mt-6 text-sm font-bold">
-<input id="pass" type="password" placeholder="Password" class="w-full border rounded-xl p-3.5 mt-3 text-sm font-bold">
-<button onclick="login()" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold mt-4">LOGIN</button>
+<body class="bg-[#0F172A] min-h-screen flex items-center justify-center p-4">
+
+<div class="bg-white w-full max-w-4xl rounded- p-8 shadow-2xl">
+<div class="text-center mb-8">
+<h1 class="text-3xl font-extrabold tracking-tight">PAYQUICKPAY</h1>
+<p class="text-xs font-bold text-slate-500 tracking-[0.2em] mt-1">PROFESSIONAL RECHARGE APPLICATION</p>
+</div>
+
+<!-- 3 PANEL SELECTION -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+<button onclick="selectPanel('admin')" id="btn-admin" class="border-2 border-slate-100 hover:border-slate-900 rounded-2xl p-5 text-center transition">
+<div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center mx-auto"><i class="fa fa-shield-halved text-red-600"></i></div>
+<p class="font-extrabold text-sm mt-3">ADMIN</p><p class="text- text-slate-500 font-bold mt-1">Full Control</p>
+</button>
+<button onclick="selectPanel('distributor')" id="btn-distributor" class="border-2 border-slate-900 bg-slate-900 text-white rounded-2xl p-5 text-center transition">
+<div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mx-auto"><i class="fa fa-users"></i></div>
+<p class="font-extrabold text-sm mt-3">DISTRIBUTOR</p><p class="text- text-slate-400 font-bold mt-1">Manage Retailers</p>
+</button>
+<button onclick="selectPanel('retailer')" id="btn-retailer" class="border-2 border-slate-100 hover:border-slate-900 rounded-2xl p-5 text-center transition">
+<div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mx-auto"><i class="fa fa-store text-green-600"></i></div>
+<p class="font-extrabold text-sm mt-3">RETAILER</p><p class="text- text-slate-500 font-bold mt-1">Recharge & Earn</p>
+</button>
+</div>
+
+<!-- LOGIN FORM -->
+<div class="max-w-sm mx-auto">
+<input id="uid" placeholder="User ID" class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl p-4 text-sm font-bold focus:outline-none focus:border-slate-900">
+<input id="pass" type="password" placeholder="Password" class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl p-4 text-sm font-bold mt-3 focus:outline-none focus:border-slate-900">
+<button onclick="login()" class="w-full bg-slate-900 text-white py-4 rounded-xl font-extrabold mt-4">LOGIN TO <span id="panelName">DISTRIBUTOR</span></button>
 <p id="msg" class="text-xs font-bold text-center mt-3 text-red-600"></p>
+</div>
 </div>
 
 <script>
 const URL="https://hiyjowfyszctvhljsdgx.supabase.co";
 const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.[STRIPPED 127 bytes].0cuMZjNAQQSnLIlnuxlsr4yRTgsekLliD1Qxu_3awWw";
 const H={apikey:KEY,Authorization:"Bearer "+KEY};
+let selected="distributor";
+
+function selectPanel(type){
+  selected=type;
+  document.querySelectorAll('[id^="btn-"]').forEach(b=>{ b.className="border-2 border-slate-100 hover:border-slate-900 rounded-2xl p-5 text-center transition bg-white text-slate-900"; });
+  let active=document.getElementById("btn-"+type);
+  active.className="border-2 border-slate-900 bg-slate-900 text-white rounded-2xl p-5 text-center transition";
+  document.getElementById("panelName").innerText=type.toUpperCase();
+}
 
 async function login(){
   let id=document.getElementById("uid").value.trim();
   let pw=document.getElementById("pass").value.trim();
   if(!id||!pw){ document.getElementById("msg").innerText="ID Pass darkar"; return; }
   
-  let r=await fetch(`${URL}/rest/v1/distributors?user_id=eq.${id}&password=eq.${pw}&select=user_id`,{headers:H});
+  let table = selected==="admin" ? "admins" : selected==="distributor" ? "distributors" : "retailers";
+  let r=await fetch(`${URL}/rest/v1/${table}?user_id=eq.${id}&password=eq.${pw}&select=user_id`,{headers:H});
   let d=await r.json();
   if(d.length>0){
-    // FIX - 3 jaga save karuchi
+    localStorage.setItem(selected, d[0].user_id);
+    sessionStorage.setItem(selected, d[0].user_id);
+    localStorage.setItem("role", selected);
+    // FIX - all keys save
     localStorage.setItem("distributor", d[0].user_id);
-    sessionStorage.setItem("distributor", d[0].user_id);
     localStorage.setItem("distributor_id", d[0].user_id);
-    location.href="distributor.html";
+    location.href=selected+".html";
   }else{
-    document.getElementById("msg").innerText="ID Password bhul";
+    document.getElementById("msg").innerText="Invalid "+selected+" login";
   }
 }
 </script>
