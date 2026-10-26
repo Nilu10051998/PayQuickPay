@@ -3,85 +3,80 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Distributor</title>
+<title>Distributor - PAYQUICKPAY</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-50 min-h-screen">
+<body class="bg-[#F5F7FB] min-h-screen">
 <div class="bg-white border-b p-4 flex justify-between">
 <h1 class="font-extrabold">PAYQUICKPAY - <span id="dId"></span></h1>
-<button onclick="logout()" class="bg-slate-900 text-white px-4 py-2 rounded-full text-xs font-bold">Logout</button>
+<button onclick="logout()" class="bg-slate-900 text-white px-4 py-2 rounded-full text-xs">Logout</button>
 </div>
-<div class="p-4 max-w-5xl mx-auto">
+
+<div class="max-w-5xl mx-auto p-4">
 <div class="grid grid-cols-3 gap-3">
-<div class="bg-white p-5 rounded-xl border"><p class="text-xs text-slate-500">WALLET</p><h2 id="wBal" class="text-2xl font-extrabold">Rs 0</h2></div>
-<div class="bg-slate-900 p-5 rounded-xl text-white"><p class="text-xs text-slate-400">COMMISSION</p><h2 id="cBal" class="text-2xl font-extrabold">Rs 0</h2></div>
-<div class="bg-white p-5 rounded-xl border"><p class="text-xs text-slate-500">RETAILERS</p><h2 id="rCount" class="text-2xl font-extrabold">0</h2></div>
+<div class="bg-white p-4 rounded-xl border">Wallet: <b id="wBal">Rs 0</b></div>
+<div class="bg-white p-4 rounded-xl border">Retailers: <b id="rCount">0</b></div>
+<div class="bg-white p-4 rounded-xl border">Commission: <b id="cBal">Rs 0</b></div>
 </div>
-<div class="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-4 mt-4">
-<div class="bg-white p-5 rounded-xl border h-fit">
+
+<div class="mt-4 grid grid-cols-1 md:grid-cols-[300px_1fr] gap-4">
+<div class="bg-white p-4 rounded-xl border">
 <h3 class="font-bold">Create Retailer</h3>
-<input id="retId" placeholder="Retailer ID" class="w-full border rounded-xl p-3 mt-3 text-sm font-bold">
-<input id="retPass" placeholder="Password" class="w-full border rounded-xl p-3 mt-3 text-sm font-bold">
-<button onclick="createRet()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold mt-3">Create</button>
-<p id="msg" class="text-xs font-bold text-center mt-2"></p>
+<input id="retId" placeholder="Retailer ID" class="w-full border p-3 rounded-xl mt-3 text-sm">
+<input id="retPass" placeholder="Password" class="w-full border p-3 rounded-xl mt-2 text-sm">
+<button onclick="createRet()" class="w-full bg-slate-900 text-white py-3 rounded-xl mt-3">Create</button>
+<p id="msg" class="text-xs text-center mt-2"></p>
 </div>
-<div class="bg-white rounded-xl border">
-<div class="p-4 border-b font-bold">My Retailers</div>
-<table class="w-full text-sm"><tbody id="list"></tbody></table>
+<div class="bg-white p-4 rounded-xl border">
+<h3 class="font-bold">My Retailers</h3>
+<table class="w-full text-sm mt-3"><tbody id="list"></tbody></table>
 </div>
 </div>
 </div>
 
 <script>
-const URL="https://hiyjowfyszctvhljsdgx.supabase.co";
-const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.[STRIPPED 127 bytes].0cuMZjNAQQSnLIlnuxlsr4yRTgsekLliD1Qxu_3awWw";
-const H={apikey:KEY,Authorization:"Bearer "+KEY};
+const SUPA_URL="https://hiyjowfyszctvhljsdgx.supabase.co";
+const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.[STRIPPED 127 bytes].0cuMZjNAQQSnLIlnuxlsr4yRTgsekLliD1Qxu_3awWw";
+const H={apikey:SUPA_KEY,Authorization:"Bearer "+SUPA_KEY,"Content-Type":"application/json"};
 
-function getId(){
+// PURUNA WALA FIX - kebala eita change
+function getDid(){
   return localStorage.getItem("distributor") || localStorage.getItem("distributor_id") || sessionStorage.getItem("distributor");
 }
-function check(){
-  let id=getId();
-  if(!id){ location.href="index.html"; return null; }
-  document.getElementById("dId").innerText=id;
-  return id;
+function checkLogin(){
+  let did=getDid();
+  if(!did){ location.href="index.html"; return null; }
+  document.getElementById("dId").innerText=did;
+  return did;
 }
 function logout(){ localStorage.clear(); sessionStorage.clear(); location.href="index.html"; }
 
 async function load(){
-  let id=check(); if(!id) return;
-  let r1=await fetch(`${URL}/rest/v1/distributors?user_id=eq.${id}`,{headers:H});
-  let d1=await r1.json(); if(d1[0]) document.getElementById("wBal").innerText="Rs "+(d1[0].wallet||0);
-  let r2=await fetch(`${URL}/rest/v1/retailers?distributor_id=eq.${id}&select=*`,{headers:H});
-  let rets=await r2.json(); document.getElementById("rCount").innerText=rets.length;
-  let h=""; rets.forEach(r=>{ h+=`<tr class="border-t"><td class="p-3 font-bold">${r.user_id}</td><td>Rs ${r.wallet||0}</td><td class="text-right pr-3"><button onclick="transfer('${r.user_id}')" class="bg-slate-900 text-white px-3 py-1 rounded-full text-xs">+ Balance</button></td></tr>`; });
-  document.getElementById("list").innerHTML=h||"<tr><td class='p-4 text-center text-slate-400'>No retailers</td></tr>";
+  let did=checkLogin(); if(!did) return;
+  try{
+    let r1=await fetch(SUPA_URL+"/rest/v1/distributors?user_id=eq."+did,{headers:H});
+    let d1=await r1.json(); if(d1[0]) document.getElementById("wBal").innerText="Rs "+(d1[0].wallet||0);
+    let r2=await fetch(SUPA_URL+"/rest/v1/retailers?distributor_id=eq."+did,{headers:H});
+    let rets=await r2.json(); document.getElementById("rCount").innerText=rets.length;
+    let html=""; rets.forEach(r=>{ html+=`<tr class="border-t"><td class="p-2">${r.user_id}</td><td>Rs ${r.wallet||0}</td><td><button onclick="transfer('${r.user_id}')" class="bg-slate-900 text-white px-2 py-1 rounded text-xs">Transfer</button></td></tr>`; });
+    document.getElementById("list").innerHTML=html;
+  }catch(e){ console.log(e); }
 }
-
 async function createRet(){
-  let rid=document.getElementById("retId").value.trim();
-  let pw=document.getElementById("retPass").value.trim();
-  let did=getId();
-  if(!rid||!pw){ document.getElementById("msg").innerText="ID Pass darkar"; return; }
-  let r=await fetch(`${URL}/rest/v1/retailers`,{method:"POST",headers:H,body:JSON.stringify({user_id:rid,password:pw,distributor_id:did,wallet:0})});
-  if(r.ok){ document.getElementById("msg").innerText="Created!"; document.getElementById("retId").value=""; document.getElementById("retPass").value=""; load(); }
-  else{ document.getElementById("msg").innerText="ID exists"; }
+  let id=document.getElementById("retId").value, pw=document.getElementById("retPass").value, did=getDid();
+  let res=await fetch(SUPA_URL+"/rest/v1/retailers",{method:"POST",headers:H,body:JSON.stringify({user_id:id,password:pw,distributor_id:did,wallet:0})});
+  if(res.ok){ document.getElementById("msg").innerText="Created"; load(); } else{ document.getElementById("msg").innerText="ID exists"; }
 }
-
 async function transfer(rid){
-  let amt=prompt("Amount?"); if(!amt) return; amt=Number(amt);
-  let did=getId();
-  let r1=await fetch(`${URL}/rest/v1/distributors?user_id=eq.${did}`,{headers:H});
-  let d=await r1.json(); let cur=d[0].wallet||0;
-  if(cur<amt){ alert("Low balance Rs "+cur); return; }
-  await fetch(`${URL}/rest/v1/distributors?user_id=eq.${did}`,{method:"PATCH",headers:H,body:JSON.stringify({wallet:cur-amt})});
-  let r2=await fetch(`${URL}/rest/v1/retailers?user_id=eq.${rid}`,{headers:H});
-  let ret=await r2.json(); let rc=ret[0].wallet||0;
-  await fetch(`${URL}/rest/v1/retailers?user_id=eq.${rid}`,{method:"PATCH",headers:H,body:JSON.stringify({wallet:rc+amt})});
-  alert("Sent Rs "+amt+" to "+rid); load();
+  let amt=prompt("Amount?"); amt=Number(amt); let did=getDid();
+  let r1=await fetch(SUPA_URL+"/rest/v1/distributors?user_id=eq."+did,{headers:H}); let d=await r1.json(); let cur=d[0].wallet;
+  if(cur<amt){ alert("Low balance"); return; }
+  await fetch(SUPA_URL+"/rest/v1/distributors?user_id=eq."+did,{method:"PATCH",headers:H,body:JSON.stringify({wallet:cur-amt})});
+  let r2=await fetch(SUPA_URL+"/rest/v1/retailers?user_id=eq."+rid,{headers:H}); let ret=await r2.json();
+  await fetch(SUPA_URL+"/rest/v1/retailers?user_id=eq."+rid,{method:"PATCH",headers:H,body:JSON.stringify({wallet:ret[0].wallet+amt})});
+  alert("Done"); load();
 }
-
-check(); load();
+checkLogin(); load();
 </script>
 </body>
 </html>
