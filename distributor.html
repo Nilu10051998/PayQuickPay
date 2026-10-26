@@ -1,126 +1,149 @@
 <!DOCTYPE html>
 <html>
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Distributor - PAYQUICKPAY - FIREBASE PERMANENT</title>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Distributor Panel - PAYQUICKPAY</title>
 <style>
-body{font-family:Arial; background:#f2f2f2; margin:0;}
-nav{background:#0F172A; color:white; padding:12px 20px; display:flex; justify-content:space-between;}
-.box{max-width:1100px; margin:15px auto; padding:0 15px;}
-.card{background:white; padding:15px; border-radius:10px; margin-bottom:15px; border:1px solid #ddd;}
-input{width:100%; padding:10px; margin:5px 0; border:1px solid #ccc; border-radius:6px;}
-button{width:100%; padding:10px; background:#0F172A; color:white; border:none; border-radius:6px; cursor:pointer; margin-top:5px;}
-button.small{width:auto; padding:6px 12px; font-size:12px;}
-table{width:100%; border-collapse:collapse; margin-top:10px;}
-th,td{border:1px solid #ddd; padding:8px; text-align:left; font-size:13px;}
-th{background:#f5f5f5;}
-.stats{display:flex; gap:10px; flex-wrap:wrap;}
-.stat{flex:1; min-width:150px; background:white; padding:12px; border-radius:8px; border:1px solid #ddd; text-align:center;}
-.modal{display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;}
-.modal-box{background:white; padding:20px; border-radius:10px; width:90%; max-width:400px;}
+*{box-sizing:border-box}
+body{font-family:Arial;background:#f2f2f2;margin:0}
+nav{background:#0F172A;color:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
+.box{max-width:1100px;margin:15px auto;padding:0 15px}
+.card{background:#fff;padding:15px;border-radius:10px;margin-bottom:15px;border:1px solid #ddd}
+input{width:100%;padding:10px;margin:5px 0;border:1px solid #ccc;border-radius:6px}
+button{width:100%;padding:10px;background:#0F172A;color:#fff;border:none;border-radius:6px;cursor:pointer;margin-top:5px}
+button.small{width:auto;padding:6px 12px;font-size:12px}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{border:1px solid #ddd;padding:8px;text-align:left;font-size:13px}
+th{background:#f5f5f5}
+.stats{display:flex;gap:10px;flex-wrap:wrap}
+.stat{flex:1;min-width:150px;background:#fff;padding:12px;border-radius:8px;border:1px solid #ddd;text-align:center}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);justify-content:center;align-items:center;z-index:999}
+.modal-box{background:#fff;padding:20px;border-radius:10px;width:90%;max-width:400px}
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",
-  authDomain: "payquickpay-487ef.firebaseapp.com",
-  projectId: "payquickpay-487ef",
-  storageBucket: "payquickpay-487ef.firebasestorage.app",
-  messagingSenderId: "368108778411",
-  appId: "1:368108778411:web:03dcbc47e46568d51b58ee"
-};
+const firebaseConfig={apiKey:"AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",authDomain:"payquickpay-487ef.firebaseapp.com",projectId:"payquickpay-487ef",storageBucket:"payquickpay-487ef.firebasestorage.app",messagingSenderId:"368108778411",appId:"1:368108778411:web:03dcbc47e46568d51b58ee"};
 firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+const db=firebase.firestore();
 </script>
 </head>
 <body>
-<nav><div><b>PAYQUICKPAY - DISTRIBUTOR - FIREBASE PERMANENT</b><br><small id="distId" style="font-size:10px;">Loading...</small></div><div><button onclick="logout()" class="small" style="background:white; color:black; width:auto;">Logout</button></div></nav>
+<nav><div><b>PAYQUICKPAY - DISTRIBUTOR</b><br><small id="distId"></small></div><div><button onclick="logout()" class="small" style="background:#fff;color:#000;width:auto">Logout</button></div></nav>
 
 <div class="box">
 <div class="stats">
-<div class="stat"><b>My Wallet - Permanent Firebase</b><br><span id="myWallet">Rs 0 - Loading Firebase...</span></div>
-<div class="stat"><b>My Retailers - Permanent Firebase</b><br><span id="retailerCount">0</span></div>
-<div class="stat"><b>Total Commission - Permanent</b><br><span id="totalComm">Rs 0</span></div>
+<div class="stat"><b>My Wallet</b><br><span id="myWallet">Rs 0</span></div>
+<div class="stat"><b>Total Retailers</b><br><span id="retailerCount">0</span></div>
+<div class="stat"><b>Total Commission</b><br><span id="totalComm">Rs 0</span></div>
 </div>
 
-<div style="display:flex; gap:15px; flex-wrap:wrap;">
-<div class="card" style="flex:1; min-width:300px;">
-<h3>Create Retailer - Firebase Permanent</h3>
-<input id="rId" placeholder="Retailer ID - Permanent">
-<input id="rPass" placeholder="Password - Permanent">
+<div style="display:flex;gap:15px;flex-wrap:wrap">
+<div class="card" style="flex:1;min-width:300px">
+<h3>Create Retailer</h3>
+<input id="rId" placeholder="Retailer ID">
+<input id="rPass" placeholder="Password">
 <input id="rName" placeholder="Name">
 <input id="rMobile" placeholder="Mobile">
-<button onclick="createRetailer()">Create Retailer - Permanent Firebase</button>
-<button onclick="clearForm()" style="background:#eee; color:black;">Clear</button>
-<p id="msg" style="text-align:center; font-size:12px; font-weight:bold;"></p>
-<div style="background:#f0fdf4; padding:8px; border-radius:6px; font-size:11px; margin-top:8px; border:1px solid #bbf7d0;">
-<b>Full Functions:</b><br>✓ Create Retailer - Permanent Firebase<br>✓ Transfer Wallet - Permanent<br>✓ Add Wallet - Permanent<br>✓ Edit - Permanent<br>✓ Delete - Permanent<br>✓ Total Retailers - Permanent
+<button onclick="createRetailer()">Create</button>
+<button onclick="clearForm()" style="background:#eee;color:#000">Clear</button>
+<p id="msg" style="text-align:center;font-size:12px"></p>
 </div>
-</div>
-
-<div class="card" style="flex:2; min-width:400px;">
-<h3>My Retailers - Firebase Permanent <button onclick="load()" class="small" style="background:#eee; color:black;">Refresh Firebase</button></h3>
-<table><tr><th>ID - Permanent</th><th>Name - Permanent</th><th>Wallet - Permanent</th><th>Action - Full Function</th></tr><tbody id="list"><tr><td colspan=4>Loading Firebase - Permanent...</td></tr></tbody></table>
+<div class="card" style="flex:2;min-width:400px">
+<h3>Retailers List <button onclick="load()" class="small" style="background:#eee;color:#000">Refresh</button></h3>
+<table><tr><th>ID</th><th>Name</th><th>Wallet</th><th>Action</th></tr><tbody id="list"></tbody></table>
 </div>
 </div>
 
 <div class="card">
-<h3>Commission Report - My Retailers - Firebase Permanent</h3>
+<h3>Commission Report</h3>
 <table><tr><th>Date</th><th>Retailer</th><th>Service</th><th>Amount</th><th>%</th><th>Earned</th></tr><tbody id="commissionReport"></tbody></table>
 </div>
 </div>
 
-<div id="transferModal" class="modal">
-<div class="modal-box">
-<h3>Transfer to <span id="transferTo"></span> - Permanent Firebase</h3>
-<input id="transferAmt" type="number" placeholder="Amount - Permanent Firebase">
-<div style="display:flex; gap:10px; margin-top:10px;">
-<button onclick="closeTransferModal()" style="background:#eee; color:black; flex:1;">Cancel</button>
-<button onclick="confirmTransfer()" style="flex:1; background:green;">Transfer - Permanent Firebase</button>
-</div>
-</div>
-</div>
+<div id="transferModal" class="modal"><div class="modal-box">
+<h3>Transfer to <span id="transferTo"></span></h3>
+<input id="transferAmt" type="number" placeholder="Amount">
+<div style="display:flex;gap:10px;margin-top:10px">
+<button onclick="closeTransferModal()" style="background:#eee;color:#000;flex:1">Cancel</button>
+<button onclick="confirmTransfer()" style="flex:1;background:green">Transfer</button>
+</div></div></div>
 
-<div id="editModal" class="modal">
-<div class="modal-box">
-<h3>Edit Retailer - Permanent Firebase</h3>
-<input id="editId" placeholder="ID"><input id="editPass" placeholder="Password"><input id="editName" placeholder="Name"><input id="editMobile" placeholder="Mobile"><input id="editWallet" type="number" placeholder="Wallet">
-<div style="display:flex; gap:10px;"><button onclick="closeEditModal()" style="background:#eee; color:black; flex:1;">Cancel</button><button onclick="saveEdit()" style="flex:1; background:green;">Save - Permanent</button></div>
-</div>
-</div>
+<div id="editModal" class="modal"><div class="modal-box">
+<h3>Edit Retailer</h3>
+<input id="editId" placeholder="ID">
+<input id="editPass" placeholder="Password">
+<input id="editName" placeholder="Name">
+<input id="editMobile" placeholder="Mobile">
+<input id="editWallet" type="number" placeholder="Wallet">
+<div style="display:flex;gap:10px"><button onclick="closeEditModal()" style="background:#eee;color:#000;flex:1">Cancel</button><button onclick="saveEdit()" style="flex:1;background:green">Save</button></div>
+</div></div>
 
 <script>
-let selectedRetailerDocId=null; let selectedRetailerId=null; let editDocId=null;
-function logout(){ localStorage.removeItem('distributor'); location.href='index.html'; }
-function clearForm(){ ['rId','rPass','rName','rMobile'].forEach(id=>document.getElementById(id).value=''); }
-
+let selectedRetailerDocId=null,editDocId=null;
+function logout(){localStorage.removeItem('distributor');location.href='index.html';}
+function clearForm(){['rId','rPass','rName','rMobile'].forEach(id=>document.getElementById(id).value='');}
 async function load(){
-  let distId = localStorage.getItem('distributor')||'dist01';
-  document.getElementById('distId').innerText='Distributor: '+distId+' - Firebase Permanent';
-  
+  let distId=localStorage.getItem('distributor');
+  if(!distId){location.href='index.html';return;}
+  document.getElementById('distId').innerText=distId;
   try{
-    // Load my wallet from Firebase
-    let distSnap = await db.collection('distributors').where('user_id','==',distId).get();
-    let myWallet = 0;
-    if(!distSnap.empty){
-      distSnap.forEach(doc=>{ myWallet = doc.data().wallet||0; });
-    }
-    document.getElementById('myWallet').innerText='Rs '+myWallet+' - Permanent Firebase';
-    
-    // Load my retailers from Firebase
-    let snap = await db.collection('retailers').where('distributor_id','==',distId).get();
-    let data=[]; snap.forEach(doc=>{ data.push({docId:doc.id, ...doc.data()}); });
-    
-    let html=''; let totalRetailers = data.length;
-    data.forEach(d=>{
-      html+=`<tr><td>${d.user_id}<br><small>${d.password}</small><br><small style="color:green;">Permanent Firebase</small></td><td>${d.name||''}<br><small>${d.mobile||''}</small></td><td>Rs ${d.wallet||0}<br><button onclick="openTransferModal('${d.docId}', '${d.user_id}', ${d.wallet||0})" class="small" style="background:green;">Transfer Permanent</button><br><button onclick="addWallet('${d.docId}', ${d.wallet||0})" class="small" style="background:#ddf; margin-top:4px;">+Add Permanent</button></td><td><button onclick="deleteRetailer('${d.docId}')" class="small" style="background:#ffdddd; color:red;">Delete Permanent</button> <button onclick="openEditModal('${d.docId}')" class="small" style="background:#ddf; margin-top:4px;">Edit Permanent</button></td></tr>`;
-    });
-    document.getElementById('list').innerHTML=html||'<tr><td colspan=4>No retailers - Firebase Permanent - Create first - No Error</td></tr>';
-    document.getElementById('retailerCount').innerText=totalRetailers+' - Permanent Firebase';
-    
-    // Save to localStorage for login
-    localStorage.setItem('retailers', JSON.stringify(data.map(d=>({user_id:d.user_id, password:d.password, name:d.name, mobile:d.mobile, wallet:d.wallet, distributor_id:d.distributor_id}))));
-    
+    let distSnap=await db.collection('distributors').where('user_id','==',distId).get();
+    let myWallet=0;distSnap.forEach(doc=>{myWallet=doc.data().wallet||0;});
+    document.getElementById('myWallet').innerText='Rs '+myWallet;
+    let snap=await db.collection('retailers').where('distributor_id','==',distId).get();
+    let data=[];snap.forEach(doc=>{data.push({docId:doc.id,...doc.data()});});
+    let html='';data.forEach(d=>{html+=`<tr><td>${d.user_id}</td><td>${d.name||''}<br><small>${d.mobile||''}</small></td><td>Rs ${d.wallet||0}<br><button onclick="openTransferModal('${d.docId}','${d.user_id}')" class="small" style="background:green">Transfer</button> <button onclick="addWallet('${d.docId}',${d.wallet||0})" class="small" style="background:#ddf">+Add</button></td><td><button onclick="deleteRetailer('${d.docId}')" class="small" style="background:#ffdddd;color:red">Delete</button> <button onclick="openEditModal('${d.docId}')" class="small" style="background:#ddf">Edit</button></td></tr>`;});
+    document.getElementById('list').innerHTML=html||'<tr><td colspan=4>No retailers</td></tr>';
+    document.getElementById('retailerCount').innerText=data.length;
+    localStorage.setItem('retailers',JSON.stringify(data.map(d=>({user_id:d.user_id,password:d.password,name:d.name,mobile:d.mobile,wallet:d.wallet,distributor_id:d.distributor_id}))));
     loadCommissionReport(data.map(d=>d.user_id));
-  }catch(e){
-    document.getElementById('list').innerHTML='<tr><td colspan=4>Firebase Error
+  }catch(e){document.getElementById('list').innerHTML='<tr><td colspan=4>'+e.message+'</td></tr>';}
+}
+async function createRetailer(){
+  let distId=localStorage.getItem('distributor');
+  let id=document.getElementById('rId').value.trim(),pw=document.getElementById('rPass').value.trim(),name=document.getElementById('rName').value.trim(),mob=document.getElementById('rMobile').value.trim();
+  if(!id||!pw){document.getElementById('msg').innerText='ID Pass required';return;}
+  document.getElementById('msg').innerText='Saving...';
+  try{
+    let existing=await db.collection('retailers').where('user_id','==',id).get();
+    if(!existing.empty){document.getElementById('msg').innerText='ID exists';return;}
+    await db.collection('retailers').add({user_id:id,password:pw,name:name,mobile:mob,wallet:0,distributor_id:distId,created:new Date().toISOString()});
+    document.getElementById('msg').innerText='Created: '+id;document.getElementById('msg').style.color='green';
+    clearForm();load();
+  }catch(e){document.getElementById('msg').innerText=e.message;document.getElementById('msg').style.color='red';}
+}
+function openTransferModal(docId,retailerId){selectedRetailerDocId=docId;document.getElementById('transferTo').innerText=retailerId;document.getElementById('transferModal').style.display='flex';}
+function closeTransferModal(){document.getElementById('transferModal').style.display='none';selectedRetailerDocId=null;document.getElementById('transferAmt').value='';}
+async function confirmTransfer(){
+  let amt=Number(document.getElementById('transferAmt').value||0);if(!amt)return alert('Enter amount');
+  let distId=localStorage.getItem('distributor');
+  try{
+    let distSnap=await db.collection('distributors').where('user_id','==',distId).get();
+    let distDocId=null,distWallet=0;distSnap.forEach(doc=>{distDocId=doc.id;distWallet=doc.data().wallet||0;});
+    if(distWallet<amt)return alert('Low balance: Rs '+distWallet);
+    let retailDoc=await db.collection('retailers').doc(selectedRetailerDocId).get();
+    let retailWallet=retailDoc.data().wallet||0;
+    await db.collection('distributors').doc(distDocId).update({wallet:distWallet-amt});
+    await db.collection('retailers').doc(selectedRetailerDocId).update({wallet:retailWallet+amt});
+    alert('Transferred Rs '+amt);closeTransferModal();load();
+  }catch(e){alert(e.message);}
+}
+async function addWallet(docId,cur){let amt=prompt('Amount');amt=Number(amt);if(!amt)return;try{await db.collection('retailers').doc(docId).update({wallet:cur+amt});load();}catch(e){alert(e.message);}}
+async function deleteRetailer(docId){if(!confirm('Delete?'))return;try{await db.collection('retailers').doc(docId).delete();load();}catch(e){alert(e.message);}}
+async function openEditModal(docId){try{let doc=await db.collection('retailers').doc(docId).get();let d=doc.data();editDocId=docId;document.getElementById('editId').value=d.user_id;document.getElementById('editPass').value=d.password;document.getElementById('editName').value=d.name||'';document.getElementById('editMobile').value=d.mobile||'';document.getElementById('editWallet').value=d.wallet||0;document.getElementById('editModal').style.display='flex';}catch(e){alert(e.message);}}
+function closeEditModal(){document.getElementById('editModal').style.display='none';editDocId=null;}
+async function saveEdit(){if(!editDocId)return;try{await db.collection('retailers').doc(editDocId).update({user_id:document.getElementById('editId').value.trim(),password:document.getElementById('editPass').value.trim(),name:document.getElementById('editName').value.trim(),mobile:document.getElementById('editMobile').value.trim(),wallet:Number(document.getElementById('editWallet').value||0)});closeEditModal();load();}catch(e){alert(e.message);}}
+function loadCommissionReport(ids){
+  let reports=JSON.parse(localStorage.getItem('recharge_history')||'[]');
+  let myReports=reports.filter(r=>ids.includes(r.retailer_id));
+  let total=0;myReports.forEach(r=>total+=Number(r.commission||0));
+  document.getElementById('totalComm').innerText='Rs '+total.toFixed(2);
+  let html='';[...myReports].reverse().slice(0,20).forEach(r=>{html+=`<tr><td><small>${r.date}</small></td><td>${r.retailer_id}</td><td>${r.service}</td><td>Rs ${r.amount}</td><td>${r.commission_percent}%</td><td>Rs ${r.commission}</td></tr>`;});
+  document.getElementById('commissionReport').innerHTML=html||'<tr><td colspan=6>No commission</td></tr>';
+}
+load();
+</script>
+</body>
+</html>
