@@ -1,164 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PAYQUICKPAY - RETAILER - 505942 LIVE</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-</head>
-<body class="bg-[#F5F7FB] min-h-screen">
 <script>
-// Auth Check
-if(!localStorage.getItem("retailer") && !localStorage.getItem("admin")){
-  // location.href="/";
+// Operator List - Permanent
+const OPERATORS = [
+ {code:"A", name:"AIRTEL"}, {code:"JIO", name:"JIO"}, {code:"V", name:"VI"},
+ {code:"BSNL", name:"BSNL"}, {code:"AT", name:"AIRTEL DTH"}
+];
+window.onload = ()=>{
+  let sel = document.getElementById('operator');
+  sel.innerHTML = OPERATORS.map(o=>`<option value="${o.code}">${o.name}</option>`).join('');
+  checkBalance();
 }
-</script>
 
-<div class="bg-slate-900 text-white p-3 flex justify-between items-center">
-  <h1 class="font-bold text-[12px]">PAYQUICKPAY - RETAILER - 505942 LIVE <br><span id="userName" class="text-[10px] text-slate-400">SINU</span></h1>
-  <div class="flex gap-2">
-    <button onclick="localStorage.clear();location.href='/'" class="bg-white text-black px-3 py-1 rounded text-[10px] font-bold">Logout</button>
-    <button onclick="checkBalance()" class="bg-blue-600 px-3 py-1 rounded text-[10px] font-bold">Check Balance</button>
-  </div>
-</div>
-
-<!-- WALLET CARDS -->
-<div class="grid grid-cols-4 gap-2 p-3">
-  <div class="bg-white rounded-lg p-3 text-center border">
-    <p class="text-[10px] font-bold text-slate-500">Wallet</p>
-    <p id="walletBal" class="font-extrabold text-sm">Rs 0</p>
-  </div>
-  <div class="bg-white rounded-lg p-3 text-center border">
-    <p class="text-[10px] font-bold text-slate-500">A1 Balance</p>
-    <p id="a1Bal" class="font-extrabold text-[11px] text-blue-600">LIVE 505942</p>
-  </div>
-  <div class="bg-white rounded-lg p-3 text-center border">
-    <p class="text-[10px] font-bold text-slate-500">Commission</p>
-    <p id="commBal" class="font-extrabold text-sm text-green-600">Rs 0.00</p>
-  </div>
-  <div class="bg-white rounded-lg p-3 text-center border">
-    <p class="text-[10px] font-bold text-slate-500">Count</p>
-    <p id="countBal" class="font-extrabold text-sm">0</p>
-  </div>
-</div>
-
-<!-- RECHARGE FORM -->
-<div class="bg-white m-3 p-4 rounded-xl border">
-  <h2 class="font-extrabold text-sm mb-4">REAL RECHARGE - A1TOPUP LIVE 505942</h2>
-  
-  <label class="text-[11px] font-bold">Mobile / Customer ID</label>
-  <input id="mobile" type="text" placeholder="Mobile" class="w-full border rounded-lg p-3 mt-1 mb-3 text-sm outline-none">
-
-  <label class="text-[11px] font-bold">Operator</label>
-  <select id="operator" class="w-full border rounded-lg p-3 mt-1 mb-3 text-sm bg-white outline-none">
-    <option>Loading...</option>
-  </select>
-
-  <label class="text-[11px] font-bold">Amount</label>
-  <input id="amount" type="number" placeholder="Amount" class="w-full border rounded-lg p-3 mt-1 mb-3 text-sm outline-none">
-
-  <button onclick="doRecharge()" id="reBtn" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg text-sm">RECHARGE NOW</button>
-  <p id="msg" class="text-center text-[11px] mt-3 font-bold"></p>
-</div>
-
-<!-- HISTORY -->
-<div class="bg-white m-3 p-4 rounded-xl border">
-  <h3 class="font-bold text-sm">History</h3>
-  <div id="history" class="mt-3 text-[11px]">No history yet</div>
-</div>
-
-<script>
-// ========== FIXED CONFIG - NO A ERROR ==========
-const A1_CONFIG = {
-  username: '505942',
-  pwd: '605254',
-  base: 'https://business.aitopup.com/recharge/'
-};
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",
-  authDomain: "payquickpay-xxxxx.firebaseapp.com",
-  projectId: "payquickpay-xxxxx"
-};
-try{ firebase.initializeApp(firebaseConfig); }catch(e){}
-const db = firebase.firestore ? firebase.firestore() : null;
-
-// ========== CLEAN OPERATOR MAP - NO ENTITY TAG ==========
-const OPERATOR_MAP = {
-  'JIO RC': 'JIO',
-  'AIRTEL RC': 'A',
-  'VODAFONE RC': 'V',
-  'IDEA': 'I',
-  'BSNL TOPUP': 'BSNL',
-  'AIRTEL DTH': 'ATV',
-  'DISH TV': 'DTV',
-  'TATA SKY': 'TTV',
-  'TPCODL': 'TPCODL',
-  'NESCO': 'NESCO',
-  'SOUTHCO': 'SOUTHCO'
-};
-
-function loadOperators(){
-  const sel = document.getElementById('operator');
-  sel.innerHTML = '<option value="">Select Operator</option>';
-  Object.keys(OPERATOR_MAP).forEach(key=>{
-    const opt = document.createElement('option');
-    opt.value = OPERATOR_MAP[key];
-    opt.innerText = key;
-    sel.appendChild(opt);
-  });
+async function checkBalance(){
+ try{
+  let res = await fetch('/api/balance');
+  let data = await res.json();
+  document.querySelector('.wallet').innerText = data.raw; // A1 Balance asiba
+ }catch(e){ console.log(e); }
 }
-loadOperators();
 
-// A1 Balance - Fixed
-<input id="mobile" onblur="autoDetect()" ...>
-
-<script>
-async function autoDetect(){
-  let mob=document.getElementById('mobile').value;
-  if(mob.length==10){
-    let r=await fetch('/api/detect?mobile='+mob);
-    let d=await r.json();
-    // Auto select operator
-    document.getElementById('operator').value=d.operator;
-  }
-}
-</script>
-
-// Recharge Function
 async function doRecharge(){
-  const mob = document.getElementById('mobile').value.trim();
-  const opr = document.getElementById('operator').value;
-  const amt = document.getElementById('amount').value.trim();
-  const msg = document.getElementById('msg');
-  const btn = document.getElementById('reBtn');
-
-  if(!mob || !opr || !amt){ msg.innerText="❌ All fields required"; msg.className="text-center text-[11px] mt-3 font-bold text-red-600"; return; }
-
-  btn.disabled=true; btn.innerText="Processing...";
-  msg.innerText="⏳ Processing LIVE Recharge..."; msg.className="text-center text-[11px] mt-3 font-bold text-blue-600";
-
-  // Example API Call - Use Vercel /api/recharge.js as proxy
-  // Direct call will CORS error, so we use our own API
-  try{
-    // For now success simulation - Replace with real API call
-    // const res = await fetch(`/api/a1recharge?mobile=${mob}&op=${opr}&amt=${amt}`);
-    
-    setTimeout(()=>{
-      msg.innerText="✅ Recharge Success - Mobile: "+mob+" Rs "+amt;
-      msg.className="text-center text-[11px] mt-3 font-bold text-green-600";
-      btn.disabled=false; btn.innerText="RECHARGE NOW";
-      let h = document.getElementById('history');
-      h.innerHTML = `<div class="border-b py-2 flex justify-between"><span>${mob} - ${opr} - Rs ${amt}</span><span class="text-green-600 font-bold">SUCCESS</span></div>` + h.innerHTML;
-    },1500);
-
-  }catch(e){
-    msg.innerText="❌ Error: "+e.message;
-    btn.disabled=false; btn.innerText="RECHARGE NOW";
+ const mob = document.getElementById('mobile').value.trim();
+ const opr = document.getElementById('operator').value;
+ const amt = document.getElementById('amount').value.trim();
+ if(!mob || !opr || !amt){ alert("All fields"); return; }
+ 
+ let btn = document.getElementById('reBtn');
+ btn.disabled=true; btn.innerText="Processing...";
+ try{
+  let res = await fetch(`/api/recharge?mobile=${mob}&op=${opr}&amt=${amt}`);
+  let data = await res.json();
+  if(data.raw && data.raw.includes("SUCCESS") || data.raw.includes("Success")){
+    alert("SUCCESS: "+data.raw);
+  } else {
+    alert("Response: "+data.raw);
   }
+  btn.disabled=false; btn.innerText="RECHARGE NOW";
+ }catch(e){
+  alert("Error: "+e.message);
+  btn.disabled=false; btn.innerText="RECHARGE NOW";
+ }
 }
 </script>
-</body>
-</html>
