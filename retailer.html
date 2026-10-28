@@ -2,159 +2,89 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Retailer - LIVE Backend 505942</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PAYQUICKPAY 505942 LIVE</title>
 <style>
-body{font-family:Arial;background:#f2f2f2;margin:0}
-nav{background:#0F172A;color:#fff;padding:12px 20px;display:flex;justify-content:space-between}
-.box{max-width:1100px;margin:15px auto;padding:0 15px}
-.card{background:#fff;padding:15px;border-radius:10px;margin-bottom:15px;border:1px solid #ddd}
-input,select{width:100%;padding:10px;margin:5px 0;border:1px solid #ccc;border-radius:6px}
-button{width:100%;padding:10px;background:#0F172A;color:#fff;border:none;border-radius:6px;cursor:pointer;margin-top:5px}
-button.small{width:auto;padding:6px 12px;font-size:11px}
-table{width:100%;border-collapse:collapse;margin-top:10px}
-th,td{border:1px solid #ddd;padding:6px;font-size:11px}
-th{background:#f5f5f5}
-.stats{display:flex;gap:8px;flex-wrap:wrap}
-.stat{flex:1;min-width:120px;background:#fff;padding:10px;border-radius:8px;border:1px solid #ddd;text-align:center}
+*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
+body{background:#f1f5f9;padding:10px}
+.header{background:#0f172a;color:#fff;padding:12px;border-radius:10px;display:flex;justify-content:space-between;align-items:center}
+.card{background:#fff;padding:15px;border-radius:10px;margin:10px 0;box-shadow:0 2px 8px #0002}
+input,select{width:100%;padding:14px;margin:8px 0;border:1px solid #cbd5e1;border-radius:10px;font-size:15px}
+button{width:100%;padding:15px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-weight:800;font-size:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.grid div{background:#fff;padding:10px;border-radius:10px;text-align:center;font-weight:700}
 </style>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<script>
-var firebaseConfig={apiKey:"AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",authDomain:"payquickpay-487ef.firebaseapp.com",projectId:"payquickpay-487ef",storageBucket:"payquickpay-487ef.firebasestorage.app",messagingSenderId:"368108778411",appId:"1:368108778411:web:03dcbc47e46568d51b58ee"};
-firebase.initializeApp(firebaseConfig);
-var db=firebase.firestore();
-</script>
 </head>
 <body>
-<nav><div><b>RETAILER LIVE BACKEND 505942</b><br><small id="rid"></small></div><div><button onclick="logout()" class="small" style="background:#fff;color:#000;width:auto">Logout</button></div></nav>
-<div class="box">
-<div class="card">
-<h3>A1Topup Connection Status - 505942 - Backend</h3>
-<div style="display:flex;gap:10px;flex-wrap:wrap">
-<div style="flex:1;background:#f0f9ff;padding:10px;border-radius:6px;border:1px solid #ddd">
-<b>A1 Username:</b> 505942<br>
-<b>Status:</b> <span id="connStatus" style="color:orange">Not Checked</span><br>
-<b>Balance:</b> <span id="a1bal">Click Check</span>
-</div>
-<div style="flex:1;background:#f0fdf4;padding:10px;border-radius:6px;border:1px solid #ddd">
-<b>My Wallet:</b> <span id="wallet">Rs 0</span><br>
-<b>Commission:</b> <span id="comm">Rs 0</span><br>
-<b>Firebase:</b> <span style="color:green">Connected</span>
-</div>
-</div>
-<button onclick="checkConnection()" style="background:blue;margin-top:10px">Check A1Topup Connection - Backend - 505942</button>
-<p id="connMsg" style="text-align:center;font-size:12px;font-weight:bold"></p>
+<div class="header"><b>PAYQUICKPAY 505942 LIVE</b><button onclick="checkBal()" style="width:auto;padding:6px 12px;font-size:12px;background:#22c55e">Check Balance</button></div>
+
+<div class="grid">
+<div>Wallet: <span id="w1">Rs 0</span></div>
+<div>A1 Bal: <span id="w2" style="color:blue">Check Kara</span></div>
 </div>
 
 <div class="card">
-<h3>REAL RECHARGE - BACKEND - LIVE 505942</h3>
-<select id="op"><option value="RC" selected> Jio RC - Odisha 23</option><option value="A"> Airtel A</option><option value="V"> Vodafone V</option><option value="ATV"> Airtel DTH ATV</option><option value="DTV"> Dish TV DTV</option><option value="TPCODL"> TPCODL Electricity</option></select>
-<select id="circle"><option value="23" selected>Odisha 23</option><option value="2">WB 2</option><option value="17">Bihar 17</option></select>
-<input id="num" placeholder="Mobile No 10 Digit">
-<input id="amt" type="number" placeholder="Amount 10">
-<button onclick="doRecharge()" style="background:green">REAL RECHARGE - BACKEND LIVE</button>
-<p id="msg" style="text-align:center;font-weight:bold;word-break:break-all"></p>
-</div>
-
-<div class="card">
-<h3>History - Backend LIVE</h3>
-<table><tr><th>Date</th><th>Number</th><th>Amt</th><th>TxID</th><th>Status</th></tr><tbody id="hist"></tbody></table>
-</div>
+<h3 style="margin-bottom:10px">REAL RECHARGE - A1TOPUP LIVE 505942</h3>
+<input id="mobile" placeholder="Mobile / Customer ID" type="number">
+<select id="operator"></select>
+<input id="amount" placeholder="Amount" type="number">
+<button onclick="doRecharge()" id="reBtn">REAL RECHARGE KARA</button>
+<div id="msg" style="margin-top:12px;padding:10px;background:#f8fafc;border-radius:8px;font-size:13px;white-space:pre-wrap">Ready. First Check Balance click kara.</div>
+<div style="margin-top:15px"><b>History - Backend LIVE</b><div id="history">No history yet</div></div>
 </div>
 
 <script>
-function logout(){localStorage.removeItem('retailer');location.href='index.html';}
+const OPERATORS = [
+ {code:"JIO", name:"Jio Prepaid - All India"},
+ {code:"JIO", name:"Jio RC - Odisha 23"},
+ {code:"A", name:"Airtel Prepaid - A"},
+ {code:"AP", name:"Airtel Postpaid"},
+ {code:"V", name:"Vi / Vodafone Idea - V"},
+ {code:"B", name:"BSNL Prepaid - B"},
+ {code:"BP", name:"BSNL Postpaid"},
+ {code:"AT", name:"Airtel DTH - ATV"},
+ {code:"DT", name:"Dish TV - DTV"},
+ {code:"TT", name:"Tata Play / Tata Sky"},
+ {code:"SD", name:"Sun Direct TV"},
+ {code:"VD", name:"Videocon D2H"},
+ {code:"TPCODL", name:"TPCODL Electricity"},
+ {code:"TPNODL", name:"TPNODL Electricity"},
+ {code:"TPSODL", name:"TPSODL Electricity"},
+ {code:"TPWODL", name:"TPWODL Electricity"},
+ {code:"JIOF", name:"Jio Fiber"}
+];
 
-async function load(){
-  var id=localStorage.getItem('retailer');
-  if(!id){location.href='index.html';return;}
-  document.getElementById('rid').innerText=id;
-  try{
-    var s=await db.collection('retailers').where('user_id','==',id).get();
-    var w=0; s.forEach(function(d){w=d.data().wallet||0;});
-    document.getElementById('wallet').innerText='Rs '+w;
-  }catch(e){}
-  var h=JSON.parse(localStorage.getItem('recharge_history')||'[]').filter(function(r){return r.retailer_id==id;});
-  var c=0; h.forEach(function(r){c+=Number(r.commission||0);});
-  document.getElementById('comm').innerText='Rs '+c.toFixed(2);
-  var html=''; h.slice(-20).reverse().forEach(function(r){
-    html+='<tr><td><small>'+r.date+'</small></td><td>'+r.customer_no+'</td><td>Rs '+r.amount+'</td><td><small>'+(r.txid||'')+'</small></td><td><small>'+(r.status||'').substring(0,20)+'</small></td></tr>';
-  });
-  document.getElementById('hist').innerHTML=html||'<tr><td colspan=5>No history</td></tr>';
-}
+const sel = document.getElementById('operator');
+sel.innerHTML = OPERATORS.map(o=>`<option value="${o.code}">${o.name}</option>`).join('');
 
-async function checkConnection(){
-  document.getElementById('connStatus').innerText='Checking via Backend...';
-  document.getElementById('connStatus').style.color='orange';
-  document.getElementById('a1bal').innerText='Checking...';
-  document.getElementById('connMsg').innerText='Connecting via Backend /api/a1topup...';
-  document.getElementById('connMsg').style.color='blue';
-  try{
-    let res=await fetch('/api/a1topup?action=balance');
-    let text=await res.text();
-    document.getElementById('a1bal').innerText=text.substring(0,100);
-    if(text.includes('Invalid')){
-      document.getElementById('connStatus').innerText='❌ Invalid ID Pass';
-      document.getElementById('connStatus').style.color='red';
-      document.getElementById('connMsg').innerText='❌ Invalid - Check 505942 / 605254';
-      document.getElementById('connMsg').style.color='red';
-    } else {
-      document.getElementById('connStatus').innerText='✅ Connected 505942 LIVE - Backend OK';
-      document.getElementById('connStatus').style.color='green';
-      document.getElementById('connMsg').innerText='✅ Connected - Balance: '+text.substring(0,50)+' - Backend Working - No CORS - LIVE';
-      document.getElementById('connMsg').style.color='green';
-    }
-  }catch(e){
-    document.getElementById('a1bal').innerText='Backend Error: '+e.message;
-    document.getElementById('connStatus').innerText='❌ Backend Not Deployed';
-    document.getElementById('connStatus').style.color='red';
-    document.getElementById('connMsg').innerText='Deploy /api/a1topup.js first - Vercel - Then check - Error: '+e.message;
-    document.getElementById('connMsg').style.color='red';
-  }
+async function checkBal(){
+ const m=document.getElementById('msg');
+ m.innerText="Balance checking...";
+ try{
+  const r=await fetch('/api/balance');
+  const d=await r.json();
+  document.getElementById('w2').innerText=d.raw;
+  m.innerText="BALANCE RESPONSE:\n"+d.raw;
+ }catch(e){m.innerText="Error: "+e.message;}
 }
 
 async function doRecharge(){
-  var id=localStorage.getItem('retailer');
-  var num=document.getElementById('num').value.trim();
-  var amt=document.getElementById('amt').value.trim();
-  var op=document.getElementById('op').value;
-  var circle=document.getElementById('circle').value;
-  if(!num||!amt){document.getElementById('msg').innerText='Enter Number Amount';return;}
-  var orderId='PAY'+Date.now();
-  document.getElementById('msg').innerText='Processing Backend LIVE OrderID: '+orderId;
-  document.getElementById('msg').style.color='blue';
-  try{
-    var s=await db.collection('retailers').where('user_id','==',id).get();
-    var docId=null,w=0; s.forEach(function(d){docId=d.id;w=d.data().wallet||0;});
-    if(w<Number(amt)){document.getElementById('msg').innerText='Low Wallet Rs '+w;document.getElementById('msg').style.color='red';return;}
-    var url='/api/a1topup?action=recharge&operatorcode='+op+'&number='+num+'&amount='+amt+'&orderid='+orderId+'&circlecode='+circle;
-    var res=await fetch(url);
-    var text=await res.text();
-    var status='Failed',txid='',opid='';
-    try{
-      var j=JSON.parse(text);
-      status=j.status||'Failed';txid=j.txid||'';opid=j.opid||'';
-    }catch(e){
-      var p=text.split(',');
-      if(p.length>=3){txid=p[0];status=p[1];opid=p[2];}
-      else if(text.toLowerCase().indexOf('success')>-1)status='Success';
-    }
-    if(status.toLowerCase().indexOf('success')>-1){
-      var comm=Number(amt)*0.02;
-      await db.collection('retailers').doc(docId).update({wallet:w-Number(amt)+comm});
-      var data={retailer_id:id,customer_no:num,amount:amt,commission:comm.toFixed(2),orderid:orderId,txid:txid,opid:opid,status:'Success Tx:'+txid,date:new Date().toLocaleString()};
-      var hist=JSON.parse(localStorage.getItem('recharge_history')||'[]'); hist.push(data); localStorage.setItem('recharge_history',JSON.stringify(hist));
-      document.getElementById('msg').innerText='SUCCESS Tx:'+txid+' Op:'+opid+' Order:'+orderId;
-      document.getElementById('msg').style.color='green';
-      load();
-    } else {
-      document.getElementById('msg').innerText='FAILED: '+text.substring(0,200);
-      document.getElementById('msg').style.color='red';
-    }
-  }catch(e){document.getElementById('msg').innerText='Error: '+e.message;document.getElementById('msg').style.color='red';}
+ const mob=document.getElementById('mobile').value.trim();
+ const opr=document.getElementById('operator').value;
+ const amt=document.getElementById('amount').value.trim();
+ const msg=document.getElementById('msg');
+ const btn=document.getElementById('reBtn');
+ if(mob.length<4||!amt){alert("Mobile & Amount dia");return;}
+ btn.disabled=true;btn.innerText="Processing...";
+ msg.innerText="Processing LIVE 505942...";
+ try{
+  const r=await fetch(`/api/recharge?mobile=${mob}&op=${opr}&amt=${amt}`);
+  const d=await r.json();
+  msg.innerText="RECHARGE RESPONSE:\n"+d.raw;
+  document.getElementById('history').innerHTML=`<div style="padding:5px;border-bottom:1px solid #eee"><b>${mob}</b> - ${opr} - Rs ${amt}<br><small>${d.raw}</small></div>`+document.getElementById('history').innerHTML;
+  btn.disabled=false;btn.innerText="REAL RECHARGE KARA";
+ }catch(e){msg.innerText="Error: "+e.message;btn.disabled=false;btn.innerText="REAL RECHARGE KARA";}
 }
-load();
 </script>
 </body>
 </html>
