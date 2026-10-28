@@ -1,62 +1,32 @@
-<div class="card">
-<h3>A1Topup Connection Status - 505942</h3>
-<div style="display:flex;gap:10px">
-<div style="flex:1;background:#f0f9ff;padding:10px;border-radius:6px;border:1px solid #ddd">
-<b>A1 Username:</b> 505942<br>
-<b>Status:</b> <span id="connStatus" style="color:orange">Checking...</span><br>
-<b>Balance:</b> <span id="a1bal">Click Check</span>
-</div>
-<div style="flex:1;background:#f0fdf4;padding:10px;border-radius:6px;border:1px solid #ddd">
-<b>My Wallet:</b> <span id="wallet">Rs 0</span><br>
-<b>Commission:</b> <span id="comm">Rs 0</span><br>
-<b>Firebase:</b> <span style="color:green">Connected</span>
-</div>
-</div>
-<button onclick="checkConnection()" style="background:blue">Check A1Topup Connection - 505942</button>
-<p id="connMsg" style="text-align:center;font-size:12px;font-weight:bold"></p>
-</div>
-
-<script>
 async function checkConnection(){
-  document.getElementById('connStatus').innerText='Checking...';
-  document.getElementById('connStatus').style.color='orange';
-  document.getElementById('a1bal').innerText='Checking...';
-  document.getElementById('connMsg').innerText='Connecting to A1Topup 505942...';
-  
+  document.getElementById('connStatus').innerText='Checking via Backend...';
   try{
-    var apiUrl='https://business.a1topup.com/recharge/balance?username=505942&pwd=605254&format=json';
-    var proxy='https://api.allorigins.win/raw?url='+encodeURIComponent(apiUrl);
-    var res=await fetch(proxy);
-    var text=await res.text();
-    
-    if(text.includes('Invalid username')){
-      document.getElementById('connStatus').innerText='❌ Invalid Username';
+    let res=await fetch('/api/a1topup?action=balance');
+    let text=await res.text();
+    document.getElementById('a1bal').innerText=text.substring(0,100);
+    if(text.includes('Invalid')){
+      document.getElementById('connStatus').innerText='❌ Invalid ID Pass';
       document.getElementById('connStatus').style.color='red';
-      document.getElementById('connMsg').innerText='Username 505942 bhul - Check kara';
-      document.getElementById('connMsg').style.color='red';
-    } else if(text.includes('Invalid password') || text.includes('Invalid pwd')){
-      document.getElementById('connStatus').innerText='❌ Invalid Password';
-      document.getElementById('connStatus').style.color='red';
-      document.getElementById('connMsg').innerText='Password 605254 bhul';
     } else {
-      // Success - Any number including 0.00
-      document.getElementById('connStatus').innerText='✅ Connected - 505942 LIVE';
+      document.getElementById('connStatus').innerText='✅ Connected 505942 LIVE - Backend OK';
       document.getElementById('connStatus').style.color='green';
-      document.getElementById('a1bal').innerText=text.substring(0,50);
-      
-      if(text.includes('0.00') || text.includes('"balance":"0"') || text.trim()=='0'){
-        document.getElementById('connMsg').innerText='✅ Connected - 505942 - Balance 0.00 - Add Balance to Recharge - Connection OK';
-        document.getElementById('connMsg').style.color='green';
-      } else {
-        document.getElementById('connMsg').innerText='✅ Connected - 505942 - Balance: '+text.substring(0,50)+' - Ready for Real Recharge';
-        document.getElementById('connMsg').style.color='green';
-      }
+      document.getElementById('connMsg').innerText='✅ Connected - Balance: '+text.substring(0,50)+' - Backend Working - No CORS';
+      document.getElementById('connMsg').style.color='green';
     }
   }catch(e){
-    document.getElementById('connStatus').innerText='❌ Connection Failed';
-    document.getElementById('connStatus').style.color='red';
-    document.getElementById('connMsg').innerText='Error: '+e.message+' - Check internet / Try again';
-    document.getElementById('connMsg').style.color='red';
+    document.getElementById('a1bal').innerText='Backend Error: '+e.message+' - Deploy /api/a1topup.js first';
   }
 }
-</script>
+
+async function doRecharge(){
+  let num=document.getElementById('num').value;
+  let amt=document.getElementById('amt').value;
+  let op=document.getElementById('op').value;
+  let circle=document.getElementById('circle').value;
+  let orderId='PAY'+Date.now();
+  
+  let url=`/api/a1topup?action=recharge&operatorcode=${op}&number=${num}&amount=${amt}&orderid=${orderId}&circlecode=${circle}`;
+  let res=await fetch(url);
+  let text=await res.text();
+  document.getElementById('msg').innerText=text.substring(0,200);
+}
