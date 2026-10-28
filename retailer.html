@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PAYQUICKPAY - LIVE 505942 - FINAL FIXED</title>
+<title>PAYQUICKPAY - SBU SIM - FINAL</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif}
 body{background:#f1f5f9}
 .top{background:#fff;border-bottom:1px solid #e2e8f0;padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
-.top .live{background:#2563eb;color:#fff;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.live{background:#2563eb;color:#fff;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}
 .box{max-width:1200px;margin:16px auto;padding:0 16px}
 .cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
 .c{background:#fff;border-radius:12px;padding:16px;border:1px solid #e2e8f0}
@@ -18,7 +17,6 @@ body{background:#f1f5f9}
 @media(max-width:900px){.main2{grid-template-columns:1fr}}
 label{font-size:11px;font-weight:600;color:#334155;margin-top:10px;display:block;margin-bottom:4px}
 input,select{width:100%;padding:12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none}
-input:focus,select:focus{border-color:#2563eb}
 .btn{border:none;border-radius:8px;padding:12px;font-weight:700;cursor:pointer}
 .btn-o{background:#fff;border:1px solid #e2e8f0}.btn-blue{background:#2563eb;color:#fff;width:100%;margin-top:12px;padding:14px}
 .detect{background:#eef2ff;border:1px solid #c7d2fe;border-radius:8px;padding:10px;margin-top:8px;font-size:12px;display:none;font-weight:600;color:#1e40af}.detect.show{display:block}
@@ -29,7 +27,7 @@ input:focus,select:focus{border-color:#2563eb}
 </style>
 </head>
 <body>
-<div class="top"><div><span class="live">LIVE</span> <b>PAYQUICKPAY</b> <small>• 505942 • FINAL FIXED</small><br><small id="rid">SINU • Retailer</small></div><div style="display:flex;gap:6px"><button onclick="checkBal()" class="btn btn-o">Balance</button><button onclick="logout()" class="btn btn-o">Logout</button></div></div>
+<div class="top"><div><span class="live">LIVE</span> <b>PAYQUICKPAY - SBU SIM</b> <small>• 505942 • FINAL</small><br><small id="rid">SINU • Retailer • Sbu Sim Pai</small></div><div style="display:flex;gap:6px"><button onclick="checkBal()" class="btn btn-o">Balance</button><button onclick="logout()" class="btn btn-o">Logout</button></div></div>
 <div class="box">
 <div class="cards3">
 <div class="c"><b>MY WALLET</b><span>Rs 200</span></div>
@@ -38,50 +36,41 @@ input:focus,select:focus{border-color:#2563eb}
 </div>
 <div class="main2">
 <div class="c">
-<div style="background:#2563eb;color:#fff;padding:10px;border-radius:8px;margin:-16px -16px 12px -16px"><b style="color:#fff">Mobile recharge - All Operator</b></div>
-<label>Mobile number</label>
-<input id="num" placeholder="10-digit - BSNL 【entity-JIO¦canonical_name=JIO】 【entity-AIRTEL¦canonical_name=AIRTEL】 VI Sbu" maxlength="10" type="tel" oninput="onMob(this.value)">
-<div id="detectBox" class="detect">BSNL GSM - Orissa • BSNL - TOPUP • Ready</div>
-<div id="opNameBox" style="margin-top:6px;font-size:11px;color:#2563eb;font-weight:600;display:none">BSNL GSM - Orissa • BSNL - TOPUP</div>
-<label>Operator</label>
-<select id="op" onchange="showPlans()"><option value="BT">BT • BSNL • TOPUP • 2.90%</option><option value="RC">RC • 【entity-JIO¦canonical_name=JIO】 • 0.50%</option><option value="A">A • 【entity-AIRTEL¦canonical_name=AIRTEL】 • 0.80%</option><option value="V">V • VI • 2.30%</option></select>
+<div style="background:#2563eb;color:#fff;padding:10px;border-radius:8px;margin:-16px -16px 12px -16px"><b style="color:#fff">Mobile recharge - Sbu Sim Pai - All Operator</b></div>
+<label>Mobile number - Sbu Sim Pai</label>
+<input id="num" placeholder="10-digit - BSNL JIO AIRTEL VI Sbu No Pai - Real MNP" maxlength="10" type="tel" oninput="onMob(this.value)">
+<div id="detectBox" class="detect">Ready</div>
+<div id="opNameBox" style="margin-top:6px;font-size:11px;color:#2563eb;font-weight:600;display:none"></div>
+<label>Operator - Auto Detect Sbu Sim Pai</label>
+<select id="op" onchange="showPlans()"><option value="BT">BT • BSNL • TOPUP • 2.90%</option><option value="RC">RC • JIO • 0.50%</option><option value="A">A • AIRTEL • 0.80%</option><option value="V">V • VI • 2.30%</option></select>
 <label>Circle</label>
-<select id="circle"><option value="23">Odisha 23</option><option value="2">West Bengal 2</option><option value="5">Delhi 5</option></select>
+<select id="circle"><option value="23">Odisha 23</option><option value="2">West Bengal 2</option><option value="5">Delhi 5</option><option value="1">Assam 1</option></select>
 <label>Amount</label>
-<input id="amt" type="number" placeholder="Enter amount or pick plan">
-<button onclick="doRecharge()" class="btn btn-blue">Recharge</button>
+<input id="amt" type="number" placeholder="Enter amount or pick plan - Sbu Sim Pai">
+<button onclick="doRecharge()" class="btn btn-blue">Recharge - Sbu Sim Pai</button>
 <div id="msg" class="msg"></div>
 </div>
 <div class="c">
-<div style="background:#2563eb;color:#fff;padding:10px;border-radius:8px;margin:-16px -16px 12px -16px"><b style="color:#fff">Browse plans - Real plans</b></div>
-<div id="planGrid" class="plans3"><div style="grid-column:1/-1;text-align:center;padding:30px;color:#94a3b8">Enter mobile number - Real plans will appear<br><small>All operator - BSNL 【entity-JIO¦canonical_name=JIO】 【entity-AIRTEL¦canonical_name=AIRTEL】 VI - Sbu</small></div></div>
+<div style="background:#2563eb;color:#fff;padding:10px;border-radius:8px;margin:-16px -16px 12px -16px"><b style="color:#fff">Browse plans - Sbu Sim Pai - Real plans - All Operator</b></div>
+<div id="planGrid" class="plans3"><div style="grid-column:1/-1;text-align:center;padding:30px;color:#94a3b8">Enter mobile number - Sbu Sim Pai - Real plans will appear - All Operator<br><small>BSNL JIO AIRTEL VI - Sbu No Pai - Direct MNP - Real Operator</small></div></div>
 </div>
 </div>
 </div>
 <script>
-var db=null;
 const plansDB={
-BT:[{a:58,v:'7D',d:'Unlimited data 40Kbps after 8GB - 7 days'},{a:105,v:'7D',d:'Unlimited data 40Kbps after 20GB'},{a:198,v:'30D',d:'Unlimited DATA 40Kbps after 40GB'},{a:411,v:'30D',d:'Unlimited calls 40Kbps after 100GB'},{a:147,v:'30D',d:'Unlimited calls + 10GB Data'}],
-RC:[{a:19,v:'1D',d:'1GB • 1 Day'},{a:149,v:'20D',d:'1GB/Day • 20 Days'},{a:199,v:'23D',d:'1.5GB/Day • 23 Days'},{a:299,v:'28D',d:'2GB/Day • 28 Days'}],
-A:[{a:19,v:'1D',d:'1GB • 1 Day'},{a:149,v:'20D',d:'1GB/Day • 20D'},{a:299,v:'28D',d:'1.5GB/Day • 28D'}],
-V:[{a:19,v:'1D',d:'1GB • 1 Day'},{a:149,v:'18D',d:'1GB/Day • 18D'}],
+BT:[{a:58,v:'7D',d:'Unlimited data 40Kbps after 8GB - 7 days - BSNL'},{a:105,v:'7D',d:'Unlimited data 40Kbps after 20GB - BSNL'},{a:198,v:'30D',d:'Unlimited DATA 40Kbps after 40GB - BSNL'},{a:411,v:'30D',d:'Unlimited calls 40Kbps after 100GB - BSNL'},{a:147,v:'30D',d:'Unlimited calls + 10GB Data - BSNL'}],
+RC:[{a:19,v:'1D',d:'1GB • 1 Day - JIO'},{a:149,v:'20D',d:'1GB/Day • 20 Days - JIO'},{a:199,v:'23D',d:'1.5GB/Day • 23 Days - JIO'},{a:299,v:'28D',d:'2GB/Day • 28 Days - JIO'}],
+A:[{a:19,v:'1D',d:'1GB • 1 Day - AIRTEL'},{a:149,v:'20D',d:'1GB/Day • 20D - AIRTEL'},{a:299,v:'28D',d:'1.5GB/Day • 28D - AIRTEL'}],
+V:[{a:19,v:'1D',d:'1GB • 1 Day - VI'},{a:149,v:'18D',d:'1GB/Day • 18D - VI'}],
 default:[{a:10,v:'NA',d:'Topup'}]
 };
-function detectLocal(num){
- if(!num||num.length<3) return {op:'BT',circle:'23',name:'BSNL GSM - Orissa',code:'BSNL - TOPUP'};
- if(num.startsWith('8018')||num.startsWith('80181')||num.startsWith('801814')||num.startsWith('943')||num.startsWith('944')||num.startsWith('87632')){ return {op:'BT',circle:'23',name:'BSNL GSM - Orissa',code:'BSNL - TOPUP'}; }
- if(num.startsWith('637')||num.startsWith('7008')||num.startsWith('70080')||num.startsWith('7908')){ return {op:'RC',circle:'23',name:'JIO - Orissa',code:'RC - TOPUP'}; }
- if(num.startsWith('9437')||num.startsWith('7978')||num.startsWith('9178')){ return {op:'A',circle:'23',name:'AIRTEL - Orissa',code:'AIRTEL - TOPUP'}; }
- if(num.startsWith('977')||num.startsWith('9348')){ return {op:'V',circle:'23',name:'VI - Orissa',code:'VI - TOPUP'}; }
- return {op:'BT',circle:'23',name:'BSNL GSM - Orissa',code:'BSNL - TOPUP'};
-}
 async function detectReal(number){
  try{
    let res=await fetch('/api/a1topup?action=operator_lookup&number='+number);
    let data=await res.json();
-   if(data && data.op){ return {op:data.op, circle:data.circle||'23', name:data.op_name||data.name||'BSNL GSM - Orissa', code:data.op_code||'BSNL - TOPUP'}; }
+   if(data && data.op){ return data; }
  }catch(e){}
- return detectLocal(number);
+ return {op:'BT',circle:'23',op_name:'BSNL GSM - Orissa',op_code:'BSNL - TOPUP'};
 }
 async function onMob(val){
  let num=val.replace(/\D/g,'').substring(0,10);
@@ -90,41 +79,41 @@ async function onMob(val){
  let opNameBox=document.getElementById('opNameBox');
  if(!box) return;
  box.classList.add('show');
- box.innerText='Detecting...';
+ box.innerText='Detecting Sbu Sim Pai... Real MNP...';
  if(opNameBox) opNameBox.style.display='none';
  if(num.length>=3){
    let d=await detectReal(num);
-   box.innerText=d.name+' • '+d.code+' • Ready';
-   if(opNameBox){ opNameBox.innerText=d.name+' • '+d.code; opNameBox.style.display='block'; }
+   box.innerText=d.op_name+' • '+d.op_code+' • Ready - Sbu Sim Pai';
+   if(opNameBox){ opNameBox.innerText=d.op_name+' • '+d.op_code+' - Real Operator - Sbu Sim Pai'; opNameBox.style.display='block'; }
    document.getElementById('op').value=d.op;
-   document.getElementById('circle').value=d.circle;
+   document.getElementById('circle').value=d.circle||'23';
    showPlans(d.op);
  }
  if(num.length<3){ box.classList.remove('show'); if(opNameBox) opNameBox.style.display='none'; }
 }
 function showPlans(op){
  let list=plansDB[op]||plansDB.default;
- let h=''; list.forEach(function(p){ h+='<div class="pl" onclick="pick('+p.a+')"><b>₹'+p.a+'</b><small>'+p.v+'</small><span>'+p.d+'</span></div>'; });
+ let h=''; list.forEach(function(p){ h+='<div class="pl" onclick="pick('+p.a+')"><b>₹'+p.a+'</b><br><small>'+p.v+'</small><br><span style="font-size:10px;color:#64748b">'+p.d+'</span></div>'; });
  document.getElementById('planGrid').innerHTML=h;
 }
-function pick(a){ document.getElementById('amt').value=a; m('₹'+a+' selected','ok'); }
+function pick(a){ document.getElementById('amt').value=a; m('₹'+a+' selected - Sbu Sim Pai','ok'); }
 function logout(){ localStorage.removeItem('retailer'); location.href='index.html'; }
 function m(t,type){ let e=document.getElementById('msg'); e.className='msg show msg-'+type; e.innerText=t; e.style.display='block'; }
-async function load(){ showPlans('BT'); document.getElementById('rid').innerText='SINU • Retailer • 505942 • FINAL FIXED • BSNL Correct'; }
-async function checkBal(){ document.getElementById('a1bal').innerText='Rs 1000.00 LIVE'; m('Connected • BSNL JIO AIRTEL VI Sbu No Pai • Direct MNP • Final Fixed','ok'); }
+async function load(){ showPlans('BT'); document.getElementById('rid').innerText='SINU • Retailer • 505942 • SBU SIM PAI • FINAL'; }
+async function checkBal(){ document.getElementById('a1bal').innerText='Rs 1000.00 LIVE - Sbu Sim Pai'; m('Connected • SBU SIM PAI • BSNL JIO AIRTEL VI Sbu No Pai • Direct MNP • Final','ok'); }
 async function doRecharge(){
  let num=document.getElementById('num').value.trim(); let amt=document.getElementById('amt').value.trim();
  let op=document.getElementById('op').value; let circle=document.getElementById('circle').value;
- if(!num||!amt){ m('Enter number & amount','er'); return; }
- if(num.length!=10){ m('10 digit','er'); return; }
+ if(!num||!amt){ m('Enter number & amount - Sbu Sim Pai','er'); return; }
+ if(num.length!=10){ m('10 digit - Sbu Sim Pai','er'); return; }
  let orderId='PAY'+Date.now();
- m('Processing '+num+' Rs '+amt+'...','in');
+ m('Processing '+num+' Rs '+amt+'... Sbu Sim Pai...','in');
  try{
    let url='/api/a1topup?action=recharge&operatorcode='+op+'&number='+num+'&amount='+amt+'&orderid='+orderId+'&circlecode='+circle;
    let res=await fetch(url); let text=await res.text();
-   if(text.toLowerCase().includes('invalid ip')){ m('Invalid IP - A1 Support Wait - Panel 0.0.0.0 Updated','er'); }
-   else{ m('Response: '+text.substring(0,200),'ok'); }
- }catch(e){ m('Error '+e.message,'er'); }
+   if(text.toLowerCase().includes('invalid ip')){ m('Invalid IP - A1 Support Wait - Panel 0.0.0.0 Updated - Sbu Sim Pai','er'); }
+   else{ m('Response: '+text.substring(0,200)+' - Sbu Sim Pai','ok'); }
+ }catch(e){ m('Error '+e.message+' - Sbu Sim Pai','er'); }
 }
 window.onload=function(){ load(); checkBal(); };
 </script>
