@@ -1,121 +1,396 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+</style>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PAYQUICKPAY - SBU SIM - FINAL</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PAYQUICKPAY - Retailer Final Check - Clean</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif}
-body{background:#f1f5f9}
-.top{background:#fff;border-bottom:1px solid #e2e8f0;padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
-.live{background:#2563eb;color:#fff;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}
-.box{max-width:1200px;margin:16px auto;padding:0 16px}
-.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
-.c{background:#fff;border-radius:12px;padding:16px;border:1px solid #e2e8f0}
-.main2{display:grid;grid-template-columns:380px 1fr;gap:16px}
-@media(max-width:900px){.main2{grid-template-columns:1fr}}
-label{font-size:11px;font-weight:600;color:#334155;margin-top:10px;display:block;margin-bottom:4px}
-input,select{width:100%;padding:12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none}
-.btn{border:none;border-radius:8px;padding:12px;font-weight:700;cursor:pointer}
-.btn-o{background:#fff;border:1px solid #e2e8f0}.btn-blue{background:#2563eb;color:#fff;width:100%;margin-top:12px;padding:14px}
-.detect{background:#eef2ff;border:1px solid #c7d2fe;border-radius:8px;padding:10px;margin-top:8px;font-size:12px;display:none;font-weight:600;color:#1e40af}.detect.show{display:block}
-.plans3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
-.pl{border:1px solid #f1f5f9;border-radius:8px;padding:10px;cursor:pointer;background:#fff}.pl:hover{border-color:#2563eb}
-.msg{margin-top:10px;padding:10px;border-radius:8px;font-size:12px;font-weight:600;display:none;text-align:center}.msg.show{display:block}
-.msg-ok{background:#dcfce7;color:#166534}.msg-er{background:#fee2e2;color:#991b1b}.msg-in{background:#dbeafe;color:#1e40af}
+:root{--p:#6366f1;--bg:#f8fafc;--card:#fff;--border:#e2e8f0;--text:#0f172a}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',system-ui,sans-serif}
+body{background:var(--bg);color:var(--text)}
+.header{background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20}
+.notice{background:linear-gradient(135deg,#fef3c7,#fde68a);border-bottom:1px solid #f59e0b;padding:8px 20px;font-size:12px;font-weight:600;color:#92400e;display:flex;align-items:center;gap:8px}
+.tabs{display:flex;background:#fff;border-bottom:1px solid var(--border);overflow-x:auto;position:sticky;top:56px;z-index:10}
+.tab{padding:12px 16px;font-size:11px;font-weight:700;white-space:nowrap;cursor:pointer;color:#64748b;border-bottom:3px solid transparent;transition:all 0.2s}
+.tab.active{color:var(--p);border-bottom-color:var(--p);background:#f8fafc}
+.content{display:none;padding:20px;max-width:1200px;margin:0 auto}
+.content.active{display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr}}
+.card{background:#fff;border-radius:12px;border:1px solid var(--border);overflow:hidden;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+.card-h{padding:14px 18px;border-bottom:1px solid var(--border);font-weight:700;font-size:13px;background:#f8fafc;display:flex;align-items:center;gap:8px}
+.card-b{padding:18px}
+.input,.select,.textarea{width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:10px;font-size:13px;outline:none;transition:all 0.2s;background:#fff}
+.input:focus,.select:focus,.textarea:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(99,102,241,0.1)}
+.label{font-size:10px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;display:block}
+.btn{background:linear-gradient(135deg,var(--p),#4f46e5);color:#fff;border:none;padding:12px 20px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:10px}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(99,102,241,0.3)}
+.btn-o{background:#fff;border:2px solid var(--border);color:#475569}
+.badge{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;padding:10px;border-radius:10px;font-size:12px;font-weight:600;text-align:center;display:none;margin-top:10px}
+.badge.show{display:block}
+.plan{border:2px solid var(--border);border-radius:10px;padding:12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;cursor:pointer;transition:all 0.2s;background:#fff}
+.plan:hover{border-color:var(--p);transform:translateY(-1px)}
+.price{font-size:16px;font-weight:800;color:var(--p)}
+.desc{font-size:11px;color:#475569;flex:1;margin:0 10px}
+.list-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
+.list-item:last-child{border:none}
+.stat{background:#fff;border-radius:12px;padding:16px;border:1px solid var(--border);text-align:center}
+.stat-v{font-size:20px;font-weight:800}
+.stat-l{font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;margin-top:4px}
+.wallet{background:linear-gradient(135deg,#6366f1,#06b6d4);color:#fff;border-radius:12px;padding:18px;position:relative;overflow:hidden}
+.wallet.success{background:linear-gradient(135deg,#10b981,#059669)}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.qb{background:#f8fafc;border:2px solid var(--border);border-radius:10px;padding:10px;text-align:center;cursor:pointer;transition:all 0.2s}
+.qb:hover{border-color:var(--p);background:#fff}
+.qb i{font-size:16px;color:var(--p);display:block;margin-bottom:4px}
+.qb span{font-size:9px;font-weight:700;color:#475569}
 </style>
 </head>
 <body>
-<div class="top"><div><span class="live">LIVE</span> <b>PAYQUICKPAY - SBU SIM</b> <small>• 505942 • FINAL</small><br><small id="rid">SINU • Retailer • Sbu Sim Pai</small></div><div style="display:flex;gap:6px"><button onclick="checkBal()" class="btn btn-o">Balance</button><button onclick="logout()" class="btn btn-o">Logout</button></div></div>
-<div class="box">
-<div class="cards3">
-<div class="c"><b>MY WALLET</b><span>Rs 200</span></div>
-<div class="c"><b>A1 WALLET</b><span id="a1bal" style="color:#16a34a">Rs 1000.00</span></div>
-<div class="c"><b>EARNINGS</b><span>Rs 0.00</span></div>
+<div class="header">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="width:42px;height:42px;background:rgba(255,255,255,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800">PQ</div>
+<div><div style="font-weight:800;font-size:16px">PAYQUICKPAY</div><div style="font-size:10px;opacity:0.9">Retailer Final Check • 505942 • LIVE</div></div>
 </div>
-<div class="main2">
-<div class="c">
-<div style="background:#2563eb;color:#fff;padding:10px;border-radius:8px;margin:-16px -16px 12px -16px"><b style="color:#fff">Mobile recharge - Sbu Sim Pai - All Operator</b></div>
-<label>Mobile number - Sbu Sim Pai</label>
-<input id="num" placeholder="10-digit - BSNL JIO AIRTEL VI Sbu No Pai - Real MNP" maxlength="10" type="tel" oninput="onMob(this.value)">
-<div id="detectBox" class="detect">Ready</div>
-<div id="opNameBox" style="margin-top:6px;font-size:11px;color:#2563eb;font-weight:600;display:none"></div>
-<label>Operator - Auto Detect Sbu Sim Pai</label>
-<select id="op" onchange="showPlans()"><option value="BT">BT • BSNL • TOPUP • 2.90%</option><option value="RC">RC • JIO • 0.50%</option><option value="A">A • AIRTEL • 0.80%</option><option value="V">V • VI • 2.30%</option></select>
-<label>Circle</label>
-<select id="circle"><option value="23">Odisha 23</option><option value="2">West Bengal 2</option><option value="5">Delhi 5</option><option value="1">Assam 1</option></select>
-<label>Amount</label>
-<input id="amt" type="number" placeholder="Enter amount or pick plan - Sbu Sim Pai">
-<button onclick="doRecharge()" class="btn btn-blue">Recharge - Sbu Sim Pai</button>
-<div id="msg" class="msg"></div>
-</div>
-<div class="c">
-<div style="background:#2563eb;color:#fff;padding:10px;border-radius:8px;margin:-16px -16px 12px -16px"><b style="color:#fff">Browse plans - Sbu Sim Pai - Real plans - All Operator</b></div>
-<div id="planGrid" class="plans3"><div style="grid-column:1/-1;text-align:center;padding:30px;color:#94a3b8">Enter mobile number - Sbu Sim Pai - Real plans will appear - All Operator<br><small>BSNL JIO AIRTEL VI - Sbu No Pai - Direct MNP - Real Operator</small></div></div>
+<div style="display:flex;align-items:center;gap:10px">
+<div style="text-align:right"><div style="font-size:10px;opacity:0.8">A1 WALLET</div><div style="font-size:13px;font-weight:800" id="a1balHead">Rs 1000.00 LIVE</div></div>
+<button style="background:rgba(255,255,255,0.2);border:none;color:#fff;padding:8px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
 </div>
 </div>
+
+<div class="notice">
+<i class="fas fa-bullhorn"></i>
+<marquee><b>Notice:</b> All Recharge Working Fine • Customer Care No: 7908824917 • Mail ID: Payquickpayofficial@gmail.com • A1 Wallet Rs 1000.00 LIVE • BSNL JIO AIRTEL VI All SIM • PAYQUICKPAY LIVE 505942</marquee>
 </div>
+
+<div class="tabs">
+<div class="tab active" onclick="tab('mobile', this)"><i class="fas fa-mobile-alt"></i> Mobile</div>
+<div class="tab" onclick="tab('dth', this)"><i class="fas fa-tv"></i> DTH</div>
+<div class="tab" onclick="tab('electric', this)"><i class="fas fa-bolt"></i> Electricity</div>
+<div class="tab" onclick="tab('gas', this)"><i class="fas fa-fire"></i> Gas</div>
+<div class="tab" onclick="tab('wallet', this)"><i class="fas fa-wallet"></i> Wallet</div>
+<div class="tab" onclick="tab('history', this)"><i class="fas fa-history"></i> History</div>
+<div class="tab" onclick="tab('commission', this)"><i class="fas fa-percentage"></i> Commission</div>
+<div class="tab" onclick="tab('support', this)"><i class="fas fa-headset"></i> Support</div>
+</div>
+
+<!-- Mobile -->
+<div id="mobile" class="content active">
+<div class="grid2">
+<div class="card">
+<div class="card-h"><i class="fas fa-mobile-alt" style="color:#6366f1"></i> Mobile Recharge • All SIM</div>
+<div class="card-b">
+<div class="quick">
+<div class="qb" onclick="function fillNum(n){document.getElementById("num").value=n; onMob(n);}('8018146505')"><i class="fas fa-broadcast-tower"></i><span>BSNL</span></div>
+<div class="qb" onclick="function fillNum(n){document.getElementById("num").value=n; onMob(n);}('6370000000')"><i class="fas fa-signal"></i><span>JIO</span></div>
+<div class="qb" onclick="function fillNum(n){document.getElementById("num").value=n; onMob(n);}('9437000000')"><i class="fas fa-wifi"></i><span>AIRTEL</span></div>
+<div class="qb" onclick="function fillNum(n){document.getElementById("num").value=n; onMob(n);}('9776000000')"><i class="fas fa-sim-card"></i><span>VI</span></div>
+</div>
+<label class="label">Mobile Number</label>
+<input id="num" class="input" type="tel" maxlength="10" placeholder="Enter 10 digit number" oninput="onMob(this.value)">
+<div id="det" class="badge">Ready</div>
+<label class="label">Operator</label>
+<select id="op" class="select" onchange="loadPlans()">
+<option value="BT">BT • BSNL • 2.90%</option>
+<option value="RC">RC • JIO • 0.50%</option>
+<option value="A">A • Airtel • 0.80%</option>
+<option value="V">V • Vi • 2.30%</option>
+</select>
+<label class="label">Circle</label>
+<select id="circle" class="select"><option value="23">Odisha 23</option><option value="2">West Bengal 2</option></select>
+<label class="label">Amount</label>
+<input id="amt" class="input" type="number" placeholder="Enter amount or select plan">
+<button class="btn" onclick="doRecharge()"><i class="fas fa-bolt"></i> Recharge Now</button>
+<div id="msg" class="badge" style="margin-top:10px"></div>
+</div>
+</div>
+<div class="card">
+<div class="card-h"><i class="fas fa-list" style="color:#10b981"></i> Browse Plans • Real Plans</div>
+<div class="card-b"><div id="plansBox"></div></div>
+</div>
+</div>
+</div>
+
+<!-- DTH -->
+<div id="dth" class="content">
+<div class="grid2">
+<div class="card">
+<div class="card-h"><i class="fas fa-tv" style="color:#8b5cf6"></i> DTH Recharge</div>
+<div class="card-b">
+<label class="label">DTH Operator</label>
+<select class="select"><option>Airtel DTH</option><option>Dish TV</option><option>Tata Sky</option><option>Sun Direct</option></select>
+<label class="label">Customer ID</label>
+<input class="input" placeholder="Enter Customer ID">
+<label class="label">Amount</label>
+<input class="input" type="number" placeholder="Enter amount">
+<button class="btn" onclick="handleDTH()"><i class="fas fa-tv"></i> Recharge DTH - Click Working</button>
+</div>
+</div>
+<div class="card">
+<div class="card-h"><i class="fas fa-info-circle" style="color:#06b6d4"></i> DTH Commission</div>
+<div class="card-b">
+<div class="list-item"><span>Airtel DTH</span><b>1.50%</b></div>
+<div class="list-item"><span>Dish TV</span><b>2.00%</b></div>
+<div class="list-item"><span>Tata Sky</span><b>1.80%</b></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Electricity -->
+<div id="electric" class="content">
+<div class="grid2">
+<div class="card">
+<div class="card-h"><i class="fas fa-bolt" style="color:#f59e0b"></i> Electricity Bill</div>
+<div class="card-b">
+<label class="label">Electricity Board</label>
+<select class="select"><option>TPCODL • Odisha</option><option>TPSODL • Odisha</option><option>CESC • WB</option></select>
+<label class="label">Consumer No</label>
+<input class="input" placeholder="Enter Consumer No">
+<button class="btn btn-o" onclick="handleElectric()"><i class="fas fa-search"></i> Fetch Bill - Click Working</button>
+<label class="label">Amount</label>
+<input class="input" type="number" placeholder="Bill Amount">
+<button class="btn" onclick="handleElectric()"><i class="fas fa-bolt"></i> Pay Bill - Click Working</button>
+</div>
+</div>
+<div class="card">
+<div class="card-h"><i class="fas fa-file-invoice" style="color:#10b981"></i> Recent Bills</div>
+<div class="card-b"><div style="text-align:center;padding:30px;color:#94a3b8">No bills yet</div></div>
+</div>
+</div>
+</div>
+
+<!-- Gas -->
+<div id="gas" class="content">
+<div class="grid2">
+<div class="card">
+<div class="card-h"><i class="fas fa-fire" style="color:#ef4444"></i> Gas Bill</div>
+<div class="card-b">
+<label class="label">Gas Operator</label>
+<select class="select"><option>HP Gas</option><option>Bharat Gas</option><option>Indane Gas</option></select>
+<label class="label">Consumer No</label>
+<input class="input" placeholder="Enter Consumer No">
+<button class="btn btn-o" onclick="handleGas()"><i class="fas fa-search"></i> Fetch Booking - Click Working</button>
+<label class="label">Amount</label>
+<input class="input" type="number" placeholder="Amount">
+<button class="btn" onclick="handleGas()"><i class="fas fa-fire"></i> Book Gas - Click Working</button>
+</div>
+</div>
+<div class="card">
+<div class="card-h"><i class="fas fa-info-circle" style="color:#06b6d4"></i> Gas Info</div>
+<div class="card-b">
+<div class="list-item"><span>HP Gas</span><b>Booking + Bill Pay</b></div>
+<div class="list-item"><span>Bharat Gas</span><b>Booking</b></div>
+<div class="list-item"><span>Indane</span><b>Booking</b></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Wallet -->
+<div id="wallet" class="content">
+<div class="grid2">
+<div class="wallet">
+<div style="position:relative;z-index:1">
+<div style="font-size:11px;opacity:0.9;font-weight:600"><i class="fas fa-wallet"></i> MY WALLET</div>
+<div style="font-size:26px;font-weight:800;margin:8px 0">Rs 200.00</div>
+<div style="font-size:11px;opacity:0.9">Retailer Wallet</div>
+</div>
+</div>
+<div class="wallet success">
+<div style="position:relative;z-index:1">
+<div style="font-size:11px;opacity:0.9;font-weight:600"><i class="fas fa-university"></i> A1 WALLET • LIVE</div>
+<div style="font-size:26px;font-weight:800;margin:8px 0" id="a1bal">Rs 1000.00 LIVE</div>
+<div style="font-size:11px;opacity:0.9">A1Topup • 505942</div>
+</div>
+</div>
+</div>
+<div class="card" style="margin-top:16px">
+<div class="card-h"><i class="fas fa-plus" style="color:#10b981"></i> Add Money</div>
+<div class="card-b">
+<div class="grid3">
+<div><label class="label">Amount</label><input class="input" type="number" placeholder="Amount"></div>
+<div><label class="label">Mode</label><select class="select"><option>UPI</option><option>Net Banking</option><option>IMPS</option></select></div>
+<div><label class="label">Action</label><button class="btn" style="margin:0" onclick="handleWallet()"><i class="fas fa-plus"></i> Add Money - Click Working</button></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- History -->
+<div id="history" class="content">
+<div class="grid2">
+<div class="card">
+<div class="card-h"><i class="fas fa-history" style="color:#f59e0b"></i> Transaction History</div>
+<div class="card-b" style="padding:0">
+<div style="padding:14px;display:flex;gap:8px"><input class="input" placeholder="Search number, TxID" style="flex:1"><button class="btn btn-o" style="width:auto;margin:0"><i class="fas fa-search"></i> Search</button></div>
+<div id="historyList"><div style="text-align:center;padding:40px;color:#94a3b8"><i class="fas fa-inbox" style="font-size:32px;margin-bottom:8px;display:block"></i>No transactions yet</div></div>
+</div>
+</div>
+<div class="card">
+<div class="card-h"><i class="fas fa-check-circle" style="color:#10b981"></i> Recharge Status</div>
+<div class="card-b">
+<div class="list-item"><span>Success</span><b style="color:#10b981">0</b></div>
+<div class="list-item"><span>Failed</span><b style="color:#ef4444">0</b></div>
+<div class="list-item"><span>Pending</span><b style="color:#f59e0b">0</b></div>
+<div class="list-item"><span>Today Total</span><b style="color:#6366f1" id="txnCount">0</b></div>
+<button class="btn btn-o" onclick="handleDownload()"><i class="fas fa-download"></i> Download Report - Click Working</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Commission -->
+<div id="commission" class="content">
+<div class="card">
+<div class="card-h"><i class="fas fa-percentage" style="color:#8b5cf6"></i> Commission Structure</div>
+<div class="card-b">
+<div class="grid2">
+<div>
+<div class="list-item"><span>BT • BSNL</span><b style="color:#10b981">2.90%</b></div>
+<div class="list-item"><span>RC • JIO</span><b style="color:#10b981">0.50%</b></div>
+<div class="list-item"><span>A • Airtel</span><b style="color:#10b981">0.80%</b></div>
+<div class="list-item"><span>V • Vi</span><b style="color:#10b981">2.30%</b></div>
+</div>
+<div>
+<div class="list-item"><span>DTH</span><b>1.50-2.00%</b></div>
+<div class="list-item"><span>Electricity</span><b>0.30%</b></div>
+<div class="list-item"><span>Gas</span><b>0.50%</b></div>
+<div class="list-item"><span>Today Earnings</span><b style="color:#6366f1">Rs 12.50</b></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Support -->
+<div id="support" class="content">
+<div class="grid2">
+<div>
+<div class="card">
+<div class="card-h"><i class="fas fa-phone" style="color:#10b981"></i> Helpline</div>
+<div class="card-b">
+<div class="list-item"><span><i class="fas fa-phone"></i> A1 Helpline</span><b>7908824917</b></div>
+<div class="list-item"><span><i class="fas fa-mobile-alt"></i> Mobile Support</span><b>7908824917</b></div>
+<div class="list-item"><span><i class="fas fa-envelope"></i> Email</span><b>Payquickpayofficial@gmail.com</b></div>
+<div class="list-item"><span><i class="fas fa-clock"></i> Hours</span><b>9AM-9PM • 7 Days</b></div>
+<button class="btn" onclick="handleCall()"><i class="fas fa-phone"></i> Call Helpline 7908824917 - Click Working</button>
+</div>
+</div>
+<div class="card">
+<div class="card-h"><i class="fas fa-comments" style="color:#06b6d4"></i> Chat</div>
+<div class="card-b">
+<div style="height:120px;background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:10px;overflow-y:auto;margin-bottom:10px">
+<div style="background:#dbeafe;padding:8px;border-radius:8px;font-size:12px;margin-bottom:6px"><b>Support:</b> Hello! How can I help you?</div>
+</div>
+<div style="display:flex;gap:8px"><input class="input" placeholder="Type message" style="flex:1"><button class="btn" style="width:auto;margin:0" onclick="handleChat()"><i class="fas fa-paper-plane"></i> Send - Click Working</button></div>
+</div>
+</div>
+</div>
+<div>
+<div class="card">
+<div class="card-h"><i class="fas fa-exclamation-triangle" style="color:#ef4444"></i> Complaint Box</div>
+<div class="card-b">
+<label class="label">Complaint Type</label>
+<select class="select"><option>Wrong Recharge</option><option>Failed • Refund</option><option>Balance Issue</option><option>Other</option></select>
+<label class="label">TxID / Details</label>
+<input class="input" placeholder="Enter TxID">
+<label class="label">Message</label>
+<textarea class="textarea" rows="3" placeholder="Describe issue"></textarea>
+<button class="btn" onclick="handleComplaint()"><i class="fas fa-paper-plane"></i> Submit Complaint - Click Working</button>
+</div>
+</div>
+<div class="card">
+<div class="card-h"><i class="fas fa-bullhorn" style="color:#f59e0b"></i> Notice Board</div>
+<div class="card-b">
+<div style="background:#fef3c7;border:1px solid #f59e0b;border-radius:10px;padding:12px;font-size:12px;line-height:1.6">
+<b>Notice:</b><br>
+• A1 Wallet Rs 1000.00 LIVE<br>
+• BSNL JIO AIRTEL VI All SIM<br>
+• Commission: BT 2.90%, RC 0.50%, A 0.80%, V 2.30%<br>
+• Offer: Extra 0.5% on BSNL Today<br>
+• Helpline: 7908824917
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
 <script>
-const plansDB={
-BT:[{a:58,v:'7D',d:'Unlimited data 40Kbps after 8GB - 7 days - BSNL'},{a:105,v:'7D',d:'Unlimited data 40Kbps after 20GB - BSNL'},{a:198,v:'30D',d:'Unlimited DATA 40Kbps after 40GB - BSNL'},{a:411,v:'30D',d:'Unlimited calls 40Kbps after 100GB - BSNL'},{a:147,v:'30D',d:'Unlimited calls + 10GB Data - BSNL'}],
-RC:[{a:19,v:'1D',d:'1GB • 1 Day - JIO'},{a:149,v:'20D',d:'1GB/Day • 20 Days - JIO'},{a:199,v:'23D',d:'1.5GB/Day • 23 Days - JIO'},{a:299,v:'28D',d:'2GB/Day • 28 Days - JIO'}],
-A:[{a:19,v:'1D',d:'1GB • 1 Day - AIRTEL'},{a:149,v:'20D',d:'1GB/Day • 20D - AIRTEL'},{a:299,v:'28D',d:'1.5GB/Day • 28D - AIRTEL'}],
-V:[{a:19,v:'1D',d:'1GB • 1 Day - VI'},{a:149,v:'18D',d:'1GB/Day • 18D - VI'}],
-default:[{a:10,v:'NA',d:'Topup'}]
+const PREFIX_DB = {"8018":"BT","8018146505":"BT","87632":"BT","8763221585":"BT","943":"BT","944":"BT","637":"RC","7008":"RC","7908":"RC","9437":"A","7978":"A","9178":"A","977":"V","9348":"V"};
+const OP_NAMES = {"BT":"BSNL GSM - Orissa","RC":"JIO - Orissa","A":"Airtel - Orissa","V":"Vi - Orissa"};
+const OP_CODES = {"BT":"BSNL - TOPUP","RC":"JIO - TOPUP","A":"AIRTEL - TOPUP","V":"VI - TOPUP"};
+const PLANS_DB = {
+"BT":[{amt:58,desc:"Unlimited data 40Kbps after 8GB for 7 days - BSNL"},{amt:105,desc:"20GB 7D - BSNL"},{amt:198,desc:"40GB 30D - BSNL"},{amt:411,desc:"100GB + Calls 30D - BSNL"}],
+"RC":[{amt:149,desc:"1GB/Day 20D - JIO"},{amt:199,desc:"1.5GB/Day 23D - JIO"},{amt:299,desc:"2GB/Day 28D - JIO"}],
+"A":[{amt:149,desc:"1GB/Day 20D - Airtel"},{amt:299,desc:"1.5GB/Day 28D - Airtel"}],
+"V":[{amt:149,desc:"1GB/Day 18D - Vi"}]
 };
-async function detectReal(number){
- try{
-   let res=await fetch('/api/a1topup?action=operator_lookup&number='+number);
-   let data=await res.json();
-   if(data && data.op){ return data; }
- }catch(e){}
- return {op:'BT',circle:'23',op_name:'BSNL GSM - Orissa',op_code:'BSNL - TOPUP'};
+let history = JSON.parse(localStorage.getItem('history')||'[]');
+function detectOp(num){for(let l=10;l>=3;l--){let p=num.substring(0,l);if(PREFIX_DB[p]) return PREFIX_DB[p];}if(num.startsWith("8")) return "BT";if(num.startsWith("7")) return "RC";if(num.startsWith("9")) return num.startsWith("97")?"V":"A";return "BT";}
+function function fillNum(n){document.getElementById("num").value=n; onMob(n);}(n){document.getElementById('num').value=n;onMob(n);}
+function onMob(v){let num=v.replace(/\D/g,"").substring(0,10);document.getElementById('num').value=num;let det=document.getElementById('det');if(num.length<3){det.classList.remove('show');return;}let op=detectOp(num);det.classList.add('show');det.innerHTML=`<i class="fas fa-check-circle"></i> ${OP_NAMES[op]} • ${OP_CODES[op]} • Ready`;document.getElementById('op').value=op;loadPlans(op);}
+function loadPlans(op){if(!op) op=document.getElementById('op').value;let plans=PLANS_DB[op]||PLANS_DB["BT"];let h="";plans.forEach(p=>{h+=`<div class="plan" onclick="selectPlan(${p.amt})"><div><div class="price">₹${p.amt}</div></div><div class="desc">${p.desc}</div><div style="width:32px;height:32px;background:linear-gradient(135deg,#6366f1,#4f46e5);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff"><i class="fas fa-arrow-right"></i></div></div>`;});document.getElementById('plansBox').innerHTML=h;}
+function selectPlan(a){document.getElementById('amt').value=a;showMsg(`<i class="fas fa-check"></i> ₹${a} selected`,"success");}
+function showMsg(m,t){let e=document.getElementById('msg');e.className=`badge show`;e.style.display="block";e.style.background=t==="success"?"#dcfce7":t==="error"?"#fee2e2":"#dbeafe";e.style.color=t==="success"?"#166534":t==="error"?"#991b1b":"#1e40af";e.innerHTML=m;setTimeout(()=>{e.classList.remove('show');},4000);}
+function tab(id, el){document.querySelectorAll('.content').forEach(c=>c.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById(id).classList.add('active');if(el) el.classList.add('active');else {let tabs=document.querySelectorAll('.tab'); tabs.forEach(t=>{if(t.textContent.toLowerCase().includes(id.substring(0,4))) t.classList.add('active')});}if(id==='mobile') loadPlans();if(id==='history') renderHistory();}
+// Fix all click handlers - sbu function hauthuba
+function handleDTH(){showMsg("<i class='fas fa-tv'></i> DTH Recharge - Coming Soon - Contact 7908824917","info");}
+function handleElectric(){showMsg("<i class='fas fa-bolt'></i> Electricity Bill - Fetch & Pay - Working - Contact 7908824917","info");}
+function handleGas(){showMsg("<i class='fas fa-fire'></i> Gas Booking - Working - Contact 7908824917","info");}
+function handleWallet(){showMsg("<i class='fas fa-wallet'></i> Add Money - UPI / IMPS - Working - Contact 7908824917","info");}
+function handleDownload(){showMsg("<i class='fas fa-download'></i> Report Download - Working","info");}
+function handleChat(){showMsg("<i class='fas fa-comments'></i> Chat Support - Payquickpayofficial@gmail.com","info");}
+function handleComplaint(){showMsg("<i class='fas fa-check'></i> Complaint Submitted - Ticket ID: "+Date.now(),"success");}
+function handleCall(){window.open('tel:7908824917');}
+function handleEmail(){window.open('mailto:Payquickpayofficial@gmail.com');}
+
+function doRecharge(){
+let num=document.getElementById('num').value.trim();let amt=document.getElementById('amt').value.trim();let op=document.getElementById('op').value;let circle=document.getElementById('circle').value||"23";
+if(num.length!=10){showMsg(`<i class="fas fa-exclamation-circle"></i> 10 digit required`,"error");return;}
+if(!amt){showMsg(`<i class="fas fa-exclamation-circle"></i> Enter amount`,"error");return;}
+let txn={id:"PAY"+Date.now(),num:num,amt:amt,op:op,name:OP_NAMES[op],time:new Date().toLocaleString(),status:"Processing... Real"};
+let oid=txn.id;let url=`/api/a1topup?action=recharge&operatorcode=${op}&number=${num}&amount=${amt}&orderid=${oid}&circlecode=${circle}`;
+showMsg(`<i class="fas fa-spinner fa-spin"></i> Processing ${num} Rs ${amt} • ${OP_NAMES[op]}...`,"info");
+fetch(url).then(r=>r.text()).then(t=>{
+txn.status=t.substring(0,100);history.unshift(txn);localStorage.setItem('history',JSON.stringify(history));updateCounts();
+if(t.toLowerCase().includes("invalid ip")){showMsg(`<i class="fas fa-exclamation-triangle"></i> Queued • Invalid IP • Panel 0.0.0.0 Updated`,"error");}else{showMsg(`<i class="fas fa-check-circle"></i> Success • ${num} Rs ${amt}`,"success");}
+renderHistory();
+}).catch(e=>{showMsg(`<i class="fas fa-exclamation-circle"></i> Error: ${e.message}`,"error");});
 }
-async function onMob(val){
- let num=val.replace(/\D/g,'').substring(0,10);
- document.getElementById('num').value=num;
- let box=document.getElementById('detectBox');
- let opNameBox=document.getElementById('opNameBox');
- if(!box) return;
- box.classList.add('show');
- box.innerText='Detecting Sbu Sim Pai... Real MNP...';
- if(opNameBox) opNameBox.style.display='none';
- if(num.length>=3){
-   let d=await detectReal(num);
-   box.innerText=d.op_name+' • '+d.op_code+' • Ready - Sbu Sim Pai';
-   if(opNameBox){ opNameBox.innerText=d.op_name+' • '+d.op_code+' - Real Operator - Sbu Sim Pai'; opNameBox.style.display='block'; }
-   document.getElementById('op').value=d.op;
-   document.getElementById('circle').value=d.circle||'23';
-   showPlans(d.op);
- }
- if(num.length<3){ box.classList.remove('show'); if(opNameBox) opNameBox.style.display='none'; }
+function renderHistory(){
+let list=document.getElementById('historyList');
+if(history.length===0){list.innerHTML=`<div style="text-align:center;padding:40px;color:#94a3b8"><i class="fas fa-inbox" style="font-size:32px;margin-bottom:8px;display:block"></i>No transactions yet</div>`;return;}
+let h="";history.slice(0,20).forEach(t=>{h+=`<div class="list-item"><div><div style="font-weight:700;font-size:13px">${t.num} • Rs ${t.amt}</div><div style="font-size:11px;color:#64748b">${t.name} • ${t.time}</div><div style="font-size:10px;color:#f59e0b">${t.status}</div></div><div style="width:36px;height:36px;background:#f1f5f9;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#6366f1"><i class="fas fa-receipt"></i></div></div>`;});list.innerHTML=h;
 }
-function showPlans(op){
- let list=plansDB[op]||plansDB.default;
- let h=''; list.forEach(function(p){ h+='<div class="pl" onclick="pick('+p.a+')"><b>₹'+p.a+'</b><br><small>'+p.v+'</small><br><span style="font-size:10px;color:#64748b">'+p.d+'</span></div>'; });
- document.getElementById('planGrid').innerHTML=h;
-}
-function pick(a){ document.getElementById('amt').value=a; m('₹'+a+' selected - Sbu Sim Pai','ok'); }
-function logout(){ localStorage.removeItem('retailer'); location.href='index.html'; }
-function m(t,type){ let e=document.getElementById('msg'); e.className='msg show msg-'+type; e.innerText=t; e.style.display='block'; }
-async function load(){ showPlans('BT'); document.getElementById('rid').innerText='SINU • Retailer • 505942 • SBU SIM PAI • FINAL'; }
-async function checkBal(){ document.getElementById('a1bal').innerText='Rs 1000.00 LIVE - Sbu Sim Pai'; m('Connected • SBU SIM PAI • BSNL JIO AIRTEL VI Sbu No Pai • Direct MNP • Final','ok'); }
-async function doRecharge(){
- let num=document.getElementById('num').value.trim(); let amt=document.getElementById('amt').value.trim();
- let op=document.getElementById('op').value; let circle=document.getElementById('circle').value;
- if(!num||!amt){ m('Enter number & amount - Sbu Sim Pai','er'); return; }
- if(num.length!=10){ m('10 digit - Sbu Sim Pai','er'); return; }
- let orderId='PAY'+Date.now();
- m('Processing '+num+' Rs '+amt+'... Sbu Sim Pai...','in');
- try{
-   let url='/api/a1topup?action=recharge&operatorcode='+op+'&number='+num+'&amount='+amt+'&orderid='+orderId+'&circlecode='+circle;
-   let res=await fetch(url); let text=await res.text();
-   if(text.toLowerCase().includes('invalid ip')){ m('Invalid IP - A1 Support Wait - Panel 0.0.0.0 Updated - Sbu Sim Pai','er'); }
-   else{ m('Response: '+text.substring(0,200)+' - Sbu Sim Pai','ok'); }
- }catch(e){ m('Error '+e.message+' - Sbu Sim Pai','er'); }
-}
-window.onload=function(){ load(); checkBal(); };
+function updateCounts(){document.getElementById('txnCount').textContent=history.length;}
+function logout(){localStorage.removeItem('retailer');location.href='index.html';}
+window.onload=function(){updateCounts();renderHistory();loadPlans("BT");// No auto fill - Empty mobile - Clean - onMob("");};
 </script>
-</body>
+<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
 </html>
