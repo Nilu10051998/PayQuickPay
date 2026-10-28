@@ -1,85 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PAYQUICKPAY - 505942 LIVE</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
-body{background:#f1f5f9;padding:10px}
-.header{background:#0f172a;color:#fff;padding:12px;border-radius:10px;display:flex;justify-content:space-between}
-.card{background:#fff;padding:12px;border-radius:10px;margin:8px 0;box-shadow:0 2px 8px #0001}
-.grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
-.grid div{background:#fff;padding:10px;border-radius:10px;text-align:center;font-weight:700}
-input,select{width:100%;padding:14px;margin:8px 0;border:1px solid #cbd5e1;border-radius:10px}
-button{width:100%;padding:15px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-weight:800;font-size:16px}
-#msg{margin-top:10px;padding:10px;background:#fff;border-radius:8px;font-size:13px;white-space:pre-wrap}
-</style>
-</head>
-<body>
-<div class="header"><div>PAYQUICKPAY - 505942 LIVE</div><div><button onclick="checkBal()" style="width:auto;padding:6px 10px;font-size:12px">Check Balance</button></div></div>
-
-<div class="grid">
-<div>Wallet<br><span id="w1">Rs 0</span></div>
-<div>A1 Balance<br><span id="w2" style="color:blue">LIVE</span></div>
-<div>Commission<br><span style="color:green">Rs 0.00</span></div>
-<div>Count<br><span id="w3">0</span></div>
-</div>
-
 <div class="card">
-<h3>REAL RECHARGE - A1TOPUP LIVE 505942</h3>
-<input id="mobile" placeholder="Mobile / Customer ID" type="number">
-<select id="operator"></select>
-<input id="amount" placeholder="Amount" type="number">
-<button id="reBtn" onclick="doRecharge()">RECHARGE NOW</button>
-<div id="msg">Ready. Press Check Balance first.</div>
-<div style="margin-top:15px"><b>History</b><div id="history">No history yet</div></div>
+<h3>A1Topup Connection Status - 505942</h3>
+<div style="display:flex;gap:10px">
+<div style="flex:1;background:#f0f9ff;padding:10px;border-radius:6px;border:1px solid #ddd">
+<b>A1 Username:</b> 505942<br>
+<b>Status:</b> <span id="connStatus" style="color:orange">Checking...</span><br>
+<b>Balance:</b> <span id="a1bal">Click Check</span>
+</div>
+<div style="flex:1;background:#f0fdf4;padding:10px;border-radius:6px;border:1px solid #ddd">
+<b>My Wallet:</b> <span id="wallet">Rs 0</span><br>
+<b>Commission:</b> <span id="comm">Rs 0</span><br>
+<b>Firebase:</b> <span style="color:green">Connected</span>
+</div>
+</div>
+<button onclick="checkConnection()" style="background:blue">Check A1Topup Connection - 505942</button>
+<p id="connMsg" style="text-align:center;font-size:12px;font-weight:bold"></p>
 </div>
 
 <script>
-const OPERATORS = [
- {code:"A", name:"AIRTEL Prepaid"},
- {code:"JIO", name:"JIO Prepaid"},
- {code:"V", name:"VI Prepaid"},
- {code:"B", name:"BSNL Prepaid"},
- {code:"AT", name:"AIRTEL DTH"},
- {code:"DT", name:"DISH TV"}
-];
-
-const sel = document.getElementById('operator');
-sel.innerHTML = OPERATORS.map(o=>`<option value="${o.code}">${o.name}</option>`).join('');
-
-async function checkBal(){
- const m = document.getElementById('msg');
- m.innerText = "Checking balance...";
- try{
-  const r = await fetch('/api/balance');
-  const d = await r.json();
-  document.getElementById('w2').innerText = d.raw;
-  m.innerText = "BALANCE RESPONSE:\n" + d.raw + "\n\nJadi Insufficient lekha asuchi tahale A1 re paisa add kara.";
- }catch(e){ m.innerText = "Error: "+e.message; }
-}
-
-async function doRecharge(){
- const mob = document.getElementById('mobile').value.trim();
- const opr = document.getElementById('operator').value;
- const amt = document.getElementById('amount').value.trim();
- const msg = document.getElementById('msg');
- const btn = document.getElementById('reBtn');
- if(mob.length < 10 || !amt){ alert("Mobile & Amount dia"); return; }
- btn.disabled=true; btn.innerText="Processing...";
- msg.innerText="Processing LIVE...";
- try{
-  const r = await fetch(`/api/recharge?mobile=${mob}&op=${opr}&amt=${amt}`);
-  const d = await r.json();
-  msg.innerText = "RECHARGE RESPONSE:\n" + d.raw;
-  document.getElementById('history').innerHTML = `<div>${mob} - ${opr} - Rs ${amt} <br><small>${d.raw}</small></div><hr>` + document.getElementById('history').innerHTML;
-  btn.disabled=false; btn.innerText="RECHARGE NOW";
- }catch(e){
-  msg.innerText="Error: "+e.message;
-  btn.disabled=false; btn.innerText="RECHARGE NOW";
- }
+async function checkConnection(){
+  document.getElementById('connStatus').innerText='Checking...';
+  document.getElementById('connStatus').style.color='orange';
+  document.getElementById('a1bal').innerText='Checking...';
+  document.getElementById('connMsg').innerText='Connecting to A1Topup 505942...';
+  
+  try{
+    var apiUrl='https://business.a1topup.com/recharge/balance?username=505942&pwd=605254&format=json';
+    var proxy='https://api.allorigins.win/raw?url='+encodeURIComponent(apiUrl);
+    var res=await fetch(proxy);
+    var text=await res.text();
+    
+    if(text.includes('Invalid username')){
+      document.getElementById('connStatus').innerText='❌ Invalid Username';
+      document.getElementById('connStatus').style.color='red';
+      document.getElementById('connMsg').innerText='Username 505942 bhul - Check kara';
+      document.getElementById('connMsg').style.color='red';
+    } else if(text.includes('Invalid password') || text.includes('Invalid pwd')){
+      document.getElementById('connStatus').innerText='❌ Invalid Password';
+      document.getElementById('connStatus').style.color='red';
+      document.getElementById('connMsg').innerText='Password 605254 bhul';
+    } else {
+      // Success - Any number including 0.00
+      document.getElementById('connStatus').innerText='✅ Connected - 505942 LIVE';
+      document.getElementById('connStatus').style.color='green';
+      document.getElementById('a1bal').innerText=text.substring(0,50);
+      
+      if(text.includes('0.00') || text.includes('"balance":"0"') || text.trim()=='0'){
+        document.getElementById('connMsg').innerText='✅ Connected - 505942 - Balance 0.00 - Add Balance to Recharge - Connection OK';
+        document.getElementById('connMsg').style.color='green';
+      } else {
+        document.getElementById('connMsg').innerText='✅ Connected - 505942 - Balance: '+text.substring(0,50)+' - Ready for Real Recharge';
+        document.getElementById('connMsg').style.color='green';
+      }
+    }
+  }catch(e){
+    document.getElementById('connStatus').innerText='❌ Connection Failed';
+    document.getElementById('connStatus').style.color='red';
+    document.getElementById('connMsg').innerText='Error: '+e.message+' - Check internet / Try again';
+    document.getElementById('connMsg').style.color='red';
+  }
 }
 </script>
-</body>
-</html>
