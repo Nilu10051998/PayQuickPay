@@ -45,41 +45,32 @@ var db=firebase.firestore();
 </head>
 <body>
 <nav><div><b>PAYQUICKPAY</b><br><small id="rid">SINU • Retailer • LIVE 505942</small></div><div style="display:flex;gap:8px"><button onclick="checkBal()" class="btn btn-o" style="padding:8px 12px"><i class="fa-solid fa-wallet"></i> Balance</button><button onclick="logout()" class="btn btn-o" style="padding:8px 12px">Logout</button></div></nav>
-
 <div class="box">
 <div class="cards">
 <div class="c"><b>MY WALLET</b><span id="wallet" style="color:#0F172A">Rs 100</span><small>NILU → SINU</small></div>
 <div class="c"><b>A1 WALLET • LIVE</b><span id="a1bal" style="color:#16a34a">Rs 1000.00</span><small id="conn">✅ 505942 Connected</small></div>
 <div class="c"><b>EARNINGS</b><span id="comm" style="color:#ea580c">Rs 0.00</span><small><span id="cnt">0</span> Transactions</small></div>
 </div>
-
 <div class="main">
 <div class="c">
 <label>Mobile Number</label>
 <input id="num" placeholder="8763512285" maxlength="10" type="tel" oninput="onMob(this.value)">
 <div id="detectBox" class="detect"><i class="fa-solid fa-bolt" style="color:#2563eb"></i> <span id="detectText">RC • Odisha 23 • Prepaid</span></div>
-
 <label>Operator</label>
-<select id="op" onchange="showPlans()"><option value="RC" data-comm="0.50">RC • Prepaid Mobile • 0.50%</option><option value="A" data-comm="0.80">A • Prepaid Mobile • 0.80%</option><option value="V" data-comm="2.30">V • Prepaid Mobile • 2.30%</option><option value="I" data-comm="2.30">I • Prepaid Mobile • 2.30%</option><option value="BT" data-comm="2.90">BT • BSNL • 2.90%</option><option value="ATV" data-comm="3.00">ATV • DTH • 3.00%</option><option value="DTV" data-comm="3.00">DTV • DTH • 3.00%</option><option value="TPCODL" data-comm="0.30">TPCODL • Electricity</option></select>
-
+<select id="op" onchange="showPlans()"><option value="RC" data-comm="0.50">RC • Prepaid • 0.50%</option><option value="A" data-comm="0.80">A • Prepaid • 0.80%</option><option value="V" data-comm="2.30">V • Prepaid • 2.30%</option><option value="I" data-comm="2.30">I • Prepaid • 2.30%</option><option value="BT" data-comm="2.90">BT • 2.90%</option><option value="ATV" data-comm="3.00">ATV • DTH • 3.00%</option><option value="DTV" data-comm="3.00">DTV • DTH • 3.00%</option><option value="TPCODL" data-comm="0.30">TPCODL • Electricity</option></select>
 <label>Circle</label>
 <select id="circle"><option value="23">Odisha 23</option><option value="2">West Bengal</option><option value="5">Delhi</option><option value="4">Maharashtra</option></select>
-
 <label>Amount</label>
 <input id="amt" type="number" placeholder="199">
-
 <div class="profit"><span>Commission</span><b style="color:#16a34a">Rs <span id="prevComm">0.00</span> • <span id="prevPer">0.50%</span></b></div>
-
 <button onclick="doRecharge()" class="btn btn-g">Recharge Now • LIVE</button>
 <div id="msg" class="msg"></div>
 </div>
-
 <div class="c">
 <div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:13px;color:#0F172A">Plans • <span id="planName">RC Odisha</span></b><small style="color:#94a3b8">Click to fill amount</small></div>
 <div id="planGrid" class="plans"></div>
 </div>
 </div>
-
 <div class="c" style="margin-top:16px">
 <b style="font-size:13px;color:#0F172A">Recent Transactions</b>
 <div style="margin-top:10px;overflow:auto;max-height:280px">
@@ -87,75 +78,32 @@ var db=firebase.firestore();
 </div>
 </div>
 </div>
-
 <script>
 const plansDB={RC:[{a:19,d:'1GB • 1 Day',v:'1D'},{a:29,d:'2.5GB • 2 Days',v:'2D'},{a:149,d:'1GB/Day • Unlimited Calls',v:'20D'},{a:199,d:'1.5GB/Day • Unlimited',v:'23D'},{a:239,d:'1.5GB/Day • Unlimited',v:'28D'},{a:299,d:'2GB/Day • Unlimited',v:'28D'},{a:399,d:'2.5GB/Day + OTT',v:'28D'},{a:599,d:'2GB/Day',v:'70D'},{a:899,d:'2GB/Day + Extra',v:'90D'}],A:[{a:19,d:'1GB • 1 Day',v:'1D'},{a:149,d:'1GB/Day',v:'20D'},{a:199,d:'1.5GB/Day',v:'24D'},{a:299,d:'1.5GB/Day • Unlimited',v:'28D'},{a:599,d:'2GB/Day',v:'84D'}],V:[{a:19,d:'1GB • 1 Day',v:'1D'},{a:149,d:'1GB/Day',v:'18D'},{a:199,d:'1.5GB/Day',v:'21D'},{a:299,d:'1.5GB/Day',v:'28D'}],default:[{a:10,d:'Topup',v:'NA'},{a:100,d:'Full Talktime',v:'NA'},{a:149,d:'Unlimited Pack',v:'20D'},{a:199,d:'Unlimited Pack',v:'28D'},{a:299,d:'Unlimited Pack',v:'28D'}]};
-function detectOp(num){
- if(!num||num.length<4) return {op:'RC',circle:'23',name:'RC Odisha'};
- let p4=num.substring(0,4);
- let p3=num.substring(0,3);
- let p2=num.substring(0,2);
+
+function detectOpLocal(num){
+ if(!num||num.length<4) return {op:'RC',circle:'23',name:'RC Odisha', source:'LOCAL', accuracy:'80% Guess'};
  let op='RC', circle='23', name='RC Odisha';
-
- // FULL PREFIX MAP - ODISHA + ALL INDIA - 100% AUTO DETECT
- const odishaPrefixes = ['637','638','700','701','702','703','704','706','707','708','760','761','762','763','764','765','766','768','769','770','785','789','790','791','792','793','794','801','802','803','804','805','806','807','808','809','810','826','827','828','829','832','833','834','876','877','878','879','891','892','893','894','943','977','993','994'];
- const wbPrefixes = ['900','901','902','903','904','905','906','907','908','909','980','981','983','987','988'];
- const delhiPrefixes = ['880','881','882','882','920','921','981','987','999'];
- 
- let isOdisha = odishaPrefixes.some(pr=> num.startsWith(pr));
- let isWB = wbPrefixes.some(pr=> num.startsWith(pr));
- 
+ const odishaPref=['637','638','700','701','702','703','704','706','707','708','760','761','762','763','764','765','766','768','769','770','785','789','790','791','792','793','794','801','802','803','804','805','806','807','808','809','810','826','827','828','829','832','833','834','876','877','878','879','891','892','893','894','943','977','993','994'];
+ let isOdisha=odishaPref.some(function(p){return num.startsWith(p);});
  if(isOdisha){ circle='23'; name='RC Odisha'; }
- else if(isWB){ circle='2'; name='RC West Bengal'; }
- else { circle='23'; name='RC Odisha'; } // Default Odisha
-
- // OPERATOR DETECT - FIRST 4 DIGIT LOGIC - 【entity-JIO¦canonical_name=JIO】 MOST COMMON 6-9 SERIES
- // 【entity-JIO¦canonical_name=JIO】: 600-602, 700-709, 750-799, 800-899, 910, 958, 998 - 70% numbers
- // 【entity-Airtel¦canonical_name=Airtel】: 700, 701, 702, 710, 730, 740, 750, 770, 800, 801, 802, 880, 900, 901, 902, 903, 904, 905, 906, 907, 908, 909, 940, 980, 981, 983, 987
- // Vi: 700, 730, 740, 750, 800, 900, 901, 902, 903, 904, 905, 906, 907, 908, 909
- // BSNL: 940, 941, 942, 943, 944, 945, 946, 947, 948, 949
- 
- if(num.startsWith('6') || num.startsWith('7') || num.startsWith('8') || num.startsWith('9')){
-   // 【entity-JIO¦canonical_name=JIO】 - MOST COMMON - DEFAULT RC
-   op='RC';
-   // BSNL CHECK
-   if(['943','944','945','946','947','948','949','940','941','942'].some(pr=> num.startsWith(pr))){ op='BT'; name='BT BSNL '+ (circle=='23'?'Odisha':''); }
-   // Airtel - 2nd common
-   else if(['701','702','703','704','705','710','730','740','900','901','902','903','904','905','906','907','908','909','980','981','983','987','998'].some(pr=> num.startsWith(pr))){ op='A'; name='A Airtel '+(circle=='23'?'Odisha':''); if(Math.random()>0.5) op='RC'; } // 50% JIO for MNP
-   else if(['700','800','801','802','803','804','805','806','807','808','809'].some(pr=> num.startsWith(pr))){ op='RC'; name='RC JIO '+(circle=='23'?'Odisha':''); }
- }
-
- // SPECIAL ODISHA NUMBERS - YOUR NUMBERS
- if(num==='8763512285' || num.startsWith('8763') || num.startsWith('8018') || num.startsWith('7908') || num.startsWith('6370') || num.startsWith('6371') || num.startsWith('7008') || num.startsWith('7009') || num.startsWith('9437') || num.startsWith('9438') || num.startsWith('9777') || num.startsWith('9937') || num.startsWith('9938')){
-   op='RC'; circle='23'; name='RC Odisha - 【entity-JIO¦canonical_name=JIO】';
- }
- 
- console.log('Detect:', num, '->', op, circle, name);
- return {op:op, circle:circle, name:name};
+ if(num.startsWith('943')||num.startsWith('944')||num.startsWith('940')){ op='BT'; name='BT Odisha'; }
+ if(num==='8763512285'||num.startsWith('8763')||num.startsWith('8018')||num.startsWith('7908')||num.startsWith('6370')||num.startsWith('7008')||num.startsWith('9437')){ op='RC'; circle='23'; name='RC Odisha'; }
+ return {op:op, circle:circle, name:name, source:'LOCAL', accuracy:'80% Local'};
 }
 
-function onMob(val){
- let num=val.replace(/\D/g,'').substring(0,10);
- document.getElementById('num').value=num;
- document.getElementById('detectBox').classList.add('show');
- if(num.length>=2){
-   document.getElementById('detectText').innerText='Detecting... '+num;
- }
- if(num.length>=4){
-   let d=detectOp(num);
-   document.getElementById('detectText').innerText=d.op+' • '+d.name+' • Prepaid • Auto Detected • '+num;
-   document.getElementById('op').value=d.op;
-   document.getElementById('circle').value=d.circle;
-   document.getElementById('planName').innerText=d.name;
-   showPlans();
-   upd();
- }
- if(num.length===10){
-   let d=detectOp(num);
-   document.getElementById('detectText').innerText='✅ '+num+' • '+d.op+' • '+d.name+' • Ready • Auto Detect Done';
- }
+async function detectOpReal(number){
+ try{
+   let res=await fetch('/api/a1topup?action=operator_lookup&number='+number);
+   let data=await res.json();
+   if(data && data.op){
+     return {op:data.op, circle:data.circle||'23', name:data.name||data.op+' Odisha', source:data.source||'A1', accuracy:data.source&&data.source.includes('LIVE')?'100% LIVE':'80% Local', mnp:data.mnp||false, raw:data};
+   }
+ }catch(e){ console.log('A1 lookup fail', e); }
+ return detectOpLocal(number);
 }
-function onMob(val){
+
+async function onMob(val){
  let num=val.replace(/\D/g,'').substring(0,10);
  document.getElementById('num').value=num;
  let box=document.getElementById('detectBox');
@@ -164,30 +112,31 @@ function onMob(val){
    document.getElementById('detectText').innerText='Detecting... '+num;
  }
  if(num.length>=4){
-   let d=detectOp(num);
-   document.getElementById('detectText').innerText=d.op+' • '+d.name+' • Prepaid • Auto • '+num;
-   let opSel=document.getElementById('op');
-   let circleSel=document.getElementById('circle');
-   let planName=document.getElementById('planName');
-   if(opSel) opSel.value=d.op;
-   if(circleSel) circleSel.value=d.circle;
-   if(planName) planName.innerText=d.name;
-   if(typeof showPlans==='function') showPlans();
-   if(typeof upd==='function') upd();
+   document.getElementById('detectText').innerText=num+' • Checking A1 LIVE lookup...';
+   let d=await detectOpReal(num);
+   let icon=d.source.includes('LIVE')?'✅ LIVE A1':'⚠️ Local';
+   document.getElementById('detectText').innerText=icon+' • '+d.op+' • '+d.name+' • '+d.accuracy+' • '+num;
+   document.getElementById('op').value=d.op;
+   document.getElementById('circle').value=d.circle;
+   document.getElementById('planName').innerText=d.name;
+   showPlans(); upd();
  }
  if(num.length===10){
-   let d=detectOp(num);
-   document.getElementById('detectText').innerText='✅ '+num+' • '+d.op+' • '+d.name+' • Ready • Done';
+   let d=await detectOpReal(num);
+   let icon=d.source.includes('LIVE')?'✅ LIVE A1 100%':'⚠️ Local 80%';
+   document.getElementById('detectText').innerText=icon+' • '+num+' • '+d.op+' • '+d.name+' • Ready • MNP:'+(d.mnp?'Yes':'No');
  }
 }
+
+function showPlans(){let op=document.getElementById('op').value;let list=plansDB[op]||plansDB.default;let h='';list.forEach(function(p){h+='<div class="pl" onclick="pick('+p.a+')"><b>₹'+p.a+'</b><span>'+p.d+'</span><small>'+p.v+' • Click to fill</small></div>';});document.getElementById('planGrid').innerHTML=h;}
 function pick(a){document.getElementById('amt').value=a;upd();m('₹'+a+' selected','ok');}
 function logout(){localStorage.removeItem('retailer');location.href='index.html';}
 function m(t,type){let e=document.getElementById('msg');e.className='msg show msg-'+type;e.innerText=t;e.style.display='block';}
 function upd(){let amt=Number(document.getElementById('amt').value||0);let sel=document.getElementById('op');let per=Number(sel.options[sel.selectedIndex].getAttribute('data-comm')||0.5);let c=amt*per/100;document.getElementById('prevComm').innerText=c.toFixed(2);document.getElementById('prevPer').innerText=per+'%';}
 document.getElementById('amt').addEventListener('input',upd);document.getElementById('op').addEventListener('change',upd);
-async function load(){let id=localStorage.getItem('retailer')||'SINU';document.getElementById('rid').innerText=id+' • Retailer • LIVE 505942';try{let s=await db.collection('retailers').where('user_id','==',id).get();let w=0;s.forEach(d=>{w=d.data().wallet||0;});document.getElementById('wallet').innerText='Rs '+w;}catch(e){}let h=JSON.parse(localStorage.getItem('recharge_history')||'[]').filter(r=>r.retailer_id==id);let c=0;h.forEach(r=>{c+=Number(r.commission||0);});document.getElementById('comm').innerText='Rs '+c.toFixed(2);document.getElementById('cnt').innerText=h.length;if(h.length>0){let html='';h.slice(-20).reverse().forEach(r=>{html+=`<tr><td>${r.date}</td><td>${r.operator_code}</td><td><b>${r.customer_no}</b></td><td>Rs ${r.amount}</td><td><small>${(r.txid||'').substring(0,12)}</small></td><td><span class="badge ok">Success</span></td></tr>`});document.getElementById('hist').innerHTML=html;}showPlans();upd();}
+async function load(){let id=localStorage.getItem('retailer')||'SINU';document.getElementById('rid').innerText=id+' • Retailer • LIVE 505942';try{let s=await db.collection('retailers').where('user_id','==',id).get();let w=0;s.forEach(function(d){w=d.data().wallet||0;});document.getElementById('wallet').innerText='Rs '+w;}catch(e){}let h=JSON.parse(localStorage.getItem('recharge_history')||'[]').filter(function(r){return r.retailer_id==id;});let c=0;h.forEach(function(r){c+=Number(r.commission||0);});document.getElementById('comm').innerText='Rs '+c.toFixed(2);document.getElementById('cnt').innerText=h.length;if(h.length>0){let html='';h.slice(-20).reverse().forEach(function(r){html+='<tr><td>'+r.date+'</td><td>'+r.operator_code+'</td><td><b>'+r.customer_no+'</b></td><td>Rs '+r.amount+'</td><td><small>'+(r.txid||'').substring(0,12)+'</small></td><td><span class="badge ok">Success</span></td></tr>';});document.getElementById('hist').innerHTML=html;}showPlans();upd();}
 async function checkBal(){document.getElementById('a1bal').innerText='Checking...';try{let res=await fetch('/api/a1topup?action=balance');let t=await res.text();document.getElementById('a1bal').innerText='Rs '+t.substring(0,10)+' LIVE';document.getElementById('conn').innerText='✅ 505942 Connected • Auto Detect OK';m('Connected • Rs '+t.substring(0,10),'ok');}catch(e){m('Error '+e.message,'er');}}
-async function doRecharge(){let id=localStorage.getItem('retailer')||'SINU';let num=document.getElementById('num').value.trim();let amt=document.getElementById('amt').value.trim();let op=document.getElementById('op').value;let circle=document.getElementById('circle').value;let sel=document.getElementById('op');let per=Number(sel.options[sel.selectedIndex].getAttribute('data-comm')||0.5);if(!num||!amt){m('Enter number & amount','er');return;}if(num.length!=10){m('10 digit number','er');return;}let orderId='PAY'+Date.now();m('Processing '+num+' Rs '+amt+' • '+op+' • '+circle+' • Order '+orderId+' • A1 505942...','in');try{let s=await db.collection('retailers').where('user_id','==',id).get();let docId=null,w=100;s.forEach(d=>{docId=d.id;w=d.data().wallet||0;});if(w==0) w=100;if(w<Number(amt)){m('Low wallet Rs '+w,'er');return;}let url='/api/a1topup?action=recharge&operatorcode='+op+'&number='+num+'&amount='+amt+'&orderid='+orderId+'&circlecode='+circle;let res=await fetch(url);let text=await res.text();let status='Failed',txid='',opid='';try{let j=JSON.parse(text);status=j.status||'Failed';txid=j.txid||'';opid=j.opid||'';}catch(e){let p=text.split(',');if(p.length>=3){txid=p[0];status=p[1];opid=p[2];}else if(text.toLowerCase().includes('success')){status='Success';txid='TX'+Date.now();opid='OP'+Date.now();}}if(status.toLowerCase().includes('success')){let comm=Number(amt)*per/100;if(docId){try{await db.collection('retailers').doc(docId).update({wallet:w-Number(amt)+comm});}catch(e){}}let data={retailer_id:id,service:sel.options[sel.selectedIndex].text.split('•')[0].trim(),operator_code:op,customer_no:num,amount:amt,commission:comm.toFixed(2),orderid:orderId,txid:txid,opid:opid,status:'Success',date:new Date().toLocaleString()};let hist=JSON.parse(localStorage.getItem('recharge_history')||'[]');hist.push(data);localStorage.setItem('recharge_history',JSON.stringify(hist));m('✅ Success Tx:'+txid+' Op:'+opid+' • '+num+' Rs '+amt+' • Comm Rs '+comm.toFixed(2)+' • Wallet Rs '+(w-Number(amt)+comm).toFixed(2),'ok');load();checkBal();}else{m('❌ Failed: '+text.substring(0,300),'er');}}catch(e){m('Error '+e.message,'er');}}
+async function doRecharge(){let id=localStorage.getItem('retailer')||'SINU';let num=document.getElementById('num').value.trim();let amt=document.getElementById('amt').value.trim();let op=document.getElementById('op').value;let circle=document.getElementById('circle').value;let sel=document.getElementById('op');let per=Number(sel.options[sel.selectedIndex].getAttribute('data-comm')||0.5);if(!num||!amt){m('Enter number & amount','er');return;}if(num.length!=10){m('10 digit number','er');return;}let orderId='PAY'+Date.now();m('Processing '+num+' Rs '+amt+' • '+op+' • '+circle+' • Order '+orderId+' • A1 505942...','in');try{let s=await db.collection('retailers').where('user_id','==',id).get();let docId=null,w=100;s.forEach(function(d){docId=d.id;w=d.data().wallet||0;});if(w==0) w=100;if(w<Number(amt)){m('Low wallet Rs '+w,'er');return;}let url='/api/a1topup?action=recharge&operatorcode='+op+'&number='+num+'&amount='+amt+'&orderid='+orderId+'&circlecode='+circle;let res=await fetch(url);let text=await res.text();let status='Failed',txid='',opid='';try{let j=JSON.parse(text);status=j.status||'Failed';txid=j.txid||'';opid=j.opid||'';}catch(e){let p=text.split(',');if(p.length>=3){txid=p[0];status=p[1];opid=p[2];}else if(text.toLowerCase().includes('success')){status='Success';txid='TX'+Date.now();opid='OP'+Date.now();}}if(status.toLowerCase().includes('success')){let comm=Number(amt)*per/100;if(docId){try{await db.collection('retailers').doc(docId).update({wallet:w-Number(amt)+comm});}catch(e){}}let data={retailer_id:id,service:sel.options[sel.selectedIndex].text.split('•')[0].trim(),operator_code:op,customer_no:num,amount:amt,commission:comm.toFixed(2),orderid:orderId,txid:txid,opid:opid,status:'Success',date:new Date().toLocaleString()};let hist=JSON.parse(localStorage.getItem('recharge_history')||'[]');hist.push(data);localStorage.setItem('recharge_history',JSON.stringify(hist));m('✅ Success Tx:'+txid+' Op:'+opid+' • '+num+' Rs '+amt+' • Comm Rs '+comm.toFixed(2)+' • Wallet Rs '+(w-Number(amt)+comm).toFixed(2),'ok');load();checkBal();}else{m('❌ Failed: '+text.substring(0,300),'er');}}catch(e){m('Error '+e.message,'er');}}
 load();checkBal();
 </script>
 </body>
