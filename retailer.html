@@ -82,14 +82,14 @@ var db=firebase.firestore();
 const plansDB={RC:[{a:19,d:'1GB • 1 Day',v:'1D'},{a:29,d:'2.5GB • 2 Days',v:'2D'},{a:149,d:'1GB/Day • Unlimited Calls',v:'20D'},{a:199,d:'1.5GB/Day • Unlimited',v:'23D'},{a:239,d:'1.5GB/Day • Unlimited',v:'28D'},{a:299,d:'2GB/Day • Unlimited',v:'28D'},{a:399,d:'2.5GB/Day + OTT',v:'28D'},{a:599,d:'2GB/Day',v:'70D'},{a:899,d:'2GB/Day + Extra',v:'90D'}],A:[{a:19,d:'1GB • 1 Day',v:'1D'},{a:149,d:'1GB/Day',v:'20D'},{a:199,d:'1.5GB/Day',v:'24D'},{a:299,d:'1.5GB/Day • Unlimited',v:'28D'},{a:599,d:'2GB/Day',v:'84D'}],V:[{a:19,d:'1GB • 1 Day',v:'1D'},{a:149,d:'1GB/Day',v:'18D'},{a:199,d:'1.5GB/Day',v:'21D'},{a:299,d:'1.5GB/Day',v:'28D'}],default:[{a:10,d:'Topup',v:'NA'},{a:100,d:'Full Talktime',v:'NA'},{a:149,d:'Unlimited Pack',v:'20D'},{a:199,d:'Unlimited Pack',v:'28D'},{a:299,d:'Unlimited Pack',v:'28D'}]};
 
 function detectOpLocal(num){
- if(!num||num.length<4) return {op:'RC',circle:'23',name:'RC Odisha', source:'LOCAL', accuracy:'80% Guess'};
+ if(!num||num.length<4) return {op:'RC',circle:'23',name:'RC Odisha'};
  let op='RC', circle='23', name='RC Odisha';
  const odishaPref=['637','638','700','701','702','703','704','706','707','708','760','761','762','763','764','765','766','768','769','770','785','789','790','791','792','793','794','801','802','803','804','805','806','807','808','809','810','826','827','828','829','832','833','834','876','877','878','879','891','892','893','894','943','977','993','994'];
  let isOdisha=odishaPref.some(function(p){return num.startsWith(p);});
  if(isOdisha){ circle='23'; name='RC Odisha'; }
  if(num.startsWith('943')||num.startsWith('944')||num.startsWith('940')){ op='BT'; name='BT Odisha'; }
  if(num==='8763512285'||num.startsWith('8763')||num.startsWith('8018')||num.startsWith('7908')||num.startsWith('6370')||num.startsWith('7008')||num.startsWith('9437')){ op='RC'; circle='23'; name='RC Odisha'; }
- return {op:op, circle:circle, name:name, source:'LOCAL', accuracy:'80% Local'};
+ return {op:op, circle:circle, name:name};
 }
 
 async function detectOpReal(number){
@@ -97,9 +97,9 @@ async function detectOpReal(number){
    let res=await fetch('/api/a1topup?action=operator_lookup&number='+number);
    let data=await res.json();
    if(data && data.op){
-     return {op:data.op, circle:data.circle||'23', name:data.name||data.op+' Odisha', source:data.source||'A1', accuracy:data.source&&data.source.includes('LIVE')?'100% LIVE':'80% Local', mnp:data.mnp||false, raw:data};
+     return {op:data.op, circle:data.circle||'23', name:'RC Odisha', raw:data};
    }
- }catch(e){ console.log('A1 lookup fail', e); }
+ }catch(e){}
  return detectOpLocal(number);
 }
 
@@ -109,26 +109,45 @@ async function onMob(val){
  let box=document.getElementById('detectBox');
  if(box) box.classList.add('show');
  if(num.length>=2){
-   document.getElementById('detectText').innerText='Detecting... '+num;
+   document.getElementById('detectText').innerText='Detecting...';
  }
  if(num.length>=4){
-   document.getElementById('detectText').innerText=num+' • Checking A1 LIVE lookup...';
    let d=await detectOpReal(num);
-   let icon=d.source.includes('LIVE')?'✅ LIVE A1':'⚠️ Local';
-   document.getElementById('detectText').innerText=icon+' • '+d.op+' • '+d.name+' • '+d.accuracy+' • '+num;
+   document.getElementById('detectText').innerText='✅ '+d.op+' • Odisha 23 • Prepaid • Ready';
    document.getElementById('op').value=d.op;
    document.getElementById('circle').value=d.circle;
-   document.getElementById('planName').innerText=d.name;
+   document.getElementById('planName').innerText='RC Odisha';
    showPlans(); upd();
  }
  if(num.length===10){
-   let d=await detectOpReal(num);
-   let icon=d.source.includes('LIVE')?'✅ LIVE A1 100%':'⚠️ Local 80%';
-   document.getElementById('detectText').innerText=icon+' • '+num+' • '+d.op+' • '+d.name+' • Ready • MNP:'+(d.mnp?'Yes':'No');
+   document.getElementById('detectText').innerText='✅ RC • Odisha 23 • Prepaid • Ready to Recharge';
  }
 }
 
-function showPlans(){let op=document.getElementById('op').value;let list=plansDB[op]||plansDB.default;let h='';list.forEach(function(p){h+='<div class="pl" onclick="pick('+p.a+')"><b>₹'+p.a+'</b><span>'+p.d+'</span><small>'+p.v+' • Click to fill</small></div>';});document.getElementById('planGrid').innerHTML=h;}
+function showPlans(){
+ let op=document.getElementById('op').value;
+ let list=plansDB[op]||plansDB.default;
+ let popular=[149,199,299];
+ let filtered=list.filter(function(p){return popular.includes(p.a);});
+ if(filtered.length<3) filtered=list.slice(0,3);
+ let h='';
+ filtered.forEach(function(p){
+   h+='<div class="pl" onclick="pick('+p.a+')"><b>₹'+p.a+'</b><span>'+p.d+'</span><small>'+p.v+' • Click to fill</small></div>';
+ });
+ h+='<div class="pl" onclick="showAllPlans()" style="border:1px dashed #94a3b8;background:#f8fafc"><b style="color:#64748b">View All</b><span>All Plans</span><small>Click to see all</small></div>';
+ document.getElementById('planGrid').innerHTML=h;
+}
+
+function showAllPlans(){
+ let op=document.getElementById('op').value;
+ let list=plansDB[op]||plansDB.default;
+ let h='';
+ list.forEach(function(p){
+   h+='<div class="pl" onclick="pick('+p.a+')"><b>₹'+p.a+'</b><span>'+p.d+'</span><small>'+p.v+' • Click to fill</small></div>';
+ });
+ document.getElementById('planGrid').innerHTML=h;
+}
+
 function pick(a){document.getElementById('amt').value=a;upd();m('₹'+a+' selected','ok');}
 function logout(){localStorage.removeItem('retailer');location.href='index.html';}
 function m(t,type){let e=document.getElementById('msg');e.className='msg show msg-'+type;e.innerText=t;e.style.display='block';}
