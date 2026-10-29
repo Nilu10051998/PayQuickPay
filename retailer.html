@@ -186,7 +186,7 @@ async function realRecharge(){
       resultBody.innerHTML="<b style='color:#d97706'>⚠️ Real API Connected But IP Issue - QUEUED</b><br><br><b>Response:</b><br>"+text+"<br><br><b>Real Direct Fallback - Not Demo - Click Below:</b><br><a href='http://business.a1topup.com/recharge/api?username=505942&pwd=605254&circlecode="+circle+"&operatorcode="+op+"&number="+num+"&amount="+amt+"&orderid="+orderid+"&format=json' target='_blank' style='background:#4f46e5;color:#fff;padding:8px 12px;border-radius:6px;display:inline-block;margin-top:8px;text-decoration:none;font-weight:800'>🔗 Open Real Direct A1 Link - Real TxID - Not Demo</a><br><br><b>Solution:</b> Call A1 Support Username 505942 Disable IP Check Allow 0.0.0.0/0<br><b>Customer Care:</b> 7908824917 • Payquickpayofficial@gmail.com";
       msgShow("⚠️ Real API Connected - But Invalid IP - QUEUED - Click Direct Link Below For Real TxID - Not Demo - Real Recharge - Customer Care 7908824917","error");
       // Auto open direct link - Real fallback
-      window.open("http://business.a1topup.com/recharge/api?username=505942&pwd=605254&circlecode="+circle+"&operatorcode="+op+"&number="+num+"&amount="+amt+"&orderid="+orderid+"&format=json","_blank");
+      window.open("https://business.a1topup.com/api/recharge/do?username=505942&apikey=YOUR_API_KEY_HERE&operatorcode="+op+"&number="+num+"&amount="+amt+"&orderid="+orderid+"&circlecode="+circle,"_blank");
     }else{
       // Real success - TxID
       resultBody.innerHTML="<b style='color:#10b981'>✅ REAL RECHARGE SUCCESS - Not Demo - Real TxID</b><br><br><b>Number:</b> "+num+"<br><b>Amount:</b> Rs "+amt+"<br><b>Operator:</b> "+NAMES[op]+" ("+op+")<br><b>Circle:</b> Odisha 23<br><b>OrderID:</b> "+orderid+"<br><br><b>Real A1 Response - TxID OpID Balance:</b><br><div style='background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px;margin-top:6px;font-size:11px'>"+text+"</div><br><b>Customer:</b> SMS Sent • Balance Deducted Rs "+amt+" • Commission BT 2.90% • Real • Not Demo<br><b>Customer Care:</b> 7908824917 • Payquickpayofficial@gmail.com • All Recharge Working Fine";
@@ -200,7 +200,7 @@ async function realRecharge(){
     resultDiv.style.display="block";
     resultBody.innerHTML="<b style='color:#ef4444'>❌ API Fetch Failed - Network Error - Real Direct Fallback</b><br><br><b>Error:</b> "+e.message+"<br><br><b>Real Direct A1 Link - Not Demo - Click:</b><br><a href='http://business.a1topup.com/recharge/api?username=505942&pwd=605254&circlecode="+circle+"&operatorcode="+op+"&number="+num+"&amount="+amt+"&orderid="+orderid+"&format=json' target='_blank' style='background:#10b981;color:#fff;padding:8px 12px;border-radius:6px;display:inline-block;margin-top:8px;text-decoration:none;font-weight:800'>🔗 Open Real Direct A1 Link - Real TxID - Not Demo - No Backend Needed</a><br><br><b>Backend Missing:</b> Deploy api/a1topup.js<br><b>Customer Care:</b> 7908824917";
     msgShow("❌ Fetch Failed: "+e.message+" - Real Direct Link Below - Click For Real TxID - Not Demo","error");
-    window.open("http://business.a1topup.com/recharge/api?username=505942&pwd=605254&circlecode="+circle+"&operatorcode="+op+"&number="+num+"&amount="+amt+"&orderid="+orderid+"&format=json","_blank");
+    window.open("https://business.a1topup.com/api/recharge/do?username=505942&apikey=YOUR_API_KEY_HERE&operatorcode="+op+"&number="+num+"&amount="+amt+"&orderid="+orderid+"&circlecode="+circle,"_blank");
   }finally{
     btn.disabled=false;
     btn.innerHTML="⚡ REAL RECHARGE NOW - Real A1 API - Real TxID - Not Demo - Click";
