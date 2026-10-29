@@ -1,134 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><style>
-@font-face {
-  font-family: "Optimistic";
-  font-style: normal;
-  font-weight: 400 600;
-  font-display: swap;
-  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Optimistic Mono";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
-}
-:where(html) {
-  font-family: "Optimistic", system-ui, sans-serif;
-}
-:where(code, pre, kbd, samp) {
-  font-family: "Optimistic Mono", ui-monospace, monospace;
-}
-</style>
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PAYQUICKPAY - Final Recharge - LIVE 505942</title>
+<title>PAYQUICKPAY - Final LIVE - 505942</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
-body{background:#f5f7fb;padding:12px}
-.header{background:#4f46e5;color:#fff;padding:16px;border-radius:12px;text-align:center;margin-bottom:12px}
-.card{background:#fff;border-radius:12px;border:1px solid #e2e8f0;padding:16px;margin-bottom:12px}
-.input,.select{width:100%;padding:14px;border:2px solid #e2e8f0;border-radius:10px;margin-top:8px;font-size:15px;font-weight:700}
-.btn{background:#4f46e5;color:#fff;border:none;padding:16px;border-radius:10px;width:100%;font-weight:800;margin-top:14px;cursor:pointer;font-size:16px}
-.badge{padding:12px;border-radius:10px;font-size:13px;font-weight:700;margin-top:12px;word-break:break-all}
-.plan{border:2px solid #e2e8f0;border-radius:10px;padding:12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;cursor:pointer}
-.price{font-weight:800;color:#4f46e5;font-size:18px}
-.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
-.qb{background:#f1f5f9;border:2px solid #e2e8f0;border-radius:10px;padding:12px;text-align:center;cursor:pointer;font-weight:800;font-size:12px}
+body{font-family:Arial;background:#f0f4ff;margin:0;padding:10px}
+.header{background:#4f46e5;color:white;padding:15px;text-align:center;border-radius:12px;font-weight:bold}
+.card{background:white;padding:15px;border-radius:12px;margin-top:10px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.op-btn{background:#eef2ff;border:1px solid #c7d2fe;padding:10px;border-radius:10px;text-align:center;font-size:13px;font-weight:bold}
+input,select{width:100%;padding:12px;border:1px solid #ccc;border-radius:10px;margin:8px 0;font-size:16px;box-sizing:border-box}
+.recharge-btn{background:#4f46e5;color:white;padding:14px;border:none;border-radius:10px;width:100%;font-weight:bold;font-size:16px;cursor:pointer}
+.success{background:#dcfce7;padding:10px;border-radius:10px;margin:8px 0;font-size:12px;word-break:break-all}
+.info{background:#fffbeb;padding:10px;border-radius:10px;margin:10px 0;font-size:11px;border:1px solid #fcd34d}
 </style>
 </head>
 <body>
+
 <div class="header">
-<b>PAYQUICKPAY - Final LIVE - 505942 - 7908824917</b><br>
-<span style="font-size:12px">Rs 1000.00 LIVE • Official API • BT RC A V • Orissa 23 • Real TxID • No 404</span>
+PAYQUICKPAY - Final LIVE - 505942 - 7908824917<br>
+<span id="balText" style="font-size:13px;font-weight:normal">Rs 1000.00 LIVE • Official API • BT RC A V • Orissa 23 • Real TxID • No 404</span>
 </div>
 
 <div class="card">
-<div style="background:#fef3c7;padding:8px;border-radius:8px;font-size:11px;font-weight:700;text-align:center;margin-bottom:12px">
+<div class="info">
 All Recharge Working Fine • Customer Care: 7908824917 • Payquickpayofficial@gmail.com • A1 Wallet Rs 1000 LIVE • BSNL JIO AIRTEL VI All SIM
 </div>
 
-<div class="quick">
-<div class="qb" onclick="setN('8763512285','BT')">BSNL<br>87635<br>BT</div>
-<div class="qb" onclick="setN('8018146505','BT')">BSNL<br>8018<br>BT</div>
-<div class="qb" onclick="setN('6370000000','RC')">JIO<br>637<br>RC</div>
-<div class="qb" onclick="setN('9437000000','A')">AIRTEL<br>9437<br>A</div>
+<div class="btn-grid">
+<div class="op-btn">BSNL<br>87635<br>BT</div>
+<div class="op-btn">BSNL<br>8018<br>BT</div>
+<div class="op-btn">JIO<br>637<br>RC</div>
+<div class="op-btn">AIRTEL<br>9437<br>A</div>
 </div>
 
-<label style="font-size:12px;font-weight:800">MOBILE NUMBER (Empty)</label>
-<input id="num" class="input" type="tel" maxlength="10" placeholder="Enter 10 digit - Eg 8763512285" oninput="onM(this.value)">
+<label>MOBILE NUMBER</label>
+<input id="mobile" type="tel" placeholder="Enter Mobile" value="7908824917">
 
-<div id="det" class="badge" style="background:#f0fdf4;border:1px solid #bbf7d0;color:#166534">Enter Number - Official A1 API - Ready</div>
+<div style="background:#dcfce7;padding:10px;border-radius:10px;color:#166534;font-size:13px" id="statusBox">
+Enter Number - Official A1 API - Ready
+</div>
 
-<label style="font-size:12px;font-weight:800;margin-top:12px;display:block">OPERATOR CODE - Official BT RC A V</label>
-<select id="op" class="select" onchange="showP()">
-<option value="BT">BT - BSNL TOPUP - BSNL</option>
-<option value="RC">RC - JIO - RELIANCE JIO</option>
-<option value="A">A - Airtel - Airtel</option>
-<option value="V">V - Vodafone - Vi</option>
+<label style="margin-top:10px;display:block;font-weight:bold;font-size:13px">OPERATOR CODE - Official BT RC A V</label>
+<select id="opCode">
+<option value="BT">BT - BSNL - BSNL TOPUP</option>
+<option value="RC" selected>RC - JIO - RELIANCE JIO</option>
+<option value="A">A - AIRTEL - AIRTEL</option>
+<option value="V">V - VODAFONE - VODAFONE</option>
 </select>
 
-<label style="font-size:12px;font-weight:800;margin-top:12px;display:block">CIRCLE CODE - Official Orissa 23</label>
-<select id="circle" class="select">
-<option value="23">Orissa 23 - Real</option>
+<label style="display:block;font-weight:bold;font-size:13px">CIRCLE CODE - Official Orissa 23</label>
+<select id="circleCode">
+<option value="23" selected>Orissa 23 - Real</option>
 <option value="2">West Bengal 2</option>
+<option value="13">Bihar 13</option>
 <option value="5">Delhi 5</option>
 </select>
 
-<label style="font-size:12px;font-weight:800;margin-top:12px;display:block">AMOUNT</label>
-<input id="amt" class="input" type="number" placeholder="10" value="10">
+<label>AMOUNT</label>
+<input id="amount" type="number" value="19">
 
-<button class="btn" onclick="rechargeNow()">🚀 RECHARGE NOW - Official A1 API - Real TxID - No 404</button>
+<button class="recharge-btn" onclick="doRecharge()" id="rechBtn">🚀 RECHARGE NOW - Official A1 API - Real TxID - No 404</button>
 
-<div id="msg" class="badge" style="display:none;background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af"></div>
-<div id="res" class="badge" style="display:none;background:#f8fafc;border:1px solid #e2e8f0;color:#334155"></div>
+<div id="result" class="success" style="display:none"></div>
+
+<button onclick="checkBalance()" style="margin-top:10px;width:100%;padding:10px;background:#10b981;color:white;border:none;border-radius:8px">Check Balance - LIVE</button>
+
 </div>
 
 <div class="card">
-<b style="font-size:13px">Browse Plans - Official BT RC A V</b>
-<div id="plans" style="margin-top:12px"></div>
+<b>Browse Plans - Official BT RC A V</b>
+<div id="plans"></div>
 </div>
 
-<div class="card" style="font-size:11px;line-height:18px">
+<div class="card" style="font-size:11px">
 <b>Official A1 API - From Docs - Real - No 404 - Final LIVE 505942:</b><br>
-Endpoint: https://business.a1topup.com/recharge/api?username=505942&pwd=605254&circlecode=23&operatorcode=BT&number=8763512285&amount=10&orderid=PAY...&format=json<br>
+Endpoint: https://business.a1topup.com/recharge/api?username=505942&pwd=605254&circlecode=23&operatorcode=BT&number=8763512285&amount=10&orderid=PAY...<br>
 Operator: BT=BSNL TOPUP, RC=JIO, A=Airtel, V=Vodafone<br>
 Circle: Orissa 23, West Bengal 2<br>
-Response: {"txid":"5804","status":"Success","opid":"RJ0317161622000269New","number":"980000000","amount":"10","orderid":"485668"}<br>
+Response: {"txid":"5804","status":"Success","opid":"RJ0317161622000269New","number":"980000000","amount":"10","orderid":"48566"}<br>
 Helpline: 7908824917 • Payquickpayofficial@gmail.com
 </div>
 
 <script>
-var MAP={"87635":"BT","8018":"BT","637":"RC","9437":"A","977":"V"};
-var NAME={"BT":"BSNL GSM - Orissa • BT • BSNL TOPUP • Ready","RC":"JIO - Orissa • RC • JIO • Ready","A":"Airtel - Orissa • A • Airtel • Ready","V":"Vi - Orissa • V • Vodafone • Ready"};
-var PL={"BT":[{a:58,d:"Unlimited 40Kbps after 8GB 7D BSNL"},{a:105,d:"20GB 7D BSNL"},{a:198,d:"40GB 30D BSNL"},{a:10,d:"10 Topup Test Real"}],"RC":[{a:149,d:"1GB/Day 20D JIO"},{a:10,d:"10 Topup Test Real"}],"A":[{a:149,d:"1GB/Day 20D Airtel"},{a:10,d:"10 Topup Test Real"}],"V":[{a:149,d:"1GB/Day 18D Vi"},{a:10,d:"10 Topup Test Real"}];
-function detect(n){for(var l=5;l>=3;l--){var p=n.substring(0,l);if(MAP[p])return MAP[p];} if(n.startsWith("87635"))return"BT"; if(n[0]=="8")return"BT"; if(n[0]=="7")return"RC"; if(n[0]=="9")return"A"; return"BT";}
-function setN(n,o){document.getElementById('num').value=n;document.getElementById('op').value=o;onM(n);}
-function onM(v){var n=v.replace(/[^0-9]/g,"").substring(0,10);document.getElementById('num').value=n;var d=document.getElementById('det'); if(n.length<3){d.innerHTML="Enter Number - Official API Ready";return;} var op=detect(n);d.innerHTML="✓ "+NAME[op];document.getElementById('op').value=op;showP();}
-function showP(){var op=document.getElementById('op').value||"BT";var list=PL[op]||PL["BT"];var h="";for(var i=0;i<list.length;i++){var p=list[i];h+='<div class="plan" onclick="pick('+p.a+')"><div class="price">₹'+p.a+'</div><div style="flex:1;margin:0 10px;font-size:12px">'+p.d+'</div><div style="background:#4f46e5;color:#fff;border-radius:6px;padding:6px 10px;font-size:11px;font-weight:800">Recharge</div></div>';}document.getElementById('plans').innerHTML=h;}
-function pick(a){document.getElementById('amt').value=a;}
-function rechargeNow(){
-var num=document.getElementById('num').value.trim();
-var amt=document.getElementById('amt').value.trim()||"10";
-var op=document.getElementById('op').value||"BT";
-var circle=document.getElementById('circle').value||"23";
-if(num.length!=10){alert("10 digit number required - Eg 8763512285");return;}
-var orderid="PAY"+Date.now();
-var username="505942";
-var pwd="605254";
-var officialUrl="https://business.a1topup.com/recharge/api?username="+username+"&pwd="+pwd+"&circlecode="+circle+"&operatorcode="+op+"&number="+num+"&amount="+amt+"&orderid="+orderid+"&format=json";
-var msg=document.getElementById('msg');
-msg.style.display="block";
-msg.innerHTML="🚀 Official A1 API - Real - No 404<br><br>Number: "+num+"<br>Operator: "+op+" - "+NAME[op]+"<br>Circle: "+circle+" Orissa<br>Amount: Rs "+amt+"<br>OrderID: "+orderid+"<br><br>Official Endpoint:<br>"+officialUrl+"<br><br>Opening in New Tab - Real TxID Will Show...<br><br><a href='"+officialUrl+"' target='_blank' style='color:#4f46e5;font-weight:800'>Click If Not Opening</a>";
-var res=document.getElementById('res');
-res.style.display="block";
-res.innerHTML="<b>Official A1 API Request - From Docs - No 404:</b><br><br><div style='background:#fff;border:1px solid #e2e8f0;padding:8px;border-radius:6px;font-size:10px;word-break:break-all'>"+officialUrl+"</div><br><b>Expected Real Response:</b><br>{"txid":"5804","status":"Success","opid":"RJ0317161622000269New","number":""+num+"","amount":""+amt+"","orderid":""+orderid+""}<br><br><b>Operator Code:</b> BT=BSNL TOPUP, RC=JIO, A=Airtel, V=Vodafone<br><b>Circle Code:</b> Orissa 23<br><b>Customer Care:</b> 7908824917";
-fetch(officialUrl).then(r=>r.text()).then(t=>{res.innerHTML+="<br><br><b style='color:#16a34a'>Real Official Response - No 404 - Live:</b><br><div style='background:#f0fdf4;border:1px solid #bbf7d0;padding:8px;border-radius:6px;margin-top:8px;font-size:11px;word-break:break-all'>"+t+"</div>";}).catch(e=>{res.innerHTML+="<br><br>CORS - Opening New Tab - "+e.message;});
-window.open(officialUrl,'_blank');
+async function checkBalance(){
+  document.getElementById('statusBox').innerText = "Checking Balance...";
+  try{
+    let res = await fetch('/api/balance');
+    let data = await res.json();
+    document.getElementById('balText').innerText = "Balance Response: " + data.raw;
+    document.getElementById('statusBox').innerText = "Balance: " + data.raw + " - LIVE";
+  }catch(e){
+    document.getElementById('statusBox').innerText = "Balance Error: " + e.message;
+  }
 }
-window.onload=function(){showP();}
+
+async function doRecharge(){
+  let mobile = document.getElementById('mobile').value;
+  let op = document.getElementById('opCode').value;
+  let circle = document.getElementById('circleCode').value;
+  let amt = document.getElementById('amount').value;
+  
+  if(!mobile || mobile.length < 10){ alert("Mobile number thik de!"); return; }
+  if(!amt || amt < 10){ alert("Amount 10 ru adhika de!"); return; }
+  
+  let orderid = "PAY" + Date.now();
+  document.getElementById('rechBtn').innerText = "Processing...";
+  document.getElementById('statusBox').innerText = "Recharging " + mobile + " - Rs " + amt + " - Please Wait...";
+  
+  let url = `/api/recharge?number=${mobile}&operatorcode=${op}&circlecode=${circle}&amount=${amt}&orderid=${orderid}`;
+  
+  try{
+    let res = await fetch(url);
+    let data = await res.json();
+    document.getElementById('result').style.display = "block";
+    document.getElementById('result').innerText = "REAL API RESPONSE:\n" + data.raw + "\n\nRequest URL:\n" + (data.url || url);
+    
+    if(data.raw.includes("Success") || data.raw.includes("txid")){
+      document.getElementById('statusBox').innerText = "✅ SUCCESS! Recharge Done! TxID Received!";
+      document.getElementById('statusBox').style.background = "#16a34a";
+      document.getElementById('statusBox').style.color = "white";
+    } else {
+      document.getElementById('statusBox').innerText = "Response: " + data.raw;
+    }
+    document.getElementById('rechBtn').innerText = "🚀 RECHARGE NOW - Official A1 API - Real TxID - No 404";
+  }catch(e){
+    document.getElementById('result').style.display = "block";
+    document.getElementById('result').innerText = "Error: " + e.message;
+    document.getElementById('rechBtn').innerText = "🚀 RECHARGE NOW";
+  }
+}
 </script>
-<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
+
+</body>
 </html>
