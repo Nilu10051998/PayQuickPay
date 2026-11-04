@@ -1,16 +1,26 @@
-// api/recharge.js - NEW
+// api/recharge.js - A1 FINAL FIXED
 export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
   try {
     const { number, amount, operatorcode, circlecode, orderid } = req.query;
+    if (!number || !amount || !operatorcode || !circlecode) {
+      return res.status(200).json({ status: "Failed", message: "Parameter is missing - number, amount, operatorcode, circlecode darkar" });
+    }
+
     const username = "505942";
-    const pwd = "hpjqnhhw";
-    const finalOrderId = orderid || ("PAY" + Date.now().toString());
-    const url = `https://business.a1topup.com/recharge/api?username=${username}&pwd=${pwd}&circlecode=${circlecode || "23"}&operatorcode=${operatorcode || "RC"}&number=${number}&amount=${amount}&orderid=${finalOrderId}&format=json`;
+    const pwd = "hpjqnhhw"; // <-- A1 REAL API PASSWORD - THIK
+
+    // A1 Official API - Docs Anusare
+    const url = `https://business.a1topup.com/recharge/api?username=${username}&pwd=${pwd}&circlecode=${circlecode}&operatorcode=${operatorcode}&number=${number}&amount=${amount}&orderid=${orderid || 'PAY' + Date.now()}&format=json`;
+
     const response = await fetch(url);
     const text = await response.text();
-    try { return res.status(200).json(JSON.parse(text)); }
-    catch(e) { return res.status(200).json({ raw: text }); }
-  } catch(err) {
-    return res.status(200).json({ error: err.message });
+
+    let data;
+    try { data = JSON.parse(text); } catch { data = { raw: text }; }
+
+    return res.status(200).json({ requestURL: url, response: data, raw: text });
+  } catch (err) {
+    return res.status(200).json({ status: "Failed", error: err.message });
   }
 }
