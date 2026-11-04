@@ -1,86 +1,127 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PAYQUICKPAY - Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PAYQUICKPAY - Final LIVE - 505942</title>
 <style>
-*{box-sizing:border-box}
-body{font-family:Arial;background:#0F172A;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}
-.card{background:#fff;padding:25px;border-radius:12px;width:90%;max-width:380px}
-h2{text-align:center;margin:0 0 15px}
-input,select{width:100%;padding:12px;margin:6px 0;border:1px solid #ccc;border-radius:6px}
-button{width:100%;padding:12px;background:#0F172A;color:#fff;border:none;border-radius:6px;cursor:pointer;margin-top:10px}
-p{text-align:center;font-size:12px;margin-top:10px}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:#f0f2f5;padding:10px}
+.top{background:#7c3aed;color:#fff;padding:14px;border-radius:12px;text-align:center}
+.top b{font-size:17px}
+.top small{font-size:12px;opacity:.9}
+.notice{background:#fff7cc;padding:12px;border-radius:10px;margin-top:10px;font-size:12px;line-height:1.5;border:1px solid #ffe58a}
+.card{background:#fff;padding:15px;border-radius:12px;margin-top:12px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+label{font-size:13px;color:#333;font-weight:700}
+input,select{width:100%;padding:13px;margin:6px 0 12px;border:1px solid #ddd;border-radius:10px;font-size:15px}
+.btn{width:100%;padding:14px;border:none;border-radius:10px;font-size:16px;font-weight:800;cursor:pointer}
+.btn-blue{background:#4f46e5;color:#fff}
+.btn-green{background:#00c853;color:#fff;margin-top:10px}
+.grid4{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.grid4 button{padding:12px;border:1px solid #eee;border-radius:10px;background:#f8f9fa;font-weight:700}
+#result{margin-top:12px;background:#e8f5e9;padding:12px;border-radius:10px;font-size:13px;white-space:pre-wrap;word-break:break-all}
+#balBox{font-size:22px;font-weight:800;color:#7c3aed}
 </style>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<script>
-const firebaseConfig={apiKey:"AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",authDomain:"payquickpay-487ef.firebaseapp.com",projectId:"payquickpay-487ef",storageBucket:"payquickpay-487ef.firebasestorage.app",messagingSenderId:"368108778411",appId:"1:368108778411:web:03dcbc47e46568d51b58ee"};
-firebase.initializeApp(firebaseConfig);
-const db=firebase.firestore();
-</script>
 </head>
 <body>
+<div class="top"><b>PAYQUICKPAY - Final LIVE - 505942 - 7908824917</b><br><small id="balTop">Balance Response: Checking...</small></div>
+
+<div class="notice">
+All Recharge Working Fine • Customer Care: 7908824917 • Payquickpayofficial@gmail.com • A1 Wallet Rs 1000 LIVE • BSNL JIO AIRTEL VI All SIM
+</div>
+
 <div class="card">
-<h2>PAYQUICKPAY</h2>
-<select id="role">
-<option value="ADMIN">ADMIN</option>
-<option value="DISTRIBUTOR">DISTRIBUTOR</option>
-<option value="RETAILER">RETAILER</option>
+<div style="display:flex;justify-content:space-between;align-items:center"><b>💰 WALLET BALANCE</b><span id="balBox">Rs. ---</span></div>
+<button class="btn btn-green" onclick="checkBalance()">Check Balance - LIVE</button>
+</div>
+
+<div class="card">
+<label>MOBILE NUMBER</label>
+<input id="number" placeholder="10 Digit Number" maxlength="10" value="7908824917">
+<div id="authMsg" style="background:#dcfce7;padding:10px;border-radius:8px;font-size:13px;color:#166534;margin-bottom:10px">Response: Ready...</div>
+<label>OPERATOR CODE - Official BT RC A V</label>
+<select id="operatorcode">
+<option value="RC">RC - JIO - RELIANCE JIO</option>
+<option value="A">A - AIRTEL - 9437</option>
+<option value="BT">BT - BSNL - 87635 / 8018</option>
+<option value="V">V - VI - VODAFONE IDEA</option>
 </select>
-<input id="userId" placeholder="User ID">
-<input id="pass" type="password" placeholder="Password">
-<button onclick="login()">Login</button>
-<p id="msg"></p>
+<label>CIRCLE CODE - Official Orissa 23</label>
+<select id="circlecode">
+<option value="23">Orissa 23 - Real</option>
+<option value="2">West Bengal 2</option>
+<option value="13">Bihar 13</option>
+<option value="22">UP West 22</option>
+</select>
+<label>AMOUNT</label>
+<input id="amount" type="number" value="19">
+<div class="grid4">
+<button onclick="setAmt(19)">Rs 19</button>
+<button onclick="setAmt(219)">Rs 219</button>
+<button onclick="setAmt(299)">Rs 299</button>
+<button onclick="setAmt(479)">Rs 479</button>
+</div>
+<button class="btn btn-blue" onclick="doRecharge()">🚀 RECHARGE NOW - Official A1 API - Real TxID - No 404</button>
+<div id="result">REAL API RESPONSE: Waiting...</div>
+</div>
+
+<div class="card">
+<b>📋 My History</b>
+<div id="history" style="margin-top:10px;font-size:13px">No history yet...</div>
 </div>
 
 <script>
-async function login(){
-  let id=document.getElementById('userId').value.trim();
-  let pass=document.getElementById('pass').value.trim();
-  let role=document.getElementById('role').value;
-  let msg=document.getElementById('msg');
-  if(!id||!pass){msg.innerText='Enter ID Password';return;}
-  msg.innerText='Checking...';
-  
-  if(role=='ADMIN'){
-    if(id=='admin' && pass=='admin123'){
-      localStorage.setItem('admin',id);
-      location.href='admin.html';
-    } else {
-      msg.innerText='Invalid Admin ID Password';
-    }
-    return;
-  }
-  
-  if(role=='DISTRIBUTOR'){
-    try{
-      let snap=await db.collection('distributors').where('user_id','==',id).where('password','==',pass).get();
-      if(!snap.empty){
-        localStorage.setItem('distributor',id);
-        msg.innerText='Login Success';
-        location.href='distributor.html';
-      } else {
-        msg.innerText='Invalid Distributor ID Password - Firebase Check';
-      }
-    }catch(e){msg.innerText=e.message;}
-    return;
-  }
-  
-  if(role=='RETAILER'){
-    try{
-      let snap=await db.collection('retailers').where('user_id','==',id).where('password','==',pass).get();
-      if(!snap.empty){
-        localStorage.setItem('retailer',id);
-        msg.innerText='Login Success';
-        location.href='retailer.html';
-      } else {
-        msg.innerText='Invalid Retailer ID Password';
-      }
-    }catch(e){msg.innerText=e.message;}
-  }
+function setAmt(v){ document.getElementById('amount').value=v; }
+function saveHist(num, amt, op, res){
+  let h = JSON.parse(localStorage.getItem('pq_hist')||'[]');
+  h.unshift({num, amt, op, res: JSON.stringify(res).substring(0,200), time: new Date().toLocaleString()});
+  localStorage.setItem('pq_hist', JSON.stringify(h.slice(0,20)));
+  showHist();
 }
+function showHist(){
+  let h = JSON.parse(localStorage.getItem('pq_hist')||'[]');
+  if(!h.length){ document.getElementById('history').innerHTML='No history yet...'; return; }
+  document.getElementById('history').innerHTML = h.map(x=>`<div style="display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #eee"><div><b>${x.num}</b> - ${x.op}<br><small>${x.time}</small><br><small>${x.res}</small></div><b>Rs ${x.amt}</b></div>`).join('');
+}
+async function checkBalance(){
+  document.getElementById('balTop').innerText='Checking Balance...';
+  try{
+    const r = await fetch('/api/balance');
+    const d = await r.json();
+    document.getElementById('balTop').innerText='Balance Response: ' + (d.raw || d.balance || JSON.stringify(d));
+    let b = d.balance || '';
+    if(b && b.length < 20) document.getElementById('balBox').innerText='Rs. '+b;
+  }catch(e){ document.getElementById('balTop').innerText='Error: '+e.message; }
+}
+async function doRecharge(){
+  const number = document.getElementById('number').value.trim();
+  const amount = document.getElementById('amount').value.trim();
+  const operatorcode = document.getElementById('operatorcode').value;
+  const circlecode = document.getElementById('circlecode').value;
+  if(number.length!==10){ alert('10 Digit Number Daba!'); return; }
+  if(!amount){ alert('Amount Daba!'); return; }
+  const orderid = 'PAY' + Date.now().toString();
+  document.getElementById('result').innerText='Recharging... Order: '+orderid;
+  document.getElementById('authMsg').innerText='Recharging...';
+  try{
+    const url = `/api/recharge?number=${number}&amount=${amount}&operatorcode=${operatorcode}&circlecode=${circlecode}&orderid=${orderid}`;
+    const r = await fetch(url);
+    const d = await r.json();
+    document.getElementById('result').innerText = 'REAL API RESPONSE:\n' + JSON.stringify(d, null, 2) + '\n\nRequest URL:\n' + url;
+    let txt = JSON.stringify(d);
+    if(txt.toLowerCase().includes('authentication fail')){
+      document.getElementById('authMsg').innerText='Response: Authentication fail! - A1 Panel Re Password Check Kara - hpjqnhhw Thik Achhi Ki Nahi!';
+      document.getElementById('authMsg').style.background='#fee2e2';
+      document.getElementById('authMsg').style.color='#991b1b';
+    } else {
+      document.getElementById('authMsg').innerText='Response: ' + (d.raw || 'Success - Check History');
+      document.getElementById('authMsg').style.background='#dcfce7';
+    }
+    saveHist(number, amount, operatorcode, d);
+    checkBalance();
+  }catch(e){ document.getElementById('result').innerText='Error: '+e.message; }
+}
+checkBalance(); showHist();
 </script>
 </body>
 </html>
