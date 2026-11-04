@@ -1,17 +1,13 @@
-// api/balance.js - A1 Balance FIXED
+// api/balance.js - PayQuickPay - Password 605254
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   try {
     const username = "505942";
-    const pwd = "hpjqnhhw";
-
-    // A1 Balance API - Try 1
+    const pwd = "605254";
     const urls = [
       `https://business.a1topup.com/recharge/balance?username=${username}&pwd=${pwd}&format=json`,
-      `https://business.a1topup.com/api/balance?username=${username}&pwd=${pwd}&format=json`,
-      `https://business.a1topup.com/recharge/api?username=${username}&pwd=${pwd}&format=json&action=balance`
+      `https://business.a1topup.com/api/balance?username=${username}&pwd=${pwd}&format=json`
     ];
-
     for (let url of urls) {
       try {
         const r = await fetch(url);
@@ -21,8 +17,7 @@ export default async function handler(req, res) {
         }
       } catch(e) {}
     }
-    // Jodi Balance API Na Mile - A1 Panel Re Balance Dekha
-    return res.status(200).json({ balance: "Check A1 Panel", message: "Balance API not available - Panel Re Dekha - Recharge Chaliba", raw: "A1 Panel Balance: https://business.a1topup.com" });
+    return res.status(200).json({ balance: "Check A1 Panel", raw: "Balance API not available" });
   } catch(err) {
     return res.status(200).json({ error: err.message });
   }
