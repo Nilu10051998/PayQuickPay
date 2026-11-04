@@ -3,13 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PAYQUICKPAY - Final LIVE - 505942</title>
+<title>PayQuickPay - LIVE - 505942</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
 body{background:#f0f2f5;padding:10px}
 .top{background:#7c3aed;color:#fff;padding:14px;border-radius:12px;text-align:center}
 .top b{font-size:17px}
-.top small{font-size:12px;opacity:.9}
 .notice{background:#fff7cc;padding:12px;border-radius:10px;margin-top:10px;font-size:12px;line-height:1.5;border:1px solid #ffe58a}
 .card{background:#fff;padding:15px;border-radius:12px;margin-top:12px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
 label{font-size:13px;color:#333;font-weight:700}
@@ -24,17 +23,12 @@ input,select{width:100%;padding:13px;margin:6px 0 12px;border:1px solid #ddd;bor
 </style>
 </head>
 <body>
-<div class="top"><b>PAYQUICKPAY - Final LIVE - 505942 - 7908824917</b><br><small id="balTop">Balance Response: Checking...</small></div>
-
-<div class="notice">
-All Recharge Working Fine • Customer Care: 7908824917 • Payquickpayofficial@gmail.com • A1 Wallet Rs 1000 LIVE • BSNL JIO AIRTEL VI All SIM
-</div>
-
+<div class="top"><b>PayQuickPay - LIVE - 505942 - 7908824917</b><br><small id="balTop">Balance Response: Checking...</small></div>
+<div class="notice">All Recharge Working Fine • Customer Care: 7908824917 • Payquickpayofficial@gmail.com • A1 Wallet Rs 1000 LIVE • BSNL JIO AIRTEL VI All SIM</div>
 <div class="card">
 <div style="display:flex;justify-content:space-between;align-items:center"><b>💰 WALLET BALANCE</b><span id="balBox">Rs. ---</span></div>
 <button class="btn btn-green" onclick="checkBalance()">Check Balance - LIVE</button>
 </div>
-
 <div class="card">
 <label>MOBILE NUMBER</label>
 <input id="number" placeholder="10 Digit Number" maxlength="10" value="7908824917">
@@ -61,22 +55,16 @@ All Recharge Working Fine • Customer Care: 7908824917 • Payquickpayofficial@
 <button onclick="setAmt(299)">Rs 299</button>
 <button onclick="setAmt(479)">Rs 479</button>
 </div>
-<button class="btn btn-blue" onclick="doRecharge()">🚀 RECHARGE NOW - Official A1 API - Real TxID - No 404</button>
+<button class="btn btn-blue" onclick="doRecharge()">🚀 RECHARGE NOW - PayQuickPay - Real TxID</button>
 <div id="result">REAL API RESPONSE: Waiting...</div>
 </div>
-
-<div class="card">
-<b>📋 My History</b>
-<div id="history" style="margin-top:10px;font-size:13px">No history yet...</div>
-</div>
-
+<div class="card"><b>📋 My History</b><div id="history" style="margin-top:10px;font-size:13px">No history yet...</div></div>
 <script>
 function setAmt(v){ document.getElementById('amount').value=v; }
 function saveHist(num, amt, op, res){
   let h = JSON.parse(localStorage.getItem('pq_hist')||'[]');
   h.unshift({num, amt, op, res: JSON.stringify(res).substring(0,200), time: new Date().toLocaleString()});
-  localStorage.setItem('pq_hist', JSON.stringify(h.slice(0,20)));
-  showHist();
+  localStorage.setItem('pq_hist', JSON.stringify(h.slice(0,20))); showHist();
 }
 function showHist(){
   let h = JSON.parse(localStorage.getItem('pq_hist')||'[]');
@@ -86,11 +74,9 @@ function showHist(){
 async function checkBalance(){
   document.getElementById('balTop').innerText='Checking Balance...';
   try{
-    const r = await fetch('/api/balance');
-    const d = await r.json();
+    const r = await fetch('/api/balance'); const d = await r.json();
     document.getElementById('balTop').innerText='Balance Response: ' + (d.raw || d.balance || JSON.stringify(d));
-    let b = d.balance || '';
-    if(b && b.length < 20) document.getElementById('balBox').innerText='Rs. '+b;
+    if(d.balance && d.balance.length < 20) document.getElementById('balBox').innerText='Rs. '+d.balance;
   }catch(e){ document.getElementById('balTop').innerText='Error: '+e.message; }
 }
 async function doRecharge(){
@@ -99,26 +85,21 @@ async function doRecharge(){
   const operatorcode = document.getElementById('operatorcode').value;
   const circlecode = document.getElementById('circlecode').value;
   if(number.length!==10){ alert('10 Digit Number Daba!'); return; }
-  if(!amount){ alert('Amount Daba!'); return; }
   const orderid = 'PAY' + Date.now().toString();
   document.getElementById('result').innerText='Recharging... Order: '+orderid;
-  document.getElementById('authMsg').innerText='Recharging...';
   try{
     const url = `/api/recharge?number=${number}&amount=${amount}&operatorcode=${operatorcode}&circlecode=${circlecode}&orderid=${orderid}`;
-    const r = await fetch(url);
-    const d = await r.json();
+    const r = await fetch(url); const d = await r.json();
     document.getElementById('result').innerText = 'REAL API RESPONSE:\n' + JSON.stringify(d, null, 2) + '\n\nRequest URL:\n' + url;
     let txt = JSON.stringify(d);
     if(txt.toLowerCase().includes('authentication fail')){
-      document.getElementById('authMsg').innerText='Response: Authentication fail! - A1 Panel Re Password Check Kara - hpjqnhhw Thik Achhi Ki Nahi!';
+      document.getElementById('authMsg').innerText='Response: Authentication fail! - Password Check Kara - 605254';
       document.getElementById('authMsg').style.background='#fee2e2';
-      document.getElementById('authMsg').style.color='#991b1b';
     } else {
-      document.getElementById('authMsg').innerText='Response: ' + (d.raw || 'Success - Check History');
+      document.getElementById('authMsg').innerText='Response: ' + (d.raw || 'Success');
       document.getElementById('authMsg').style.background='#dcfce7';
     }
-    saveHist(number, amount, operatorcode, d);
-    checkBalance();
+    saveHist(number, amount, operatorcode, d); checkBalance();
   }catch(e){ document.getElementById('result').innerText='Error: '+e.message; }
 }
 checkBalance(); showHist();
