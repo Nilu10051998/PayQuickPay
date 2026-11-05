@@ -89,14 +89,15 @@ async function doRecharge(){
   document.getElementById('result').innerText='Recharging... Order: '+orderid;
   try{
     const url = `/api/recharge?number=${number}&amount=${amount}&operatorcode=${operatorcode}&circlecode=${circlecode}&orderid=${orderid}`;
-    const r = await fetch(url);const text = await res.text();
-let data;
-try { data = JSON.parse(text); } catch { data = { raw: text }; }
-console.log(data);
+    const r = await fetch(url);
+    const text = await r.text();
+    let d;
+    try { d = JSON.parse(text); } catch { d = { raw: text }; }
+    console.log(d);
     document.getElementById('result').innerText = 'REAL API RESPONSE:\n' + JSON.stringify(d, null, 2) + '\n\nRequest URL:\n' + url;
     let txt = JSON.stringify(d);
     if(txt.toLowerCase().includes('authentication fail')){
-      document.getElementById('authMsg').innerText='Response: Authentication fail! - Password Check Kara - 605254';
+      document.getElementById('authMsg').innerText='Response: Authentication fail! - Password Check Kara';
       document.getElementById('authMsg').style.background='#fee2e2';
     } else {
       document.getElementById('authMsg').innerText='Response: ' + (d.raw || 'Success');
