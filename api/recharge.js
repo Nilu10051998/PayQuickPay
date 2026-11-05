@@ -1,21 +1,21 @@
-// api/recharge.js - NO ProxyAgent - 100% Working
+import { HttpsProxyAgent } from 'https-proxy-agent';
+
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Content-Type', 'application/json');
+  const { number, amount, operatorcode, circlecode, orderid } = req.query;
+  const user = process.env.A1_USER;
+  const pwd = process.env.A1_PWD;
+  const proxy = process.env.PROXY_URL;
+
+  const apiUrl = `https://a1topup.com/api/recharge?user=${user}&pwd=${pwd}&number=${number}&amount=${amount}&operatorcode=${operatorcode}&circlecode=${circlecode}&orderid=${orderid}`;
+
   try {
-    const { number, amount, operatorcode, circlecode, orderid } = req.query;
-    if (!number || !amount || !operatorcode || !circlecode) {
-      return res.status(200).json({ status: "Failed", message: "Parameter missing" });
-    }
-    const username = process.env.A1_USER;
-    const pwd = process.env.A1_PWD;
-    const url = `https://business.a1topup.com/recharge/api?username=${username}&pwd=${pwd}&circlecode=${circlecode}&operatorcode=${operatorcode}&number=${number}&amount=${amount}&orderid=${orderid || 'PAY' + Date.now()}&format=json`;
-    const response = await fetch(url);
-    const text = await response.text();
+    const agent = new HttpsProxyAgent(proxy);
+    const r = await fetch(apiUrl, { agent });
+    const text = await r.text();
     let data;
     try { data = JSON.parse(text); } catch { data = { raw: text }; }
-    return res.status(200).json({ success: true, a1: data, raw: text });
-  } catch (err) {
-    return res.status(200).json({ status: "Failed", error: err.message });
+    return res.status(200).json(data);
+  } catch (e) {
+    return res.status(200).json({ raw: "Proxy Error: " + e.message });
   }
 }
