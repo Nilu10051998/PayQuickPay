@@ -89,7 +89,10 @@ async function doRecharge(){
   document.getElementById('result').innerText='Recharging... Order: '+orderid;
   try{
     const url = `/api/recharge?number=${number}&amount=${amount}&operatorcode=${operatorcode}&circlecode=${circlecode}&orderid=${orderid}`;
-    const r = await fetch(url); const d = await r.json();
+    const r = await fetch(url);const text = await res.text();
+let data;
+try { data = JSON.parse(text); } catch { data = { raw: text }; }
+console.log(data);
     document.getElementById('result').innerText = 'REAL API RESPONSE:\n' + JSON.stringify(d, null, 2) + '\n\nRequest URL:\n' + url;
     let txt = JSON.stringify(d);
     if(txt.toLowerCase().includes('authentication fail')){
