@@ -1,0 +1,7 @@
+{
+  "name": "payquickpay",
+  "version": "1.0.0",
+  "dependencies": {
+    "https-proxy-agent": "^7.0.2"
+  }
+}
