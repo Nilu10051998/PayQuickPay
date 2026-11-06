@@ -1,57 +1,101 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Admin - PayQuickPay</title>
-<style>*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial}body{background:#f0f2f5}
-.top{background:#111827;color:#fff;padding:16px 20px;display:flex;justify-content:space-between}.top b{font-size:20px}.top button{background:#ef4444;color:#fff;border:none;padding:8px 14px;border-radius:8px;cursor:pointer}
-.wrap{max-width:1000px;margin:20px auto;padding:0 15px}.cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}@media(max-width:700px){.cards{grid-template-columns:1fr}}
-.card{background:#fff;padding:18px;border-radius:14px;box-shadow:0 4px 15px rgba(0,0,0,.06)}.card small{color:#888}.card h2{margin-top:5px}
-.box{background:#fff;padding:18px;border-radius:14px;margin-top:16px;box-shadow:0 4px 15px rgba(0,0,0,.06)}
-.box h3{margin-bottom:12px}.box input{width:100%;padding:11px;border:1px solid #ddd;border-radius:9px;margin-bottom:10px;outline:none}
-.box button{background:#4f46e5;color:#fff;border:none;padding:12px;border-radius:9px;width:100%;font-weight:700;cursor:pointer}
-table{width:100%;border-collapse:collapse;margin-top:10px}th,td{padding:11px;text-align:left;border-bottom:1px solid #eee;font-size:14px}th{background:#f9fafb}
+<title>Admin - PayQuickPay FIREBASE</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<style>*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial}body{background:#f1f5f9}
+.top{background:#0f172a;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center}.top button{background:#ef4444;color:#fff;border:none;padding:8px 14px;border-radius:8px;cursor:pointer}
+.wrap{max-width:1100px;margin:16px auto;padding:0 14px}
+.tabs{display:flex;gap:8px;overflow-x:auto}.tab{white-space:nowrap;background:#fff;padding:10px 16px;border-radius:20px;border:1px solid #e2e8f0;cursor:pointer;font-size:13px;font-weight:600}.tab.active{background:#0f172a;color:#fff}
+.cards{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-top:14px}@media(max-width:700px){.cards{grid-template-columns:1fr 1fr}}
+.card{background:#fff;padding:16px;border-radius:14px}.card small{color:#888}.card h2{margin-top:4px}
+.box{background:#fff;padding:18px;border-radius:14px;margin-top:14px}.box input,.box select{width:100%;padding:11px;border:1px solid #ddd;border-radius:9px;margin-bottom:10px;outline:none}
+.btn{background:#0f172a;color:#fff;border:none;padding:12px;border-radius:9px;width:100%;font-weight:700;cursor:pointer}.btn2{background:#059669}
+table{width:100%;border-collapse:collapse}th,td{padding:10px;text-align:left;border-bottom:1px solid #eee;font-size:13px}th{background:#f8fafc}
 .del{background:#fee2e2;color:#dc2626;border:none;padding:6px 10px;border-radius:7px;cursor:pointer}.add{background:#dcfce7;color:#059669;border:none;padding:6px 10px;border-radius:7px;cursor:pointer}
+.hide{display:none}.flex{display:flex;gap:10px}.flex input{flex:1}
 </style></head>
 <body>
-<div class="top"><b>👑 PayQuickPay - Admin</b><button onclick="location.href='/'">Logout</button></div>
+<div class="top"><b>👑 PayQuickPay - ADMIN 🔥 FIREBASE CONNECTED</b><button onclick="location.href='/'">Logout</button></div>
 <div class="wrap">
+<div class="tabs">
+<div class="tab active" onclick="show('dash',this)">📊 Dashboard</div>
+<div class="tab" onclick="show('dist',this)">🏢 Distributor</div>
+<div class="tab" onclick="show('ret',this)">🏪 Retailer</div>
+<div class="tab" onclick="show('his',this)">📜 History</div>
+<div class="tab" onclick="show('wallet',this)">💰 Wallet</div>
+</div>
+<div id="dash">
 <div class="cards">
-<div class="card"><small>Total Distributor</small><h2 id="c1">0</h2></div>
-<div class="card"><small>Total Retailer</small><h2 id="c2">0</h2></div>
-<div class="card"><small>Wallet Balance</small><h2>₹ 962.30</h2></div>
+<div class="card"><small>Total Distributor</small><h2 id="cDist">Loading...</h2></div>
+<div class="card"><small>Total Retailer</small><h2 id="cRet">Loading...</h2></div>
+<div class="card"><small>Total Recharge</small><h2 id="cRec">Loading...</h2></div>
+<div class="card"><small>Admin Wallet</small><h2 id="cWal">₹ 0</h2></div>
+</div>
+<div class="box"><h3>📈 Last Recharge - Firebase Ru Live</h3><div id="lastRec">Loading...</div></div>
 </div>
 
-<div class="box"><h3>➕ New Distributor Add Kara</h3>
-<input id="d-name" placeholder="Distributor Name - Ex: D2">
-<input id="d-user" placeholder="Username - Ex: d2">
-<input id="d-pass" placeholder="Password - Ex: 12345">
-<input id="d-bal" type="number" placeholder="Opening Balance - Ex: 1000">
-<button onclick="addD()">Distributor Add Kara →</button></div>
+<div id="dist" class="hide">
+<div class="box"><h3>➕ New Distributor - Firebase Re Save Heba</h3>
+<input id="d-name" placeholder="Name"><input id="d-user" placeholder="Username"><input id="d-pass" placeholder="Password"><input id="d-phone" placeholder="Phone"><input id="d-bal" type="number" placeholder="Balance">
+<button class="btn" onclick="addDist()">Distributor Add Kara → Firebase</button></div>
+<div class="box"><h3>📋 Distributor List - Firebase</h3><table><tr><th>Name</th><th>User/Pass</th><th>Balance</th><th>Action</th></tr><tbody id="distList"></tbody></table></div>
+</div>
 
-<div class="box"><h3>📋 Distributor List</h3>
-<table><thead><tr><th>Name</th><th>Username</th><th>Password</th><th>Balance</th><th>Action</th></tr></thead><tbody id="list"></tbody></table>
-<div id="empty" style="text-align:center;color:#999;padding:15px">No Distributor Yet</div>
+<div id="ret" class="hide"><div class="box"><h3>🏪 Sabu Retailer - Firebase</h3><table><tr><th>Name</th><th>User/Pass</th><th>Distributor</th><th>Balance</th><th>Action</th></tr><tbody id="retList"></tbody></table></div></div>
+<div id="his" class="hide"><div class="box"><h3>📜 Recharge History - Firebase</h3><table><tr><th>Date</th><th>Mobile</th><th>Operator</th><th>Amount</th><th>Retailer</th><th>Status</th></tr><tbody id="hisList"></tbody></table></div></div>
+<div id="wallet" class="hide">
+<div class="box"><h3>💰 Wallet</h3><p>Admin Wallet: <b id="walBal">₹ 0</b></p><input id="walAmt" type="number" placeholder="Amount"><button class="btn btn2" onclick="addWallet()">Wallet Add</button></div>
+<div class="box"><h3>💸 Distributor Ku Transfer</h3><select id="wDist"></select><input id="wAmt" type="number" placeholder="Amount"><button class="btn" onclick="transfer()">Transfer →</button></div>
 </div>
 </div>
 
 <script>
-let dist = JSON.parse(localStorage.getItem('distributors')||'[]');
-let rets = JSON.parse(localStorage.getItem('retailers')||'[]');
-function save(){localStorage.setItem('distributors',JSON.stringify(dist)); render();}
-function addD(){
- let n=document.getElementById('d-name').value, u=document.getElementById('d-user').value, p=document.getElementById('d-pass').value, b=document.getElementById('d-bal').value||0;
- if(!n||!u||!p) return alert('Sabu Bhara Bhai');
- dist.push({name:n,user:u,pass:p,balance:Number(b)});
- save(); document.getElementById('d-name').value='';document.getElementById('d-user').value='';document.getElementById('d-pass').value='';document.getElementById('d-bal').value='';
- alert('Distributor Add Heigala Bhai!');
+const firebaseConfig = {
+  apiKey: "AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",
+  authDomain: "payquickpay-487ef.firebaseapp.com",
+  projectId: "payquickpay-487ef",
+  storageBucket: "payquickpay-487ef.firebasestorage.app",
+  messagingSenderId: "368108778411",
+  appId: "1:368108778411:web:03dcbc47e46568d51b58ee",
+  measurementId: "G-9SLWLCMK8P"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+let dist=[], rets=[], his=[], wal=962.30;
+
+function show(id,el){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');['dash','dist','ret','his','wallet'].forEach(x=>document.getElementById(x).classList.add('hide'));document.getElementById(id).classList.remove('hide');}
+
+// LIVE LISTENER - Firebase Ru Data Asiba, Sabu Phone Re Same Dekha Jiba
+db.collection('distributors').onSnapshot(s=>{dist=[];s.forEach(d=>{let o=d.data();o.id=d.id;dist.push(o)});render();});
+db.collection('retailers').onSnapshot(s=>{rets=[];s.forEach(d=>{let o=d.data();o.id=d.id;rets.push(o)});render();});
+db.collection('rechargeHistory').orderBy('time','desc').limit(50).onSnapshot(s=>{his=[];s.forEach(d=>{let o=d.data();o.id=d.id;his.push(o)});render();});
+
+async function addDist(){
+ let n=document.getElementById('d-name').value,u=document.getElementById('d-user').value,p=document.getElementById('d-pass').value,ph=document.getElementById('d-phone').value,b=Number(document.getElementById('d-bal').value||0);
+ if(!n||!u||!p) return alert('Sabu Bhara');
+ if(dist.find(d=>d.user==u)) return alert('Username Ageru Achhi Firebase Re!');
+ await db.collection('distributors').add({name:n,user:u,pass:p,phone:ph,balance:b});
+ alert('✅ Firebase Re Save Heigala Bhai! Ebe Sabu Phone Re Dekha Jiba!');
+ document.querySelectorAll('#dist input').forEach(i=>i.value='');
 }
+async function delDist(id){ if(confirm('Delete?')) await db.collection('distributors').doc(id).delete(); }
+async function delRet(id){ if(confirm('Delete Retailer?')) await db.collection('retailers').doc(id).delete(); }
+async function addBal(id,cur){ let a=prompt('Kete Balance Deba?'); if(a){ await db.collection('distributors').doc(id).update({balance:cur+Number(a)}); } }
+async function addRetBal(id,cur){ let a=prompt('Kete Balance Deba?'); if(a){ await db.collection('retailers').doc(id).update({balance:cur+Number(a)}); } }
+async function addWallet(){ let a=Number(document.getElementById('walAmt').value||0); if(!a) return alert('Amount Dia'); wal+=a; document.getElementById('walBal').innerText='₹ '+wal; document.getElementById('cWal').innerText='₹ '+wal; alert('Wallet Add Heigala!'); }
+async function transfer(){ let u=document.getElementById('wDist').value,a=Number(document.getElementById('wAmt').value||0); let d=dist.find(x=>x.user==u); if(!d||!a) return alert('Distributor Au Amount Dia'); await db.collection('distributors').doc(d.id).update({balance:d.balance+a}); alert('Transfer Heigala Firebase Re!'); }
+
 function render(){
- document.getElementById('c1').innerText=dist.length;
- document.getElementById('c2').innerText=rets.length;
- let h=''; dist.forEach((d,i)=>{ h+=`<tr><td><b>${d.name}</b></td><td>${d.user}</td><td>${d.pass}</td><td>₹ ${d.balance}</td><td><button class="add" onclick="addBal(${i})">+ Balance</button> <button class="del" onclick="delD(${i})">Delete</button></td></tr>`});
- document.getElementById('list').innerHTML=h;
- document.getElementById('empty').style.display=dist.length?'none':'block';
+ document.getElementById('cDist').innerText=dist.length;
+ document.getElementById('cRet').innerText=rets.length;
+ document.getElementById('cRec').innerText=his.length;
+ document.getElementById('cWal').innerText='₹ '+wal;
+ document.getElementById('walBal').innerText='₹ '+wal;
+ document.getElementById('distList').innerHTML=dist.map(d=>`<tr><td><b>${d.name}</b></td><td>${d.user} / ${d.pass}</td><td>₹ ${d.balance}</td><td><button class="add" onclick="addBal('${d.id}',${d.balance})">+ Bal</button> <button class="del" onclick="delDist('${d.id}')">Del</button></td></tr>`).join('')||'<tr><td colspan=4 style="text-align:center">No Distributor - Agaru Thila Data Ebe Asiba</td></tr>';
+ document.getElementById('retList').innerHTML=rets.map(r=>`<tr><td><b>${r.name}</b></td><td>${r.user} / ${r.pass}</td><td>${r.dist||'-'}</td><td>₹ ${r.balance}</td><td><button class="add" onclick="addRetBal('${r.id}',${r.balance})">+ Bal</button> <button class="del" onclick="delRet('${r.id}')">Del</button></td></tr>`).join('')||'<tr><td colspan=5 style="text-align:center">No Retailer</td></tr>';
+ document.getElementById('hisList').innerHTML=his.map(x=>`<tr><td>${x.date||'-'}</td><td>${x.mobile}</td><td>${x.operator||'-'}</td><td>₹ ${x.amount}</td><td>${x.retailer||'-'}</td><td style="color:green"><b>${x.status||'SUCCESS'}</b></td></tr>`).join('')||'<tr><td colspan=6 style="text-align:center">No History</td></tr>';
+ document.getElementById('lastRec').innerHTML=his.slice(0,5).map(x=>`<div style="padding:8px 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between"><span>${x.mobile} - ${x.operator}</span><b>₹ ${x.amount}</b></div>`).join('')||'No Recharge';
+ document.getElementById('wDist').innerHTML='<option value="">Distributor Bachha</option>'+dist.map(d=>`<option value="${d.user}">${d.name} (${d.user})</option>`).join('');
 }
-function delD(i){ if(confirm('Delete Kariba?')){dist.splice(i,1); save();} }
-function addBal(i){ let a=prompt('Kete Balance Deba?'); if(a){dist[i].balance+=Number(a); save();} }
-render();
 </script></body></html>
