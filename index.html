@@ -1,46 +1,100 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PayQuickPay - Professional Recharge</title>
+<title>PayQuickPay - Secure Login</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <style>*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial}body{background:#0f172a;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:15px}
-.box{background:#fff;width:100%;max-width:520px;border-radius:4px;padding:32px 28px}
-.box h1{text-align:center;font-size:32px;letter-spacing:1px}.box p{text-align:center;color:#64748b;font-size:12px;letter-spacing:1px;margin:6px 0 22px;font-weight:600}
+.box{background:#fff;width:100%;max-width:520px;border-radius:6px;padding:32px 28px;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.box h1{text-align:center;font-size:32px;letter-spacing:1px}.box p{text-align:center;color:#64748b;font-size:11px;letter-spacing:1px;margin:6px 0 22px;font-weight:600}
 .tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px}
-.tab{padding:16px 5px;border:1.5px solid #e2e8f0;border-radius:14px;text-align:center;cursor:pointer;font-size:14px;color:#334155;background:#fff}
-.tab.active{background:#0f172a;color:#fff;border-color:#0f172a}
+.tab{padding:16px 5px;border:1.5px solid #e2e8f0;border-radius:14px;text-align:center;cursor:pointer;font-size:14px;color:#334155;background:#fff;font-weight:600}.tab.active{background:#0f172a;color:#fff;border-color:#0f172a}
 .form{background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:22px}
 .form input{width:100%;padding:15px;border:1px solid #e2e8f0;border-radius:12px;margin-bottom:14px;outline:none;font-size:15px;background:#fff}
 .form button{width:100%;padding:15px;background:#0f172a;color:#fff;border:none;border-radius:12px;font-weight:700;font-size:15px;cursor:pointer;letter-spacing:1px}
-.note{text-align:center;font-size:12px;color:#94a3b8;margin-top:14px}
+.form button:disabled{opacity:.5}.note{text-align:center;font-size:12px;color:#94a3b8;margin-top:14px}
+.err{text-align:center;color:#dc2626;font-size:13px;margin-top:10px;display:none}
 </style></head>
 <body>
 <div class="box">
-<h1>PAYQUICKPAY</h1><p>PROFESSIONAL RECHARGE - SECURE</p>
+<h1>PAYQUICKPAY</h1><p>PROFESSIONAL RECHARGE &nbsp;•&nbsp; SECURE</p>
 <div class="tabs">
 <div class="tab active" id="t-admin" onclick="setTab('admin')">ADMIN</div>
 <div class="tab" id="t-dist" onclick="setTab('distributor')">DISTRIBUTOR</div>
 <div class="tab" id="t-ret" onclick="setTab('retailer')">RETAILER</div>
 </div>
 <div class="form">
-<input id="user" placeholder="Username" value="admin">
-<input id="pass" type="password" placeholder="Password" value="">
-<button onclick="doLogin()">LOGIN</button>
+<input id="user" placeholder="Username" autocomplete="off">
+<input id="pass" type="password" placeholder="Password">
+<button id="btn" onclick="doLogin()">LOGIN</button>
+<div class="err" id="err"></div>
 </div>
-<div class="note" id="hint">Admin Login: admin / admin123</div>
+<div class="note" id="hint">Admin Login</div>
 </div>
 <script>
+const firebaseConfig = { apiKey: "AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI", authDomain: "payquickpay-487ef.firebaseapp.com", projectId: "payquickpay-487ef", storageBucket: "payquickpay-487ef.firebasestorage.app", messagingSenderId: "368108778411", appId: "1:368108778411:web:03dcbc47e46568d51b58ee", measurementId: "G-9SLWLCMK8P" };
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 let cur='admin';
+
+function getUser(d){ return d.user || d.username || d.userName || ""; }
+function getPass(d){ return d.pass || d.password || d.pwd || ""; }
+
 function setTab(t){cur=t;
  document.getElementById('t-admin').className='tab'+(t=='admin'?' active':'');
  document.getElementById('t-dist').className='tab'+(t=='distributor'?' active':'');
  document.getElementById('t-ret').className='tab'+(t=='retailer'?' active':'');
  document.getElementById('user').value=t=='admin'?'admin':'';
  document.getElementById('pass').value='';
- document.getElementById('hint').innerText=t=='admin'?'Admin Login: admin / admin123':t=='distributor'?'Distributor Login - Admin Re Add Karithiba ID':'Retailer Login - Distributor Re Add Karithiba ID';
+ document.getElementById('err').style.display='none';
+ document.getElementById('hint').innerText=t=='admin'?'Admin Login':t=='distributor'?'Distributor Login - Admin Created ID': 'Retailer Login - Distributor Created ID';
 }
-function doLogin(){
- let u=document.getElementById('user').value, p=document.getElementById('pass').value;
- if(cur=='admin'){ if(u=='admin'&&p=='admin123'){location.href='/admin/index.html';} else alert('Wrong Admin Bhai!'); }
- if(cur=='distributor'){ let d=JSON.parse(localStorage.getItem('distributors')||'[]'); let f=d.find(x=>x.user==u&&x.pass==p); if(f){localStorage.setItem('currentDist',u); location.href='/distributor/index.html';} else alert('Distributor Milila Nahin! Admin Re Add Karithila Ki?'); }
- if(cur=='retailer'){ let r=JSON.parse(localStorage.getItem('retailers')||'[]'); let f=r.find(x=>x.user==u&&x.pass==p); if(f){localStorage.setItem('currentRet',u); location.href='/retailer/index.html';} else alert('Retailer Milila Nahin! Distributor Re Add Karithila Ki?'); }
+function showErr(m){ let e=document.getElementById('err'); e.innerText=m; e.style.display='block'; }
+
+async function doLogin(){
+ let u=document.getElementById('user').value.trim(), p=document.getElementById('pass').value;
+ if(!u||!p) return showErr('Please enter username and password');
+ document.getElementById('btn').innerText='Checking...'; document.getElementById('btn').disabled=true;
+
+ if(cur=='admin'){
+   if(u=='admin' && p=='admin123'){ location.href='/admin/index.html'; }
+   else { showErr('Invalid admin credentials'); document.getElementById('btn').innerText='LOGIN'; document.getElementById('btn').disabled=false; }
+   return;
+ }
+
+ // DISTRIBUTOR - Firebase Ru Check - Puruna + Nua Field Dita
+ if(cur=='distributor'){
+   try{
+     let snap = await db.collection('distributors').get();
+     let found=null;
+     snap.forEach(doc=>{ let d=doc.data(); if(getUser(d).toLowerCase()==u.toLowerCase() && getPass(d)==p){ found={id:doc.id,...d}; } });
+     // Username case insensitive, password case sensitive
+     if(found){
+       localStorage.setItem('currentDist', getUser(found));
+       localStorage.setItem('currentDistId', found.id);
+       localStorage.setItem('currentDistName', found.name||u);
+       location.href='/distributor/index.html';
+     } else {
+       showErr('Distributor not found. Check username / password. Admin panel re achhi ki dekha.');
+     }
+   }catch(e){ showErr('Connection error: '+e.message); }
+ }
+
+ // RETAILER - Firebase Ru Check
+ if(cur=='retailer'){
+   try{
+     let snap = await db.collection('retailers').get();
+     let found=null;
+     snap.forEach(doc=>{ let d=doc.data(); if(getUser(d).toLowerCase()==u.toLowerCase() && getPass(d)==p){ found={id:doc.id,...d}; } });
+     if(found){
+       localStorage.setItem('currentRet', getUser(found));
+       localStorage.setItem('currentRetId', found.id);
+       localStorage.setItem('currentRetName', found.name||u);
+       location.href='/retailer/index.html';
+     } else {
+       showErr('Retailer not found. Distributor panel re achhi ki dekha.');
+     }
+   }catch(e){ showErr('Connection error: '+e.message); }
+ }
+ document.getElementById('btn').innerText='LOGIN'; document.getElementById('btn').disabled=false;
 }
 </script></body></html>
