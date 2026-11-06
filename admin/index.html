@@ -1,173 +1,110 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PayQuickPay - Admin Panel</title>
+<title>PayQuickPay - Admin</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<style>*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial}body{background:#0f172a;color:#fff;padding:15px}
-.top{display:flex;justify-content:space-between;align-items:center;background:#fff;color:#000;padding:15px;border-radius:12px;margin-bottom:15px}
-.top b{font-size:20px}.top span{background:#dcfce7;padding:6px 12px;border-radius:20px;font-size:13px;font-weight:700}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:15px}
-.card{background:#fff;color:#000;padding:16px;border-radius:12px}.card small{color:#64748b}.card h2{margin:5px 0}
-.tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}.tab{background:#334155;padding:10px 16px;border-radius:20px;cursor:pointer;font-size:13px}.tab.active{background:#fff;color:#000;font-weight:700}
-.box{background:#fff;color:#000;padding:18px;border-radius:12px;display:none}.box.active{display:block}
-input,select{width:100%;padding:12px;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:10px;outline:none}
-button{width:100%;padding:13px;background:#0f172a;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer}
-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}
-.badge{padding:3px 8px;border-radius:10px;font-size:11px}.ok{background:#dcfce7}.fail{background:#fee2e2}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+<style>*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,Segoe UI,Arial}body{background:#f1f5f9;color:#0f172a}
+.header{background:#0f172a;color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
+.header b{font-size:18px;letter-spacing:1px}.header small{color:#94a3b8;font-size:11px}
+.logout{background:#fff;color:#0f172a;border:none;padding:8px 14px;border-radius:8px;font-weight:600;cursor:pointer}
+.wrap{max-width:900px;margin:0 auto;padding:16px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.stat{background:#fff;padding:16px;border-radius:12px;border:1px solid #e2e8f0}.stat span{font-size:12px;color:#64748b}.stat h2{margin-top:4px}
+.balance{background:#0f172a;color:#fff;padding:16px;border-radius:12px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}.tab{background:#fff;border:1px solid #e2e8f0;padding:10px 16px;border-radius:20px;cursor:pointer;font-size:13px}.tab.active{background:#0f172a;color:#fff}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:18px;display:none}.card.active{display:block}
+input,select{width:100%;padding:12px;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:10px;outline:none;font-size:14px}
+.btn{width:100%;padding:13px;background:#0f172a;color:#fff;border:none;border-radius:10px;font-weight:600;cursor:pointer}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}th{color:#64748b;text-align:left;font-weight:600}th,td{padding:10px;border-bottom:1px solid #f1f5f9}
+.del{background:#fee2e2;color:#dc2626;border:none;padding:6px 12px;border-radius:8px;cursor:pointer}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}}
 </style></head><body>
 
-<div class="top"><div><b>PAYQUICKPAY</b><br><small>Admin Panel • Chain Wise</small></div><span id="a1bal">A1 Balance: Checking...</span></div>
+<div class="header"><div><b>PAYQUICKPAY</b><br><small>ADMIN CONSOLE</small></div><button class="logout" onclick="logout()">Logout</button></div>
 
-<div class="grid">
-<div class="card"><small>Total Distributor</small><h2 id="cDist">0</h2></div>
-<div class="card"><small>Total Retailer</small><h2 id="cRet">0</h2></div>
-<div class="card"><small>Aji Recharge</small><h2 id="cToday">0</h2></div>
-<div class="card"><small>Total Recharge</small><h2 id="cTotal">0</h2></div>
+<div class="wrap">
+<div class="balance"><span>Available Balance</span><b id="a1bal">Loading...</b></div>
+<div class="stats">
+<div class="stat"><span>Total Distributors</span><h2 id="cDist">0</h2></div>
+<div class="stat"><span>Total Retailers</span><h2 id="cRet">0</h2></div>
+<div class="stat"><span>Today Recharges</span><h2 id="cToday">0</h2></div>
+<div class="stat"><span>Total Recharges</span><h2 id="cTotal">0</h2></div>
 </div>
 
 <div class="tabs">
-<div class="tab active" onclick="showTab('dist',this)">Distributor</div>
-<div class="tab" onclick="showTab('ret',this)">Retailer</div>
-<div class="tab" onclick="showTab('wallet',this)">Wallet Transfer</div>
-<div class="tab" onclick="showTab('history',this)">Recharge History</div>
+<div class="tab active" onclick="showTab('dist',this)">Distributors</div>
+<div class="tab" onclick="showTab('ret',this)">Retailers</div>
+<div class="tab" onclick="showTab('wallet',this)">Wallet</div>
+<div class="tab" onclick="showTab('history',this)">History</div>
 <div class="tab" onclick="showTab('comm',this)">Commission</div>
 </div>
 
-<!-- DISTRIBUTOR -->
-<div class="box active" id="tab-dist">
-<h3>Add Distributor</h3><br>
-<div class="row"><input id="dName" placeholder="Full Name"><input id="dMobile" placeholder="Mobile"></div>
-<div class="row"><input id="dUser" placeholder="Username"><input id="dPass" placeholder="Password"></div>
-<button onclick="addDist()">+ ADD DISTRIBUTOR</button>
-<table><thead><tr><th>Name</th><th>Mobile</th><th>Username</th><th>Wallet</th><th>Action</th></tr></thead><tbody id="distList"></tbody></table>
+<div class="card active" id="tab-dist">
+<div class="grid2"><input id="dName" placeholder="Full Name"><input id="dMobile" placeholder="Mobile Number"></div>
+<div class="grid2"><input id="dUser" placeholder="Username"><input id="dPass" type="password" placeholder="Password"></div>
+<button class="btn" onclick="addDist()">Add Distributor</button>
+<table><thead><tr><th>Name</th><th>Mobile</th><th>Wallet</th><th></th></tr></thead><tbody id="distList"></tbody></table>
 </div>
 
-<!-- RETAILER -->
-<div class="box" id="tab-ret">
-<h3>Add Retailer</h3><br>
-<select id="rParent"><option value="">Select Distributor (Chain)</option></select>
-<div class="row"><input id="rName" placeholder="Full Name"><input id="rMobile" placeholder="Mobile"></div>
-<div class="row"><input id="rUser" placeholder="Username"><input id="rPass" placeholder="Password"></div>
-<button onclick="addRet()">+ ADD RETAILER</button>
-<table><thead><tr><th>Name</th><th>Distributor</th><th>Username</th><th>Wallet</th><th>Action</th></tr></thead><tbody id="retList"></tbody></table>
+<div class="card" id="tab-ret">
+<select id="rParent"><option value="">Select Distributor</option></select>
+<div class="grid2"><input id="rName" placeholder="Full Name"><input id="rMobile" placeholder="Mobile Number"></div>
+<div class="grid2"><input id="rUser" placeholder="Username"><input id="rPass" type="password" placeholder="Password"></div>
+<button class="btn" onclick="addRet()">Add Retailer</button>
+<table><thead><tr><th>Name</th><th>Distributor</th><th>Wallet</th><th></th></tr></thead><tbody id="retList"></tbody></table>
 </div>
 
-<!-- WALLET -->
-<div class="box" id="tab-wallet">
-<h3>Wallet Transfer - Chain Wise</h3><br>
-<select id="wType"><option value="distributors">To Distributor</option><option value="retailers">To Retailer</option></select>
-<select id="wUser"><option>Select User</option></select>
-<input id="wAmt" type="number" placeholder="Amount - Ex: 1000">
-<button onclick="sendWallet()">SEND WALLET</button>
+<div class="card" id="tab-wallet">
+<select id="wUser"><option value="">Select User</option></select>
+<input id="wAmt" type="number" placeholder="Amount">
+<button class="btn" onclick="sendWallet()">Transfer Wallet</button>
 <table><thead><tr><th>To</th><th>Amount</th><th>Date</th></tr></thead><tbody id="walletList"></tbody></table>
 </div>
 
-<!-- HISTORY -->
-<div class="box" id="tab-history">
-<h3>All Recharge History - Real A1</h3>
-<button onclick="loadHistory()">REFRESH HISTORY</button>
-<table><thead><tr><th>Number</th><th>Operator</th><th>Amount</th><th>By</th><th>Status</th></tr></thead><tbody id="histList"></tbody></table>
+<div class="card" id="tab-history">
+<table><thead><tr><th>Number</th><th>Operator</th><th>Amount</th><th>Status</th></tr></thead><tbody id="histList"></tbody></table>
 </div>
 
-<!-- COMMISSION -->
-<div class="box" id="tab-comm">
-<h3>Commission Setting (%)</h3><br>
-<label>Jio - Distributor %</label><input id="cJioD" value="1.5">
-<label>Jio - Retailer %</label><input id="cJioR" value="2.5">
-<label>Airtel - Distributor %</label><input id="cAirD" value="1.5">
-<label>Airtel - Retailer %</label><input id="cAirR" value="2.5">
-<button onclick="saveComm()">SAVE COMMISSION</button>
-<p id="commMsg" style="margin-top:10px;color:green"></p>
+<div class="card" id="tab-comm">
+<label style="font-size:12px;color:#64748b">Jio - Distributor %</label><input id="cJioD" value="1.5">
+<label style="font-size:12px;color:#64748b">Jio - Retailer %</label><input id="cJioR" value="2.5">
+<label style="font-size:12px;color:#64748b">Airtel - Distributor %</label><input id="cAirD" value="1.5">
+<label style="font-size:12px;color:#64748b">Airtel - Retailer %</label><input id="cAirR" value="2.5">
+<button class="btn" onclick="saveComm()">Save Commission</button>
+</div>
 </div>
 
 <script>
-const firebaseConfig = { apiKey: "AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI", authDomain: "payquickpay-487ef.firebaseapp.com", projectId: "payquickpay-487ef", storageBucket: "payquickpay-487ef.firebasestorage.app", messagingSenderId: "368108778411", appId: "1:368108778411:web:03dcbc47e46568d51b58ee" };
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-function showTab(id,el){ document.querySelectorAll('.box').forEach(b=>b.classList.remove('active')); document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); document.getElementById('tab-'+id).classList.add('active'); el.classList.add('active'); }
-
-// --- A1 REAL BALANCE ---
-async function loadA1Balance(){
-  try{
-    // Vercel re thile /api/balance, nahale direct A1
-    let url = '/api/balance';
-    let r = await fetch(url); let t = await r.text();
-    if(t.includes('<!DOCTYPE')||!t){ throw new Error('fallback'); }
-    document.getElementById('a1bal').innerText = 'A1 Balance: Rs ' + t.replace(/[^0-9.]/g,'');
-  }catch(e){
-    try{
-      let r2 = await fetch('https://business.a1topup.com/recharge/balance?username=505942&pwd=605254&format=json');
-      let t2 = await r2.text(); document.getElementById('a1bal').innerText = 'A1 Balance: Rs ' + t2;
-    }catch(err){ document.getElementById('a1bal').innerText = 'A1 Balance: Check Vercel API'; }
-  }
-}
-loadA1Balance();
-
-// --- ADD DISTRIBUTOR ---
-async function addDist(){
-  let n=document.getElementById('dName').value.trim(), m=document.getElementById('dMobile').value.trim(), u=document.getElementById('dUser').value.trim(), p=document.getElementById('dPass').value.trim();
-  if(!n||!u||!p) return alert('Name, Username, Password dia');
-  await db.collection('distributors').add({name:n,mobile:m,user:u,username:u,pass:p,password:p,wallet:0,createdAt:new Date()});
-  alert('Distributor Added!'); location.reload();
-}
-// --- ADD RETAILER ---
-async function addRet(){
-  let parent=document.getElementById('rParent').value, n=document.getElementById('rName').value.trim(), m=document.getElementById('rMobile').value.trim(), u=document.getElementById('rUser').value.trim(), p=document.getElementById('rPass').value.trim();
-  if(!n||!u||!p||!parent) return alert('Sabu bhara + Distributor bacha');
-  await db.collection('retailers').add({name:n,mobile:m,user:u,username:u,pass:p,password:p,distributorId:parent,distributorName:parent,wallet:0,createdAt:new Date()});
-  alert('Retailer Added Under Distributor!'); location.reload();
-}
-// --- LOAD LISTS ---
+const firebaseConfig={apiKey:"AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",authDomain:"payquickpay-487ef.firebaseapp.com",projectId:"payquickpay-487ef",storageBucket:"payquickpay-487ef.firebasestorage.app",messagingSenderId:"368108778411",appId:"1:368108778411:web:03dcbc47e46568d51b58ee"};
+firebase.initializeApp(firebaseConfig); const db=firebase.firestore();
+if(localStorage.getItem('adminAuth')!=='true'){ location.href='/index.html'; }
+function logout(){ localStorage.removeItem('adminAuth'); location.href='/index.html'; }
+function showTab(id,el){document.querySelectorAll('.card').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');el.classList.add('active');}
+async function loadBal(){ try{let r=await fetch('/api/balance');let j=await r.json();document.getElementById('a1bal').innerText='₹ '+(j.balance||'0');}catch(e){document.getElementById('a1bal').innerText='Unavailable';} }
+async function addDist(){let n=dName.value.trim(),m=dMobile.value.trim(),u=dUser.value.trim(),p=dPass.value.trim(); if(!n||!u||!p) return alert('Fill all fields'); await db.collection('distributors').add({name:n,mobile:m,user:u,username:u,pass:p,password:p,wallet:0,createdAt:new Date()}); location.reload();}
+async function addRet(){let par=rParent.value,n=rName.value.trim(),m=rMobile.value.trim(),u=rUser.value.trim(),p=rPass.value.trim(); if(!par||!n||!u||!p) return alert('Fill all fields'); await db.collection('retailers').add({name:n,mobile:m,user:u,username:u,pass:p,password:p,distributorName:par,wallet:0,createdAt:new Date()}); location.reload();}
 async function loadAll(){
-  let dSnap = await db.collection('distributors').get();
-  document.getElementById('cDist').innerText = dSnap.size;
-  let h=''; let opts='<option value="">Select Distributor</option>';
-  dSnap.forEach(doc=>{ let d=doc.data(); h+=`<tr><td>${d.name||''}</td><td>${d.mobile||''}</td><td>${d.user||''}</td><td>Rs ${d.wallet||0}</td><td><button style="width:auto;padding:6px 10px" onclick="delUser('distributors','${doc.id}')">Delete</button></td></tr>`; opts+=`<option value="${d.name}">${d.name} (${d.user})</option>`; });
-  document.getElementById('distList').innerHTML=h; document.getElementById('rParent').innerHTML=opts;
-  let rSnap = await db.collection('retailers').get();
-  document.getElementById('cRet').innerText = rSnap.size;
-  let rh=''; rSnap.forEach(doc=>{ let d=doc.data(); rh+=`<tr><td>${d.name||''}</td><td>${d.distributorName||''}</td><td>${d.user||''}</td><td>Rs ${d.wallet||0}</td><td><button style="width:auto;padding:6px 10px" onclick="delUser('retailers','${doc.id}')">Delete</button></td></tr>`; });
-  document.getElementById('retList').innerHTML=rh;
-  // Wallet dropdown
-  let wSel=document.getElementById('wUser'); wSel.innerHTML='<option value="">Select</option>';
-  dSnap.forEach(doc=>{ wSel.innerHTML+=`<option value="distributors|${doc.id}|${doc.data().name}">Dist: ${doc.data().name}</option>`; });
-  rSnap.forEach(doc=>{ wSel.innerHTML+=`<option value="retailers|${doc.id}|${doc.data().name}">Ret: ${doc.data().name}</option>`; });
-  loadHistory(); loadWalletHist();
+ let dSnap=await db.collection('distributors').get(); document.getElementById('cDist').innerText=dSnap.size;
+ let h=''; let opts='<option value="">Select Distributor</option>';
+ dSnap.forEach(doc=>{let d=doc.data(); h+=`<tr><td>${d.name}</td><td>${d.mobile||''}</td><td>₹ ${d.wallet||0}</td><td><button class="del" onclick="delUser('distributors','${doc.id}')">Delete</button></td></tr>`; opts+=`<option value="${d.name}">${d.name}</option>`;});
+ document.getElementById('distList').innerHTML=h; document.getElementById('rParent').innerHTML=opts;
+ let rSnap=await db.collection('retailers').get(); document.getElementById('cRet').innerText=rSnap.size;
+ let rh=''; rSnap.forEach(doc=>{let d=doc.data(); rh+=`<tr><td>${d.name}</td><td>${d.distributorName||''}</td><td>₹ ${d.wallet||0}</td><td><button class="del" onclick="delUser('retailers','${doc.id}')">Delete</button></td></tr>`;});
+ document.getElementById('retList').innerHTML=rh;
+ let wSel=document.getElementById('wUser'); wSel.innerHTML='<option value="">Select User</option>';
+ dSnap.forEach(doc=>{wSel.innerHTML+=`<option value="distributors|${doc.id}|${doc.data().name}">Distributor - ${doc.data().name}</option>`;});
+ rSnap.forEach(doc=>{wSel.innerHTML+=`<option value="retailers|${doc.id}|${doc.data().name}">Retailer - ${doc.data().name}</option>`;});
+ let s=await db.collection('recharges').orderBy('createdAt','desc').limit(50).get(); document.getElementById('cTotal').innerText=s.size;
+ let hh=''; let today=0; let ts=new Date().toDateString();
+ s.forEach(doc=>{let d=doc.data(); if(d.createdAt?.toDate().toDateString()===ts) today++; hh+=`<tr><td>${d.number||''}</td><td>${d.operator||''}</td><td>₹ ${d.amount||''}</td><td>${d.status||'Success'}</td></tr>`;});
+ document.getElementById('histList').innerHTML=hh||'<tr><td colspan=4>No records</td></tr>'; document.getElementById('cToday').innerText=today;
+ let ws=await db.collection('wallet_transactions').orderBy('createdAt','desc').limit(20).get(); let wh='';
+ ws.forEach(doc=>{let d=doc.data(); wh+=`<tr><td>${d.to}</td><td>₹ ${d.amount}</td><td>${d.createdAt?.toDate().toLocaleDateString()||''}</td></tr>`;});
+ document.getElementById('walletList').innerHTML=wh;
 }
-async function delUser(col,id){ if(confirm('Delete kariba?')){ await db.collection(col).doc(id).delete(); location.reload(); } }
-
-// --- WALLET ---
-async function sendWallet(){
-  let sel=document.getElementById('wUser').value, amt=parseInt(document.getElementById('wAmt').value);
-  if(!sel||!amt) return alert('User aau Amount dia');
-  let [col,id,name]=sel.split('|');
-  let ref=db.collection(col).doc(id); let doc=await ref.get(); let cur=doc.data().wallet||0;
-  await ref.update({wallet:cur+amt});
-  await db.collection('wallet_transactions').add({to:name,toId:id,toCol:col,amount:amt,from:'Admin',createdAt:new Date()});
-  alert('Rs '+amt+' sent to '+name); location.reload();
-}
-async function loadWalletHist(){
-  let s=await db.collection('wallet_transactions').orderBy('createdAt','desc').limit(20).get();
-  let h=''; s.forEach(doc=>{ let d=doc.data(); h+=`<tr><td>${d.to}</td><td>Rs ${d.amount}</td><td>${d.createdAt?.toDate().toLocaleString()||''}</td></tr>`; });
-  document.getElementById('walletList').innerHTML=h;
-}
-
-// --- HISTORY ---
-async function loadHistory(){
-  let s=await db.collection('recharges').orderBy('createdAt','desc').limit(50).get();
-  document.getElementById('cTotal').innerText=s.size;
-  let h=''; let today=0; let todayStr=new Date().toDateString();
-  s.forEach(doc=>{ let d=doc.data(); if(d.createdAt?.toDate().toDateString()==todayStr) today++;
-    h+=`<tr><td>${d.number||''}</td><td>${d.operator||''}</td><td>Rs ${d.amount||''}</td><td>${d.by||d.retailer||'Admin'}</td><td><span class="badge ${d.status=='Success'?'ok':'fail'}">${d.status||'Success'}</span></td></tr>`; });
-  document.getElementById('histList').innerHTML=h||'<tr><td colspan=5>No Recharge Yet</td></tr>'; document.getElementById('cToday').innerText=today;
-}
-
-// --- COMMISSION ---
-async function saveComm(){
-  await db.collection('settings').doc('commission').set({jioD:document.getElementById('cJioD').value, jioR:document.getElementById('cJioR').value, airD:document.getElementById('cAirD').value, airR:document.getElementById('cAirR').value});
-  document.getElementById('commMsg').innerText='Commission Saved!';
-}
-loadAll();
+async function delUser(c,id){ if(confirm('Delete this user?')){ await db.collection(c).doc(id).delete(); location.reload(); } }
+async function sendWallet(){ let sel=wUser.value, amt=parseInt(wAmt.value); if(!sel||!amt) return alert('Select user and amount'); let [col,id,name]=sel.split('|'); let ref=db.collection(col).doc(id); let doc=await ref.get(); await ref.update({wallet:(doc.data().wallet||0)+amt}); await db.collection('wallet_transactions').add({to:name,toId:id,amount:amt,from:'Admin',createdAt:new Date()}); location.reload(); }
+async function saveComm(){ await db.collection('settings').doc('commission').set({jioD:cJioD.value,jioR:cJioR.value,airD:cAirD.value,airR:cAirR.value}); alert('Saved'); }
+loadBal(); loadAll();
 </script></body></html>
