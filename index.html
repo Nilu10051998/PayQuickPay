@@ -1,112 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PayQuickPay - LIVE - 505942</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
-body{background:#f0f2f5;padding:10px}
-.top{background:#7c3aed;color:#fff;padding:14px;border-radius:12px;text-align:center}
-.top b{font-size:17px}
-.notice{background:#fff7cc;padding:12px;border-radius:10px;margin-top:10px;font-size:12px;line-height:1.5;border:1px solid #ffe58a}
-.card{background:#fff;padding:15px;border-radius:12px;margin-top:12px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-label{font-size:13px;color:#333;font-weight:700}
-input,select{width:100%;padding:13px;margin:6px 0 12px;border:1px solid #ddd;border-radius:10px;font-size:15px}
-.btn{width:100%;padding:14px;border:none;border-radius:10px;font-size:16px;font-weight:800;cursor:pointer}
-.btn-blue{background:#4f46e5;color:#fff}
-.btn-green{background:#00c853;color:#fff;margin-top:10px}
-.grid4{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.grid4 button{padding:12px;border:1px solid #eee;border-radius:10px;background:#f8f9fa;font-weight:700}
-#result{margin-top:12px;background:#e8f5e9;padding:12px;border-radius:10px;font-size:13px;white-space:pre-wrap;word-break:break-all}
-#balBox{font-size:22px;font-weight:800;color:#7c3aed}
-</style>
-</head>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PayQuickPay - Recharge Portal</title>
+<style>*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial}body{background:#f0f2f5}
+.top{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center}.top b{font-size:22px}.top span{background:rgba(255,255,255,.2);padding:6px 12px;border-radius:20px;font-size:12px}
+.hero{text-align:center;padding:25px 15px 5px}.hero h1{font-size:25px}.hero p{color:#666;margin-top:6px;font-size:14px}
+.wrap{max-width:1000px;margin:20px auto;padding:0 15px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}@media(max-width:750px){.wrap{grid-template-columns:1fr}}
+.card{background:#fff;border-radius:16px;padding:22px;box-shadow:0 8px 25px rgba(0,0,0,.08);text-align:center;border-top:5px solid #4f46e5}.card:nth-child(2){border-top-color:#059669}.card:nth-child(3){border-top-color:#dc2626}
+.icon{width:60px;height:60px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff}.c1{background:#4f46e5}.c2{background:#059669}.c3{background:#dc2626}
+.card h2{font-size:19px}.card p{font-size:13px;color:#777;margin:8px 0 16px;line-height:1.5}
+.card input{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin-bottom:10px;outline:none;font-size:14px}
+.card button{width:100%;padding:12px;border:none;border-radius:10px;color:#fff;font-weight:700;font-size:15px;cursor:pointer}.b1{background:#4f46e5}.b2{background:#059669}.b3{background:#dc2626}
+.footer{text-align:center;color:#999;font-size:12px;padding:20px}
+</style></head>
 <body>
-<div class="top"><b>PayQuickPay - LIVE - 505942 - 7908824917</b><br><small id="balTop">Balance Response: Checking...</small></div>
-<div class="notice">All Recharge Working Fine • Customer Care: 7908824917 • Payquickpayofficial@gmail.com • A1 Wallet Rs 1000 LIVE • BSNL JIO AIRTEL VI All SIM</div>
-<div class="card">
-<div style="display:flex;justify-content:space-between;align-items:center"><b>💰 WALLET BALANCE</b><span id="balBox">Rs. ---</span></div>
-<button class="btn btn-green" onclick="checkBalance()">Check Balance - LIVE</button>
+<div class="top"><b>⚡ PayQuickPay</b><span>● LIVE</span></div>
+<div class="hero"><h1>Recharge Portal - Sabu Eka Jagare</h1><p>Jio • Airtel • Vi • BSNL • DTH • Bill Payment</p></div>
+<div class="wrap">
+<div class="card"><div class="icon c1">👑</div><h2>Admin Login</h2><p>Distributor Add, Balance, Report Manage Karantu</p><input id="a-user" placeholder="Admin Username"><input id="a-pass" type="password" placeholder="Password"><button class="b1" onclick="login('admin')">Admin Login →</button><div style="font-size:12px;color:#888;margin-top:8px">Demo: admin / admin123</div></div>
+<div class="card"><div class="icon c2">🏢</div><h2>Distributor Login</h2><p>Retailer Add Karantu, Balance Transfer Karantu</p><input id="d-user" placeholder="Distributor Username"><input id="d-pass" type="password" placeholder="Password"><button class="b2" onclick="login('distributor')">Distributor Login →</button></div>
+<div class="card"><div class="icon c3">🏪</div><h2>Retailer Login</h2><p>Daily Recharge Karantu, History Dekhantu</p><input id="r-user" placeholder="Retailer Username"><input id="r-pass" type="password" placeholder="Password"><button class="b3" onclick="login('retailer')">Retailer Login →</button></div>
 </div>
-<div class="card">
-<label>MOBILE NUMBER</label>
-<input id="number" placeholder="10 Digit Number" maxlength="10" value="7908824917">
-<div id="authMsg" style="background:#dcfce7;padding:10px;border-radius:8px;font-size:13px;color:#166534;margin-bottom:10px">Response: Ready...</div>
-<label>OPERATOR CODE - Official BT RC A V</label>
-<select id="operatorcode">
-<option value="RC">RC - JIO - RELIANCE JIO</option>
-<option value="A">A - AIRTEL - 9437</option>
-<option value="BT">BT - BSNL - 87635 / 8018</option>
-<option value="V">V - VI - VODAFONE IDEA</option>
-</select>
-<label>CIRCLE CODE - Official Orissa 23</label>
-<select id="circlecode">
-<option value="23">Orissa 23 - Real</option>
-<option value="2">West Bengal 2</option>
-<option value="13">Bihar 13</option>
-<option value="22">UP West 22</option>
-</select>
-<label>AMOUNT</label>
-<input id="amount" type="number" value="19">
-<div class="grid4">
-<button onclick="setAmt(19)">Rs 19</button>
-<button onclick="setAmt(219)">Rs 219</button>
-<button onclick="setAmt(299)">Rs 299</button>
-<button onclick="setAmt(479)">Rs 479</button>
-</div>
-<button class="btn btn-blue" onclick="doRecharge()">🚀 RECHARGE NOW - PayQuickPay - Real TxID</button>
-<div id="result">REAL API RESPONSE: Waiting...</div>
-</div>
-<div class="card"><b>📋 My History</b><div id="history" style="margin-top:10px;font-size:13px">No history yet...</div></div>
+<div class="footer">© 2026 PayQuickPay.in • Made in India</div>
 <script>
-function setAmt(v){ document.getElementById('amount').value=v; }
-function saveHist(num, amt, op, res){
-  let h = JSON.parse(localStorage.getItem('pq_hist')||'[]');
-  h.unshift({num, amt, op, res: JSON.stringify(res).substring(0,200), time: new Date().toLocaleString()});
-  localStorage.setItem('pq_hist', JSON.stringify(h.slice(0,20))); showHist();
+function login(type){
+ if(type=='admin'){let u=document.getElementById('a-user').value,p=document.getElementById('a-pass').value; if(u=='admin'&&p=='admin123'){location.href='/admin/index.html';} else alert('Wrong Admin Login Bhai!');}
+ if(type=='distributor'){let u=document.getElementById('d-user').value,p=document.getElementById('d-pass').value; let dist=JSON.parse(localStorage.getItem('distributors')||'[]'); let f=dist.find(d=>d.user==u&&d.pass==p); if(f){localStorage.setItem('currentDist',u); location.href='/distributor/index.html';} else alert('Distributor Milila Nahin! Admin Re Add Karithila Ki Check Kara');}
+ if(type=='retailer'){let u=document.getElementById('r-user').value,p=document.getElementById('r-pass').value; let rets=JSON.parse(localStorage.getItem('retailers')||'[]'); let f=rets.find(d=>d.user==u&&d.pass==p); if(f){localStorage.setItem('currentRet',u); location.href='/retailer/index.html';} else alert('Retailer Milila Nahin! Distributor Re Add Karithila Ki Check Kara');}
 }
-function showHist(){
-  let h = JSON.parse(localStorage.getItem('pq_hist')||'[]');
-  if(!h.length){ document.getElementById('history').innerHTML='No history yet...'; return; }
-  document.getElementById('history').innerHTML = h.map(x=>`<div style="display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #eee"><div><b>${x.num}</b> - ${x.op}<br><small>${x.time}</small><br><small>${x.res}</small></div><b>Rs ${x.amt}</b></div>`).join('');
-}
-async function checkBalance(){
-  document.getElementById('balTop').innerText='Checking Balance...';
-  try{
-    const r = await fetch('/api/balance'); const d = await r.json();
-    document.getElementById('balTop').innerText='Balance Response: ' + (d.raw || d.balance || JSON.stringify(d));
-    if(d.balance && d.balance.length < 20) document.getElementById('balBox').innerText='Rs. '+d.balance;
-  }catch(e){ document.getElementById('balTop').innerText='Error: '+e.message; }
-}
-async function doRecharge(){
-  const number = document.getElementById('number').value.trim();
-  const amount = document.getElementById('amount').value.trim();
-  const operatorcode = document.getElementById('operatorcode').value;
-  const circlecode = document.getElementById('circlecode').value;
-  if(number.length!==10){ alert('10 Digit Number Daba!'); return; }
-  const orderid = 'PAY' + Date.now().toString();
-  document.getElementById('result').innerText='Recharging... Order: '+orderid;
-  try{
-    const url = `/api/recharge?number=${number}&amount=${amount}&operatorcode=${operatorcode}&circlecode=${circlecode}&orderid=${orderid}`;
-    const r = await fetch(url);
-    const text = await r.text();
-    let d;
-    try { d = JSON.parse(text); } catch { d = { raw: text }; }
-    console.log(d);
-    document.getElementById('result').innerText = 'REAL API RESPONSE:\n' + JSON.stringify(d, null, 2) + '\n\nRequest URL:\n' + url;
-    let txt = JSON.stringify(d);
-    if(txt.toLowerCase().includes('authentication fail')){
-      document.getElementById('authMsg').innerText='Response: Authentication fail! - Password Check Kara';
-      document.getElementById('authMsg').style.background='#fee2e2';
-    } else {
-      document.getElementById('authMsg').innerText='Response: ' + (d.raw || 'Success');
-      document.getElementById('authMsg').style.background='#dcfce7';
-    }
-    saveHist(number, amount, operatorcode, d); checkBalance();
-  }catch(e){ document.getElementById('result').innerText='Error: '+e.message; }
-}
-checkBalance(); showHist();
-</script>
-</body>
-</html>
+</script></body></html>
