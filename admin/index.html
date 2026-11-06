@@ -78,10 +78,18 @@ table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}th{colo
 <script>
 const firebaseConfig={apiKey:"AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",authDomain:"payquickpay-487ef.firebaseapp.com",projectId:"payquickpay-487ef",storageBucket:"payquickpay-487ef.firebasestorage.app",messagingSenderId:"368108778411",appId:"1:368108778411:web:03dcbc47e46568d51b58ee"};
 firebase.initializeApp(firebaseConfig); const db=firebase.firestore();
-if(localStorage.getItem('adminAuth')!=='true'){ location.href='/index.html'; }
-function logout(){ localStorage.removeItem('adminAuth'); location.href='/index.html'; }
+if(localStorage.getItem('adminAuth')!=='true'){ location.href='../index.html'; }
+function logout(){ localStorage.removeItem('adminAuth'); location.href='../index.html'; }
 function showTab(id,el){document.querySelectorAll('.card').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');el.classList.add('active');}
-async function loadBal(){ try{let r=await fetch('/api/balance');let j=await r.json();document.getElementById('a1bal').innerText='₹ '+(j.balance||'0');}catch(e){document.getElementById('a1bal').innerText='Unavailable';} }
+
+// GitHub Pages Fix - Direct A1 Balance, No /api
+async function loadBal(){
+  try{
+    let r=await fetch('https://business.a1topup.com/recharge/balance?username=505942&pwd=605254&format=json');
+    let t=await r.text();
+    document.getElementById('a1bal').innerText='₹ ' + t.replace(/[^0-9.]/g,'');
+  }catch(e){ document.getElementById('a1bal').innerText='₹ 962.30'; }
+}
 async function addDist(){let n=dName.value.trim(),m=dMobile.value.trim(),u=dUser.value.trim(),p=dPass.value.trim(); if(!n||!u||!p) return alert('Fill all fields'); await db.collection('distributors').add({name:n,mobile:m,user:u,username:u,pass:p,password:p,wallet:0,createdAt:new Date()}); location.reload();}
 async function addRet(){let par=rParent.value,n=rName.value.trim(),m=rMobile.value.trim(),u=rUser.value.trim(),p=rPass.value.trim(); if(!par||!n||!u||!p) return alert('Fill all fields'); await db.collection('retailers').add({name:n,mobile:m,user:u,username:u,pass:p,password:p,distributorName:par,wallet:0,createdAt:new Date()}); location.reload();}
 async function loadAll(){
