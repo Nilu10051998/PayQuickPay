@@ -1,25 +1,57 @@
 <!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PAYQUICKPAY</title><script src="https://cdn.tailwindcss.com"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></head>
-<body class="bg-[#0F172A] min-h-screen flex items-center justify-center p-4">
-<div class="bg-white w-full max-w-4xl rounded- p-8 shadow-2xl">
-<div class="text-center mb-8"><h1 class="text-3xl font-extrabold">PAYQUICKPAY</h1><p class="text-xs font-bold text-slate-500">PROFESSIONAL RECHARGE - SECURE</p></div>
-<div class="grid grid-cols-3 gap-4 mb-8">
-<button onclick="selectPanel('admin')" id="btn-admin" class="border-2 border-slate-100 rounded-2xl p-6 text-center">ADMIN</button>
-<button onclick="selectPanel('distributor')" id="btn-distributor" class="border-2 border-slate-900 bg-slate-900 text-white rounded-2xl p-6">DISTRIBUTOR</button>
-<button onclick="selectPanel('retailer')" id="btn-retailer" class="border-2 border-slate-100 rounded-2xl p-6">RETAILER</button>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin - PayQuickPay</title>
+<style>*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial}body{background:#f0f2f5}
+.top{background:#111827;color:#fff;padding:16px 20px;display:flex;justify-content:space-between}.top b{font-size:20px}.top button{background:#ef4444;color:#fff;border:none;padding:8px 14px;border-radius:8px;cursor:pointer}
+.wrap{max-width:1000px;margin:20px auto;padding:0 15px}.cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}@media(max-width:700px){.cards{grid-template-columns:1fr}}
+.card{background:#fff;padding:18px;border-radius:14px;box-shadow:0 4px 15px rgba(0,0,0,.06)}.card small{color:#888}.card h2{margin-top:5px}
+.box{background:#fff;padding:18px;border-radius:14px;margin-top:16px;box-shadow:0 4px 15px rgba(0,0,0,.06)}
+.box h3{margin-bottom:12px}.box input{width:100%;padding:11px;border:1px solid #ddd;border-radius:9px;margin-bottom:10px;outline:none}
+.box button{background:#4f46e5;color:#fff;border:none;padding:12px;border-radius:9px;width:100%;font-weight:700;cursor:pointer}
+table{width:100%;border-collapse:collapse;margin-top:10px}th,td{padding:11px;text-align:left;border-bottom:1px solid #eee;font-size:14px}th{background:#f9fafb}
+.del{background:#fee2e2;color:#dc2626;border:none;padding:6px 10px;border-radius:7px;cursor:pointer}.add{background:#dcfce7;color:#059669;border:none;padding:6px 10px;border-radius:7px;cursor:pointer}
+</style></head>
+<body>
+<div class="top"><b>👑 PayQuickPay - Admin</b><button onclick="location.href='/'">Logout</button></div>
+<div class="wrap">
+<div class="cards">
+<div class="card"><small>Total Distributor</small><h2 id="c1">0</h2></div>
+<div class="card"><small>Total Retailer</small><h2 id="c2">0</h2></div>
+<div class="card"><small>Wallet Balance</small><h2>₹ 962.30</h2></div>
 </div>
-<div class="max-w-sm mx-auto bg-slate-50 rounded-2xl p-6 border">
-<input id="uid" placeholder="User ID" class="w-full bg-white border rounded-xl p-4 text-sm font-bold">
-<input id="pass" type="password" placeholder="Password" class="w-full bg-white border rounded-xl p-4 text-sm font-bold mt-3">
-<button onclick="login()" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold mt-4">LOGIN</button>
-<p id="msg" class="text-xs font-bold text-center mt-3 text-red-600"></p>
+
+<div class="box"><h3>➕ New Distributor Add Kara</h3>
+<input id="d-name" placeholder="Distributor Name - Ex: D2">
+<input id="d-user" placeholder="Username - Ex: d2">
+<input id="d-pass" placeholder="Password - Ex: 12345">
+<input id="d-bal" type="number" placeholder="Opening Balance - Ex: 1000">
+<button onclick="addD()">Distributor Add Kara →</button></div>
+
+<div class="box"><h3>📋 Distributor List</h3>
+<table><thead><tr><th>Name</th><th>Username</th><th>Password</th><th>Balance</th><th>Action</th></tr></thead><tbody id="list"></tbody></table>
+<div id="empty" style="text-align:center;color:#999;padding:15px">No Distributor Yet</div>
 </div>
 </div>
+
 <script>
-const SUPA_URL="https://hiyjowfyszctvhljsdgx.supabase.co";const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.[STRIPPED 127 bytes].0cuMZjNAQQSnLIlnuxlsr4yRTgsekLliD1Qxu_3awWw";const H={apikey:SUPA_KEY,Authorization:"Bearer "+SUPA_KEY,"Content-Type":"application/json"};
-let selected="distributor";function selectPanel(t){selected=t;document.querySelectorAll('[id^="btn-"]').forEach(b=>b.className="border-2 border-slate-100 rounded-2xl p-6");document.getElementById("btn-"+t).className="border-2 border-slate-900 bg-slate-900 text-white rounded-2xl p-6";}
-async function login(){let id=document.getElementById("uid").value.trim(),pw=document.getElementById("pass").value.trim();if(selected==="admin"&&id==="admin"&&pw==="admin123"){localStorage.setItem("admin",id);location.href="admin/";return;}let table=selected==="admin"?"admins":selected==="distributor"?"distributors":"retailers";let r=await fetch(`${SUPA_URL}/rest/v1/${table}?user_id=eq.${id}&password=eq.${pw}`,{headers:H});let d=await r.json();if(d.length>0){localStorage.setItem(selected,d[0].user_id);localStorage.setItem("distributor",d[0].user_id);location.href=selected+"/";}else{document.getElementById("msg").innerText="Invalid";}}
-</script>
-</body>
-</html>
+let dist = JSON.parse(localStorage.getItem('distributors')||'[]');
+let rets = JSON.parse(localStorage.getItem('retailers')||'[]');
+function save(){localStorage.setItem('distributors',JSON.stringify(dist)); render();}
+function addD(){
+ let n=document.getElementById('d-name').value, u=document.getElementById('d-user').value, p=document.getElementById('d-pass').value, b=document.getElementById('d-bal').value||0;
+ if(!n||!u||!p) return alert('Sabu Bhara Bhai');
+ dist.push({name:n,user:u,pass:p,balance:Number(b)});
+ save(); document.getElementById('d-name').value='';document.getElementById('d-user').value='';document.getElementById('d-pass').value='';document.getElementById('d-bal').value='';
+ alert('Distributor Add Heigala Bhai!');
+}
+function render(){
+ document.getElementById('c1').innerText=dist.length;
+ document.getElementById('c2').innerText=rets.length;
+ let h=''; dist.forEach((d,i)=>{ h+=`<tr><td><b>${d.name}</b></td><td>${d.user}</td><td>${d.pass}</td><td>₹ ${d.balance}</td><td><button class="add" onclick="addBal(${i})">+ Balance</button> <button class="del" onclick="delD(${i})">Delete</button></td></tr>`});
+ document.getElementById('list').innerHTML=h;
+ document.getElementById('empty').style.display=dist.length?'none':'block';
+}
+function delD(i){ if(confirm('Delete Kariba?')){dist.splice(i,1); save();} }
+function addBal(i){ let a=prompt('Kete Balance Deba?'); if(a){dist[i].balance+=Number(a); save();} }
+render();
+</script></body></html>
