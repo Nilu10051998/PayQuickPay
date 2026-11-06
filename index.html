@@ -1,30 +1,46 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PayQuickPay - Recharge Portal</title>
-<style>*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial}body{background:#f0f2f5}
-.top{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center}.top b{font-size:22px}.top span{background:rgba(255,255,255,.2);padding:6px 12px;border-radius:20px;font-size:12px}
-.hero{text-align:center;padding:25px 15px 5px}.hero h1{font-size:25px}.hero p{color:#666;margin-top:6px;font-size:14px}
-.wrap{max-width:1000px;margin:20px auto;padding:0 15px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}@media(max-width:750px){.wrap{grid-template-columns:1fr}}
-.card{background:#fff;border-radius:16px;padding:22px;box-shadow:0 8px 25px rgba(0,0,0,.08);text-align:center;border-top:5px solid #4f46e5}.card:nth-child(2){border-top-color:#059669}.card:nth-child(3){border-top-color:#dc2626}
-.icon{width:60px;height:60px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff}.c1{background:#4f46e5}.c2{background:#059669}.c3{background:#dc2626}
-.card h2{font-size:19px}.card p{font-size:13px;color:#777;margin:8px 0 16px;line-height:1.5}
-.card input{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin-bottom:10px;outline:none;font-size:14px}
-.card button{width:100%;padding:12px;border:none;border-radius:10px;color:#fff;font-weight:700;font-size:15px;cursor:pointer}.b1{background:#4f46e5}.b2{background:#059669}.b3{background:#dc2626}
-.footer{text-align:center;color:#999;font-size:12px;padding:20px}
+<title>PayQuickPay - Professional Recharge</title>
+<style>*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial}body{background:#0f172a;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:15px}
+.box{background:#fff;width:100%;max-width:520px;border-radius:4px;padding:32px 28px}
+.box h1{text-align:center;font-size:32px;letter-spacing:1px}.box p{text-align:center;color:#64748b;font-size:12px;letter-spacing:1px;margin:6px 0 22px;font-weight:600}
+.tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px}
+.tab{padding:16px 5px;border:1.5px solid #e2e8f0;border-radius:14px;text-align:center;cursor:pointer;font-size:14px;color:#334155;background:#fff}
+.tab.active{background:#0f172a;color:#fff;border-color:#0f172a}
+.form{background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:22px}
+.form input{width:100%;padding:15px;border:1px solid #e2e8f0;border-radius:12px;margin-bottom:14px;outline:none;font-size:15px;background:#fff}
+.form button{width:100%;padding:15px;background:#0f172a;color:#fff;border:none;border-radius:12px;font-weight:700;font-size:15px;cursor:pointer;letter-spacing:1px}
+.note{text-align:center;font-size:12px;color:#94a3b8;margin-top:14px}
 </style></head>
 <body>
-<div class="top"><b>⚡ PayQuickPay</b><span>● LIVE</span></div>
-<div class="hero"><h1>Recharge Portal - Sabu Eka Jagare</h1><p>Jio • Airtel • Vi • BSNL • DTH • Bill Payment</p></div>
-<div class="wrap">
-<div class="card"><div class="icon c1">👑</div><h2>Admin Login</h2><p>Distributor Add, Balance, Report Manage Karantu</p><input id="a-user" placeholder="Admin Username"><input id="a-pass" type="password" placeholder="Password"><button class="b1" onclick="login('admin')">Admin Login →</button><div style="font-size:12px;color:#888;margin-top:8px">Demo: admin / admin123</div></div>
-<div class="card"><div class="icon c2">🏢</div><h2>Distributor Login</h2><p>Retailer Add Karantu, Balance Transfer Karantu</p><input id="d-user" placeholder="Distributor Username"><input id="d-pass" type="password" placeholder="Password"><button class="b2" onclick="login('distributor')">Distributor Login →</button></div>
-<div class="card"><div class="icon c3">🏪</div><h2>Retailer Login</h2><p>Daily Recharge Karantu, History Dekhantu</p><input id="r-user" placeholder="Retailer Username"><input id="r-pass" type="password" placeholder="Password"><button class="b3" onclick="login('retailer')">Retailer Login →</button></div>
+<div class="box">
+<h1>PAYQUICKPAY</h1><p>PROFESSIONAL RECHARGE - SECURE</p>
+<div class="tabs">
+<div class="tab active" id="t-admin" onclick="setTab('admin')">ADMIN</div>
+<div class="tab" id="t-dist" onclick="setTab('distributor')">DISTRIBUTOR</div>
+<div class="tab" id="t-ret" onclick="setTab('retailer')">RETAILER</div>
 </div>
-<div class="footer">© 2026 PayQuickPay.in • Made in India</div>
+<div class="form">
+<input id="user" placeholder="Username" value="admin">
+<input id="pass" type="password" placeholder="Password" value="">
+<button onclick="doLogin()">LOGIN</button>
+</div>
+<div class="note" id="hint">Admin Login: admin / admin123</div>
+</div>
 <script>
-function login(type){
- if(type=='admin'){let u=document.getElementById('a-user').value,p=document.getElementById('a-pass').value; if(u=='admin'&&p=='admin123'){location.href='/admin/index.html';} else alert('Wrong Admin Login Bhai!');}
- if(type=='distributor'){let u=document.getElementById('d-user').value,p=document.getElementById('d-pass').value; let dist=JSON.parse(localStorage.getItem('distributors')||'[]'); let f=dist.find(d=>d.user==u&&d.pass==p); if(f){localStorage.setItem('currentDist',u); location.href='/distributor/index.html';} else alert('Distributor Milila Nahin! Admin Re Add Karithila Ki Check Kara');}
- if(type=='retailer'){let u=document.getElementById('r-user').value,p=document.getElementById('r-pass').value; let rets=JSON.parse(localStorage.getItem('retailers')||'[]'); let f=rets.find(d=>d.user==u&&d.pass==p); if(f){localStorage.setItem('currentRet',u); location.href='/retailer/index.html';} else alert('Retailer Milila Nahin! Distributor Re Add Karithila Ki Check Kara');}
+let cur='admin';
+function setTab(t){cur=t;
+ document.getElementById('t-admin').className='tab'+(t=='admin'?' active':'');
+ document.getElementById('t-dist').className='tab'+(t=='distributor'?' active':'');
+ document.getElementById('t-ret').className='tab'+(t=='retailer'?' active':'');
+ document.getElementById('user').value=t=='admin'?'admin':'';
+ document.getElementById('pass').value='';
+ document.getElementById('hint').innerText=t=='admin'?'Admin Login: admin / admin123':t=='distributor'?'Distributor Login - Admin Re Add Karithiba ID':'Retailer Login - Distributor Re Add Karithiba ID';
+}
+function doLogin(){
+ let u=document.getElementById('user').value, p=document.getElementById('pass').value;
+ if(cur=='admin'){ if(u=='admin'&&p=='admin123'){location.href='/admin/index.html';} else alert('Wrong Admin Bhai!'); }
+ if(cur=='distributor'){ let d=JSON.parse(localStorage.getItem('distributors')||'[]'); let f=d.find(x=>x.user==u&&x.pass==p); if(f){localStorage.setItem('currentDist',u); location.href='/distributor/index.html';} else alert('Distributor Milila Nahin! Admin Re Add Karithila Ki?'); }
+ if(cur=='retailer'){ let r=JSON.parse(localStorage.getItem('retailers')||'[]'); let f=r.find(x=>x.user==u&&x.pass==p); if(f){localStorage.setItem('currentRet',u); location.href='/retailer/index.html';} else alert('Retailer Milila Nahin! Distributor Re Add Karithila Ki?'); }
 }
 </script></body></html>
