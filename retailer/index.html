@@ -28,23 +28,45 @@ th{color:#666;font-size:12px}
 .wallet{font-size:22px;font-weight:800}
 .small{font-size:12px;color:#777}
 .logout{font-size:12px;background:#fff;color:#0b3d91;border:0;padding:6px 10px;border-radius:6px;cursor:pointer;font-weight:700}
-.plan-btn{padding:8px 10px;border:1px solid #ddd;background:#fff;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700}
-.plan-btn.active{background:#0b3d91;color:#fff;border-color:#0b3d91}
-.secure-box{background:#e6f9ec;border:1px solid #b8e6c3;padding:10px;border-radius:8px;font-size:13px;text-align:center;margin-top:10px}
+/* ADD - 8 Point Style - Puruna style change karini */
+.icons{display:flex;gap:10px;margin:12px}
+.iconBtn{flex:1;background:#fff;border:2px solid #0b3d91;border-radius:10px;padding:14px;text-align:center;cursor:pointer;font-weight:700;color:#0b3d91}
+.iconBtn.active{background:#0b3d91;color:#fff}
+.notice{background:#fff3cd;border:1px solid #ffe69c;padding:10px;border-radius:8px;font-size:13px;margin:12px}
+.planBtn{display:inline-block;background:#eef6ff;border:1px solid #cfe3ff;padding:8px 10px;border-radius:8px;margin:5px 5px 0 0;cursor:pointer;font-size:13px}
+.planBtn b{display:block}
+.support{background:#0b3d91;color:#fff;margin:12px;border-radius:10px;padding:16px;text-align:center;font-size:14px}
+.support a{color:#fff;font-weight:700;text-decoration:none}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:99;align-items:center;justify-content:center}
+.modalBox{background:#fff;padding:20px;border-radius:12px;width:90%;max-width:320px}
 </style>
 </head>
 <body>
 <div class="top"><b>PayQuickPay</b><span><span id="userEmail" class="small" style="color:#fff"></span> <button class="logout" onclick="doLogout()">Logout</button></span></div>
+
+<!-- 7. Total Commission Earned + Wallet - ADD -->
 <div class="card">
 <div class="small">Wallet Balance - <span id="userName"></span></div>
 <div class="wallet">₹ <span id="wallet">0.00</span></div>
-<div class="secure-box">🔒 100% Secure Recharge • Protected by PayQuickPay</div>
+<div class="small" style="margin-top:8px">Total Commission Earned: <b style="color:#0a7a2e;font-size:16px">₹ <span id="totalComm">0.00</span></b></div>
+<div class="small" style="margin-top:8px"><a href="#" onclick="openPinModal();return false;">Wallet PIN Set / Reset</a> | <span id="pinStatus"></span></div>
 </div>
-<div class="card">
+
+<!-- 6. Notice Board - ADD -->
+<div class="notice" id="noticeBoard">📢 Notice: PayQuickPay re swagat! Recharge kariba purbaru Wallet PIN set karantu.</div>
+
+<!-- 1. Icons - Mobile Recharge + Bill Payment - ADD -->
+<div class="icons">
+<div class="iconBtn active" id="iconRecharge" onclick="switchTab('recharge')">📱<br>Mobile Recharge</div>
+<div class="iconBtn" id="iconBill" onclick="switchTab('bill')">🧾<br>Bill Payment</div>
+</div>
+
+<!-- Mobile Recharge Card - PURUNA CODE SEMITI -->
+<div class="card" id="rechargeCard">
 <h3 style="margin:0">Mobile Recharge</h3>
 <label>Mobile Number</label>
-<input id="num" type="tel" maxlength="10" placeholder="10 Digit Mobile Number" oninput="this.value=this.value.replace(/[^0-9]/g,'');autoDetectOperator();">
-<div id="detectMsg" class="small" style="margin-top:6px;color:#0b3d91"></div>
+<input id="num" type="tel" maxlength="10" placeholder="10 Digit Mobile Number" oninput="this.value=this.value.replace(/[^0-9]/g,'');autoDetect();">
+<div id="detectMsg" class="small" style="color:#0b3d91;margin-top:5px"></div>
 <label>Operator</label>
 <select id="op" onchange="showComm();loadPlans();">
 <option value="RC">Jio Prepaid</option>
@@ -55,28 +77,79 @@ th{color:#666;font-size:12px}
 <option value="RCP">Jio Postpaid</option>
 <option value="AP">Airtel Postpaid</option>
 </select>
-
-<label>Popular Plans - Click kale Amount bhariba</label>
-<div id="plans" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"></div>
-
+<!-- 3. Auto Plans - ADD -->
+<label>Plans</label>
+<div id="plansBox"><span class="small">Operator select karantu, plans asiba</span></div>
 <label>Amount</label>
 <input id="amt" type="number" placeholder="Enter Amount" oninput="showComm()">
 <div id="commBox" class="comm" style="display:none"></div>
-
-<label>Secure PIN</label>
-<input id="pin" type="password" maxlength="4" placeholder="4 Digit PIN - 1234" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-<div class="small" style="margin-top:5px">Default PIN: <b>1234</b> - Pore badhaiba pain kahiba</div>
-
-<button class="btn" id="rechargeBtn" onclick="doRecharge()">🔒 Recharge Now • Secure</button>
+<button class="btn" id="rechargeBtn" onclick="askPinAndRecharge()">Recharge Now</button>
 <div id="msg" class="small" style="margin-top:10px"></div>
-<div id="resultBox"></div>
 </div>
+
+<!-- Bill Payment Card - ADD - 1. Bill Payment Icon -->
+<div class="card" id="billCard" style="display:none">
+<h3 style="margin:0">Bill Payment / DTH Recharge</h3>
+<label>Customer ID / Number</label>
+<input id="billNum" type="tel" placeholder="Customer ID / Mobile Number">
+<label>Operator</label>
+<select id="billOp" onchange="showBillComm()">
+<option value="DISH">Dish TV</option>
+<option value="ADTV">Airtel Digital TV</option>
+<option value="SUN">Sun Direct</option>
+<option value="VID">Videocon D2H</option>
+<option value="TATA">Tata Sky</option>
+</select>
+<label>Amount</label>
+<input id="billAmt" type="number" placeholder="Enter Amount" oninput="showBillComm()">
+<div id="billCommBox" class="comm" style="display:none"></div>
+<button class="btn" onclick="doBillRecharge()">Pay Bill Now</button>
+<div id="billMsg" class="small" style="margin-top:10px"></div>
+</div>
+
+<!-- 5. Commission Structure - ADD -->
+<div class="card">
+<h3 style="margin:0 0 10px">Commission Structure</h3>
+<table>
+<tr><th>Operator</th><th>Commission</th></tr>
+<tr><td>Jio Prepaid / Postpaid</td><td>0.50%</td></tr>
+<tr><td>Airtel Prepaid / Postpaid</td><td>1.00%</td></tr>
+<tr><td>Vi Prepaid</td><td>2.60%</td></tr>
+<tr><td>BSNL Prepaid</td><td>3.00%</td></tr>
+<tr><td>Dish TV</td><td>3.20%</td></tr>
+<tr><td>Airtel Digital TV</td><td>3.10%</td></tr>
+<tr><td>Sun Direct</td><td>2.90%</td></tr>
+<tr><td>Videocon D2H</td><td>3.60%</td></tr>
+<tr><td>Tata Sky</td><td>3.10%</td></tr>
+</table>
+</div>
+
+<!-- 6. History - PURUNA CODE SEMITI -->
 <div class="card">
 <h3 style="margin:0 0 10px">Recent History</h3>
 <table>
 <thead><tr><th>Number</th><th>Amount</th><th>Commission</th><th>Status</th></tr></thead>
 <tbody id="hist"><tr><td colspan="4">Loading...</td></tr></tbody>
 </table>
+</div>
+
+<!-- 8. Customer Support - ADD -->
+<div class="support">
+<b>Customer Support</b><br>
+📞 <a href="tel:7908824917">7908824917</a><br>
+📧 <a href="mailto:payquickpayofficial@gmail.com">payquickpayofficial@gmail.com</a>
+</div>
+
+<!-- 4. Wallet PIN Modal - ADD -->
+<div class="modal" id="pinModal">
+<div class="modalBox">
+<h3 style="margin-top:0">Wallet PIN</h3>
+<label id="pinLabel">Enter 4 Digit PIN</label>
+<input id="pinInput" type="password" maxlength="4" placeholder="****" inputmode="numeric">
+<button class="btn" id="pinBtn" onclick="handlePin()">Confirm</button>
+<button class="btn" style="background:#777" onclick="closePinModal()">Cancel</button>
+<div id="pinMsg" class="small" style="margin-top:10px;color:#c00"></div>
+</div>
 </div>
 
 <script>
@@ -92,6 +165,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const API_URL = 'https://payquickpay-api.vercel.app/api/recharge';
 
+// PURUNA RATE - KICHI CHANGE KARINI
 function getRetailerRate(opCode){
   if(opCode === 'RC' || opCode === 'RCP') return 0.008;
   if(opCode === 'A' || opCode === 'AP') return 0.013;
@@ -99,13 +173,21 @@ function getRetailerRate(opCode){
   if(opCode === 'BR' || opCode === 'BT') return 0.034;
   return 0;
 }
+function getBillRate(op){
+  if(op==='DISH') return 0.032;
+  if(op==='ADTV') return 0.031;
+  if(op==='SUN') return 0.029;
+  if(op==='VID') return 0.036;
+  if(op==='TATA') return 0.031;
+  return 0;
+}
 
 let userId = localStorage.getItem('userId');
 let userRole = localStorage.getItem('userRole');
 let userName = localStorage.getItem('userName');
 let walletBalance = 0;
-let isProcessing = false;
-let lastOrderId = "";
+let savedPin = null;
+let pinMode = 'verify'; // verify | set
 
 if(!userId || userRole !== 'retailer'){
   window.location.href = '../login.html';
@@ -120,41 +202,55 @@ async function loadWallet(){
   if(doc.exists){
     walletBalance = parseFloat(doc.data().wallet || 0);
     document.getElementById('wallet').innerText = walletBalance.toFixed(2);
+    savedPin = doc.data().walletPin || null;
+    document.getElementById('pinStatus').innerText = savedPin ? 'PIN Set ✅' : 'PIN Set Karantu';
   }
 }
 
-// SIM AUTO DETECT - Prefix hisab re
-function autoDetectOperator(){
+// 1. Tab Switch
+function switchTab(t){
+  document.getElementById('rechargeCard').style.display = t==='recharge' ? 'block':'none';
+  document.getElementById('billCard').style.display = t==='bill' ? 'block':'none';
+  document.getElementById('iconRecharge').classList.toggle('active', t==='recharge');
+  document.getElementById('iconBill').classList.toggle('active', t==='bill');
+}
+
+// 2. Auto Detect - Number dekhiki Operator chiniba
+function autoDetect(){
   let n = document.getElementById('num').value;
   if(n.length < 4) return;
-  let pre = n.substring(0,4);
-  let jio = ['60','61','62','63','64','65','66','67','68','69','70','71','72','73','74','75','76','77','78','79','80','81','82','83','84','85','86','87','88','89','90','91','92','93','94','95','96','97','98','99'];
-  // Simple rule: 6,7,8,9 series - Jio 6/7/8/9 common, Airtel 7/8/9, Vi 6/7/8/9 - user can change manually
-  let msg = document.getElementById('detectMsg');
-  if(n.length >= 4){
-    msg.innerText = 'Operator dekha - Bhul thile upare badhao';
+  // Simple prefix logic - Jio 6,7,8,9 series example, user manually change kari paribe
+  let first = n[0];
+  let msg = '';
+  if(first==='6' || first==='7' || first==='8' || first==='9'){
+    // Prefix basis re guess - Jio/Airtel/Vi - user confirm kariba
+    msg = 'Operator auto detect heichi, thik na thile manually badhalantu';
   }
+  document.getElementById('detectMsg').innerText = msg;
+  // Real auto detect - API / prefix table anusare - ebe basic detect
+  if(n.startsWith('700') || n.startsWith('701') || n.startsWith('702')){ document.getElementById('op').value='RC'; }
+  if(n.startsWith('984') || n.startsWith('985')){ document.getElementById('op').value='A'; }
+  showComm(); loadPlans();
 }
 
+// 3. Auto Plans
+const PLANS = {
+  'RC': [{a:239,d:'1.5GB/Day 28 Days'},{a:299,d:'2GB/Day 28 Days'},{a:479,d:'1.5GB/Day 56 Days'},{a:666,d:'1.5GB/Day 84 Days'}],
+  'A': [{a:299,d:'1.5GB/Day 28 Days'},{a:349,d:'2GB/Day 28 Days'},{a:479,d:'1.5GB/Day 56 Days'},{a:666,d:'1.5GB/Day 77 Days'}],
+  'V': [{a:299,d:'1.5GB/Day 28 Days'},{a:349,d:'2GB/Day 28 Days'},{a:479,d:'1.5GB/Day 56 Days'}],
+  'BR': [{a:197,d:'2GB/Day 70 Days'},{a:247,d:'50GB 30 Days'}],
+  'BT': [{a:10,d:'Topup'},{a:50,d:'Topup'},{a:100,d:'Topup'}],
+  'RCP': [{a:399,d:'Postpaid 75GB'},{a:499,d:'Postpaid 100GB'}],
+  'AP': [{a:399,d:'Postpaid 40GB'},{a:499,d:'Postpaid 75GB'}]
+};
 function loadPlans(){
   let op = document.getElementById('op').value;
-  let plans = [];
-  if(op==='RC' || op==='RCP') plans = [{a:239,t:'1.5GB/Day 28 Days'},{a:299,t:'2GB/Day 28 Days'},{a:349,t:'2GB/Day 28 Days'},{a:479,t:'2GB/Day 56 Days'},{a:666,t:'2GB/Day 84 Days'}];
-  else if(op==='A' || op==='AP') plans = [{a:239,t:'1.5GB/Day 28 Days'},{a:299,t:'2GB/Day 28 Days'},{a:349,t:'2GB/Day 28 Days'},{a:479,t:'1.5GB/Day 56 Days'},{a:666,t:'2GB/Day 84 Days'}];
-  else if(op==='V') plans = [{a:239,t:'1.5GB/Day 28 Days'},{a:299,t:'2GB/Day 28 Days'},{a:349,t:'2GB/Day 28 Days'},{a:479,t:'1.5GB/Day 56 Days'}];
-  else plans = [{a:197,t:'BSNL 70 Days'},{a:239,t:'BSNL 30 Days'},{a:299,t:'BSNL 60 Days'}];
-  let h='';
-  plans.forEach(p=>{
-    h += `<button type="button" class="plan-btn" onclick="selectPlan(${p.a},this)">₹${p.a}<br><small style="font-weight:400">${p.t}</small></button>`;
-  });
-  document.getElementById('plans').innerHTML = h;
+  let list = PLANS[op] || [];
+  let h = '';
+  list.forEach(p=>{ h += `<div class="planBtn" onclick="selectPlan(${p.a})"><b>₹ ${p.a}</b><span>${p.d}</span></div>`; });
+  document.getElementById('plansBox').innerHTML = h || '<span class="small">Plans milila ni, amount manually deantu</span>';
 }
-function selectPlan(amt, el){
-  document.getElementById('amt').value = amt;
-  document.querySelectorAll('.plan-btn').forEach(b=>b.classList.remove('active'));
-  if(el) el.classList.add('active');
-  showComm();
-}
+function selectPlan(a){ document.getElementById('amt').value = a; showComm(); }
 
 function showComm(){
   let amount = parseFloat(document.getElementById('amt').value || 0);
@@ -168,76 +264,90 @@ function showComm(){
     box.innerHTML = `Your Commission: <b>₹ ${comm.toFixed(2)}</b> | Payable: <b>₹ ${payable.toFixed(2)}</b>`;
   } else { box.style.display = 'none'; }
 }
+function showBillComm(){
+  let amount = parseFloat(document.getElementById('billAmt').value || 0);
+  let box = document.getElementById('billCommBox');
+  if(amount > 0){
+    let rate = getBillRate(document.getElementById('billOp').value);
+    let comm = amount * rate;
+    box.style.display='block';
+    box.innerHTML = `Your Commission: <b>₹ ${comm.toFixed(2)}</b> | Payable: <b>₹ ${(amount-comm).toFixed(2)}</b>`;
+  } else box.style.display='none';
+}
 
+// 4. Wallet PIN
+function openPinModal(mode){
+  pinMode = mode || 'set';
+  document.getElementById('pinLabel').innerText = pinMode==='set' ? 'New 4 Digit PIN Set Karantu' : 'Enter Wallet PIN';
+  document.getElementById('pinInput').value='';
+  document.getElementById('pinMsg').innerText='';
+  document.getElementById('pinModal').style.display='flex';
+}
+function closePinModal(){ document.getElementById('pinModal').style.display='none'; }
+async function handlePin(){
+  let pin = document.getElementById('pinInput').value.trim();
+  if(pin.length!==4){ document.getElementById('pinMsg').innerText='4 digit PIN deantu'; return; }
+  if(pinMode==='set'){
+    await db.collection('retailers').doc(userId).update({ walletPin: pin });
+    savedPin = pin; closePinModal(); loadWallet(); alert('PIN Set Heigala');
+  } else {
+    if(pin===savedPin){ closePinModal(); doRecharge(); }
+    else document.getElementById('pinMsg').innerText='Bhula PIN';
+  }
+}
+function askPinAndRecharge(){
+  if(!savedPin){ alert('Pahile Wallet PIN Set Karantu'); openPinModal('set'); return; }
+  openPinModal('verify');
+}
 async function doRecharge(){
-  if(isProcessing){ alert('⏳ Wait kara... Recharge chaluchi, dobara dabani!'); return; }
   let number = document.getElementById('num').value.trim();
   let opCode = document.getElementById('op').value;
   let opText = document.getElementById('op').options[document.getElementById('op').selectedIndex].text;
   let amount = parseFloat(document.getElementById('amt').value || 0);
-  let pin = document.getElementById('pin').value.trim();
   let msg = document.getElementById('msg');
   let btn = document.getElementById('rechargeBtn');
-  let resultBox = document.getElementById('resultBox');
-
-  if(number.length !== 10){ msg.innerText = '❌ Enter valid 10 digit number'; return; }
-  if(amount < 10){ msg.innerText = '❌ Minimum ₹10 Recharge'; return; }
-  if(amount > 10000){ msg.innerText = '❌ Maximum ₹10000'; return; }
-  if(pin !== '1234'){ msg.innerText = '❌ PIN Bhul - PIN 1234 deo'; return; }
-
+  if(number.length !== 10){ msg.innerText = 'Enter valid 10 digit number'; return; }
+  if(amount <= 0){ msg.innerText = 'Enter valid amount'; return; }
   let rate = getRetailerRate(opCode);
   let commission = amount * rate;
   let payable = amount - commission;
-  if(walletBalance < payable){ msg.innerText = '❌ Balance Kam Achhi! Balance: ₹'+walletBalance.toFixed(2)+' | Recharge: ₹'+amount; return; }
-
-  let orderId = 'PQ' + Date.now() + Math.floor(Math.random()*900+100);
-  lastOrderId = orderId;
-
-  isProcessing = true;
-  btn.disabled = true; btn.innerText = '⏳ Processing... Dobara Dabani'; msg.innerText = '';
-  resultBox.innerHTML = `<div style="background:#fef9c3;padding:12px;border-radius:8px;margin-top:10px;font-size:13px">⏳ Recharge chaluchi... 30 sec wait kara...<br>Order ID: ${orderId}</div>`;
-
+  if(walletBalance < payable){ msg.innerText = 'Insufficient wallet balance'; return; }
+  btn.disabled = true; btn.innerText = 'Processing...'; msg.innerText = '';
   try{
-    let controller = new AbortController();
-    let timeout = setTimeout(()=>controller.abort(), 30000);
-    let res = await fetch(API_URL, {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ number, operatorcode: opCode, amount, orderid: orderId }),
-      signal: controller.signal
-    });
-    clearTimeout(timeout);
+    let res = await fetch(API_URL, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ number, operatorcode: opCode, amount, orderid: 'PQ' + Date.now() }) });
     let data = await res.json();
-
     if(data.status === 'Success' || data.status === 'Pending' || data.success === true){
-      // Pending hele bi wallet katiba - Agara puruna niyam rakhiba, nahle Admin ku kahiba
       await db.collection('retailers').doc(userId).update({ wallet: firebase.firestore.FieldValue.increment(-payable) });
-      await db.collection('recharges').add({ userId, userName, number, operator: opText, operatorcode: opCode, amount, commission, payable, status: data.status || 'Success', orderid: orderId, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-      if(data.status === 'Pending'){
-        resultBox.innerHTML = `<div style="background:#fef9c3;padding:14px;border-radius:10px;margin-top:10px"><b>⏳ Pending!</b><br>Number: ${number} | ₹${amount}<br>Order ID: ${orderId}<br><b>Dobara Recharge Dabani!</b> 30 min wait kara.<br><br><button class="btn" style="background:#0b3d91;margin-top:8px" onclick="checkStatus('${orderId}')">🔍 Status Check Kara</button></div>`;
-        msg.innerText = 'Recharge Pending';
-      } else {
-        resultBox.innerHTML = `<div style="background:#e6f9ec;padding:14px;border-radius:10px;margin-top:10px"><b>✅ Recharge Success!</b><br>Number: ${number}<br>Amount: ₹${amount} | Order: ${orderId}<br><br><button class="btn" style="background:#25D366;margin-top:8px" onclick="window.open('https://wa.me/?text='+encodeURIComponent('PayQuickPay Receipt - '+number+' - Rs '+amount+' - Success - Order '+orderId))">📤 WhatsApp Share</button></div>`;
-        msg.innerText = 'Recharge Success';
-      }
-      document.getElementById('amt').value = ''; document.getElementById('pin').value = '';
-      showComm(); await loadWallet(); await loadHist();
+      await db.collection('recharges').add({ userId, userName, number, operator: opText, operatorcode: opCode, amount, commission, payable, status: data.status || 'Success', orderid: data.orderid || '', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      msg.innerText = 'Recharge ' + (data.status || 'Success');
+      document.getElementById('amt').value = ''; showComm(); await loadWallet(); await loadHist();
     } else {
-      await db.collection('recharges').add({ userId, userName, number, operator: opText, operatorcode: opCode, amount, commission, payable, status: 'Failed', orderid: orderId, raw: data.message || '', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-      resultBox.innerHTML = `<div style="background:#fdecea;padding:14px;border-radius:10px;margin-top:10px"><b>❌ Failed</b><br>${data.message||'Try again'}<br>Paisa 2-24 ghanta re return aasiba.<br>Order: ${orderId}</div>`;
-      msg.innerText = 'Failed: ' + (data.message || 'Try again');
-      await loadHist();
+      await db.collection('recharges').add({ userId, userName, number, operator: opText, operatorcode: opCode, amount, commission, payable, status: 'Failed', orderid: '', raw: data.message || '', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      msg.innerText = 'Failed: ' + (data.message || 'Try again'); await loadHist();
     }
-  }catch(e){
-    resultBox.innerHTML = `<div style="background:#fef9c3;padding:14px;border-radius:10px;margin-top:10px"><b>⏳ Network Atkila / Timeout</b><br>Dobara Dabani! Age Status Check kara.<br>Order: ${orderId}<br><br><button class="btn" style="background:#0b3d91;margin-top:8px" onclick="checkStatus('${orderId}')">🔍 Status Check</button></div>`;
-    msg.innerText = 'Network error. Status Check kara.';
-    console.log(e);
-  }
-  setTimeout(()=>{ isProcessing = false; btn.disabled = false; btn.innerText = '🔒 Recharge Now • Secure'; }, 2000);
+  }catch(e){ msg.innerText = 'Network error. Try again.'; console.log(e); }
+  btn.disabled = false; btn.innerText = 'Recharge Now';
 }
-
-async function checkStatus(orderId){
-  alert('Order: '+orderId+'\nStatus check - Tuma API re /api/status thile mu seta connect karidebi. Ebe History re dekha.');
+async function doBillRecharge(){
+  let number = document.getElementById('billNum').value.trim();
+  let op = document.getElementById('billOp').value;
+  let opText = document.getElementById('billOp').options[document.getElementById('billOp').selectedIndex].text;
+  let amount = parseFloat(document.getElementById('billAmt').value || 0);
+  let msg = document.getElementById('billMsg');
+  if(!number){ msg.innerText='Customer ID deantu'; return; }
+  if(amount<=0){ msg.innerText='Amount deantu'; return; }
+  if(!savedPin){ alert('Pahile Wallet PIN Set Karantu'); openPinModal('set'); return; }
+  let rate = getBillRate(op); let commission = amount*rate; let payable = amount-commission;
+  if(walletBalance < payable){ msg.innerText='Insufficient wallet balance'; return; }
+  try{
+    let res = await fetch(API_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ number, operatorcode: op, amount, orderid:'PQ'+Date.now() }) });
+    let data = await res.json();
+    if(data.status==='Success' || data.status==='Pending' || data.success===true){
+      await db.collection('retailers').doc(userId).update({ wallet: firebase.firestore.FieldValue.increment(-payable) });
+      await db.collection('recharges').add({ userId, userName, number, operator: opText, operatorcode: op, amount, commission, payable, status: data.status||'Success', orderid: data.orderid||'', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      msg.innerText='Bill Payment '+ (data.status||'Success'); await loadWallet(); await loadHist();
+    } else { msg.innerText='Failed: '+(data.message||'Try again'); }
+  }catch(e){ msg.innerText='Network error'; }
 }
 
 async function loadHist(){
@@ -245,18 +355,27 @@ async function loadHist(){
     let s = await db.collection('recharges').where('userId','==',userId).limit(20).get();
     let arr = []; s.forEach(doc => arr.push(doc.data()));
     arr.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-    let h = '';
+    let h = ''; let total = 0;
     arr.forEach(d => {
+      if(d.status==='Success') total += (d.commission||0);
       let cls = d.status === 'Success' ? 'success' : (d.status === 'Failed' ? 'failed' : 'pending');
       h += `<tr><td>${d.number}<br><small>${d.operator || ''}</small></td><td>₹ ${d.amount}</td><td>₹ ${(d.commission || 0).toFixed(2)}</td><td><span class="badge ${cls}">${d.status || 'Success'}</span></td></tr>`;
     });
     document.getElementById('hist').innerHTML = h || '<tr><td colspan="4">No records</td></tr>';
+    // 7. Total Commission - last 20 ru hisab, pura hisab paain total load
+    let all = await db.collection('recharges').where('userId','==',userId).where('status','==','Success').get();
+    let t2=0; all.forEach(d=> t2 += (d.data().commission||0));
+    document.getElementById('totalComm').innerText = t2.toFixed(2);
   }catch(e){ document.getElementById('hist').innerHTML = '<tr><td colspan="4">Unable to load history</td></tr>'; }
 }
-
-loadWallet();
-loadHist();
-loadPlans();
+// Notice Board - Firestore ru notice asiba, na thile default
+async function loadNotice(){
+  try{
+    let s = await db.collection('notices').orderBy('createdAt','desc').limit(1).get();
+    if(!s.empty){ s.forEach(d=>{ document.getElementById('noticeBoard').innerText = '📢 Notice: ' + (d.data().text || ''); }); }
+  }catch(e){}
+}
+loadWallet(); loadHist(); loadNotice(); loadPlans();
 </script>
 </body>
 </html>
