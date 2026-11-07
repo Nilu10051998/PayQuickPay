@@ -3,35 +3,148 @@
 <title>PayQuickPay - Retailer</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<style>*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,Arial}body{background:#f1f5f9} .header{background:#0f172a;color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center} .wrap{max-width:500px;margin:0 auto;padding:16px} .card{background:#fff;padding:18px;border-radius:12px;border:1px solid #e2e8f0;margin-bottom:14px} input,select{width:100%;padding:12px;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:10px;outline:none} .btn{width:100%;padding:13px;background:#0f172a;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer} .logout{background:#fff;color:#0f172a;border:none;padding:8px 14px;border-radius:8px;font-weight:600} table{width:100%;border-collapse:collapse;font-size:13px} th,td{padding:10px;border-bottom:1px solid #f1f5f9;text-align:left}
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,Arial}
+body{background:#f1f5f9}
+.header{background:#0f172a;color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
+.header small{color:#94a3b8}
+.wrap{max-width:500px;margin:0 auto;padding:16px}
+.card{background:#fff;padding:18px;border-radius:12px;border:1px solid #e2e8f0;margin-bottom:14px}
+input,select{width:100%;padding:12px;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:10px;outline:none;font-size:14px}
+.btn{width:100%;padding:13px;background:#0f172a;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:15px}
+.logout{background:#fff;color:#0f172a;border:none;padding:8px 14px;border-radius:8px;font-weight:600;cursor:pointer}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:10px;border-bottom:1px solid #f1f5f9;text-align:left}
+label{font-size:12px;color:#64748b;font-weight:600;display:block;margin-bottom:4px}
 </style></head><body>
-<div class="header"><div><b id="uName">RETAILER</b><br><small style="color:#94a3b8">Wallet: ₹ <span id="uWallet">0</span></small></div><button class="logout" onclick="logout()">Logout</button></div>
+<div class="header"><div><b id="uName">RETAILER</b><br><small>Wallet: ₹ <span id="uWallet">0</span></small></div><button class="logout" onclick="logout()">Logout</button></div>
+
 <div class="wrap">
-<div class="card"><h3 style="margin-bottom:12px">Mobile Recharge</h3><input id="num" placeholder="Mobile Number" maxlength="10"><select id="op"><option value="1">Jio Prepaid</option><option value="2">Airtel Prepaid</option><option value="3">Vi Prepaid</option><option value="4">BSNL Prepaid</option></select><input id="amt" type="number" placeholder="Amount"><button class="btn" onclick="doRecharge()">Recharge Now</button><p id="msg" style="font-size:13px;margin-top:10px"></p></div>
+<div class="card">
+<h3 style="margin-bottom:12px">Mobile Recharge</h3>
+
+<label>Mobile Number</label>
+<input id="num" placeholder="10 Digit Number" maxlength="10" inputmode="numeric" oninput="autoDetect()">
+<p id="detectMsg" style="font-size:12px;color:#16a34a;margin:-6px 0 10px;min-height:16px"></p>
+
+<label>Operator - Auto Detect Heba</label>
+<select id="op">
+<option value="1">Jio Prepaid</option>
+<option value="2">Airtel Prepaid</option>
+<option value="3">Vi Prepaid</option>
+<option value="4">BSNL Prepaid</option>
+<option value="5">Jio Postpaid</option>
+<option value="6">Airtel Postpaid</option>
+</select>
+
+<label>Circle - Auto Detect Heba</label>
+<select id="circle">
+<option value="15">Odisha</option>
+<option value="1">Andhra Pradesh</option>
+<option value="2">Assam</option>
+<option value="3">Bihar</option>
+<option value="4">Chennai</option>
+<option value="5">Delhi</option>
+<option value="6">Gujarat</option>
+<option value="7">Haryana</option>
+<option value="8">Himachal Pradesh</option>
+<option value="9">Jammu Kashmir</option>
+<option value="10">Karnataka</option>
+<option value="11">Kerala</option>
+<option value="12">Kolkata</option>
+<option value="13">Madhya Pradesh</option>
+<option value="14">Maharashtra</option>
+<option value="16">Punjab</option>
+<option value="17">Rajasthan</option>
+<option value="18">Tamil Nadu</option>
+<option value="19">UP East</option>
+<option value="20">UP West</option>
+<option value="21">West Bengal</option>
+<option value="22">North East</option>
+<option value="23">Bihar Jharkhand</option>
+</select>
+
+<label>Amount</label>
+<input id="amt" type="number" placeholder="Amount - Ex: 149">
+<button class="btn" onclick="doRecharge()">Recharge Now</button>
+<p id="msg" style="font-size:13px;margin-top:10px;word-break:break-all"></p>
+</div>
+
 <div class="card"><h3 style="margin-bottom:10px">My History</h3><table><thead><tr><th>Number</th><th>Amount</th><th>Status</th></tr></thead><tbody id="hist"></tbody></table></div>
 </div>
+
 <script>
 const API="https://payquickpay-api.vercel.app";
 const firebaseConfig={apiKey:"AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",authDomain:"payquickpay-487ef.firebaseapp.com",projectId:"payquickpay-487ef",storageBucket:"payquickpay-487ef.firebasestorage.app",messagingSenderId:"368108778411",appId:"1:368108778411:web:03dcbc47e46568d51b58ee"};
 firebase.initializeApp(firebaseConfig); const db=firebase.firestore();
+
 let userId=localStorage.getItem('userId'); let userName=localStorage.getItem('userName');
 if(!userId){ location.href='../index.html'; }
 document.getElementById('uName').innerText=userName||'RETAILER';
+
 function logout(){ localStorage.clear(); location.href='../index.html'; }
+
 async function loadWallet(){ let d=await db.collection('retailers').doc(userId).get(); if(d.exists){ document.getElementById('uWallet').innerText=d.data().wallet||0; } }
-async function loadHist(){ let s=await db.collection('recharges').where('userId','==',userId).orderBy('createdAt','desc').limit(20).get(); let h=''; s.forEach(doc=>{let d=doc.data(); h+=`<tr><td>${d.number}</td><td>₹ ${d.amount}</td><td>${d.status||'Success'}</td></tr>`;}); document.getElementById('hist').innerHTML=h||'<tr><td colspan=3>No records</td></tr>'; }
+
+async function loadHist(){ let s=await db.collection('recharges').where('userId','==',userId).orderBy('createdAt','desc').limit(20).get(); let h=''; s.forEach(doc=>{let d=doc.data(); h+=`<tr><td>${d.number}<br><small>${d.operator||''}</small></td><td>₹ ${d.amount}</td><td>${d.status||'Success'}</td></tr>`;}); document.getElementById('hist').innerHTML=h||'<tr><td colspan=3>No records</td></tr>'; }
+
+// ============ AUTO DETECT ============
+function autoDetect(){
+  let n=document.getElementById('num').value.replace(/[^0-9]/g,'');
+  document.getElementById('num').value=n;
+  if(n.length<4) return;
+  let pre=n.substring(0,4);
+  let opSel=document.getElementById('op');
+  let cirSel=document.getElementById('circle');
+  let msg=document.getElementById('detectMsg');
+
+  // Odisha Common Series
+  let map={
+    '8018':'4','9437':'4','9438':'4','9439':'4','9450':'4','9451':'4','9452':'4','9453':'4','9454':'4','9455':'4','9456':'4','9457':'4','9458':'4','9459':'4',
+    '7000':'1','7001':'1','7002':'1','7003':'1','7004':'1','7005':'1','7006':'1','7007':'1','7008':'1','7009':'1','7010':'1','7011':'1','7012':'1','7013':'1','7014':'1','7015':'1','7016':'1','7017':'1','7018':'1','7019':'1','7020':'1','7021':'1','7022':'1','7023':'1','7024':'1','7025':'1','7026':'1','7027':'1','7028':'1','7029':'1','7030':'1','7031':'1','7032':'1','7033':'1','7034':'1','7035':'1','7036':'1','7037':'1','7038':'1','7039':'1','7040':'1','7041':'1','7042':'1','7043':'1','7044':'1','7045':'1','7046':'1','7047':'1','7048':'1','7049':'1','7050':'1','7051':'1','7052':'1','7053':'1','7054':'1','7055':'1','7056':'1','7057':'1','7058':'1','7059':'1','7060':'1','7061':'1','7062':'1','7063':'1','7064':'1','7065':'1','7066':'1','7067':'1','7068':'1','7069':'1','7070':'1','7071':'1','7072':'1','7073':'1','7074':'1','7075':'1','7076':'1','7077':'1','7078':'1','7079':'1','7080':'1','7081':'1','7082':'1','7083':'1','7084':'1','7085':'1','7086':'1','7087':'1','7088':'1','7089':'1','7090':'1','7091':'1','7092':'1','7093':'1','7094':'1','7095':'1','7096':'1','7097':'1','7098':'1','7099':'1',
+    '7200':'2','7201':'2','7202':'2','7203':'2','7204':'2','7205':'2','7206':'2','7207':'2','7208':'2','7209':'2','7210':'2','7211':'2','7212':'2','7213':'2','7214':'2','7215':'2','7216':'2','7217':'2','7218':'2','7219':'2','7220':'2','7221':'2','7222':'2','7223':'2','7224':'2','7225':'2','7226':'2','7227':'2','7228':'2','7229':'2','7230':'2','7231':'2','7232':'2','7233':'2','7234':'2','7235':'2','7236':'2','7237':'2','7238':'2','7239':'2','7240':'2','7241':'2','7242':'2','7243':'2','7244':'2','7245':'2','7246':'2','7247':'2','7248':'2','7249':'2','7250':'2','7251':'2','7252':'2','7253':'2','7254':'2','7255':'2','7256':'2','7257':'2','7258':'2','7259':'2','7260':'2','7261':'2','7262':'2','7263':'2','7264':'2','7265':'2','7266':'2','7267':'2','7268':'2','7269':'2','7270':'2','7271':'2','7272':'2','7273':'2','7274':'2','7275':'2','7276':'2','7277':'2','7278':'2','7279':'2','7280':'2','7281':'2','7282':'2','7283':'2','7284':'2','7285':'2','7286':'2','7287':'2','7288':'2','7289':'2','7290':'2','7291':'2','7292':'2','7293':'2','7294':'2','7295':'2','7296':'2','7297':'2','7298':'2','7299':'2',
+    '7300':'3','7301':'3','7302':'3','7303':'3','7304':'3','7305':'3','7306':'3','7307':'3','7308':'3','7309':'3','7310':'3','7311':'3','7312':'3','7313':'3','7314':'3','7315':'3','7316':'3','7317':'3','7318':'3','7319':'3','7320':'3','7321':'3','7322':'3','7323':'3','7324':'3','7325':'3','7326':'3','7327':'3','7328':'3','7329':'3','7330':'3','7331':'3','7332':'3','7333':'3','7334':'3','7335':'3','7336':'3','7337':'3','7338':'3','7339':'3','7340':'3','7341':'3','7342':'3','7343':'3','7344':'3','7345':'3','7346':'3','7347':'3','7348':'3','7349':'3','7350':'3','7351':'3','7352':'3','7353':'3','7354':'3','7355':'3','7356':'3','7357':'3','7358':'3','7359':'3','7360':'3','7361':'3','7362':'3','7363':'3','7364':'3','7365':'3','7366':'3','7367':'3','7368':'3','7369':'3','7370':'3','7371':'3','7372':'3','7373':'3','7374':'3','7375':'3','7376':'3','7377':'3','7378':'3','7379':'3','7380':'3','7381':'3','7382':'3','7383':'3','7384':'3','7385':'3','7386':'3','7387':'3','7388':'3','7389':'3','7390':'3','7391':'3','7392':'3','7393':'3','7394':'3','7395':'3','7396':'3','7397':'3','7398':'3','7399':'3'
+  };
+
+  if(n.length>=4 && map[pre]){
+    opSel.value=map[pre];
+    cirSel.value='15';
+    let opName=opSel.options[opSel.selectedIndex].text;
+    msg.innerText='✅ Detected: '+opName+' - Odisha';
+  } else if(n.length===10){
+    // Fallback: 1st digit guess
+    if(n.startsWith('6')||n.startsWith('7')||n.startsWith('8')||n.startsWith('9')){
+      msg.innerText='⚠️ Operator confirm kara - Ported hele alaga heipare';
+    }
+  } else {
+    msg.innerText='';
+  }
+}
+
+// ============ RECHARGE ============
 async function doRecharge(){
- let number=num.value.trim(), amount=amt.value.trim(), opCode=op.value, opName=op.options[op.selectedIndex].text;
+ let number=num.value.trim(), amount=parseInt(amt.value), opCode=op.value, circleCode=circle.value, opName=op.options[op.selectedIndex].text;
  if(number.length!==10||!amount) return alert('Fill correct number & amount');
- document.getElementById('msg').innerText='Processing...';
+ let wallet=parseInt(document.getElementById('uWallet').innerText||0);
+ if(amount>wallet) return alert('Wallet low! Wallet: ₹ '+wallet);
+ document.getElementById('msg').innerText='Processing... Please wait';
  let orderid='PQ'+Date.now();
  try{
-  let r=await fetch(`${API}/api/recharge?number=${number}&amount=${amount}&operatorcode=${opCode}&circlecode=23&orderid=${orderid}`);
-  let j=await r.json();
-  await db.collection('recharges').add({number,amount,operator:opName,userId,userName,orderid,status:'Success',createdAt:new Date()});
-  document.getElementById('msg').innerText='Recharge Success - '+orderid;
-  location.reload();
- }catch(e){ document.getElementById('msg').innerText='Failed, try again'; }
+  let url=`${API}/api/recharge?number=${number}&amount=${amount}&operatorcode=${opCode}&circlecode=${circleCode}&orderid=${orderid}`;
+  let r=await fetch(url); let txt=await r.text();
+  document.getElementById('msg').innerText='API Reply: '+txt;
+  let j={}; try{j=JSON.parse(txt);}catch(e){}
+  if(txt.toLowerCase().includes('success') || j.status==1 || j.status=='1' || j.status=='Success'){
+    await db.collection('recharges').add({number,amount,operator:opName,userId,userName,orderid,status:'Success',createdAt:new Date()});
+    await db.collection('retailers').doc(userId).update({wallet: wallet - amount});
+    document.getElementById('msg').innerText='✅ Recharge Success - '+orderid;
+    setTimeout(()=>location.reload(),1500);
+  } else {
+    await db.collection('recharges').add({number,amount,operator:opName,userId,userName,orderid,status:'Failed - '+txt,createdAt:new Date()});
+    document.getElementById('msg').innerText='❌ Failed: '+txt+' - Taka kata nahi';
+  }
+ }catch(e){ document.getElementById('msg').innerText='Failed: '+e.message; }
 }
+
 loadWallet(); loadHist();
 </script></body></html>
