@@ -12,8 +12,8 @@ input,select{width:100%;padding:13px;border:1px solid #e2e8f0;border-radius:10px
 </style></head><body>
 <div class="box"><h1>PAYQUICKPAY</h1><p>Recharge & Wallet System</p>
 <select id="role"><option value="admin">Admin</option><option value="distributor">Distributor</option><option value="retailer">Retailer</option></select>
-<input id="user" placeholder="Username"><input id="pass" type="password" placeholder="Password">
-<button class="btn" onclick="login()">Login</button><div class="err" id="err">Wrong Username / Password</div></div>
+<input id="user" placeholder="Username / Mobile / Name"><input id="pass" type="password" placeholder="Password">
+<button class="btn" onclick="login()">Login</button><div class="err" id="err">Wrong Username / Password</div><div id="debug" style="font-size:11px;color:#64748b;margin-top:10px"></div></div>
 <script>
 const firebaseConfig={apiKey:"AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",authDomain:"payquickpay-487ef.firebaseapp.com",projectId:"payquickpay-487ef",storageBucket:"payquickpay-487ef.firebasestorage.app",messagingSenderId:"368108778411",appId:"1:368108778411:web:03dcbc47e46568d51b58ee"};
 firebase.initializeApp(firebaseConfig); const db=firebase.firestore();
@@ -26,10 +26,19 @@ async function login(){
    return;
  }
  let col = r==='distributor' ? 'distributors' : 'retailers';
- let snap=await db.collection(col).where('username','==',u).where('password','==',p).get();
- if(snap.empty){ document.getElementById('err').style.display='block'; return; }
- let doc=snap.docs[0]; let d=doc.data();
- localStorage.setItem('userRole',r); localStorage.setItem('userId',doc.id); localStorage.setItem('userName',d.name); localStorage.setItem('userWallet',d.wallet||0);
- location.href = r==='distributor' ? 'distributor/index.html' : 'retailer/index.html';
+ document.getElementById('debug').innerText='Checking...';
+ try{
+  let all=await db.collection(col).get();
+  let found=null;
+  all.forEach(doc=>{ let d=doc.data();
+   let allNames=[d.username,d.user,d.name,d.mobile].map(x=>(x||'').toString().toLowerCase().trim());
+   if(allNames.includes(u.toLowerCase())){ found={id:doc.id,data:d}; }
+  });
+  if(!found){ document.getElementById('err').style.display='block'; document.getElementById('debug').innerText='User not found in '+col+' - Total: '+all.size; return; }
+  let realPass = (found.data.password || found.data.pass || "").toString().trim();
+  if(realPass !== p){ document.getElementById('err').style.display='block'; document.getElementById('debug').innerText='Password mismatch. Saved pass: '+realPass; return; }
+  localStorage.setItem('userRole',r); localStorage.setItem('userId',found.id); localStorage.setItem('userName',found.data.name); localStorage.setItem('userWallet',found.data.wallet||0);
+  location.href = r==='distributor' ? 'distributor/index.html' : 'retailer/index.html';
+ }catch(e){ document.getElementById('debug').innerText='Error: '+e.message; }
 }
 </script></body></html>
