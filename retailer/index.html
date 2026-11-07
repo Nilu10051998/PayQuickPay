@@ -74,7 +74,7 @@ th{color:#666;font-size:12px}
 <div class="main">
 <div class="card">
 <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-<div><div class="small">Wallet Balance - <span id="userName"></span></div><div class="wallet">₹ <span id="wallet">0.00</span></div></div><div style="background:#eef6ff;border-radius:8px;padding:8px 12px;text-align:right"><div class="small">Total Earned</div><div style="font-weight:800;font-size:16px">₹ <span id="totalEarnedTop">0.00</span></div><div class="small">Today: ₹ <span id="todayEarnedTop">0.00</span></div></div>
+<div><div class="small">Wallet Balance - <span id="userName"></span></div><div class="wallet">₹ <span id="wallet">0.00</span></div></div>
 <button class="btn" style="width:auto;margin:0;padding:10px 14px;font-size:13px" onclick="openDistModal()">+ Request to Distributor<br><span style="font-weight:400;font-size:11px">Add Money to Wallet</span></button>
 </div>
 </div>
@@ -99,10 +99,12 @@ th{color:#666;font-size:12px}
 <input id="amt" type="number" placeholder="Enter Amount" oninput="showComm()">
 <div id="commBox" class="comm" style="display:none"></div>
 <div class="card" style="margin:12px 0 0;padding:12px;background:#f8faff">
-<div style="display:flex;justify-content:space-between;align-items:center"><h4 style="margin:0">Commission Structure</h4><button type="button" onclick="toggleCommList()" style="background:#0b3d91;color:#fff;border:0;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer">View</button></div>
-<div id="commList" class="small" style="line-height:1.8;display:none;margin-top:8px">
-<b>Mobile:</b> Jio - 0.50% • Airtel - 1.00% • Vi - 2.60% • BSNL - 3.00%<br>
-<b>DTH:</b> Dish TV - 3.20% • Airtel Digital - 3.10% • Sun Direct - 2.90% • Videocon - 3.60% • Tata Sky - 3.10%
+<h4 style="margin:0 0 8px">Commission Structure</h4>
+<div class="small" style="line-height:1.8">
+Jio Prepaid - 0.80% • Jio Postpaid - 0.80%<br>
+Airtel Prepaid - 1.30% • Airtel Postpaid - 1.30%<br>
+Vi Prepaid - 3.00% • BSNL STV / Topup - 3.40%<br>
+<span style="color:#888">Rates as per existing code - not changed.</span>
 </div>
 </div>
 <button class="btn" id="rechargeBtn" onclick="doRecharge()">Recharge Now</button>
@@ -118,34 +120,19 @@ th{color:#666;font-size:12px}
 </div>
 <div class="card">
 <h3 style="margin:0 0 10px">Customer Support &amp; Services</h3>
-<div style="display:flex;gap:10px"><div style="flex:1;background:#eef6ff;border-radius:8px;padding:12px;text-align:center">🎧<br><b style="font-size:13px">Customer Support</b><br><div class="small" style="margin-top:8px;line-height:1.8">📞 Customer Care: <b>+91 79088 24917</b><br>✉️ Mail: <b>payquickpayofficial@gmail.com</b></div><a href="tel:+917908824917" class="btn" style="display:block;text-align:center;text-decoration:none;margin-top:8px;padding:8px;font-size:12px">Call Support</a><a href="mailto:payquickpayofficial@gmail.com" class="btn" style="display:block;text-align:center;text-decoration:none;margin-top:8px;padding:8px;font-size:12px;background:#fff;color:#0b3d91;border:1px solid #0b3d91">Mail Support</a></div><div style="flex:1;background:#f1f4f8;border-radius:8px;padding:12px;text-align:center">☰<br><b style="font-size:13px">Services</b><br><span class="small">Recharge History • Bill History • Offers</span></div></div>
+<div style="display:flex;gap:10px"><div style="flex:1;background:#eef6ff;border-radius:8px;padding:12px;text-align:center">🎧<br><b style="font-size:13px">Customer Support</b><br><button class="btn" style="margin-top:8px;padding:8px;font-size:12px" onclick="alert('Customer Support: Contact your Distributor / Admin from Settings')">Help / Call Support</button></div><div style="flex:1;background:#f1f4f8;border-radius:8px;padding:12px;text-align:center">☰<br><b style="font-size:13px">Services</b><br><span class="small">Recharge History • Bill History • Offers</span></div></div>
 </div>
 <div class="card">
 <div style="display:flex;justify-content:space-between;align-items:center"><b>Settings</b><label class="switch"><input type="checkbox" id="settingSwitch" onchange="toggleSettings()"><span class="slider"></span></label></div>
 <div id="settingsBox" style="display:none">
-<div style="background:#f8faff;border-radius:8px;padding:12px;margin-top:10px">
-<b>Profile Details</b>
-<div class="small" style="margin-top:6px;line-height:1.8">
-Name: <b id="profileName"></b><br>
-User ID: <span id="profileId"></span><br>
-Role: <span id="profileRole"></span>
-</div>
-</div>
 <label>Wallet PIN</label>
 <input id="walletPin" type="password" maxlength="4" placeholder="Enter 4 digit PIN" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
 <div style="display:flex;gap:12px;margin-top:8px"><a href="#" onclick="forgotPin();return false;" class="small">Forgot PIN?</a><a href="#" onclick="resetPin();return false;" class="small">Reset PIN</a></div>
 <div id="pinMsg" class="small" style="margin-top:8px"></div>
-<div style="background:#fff7e6;border-radius:8px;padding:12px;margin-top:12px">
-<b>Change Login Password</b>
-<label>New Login Password</label>
-<input id="newLoginPass" type="password" placeholder="Enter new login password">
-<button class="btn" style="margin-top:10px;padding:10px;font-size:13px" onclick="changeLoginPassword()">Change Password</button>
-<div id="passMsg" class="small" style="margin-top:8px"></div>
 </div>
 </div>
 </div>
-</div>
-<div class="side" style="display:none">
+<div class="side">
 <div class="card"><div class="small">Total Earned</div><div class="wallet" style="font-size:20px">₹ <span id="totalEarned">0.00</span></div><div class="small">Today: ₹ <span id="todayEarnedSide">0.00</span></div></div>
 </div>
 </div>
@@ -168,15 +155,10 @@ const db = firebase.firestore();
 const API_URL = 'https://payquickpay-api.vercel.app/api/recharge';
 
 function getRetailerRate(opCode){
-  if(opCode === 'RC' || opCode === 'RCP') return 0.005; // Jio 0.50%
-  if(opCode === 'A' || opCode === 'AP') return 0.01; // Airtel 1.00%
-  if(opCode === 'V') return 0.026; // Vi 2.60%
-  if(opCode === 'BR' || opCode === 'BT') return 0.03; // BSNL 3.00%
-  if(opCode === 'DISH') return 0.032;
-  if(opCode === 'ADTV') return 0.031;
-  if(opCode === 'SUN') return 0.029;
-  if(opCode === 'VIDEOCON') return 0.036;
-  if(opCode === 'TATA') return 0.031;
+  if(opCode === 'RC' || opCode === 'RCP') return 0.008;
+  if(opCode === 'A' || opCode === 'AP') return 0.013;
+  if(opCode === 'V') return 0.03;
+  if(opCode === 'BR' || opCode === 'BT') return 0.034;
   return 0;
 }
 
@@ -186,7 +168,7 @@ let userName = localStorage.getItem('userName');
 let walletBalance = 0;
 
 if(!userId || userRole !== 'retailer'){
-  window.location.href = 'login.html';
+  window.location.href = '../index.html';
 }
 
 document.getElementById('userName').innerText = userName || '';
@@ -194,7 +176,7 @@ document.getElementById('userEmail').innerText = userName || '';
 
 async function doLogout(){
   localStorage.clear();
-  window.location.href = 'login.html';
+  window.location.href = '../index.html';
 }
 
 async function loadWallet(){
@@ -251,20 +233,9 @@ function autoDetectOperator(){
 }
 
 // --- NEW: Settings Switch - Wallet PIN (local only, does NOT block existing recharge unless PIN set) ---
-function toggleCommList(){ let el=document.getElementById("commList"); el.style.display = el.style.display==="none"?"block":"none"; }
-function loadProfileDetails(){
-  document.getElementById('profileName').innerText = localStorage.getItem('userName') || '';
-  document.getElementById('profileId').innerText = localStorage.getItem('userId') || '';
-  document.getElementById('profileRole').innerText = localStorage.getItem('userRole') || 'retailer';
-}
-async function changeLoginPassword(){
-  let np = document.getElementById('newLoginPass').value.trim();
-  if(np.length < 4){ document.getElementById('passMsg').innerText = 'Password at least 4 characters deba.'; return; }
-  try{ await db.collection('retailers').doc(userId).update({ password: np }); document.getElementById('passMsg').innerText = 'Login Password change heigala. Ebe nua password re hi kholiba.'; document.getElementById('newLoginPass').value=''; }catch(e){ document.getElementById('passMsg').innerText = 'Password change heini. Try again.'; }
-}
 function toggleSettings(){
   let on = document.getElementById('settingSwitch').checked;
-  document.getElementById('settingsBox').style.display = on ? 'block' : 'none'; if(on) loadProfileDetails();
+  document.getElementById('settingsBox').style.display = on ? 'block' : 'none';
 }
 function forgotPin(){ document.getElementById('pinMsg').innerText = 'Forgot PIN: Contact Distributor / Admin to reset. Or use Reset PIN with OTP.'; }
 function resetPin(){
@@ -347,7 +318,7 @@ async function loadHist(){
     });
     document.getElementById('hist').innerHTML = h || '<tr><td colspan="4">No records</td></tr>';
     document.getElementById('todayComm').innerText = todayTotal.toFixed(2);
-    document.getElementById('totalEarnedTop').innerText = total.toFixed(2); document.getElementById('todayEarnedTop').innerText = todayTotal.toFixed(2); document.getElementById('totalEarned').innerText = total.toFixed(2);
+    document.getElementById('totalEarned').innerText = total.toFixed(2);
     document.getElementById('todayEarnedSide').innerText = todayTotal.toFixed(2);
     // Notice Board - if any pending wallet request, show
     try{
