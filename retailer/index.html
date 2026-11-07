@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PayQuickPay - Retailer</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <style>
 *{box-sizing:border-box;font-family:Arial,sans-serif}
@@ -28,32 +27,13 @@ th{color:#666;font-size:12px}
 .pending{background:#fff3cd;color:#856404}
 .wallet{font-size:22px;font-weight:800}
 .small{font-size:12px;color:#777}
-.loginWrap{display:flex;justify-content:center;align-items:center;min-height:90vh;padding:16px}
-.loginCard{background:#fff;width:100%;max-width:380px;border-radius:12px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.08)}
 .logout{font-size:12px;background:#fff;color:#0b3d91;border:0;padding:6px 10px;border-radius:6px;cursor:pointer;font-weight:700}
 </style>
 </head>
 <body>
-
-<!-- LOGIN PART -->
-<div id="loginBox" class="loginWrap" style="display:none">
-<div class="loginCard">
-<h2 style="margin:0;text-align:center;color:#0b3d91">PayQuickPay</h2>
-<p style="text-align:center;color:#777;font-size:13px">Retailer Login</p>
-<label>Email</label>
-<input id="email" type="email" placeholder="Enter Email">
-<label>Password</label>
-<input id="pass" type="password" placeholder="Enter Password">
-<button class="btn" id="loginBtn" onclick="doLogin()">Login</button>
-<div id="loginMsg" class="small" style="color:#c00;text-align:center;margin-top:10px"></div>
-</div>
-</div>
-
-<!-- PANEL PART -->
-<div id="panelBox" style="display:none">
 <div class="top"><b>PayQuickPay</b><span><span id="userEmail" class="small" style="color:#fff"></span> <button class="logout" onclick="doLogout()">Logout</button></span></div>
 <div class="card">
-<div class="small">Wallet Balance</div>
+<div class="small">Wallet Balance - <span id="userName"></span></div>
 <div class="wallet">₹ <span id="wallet">0.00</span></div>
 </div>
 <div class="card">
@@ -83,7 +63,6 @@ th{color:#666;font-size:12px}
 <tbody id="hist"><tr><td colspan="4">Loading...</td></tr></tbody>
 </table>
 </div>
-</div>
 
 <script>
 const firebaseConfig = {
@@ -92,11 +71,9 @@ const firebaseConfig = {
   projectId: "payquickpay-487ef",
   storageBucket: "payquickpay-487ef.firebasestorage.app",
   messagingSenderId: "368108778411",
-  appId: "1:368108778411:web:03dcbc47e46568d51b58ee",
-  measurementId: "G-9SLWLCMK8P"
+  appId: "1:368108778411:web:03dcbc47e46568d51b58ee"
 };
 firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
 const db = firebase.firestore();
 
 function getRetailerRate(opCode){
@@ -107,44 +84,28 @@ function getRetailerRate(opCode){
   return 0;
 }
 
-let userId = null;
+// Tuma Login Page ra system - localStorage
+let userId = localStorage.getItem('userId');
+let userRole = localStorage.getItem('userRole');
+let userName = localStorage.getItem('userName');
 let walletBalance = 0;
 
-auth.onAuthStateChanged(async (user)=>{
-  if(!user){
-    document.getElementById('loginBox').style.display='flex';
-    document.getElementById('panelBox').style.display='none';
-    return;
-  }
-  userId = user.uid;
-  document.getElementById('loginBox').style.display='none';
-  document.getElementById('panelBox').style.display='block';
-  document.getElementById('userEmail').innerText = user.email || '';
-  await loadWallet();
-  await loadHist();
-});
-
-async function doLogin(){
-  let email = document.getElementById('email').value.trim();
-  let pass = document.getElementById('pass').value;
-  let msg = document.getElementById('loginMsg');
-  let btn = document.getElementById('loginBtn');
-  if(!email || !pass){ msg.innerText='Email ar Password dia'; return; }
-  btn.disabled=true; btn.innerText='Logging in...'; msg.innerText='';
-  try{
-    await auth.signInWithEmailAndPassword(email, pass);
-  }catch(e){
-    msg.innerText = e.message;
-    btn.disabled=false; btn.innerText='Login';
-  }
+if(!userId || userRole !== 'retailer'){
+  window.location.href = '../login.html';
 }
 
-async function doLogout(){ await auth.signOut(); location.reload(); }
+document.getElementById('userName').innerText = userName || '';
+document.getElementById('userEmail').innerText = userName || '';
+
+async function doLogout(){
+  localStorage.clear();
+  window.location.href = '../login.html';
+}
 
 async function loadWallet(){
-  let doc = await db.collection('users').doc(userId).get();
+  let doc = await db.collection('retailers').doc(userId).get();
   if(doc.exists){
-    walletBalance = doc.data().wallet || 0;
+    walletBalance = parseFloat(doc.data().wallet || 0);
     document.getElementById('wallet').innerText = walletBalance.toFixed(2);
   }
 }
@@ -184,8 +145,8 @@ async function doRecharge(){
     });
     let data = await res.json();
     if(data.status === 'Success' || data.status === 'Pending' || data.success === true){
-      await db.collection('users').doc(userId).update({ wallet: firebase.firestore.FieldValue.increment(-payable) });
-      await db.collection('recharges').add({ userId, number, operator: opText, operatorcode: opCode, amount, commission, payable, status: data.status || 'Success', orderid: data.orderid || '', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      await db.collection('retailers').doc(userId).update({ wallet: firebase.firestore.FieldValue.increment(-payable) });
+      await db.collection('recharges').add({ userId, userName, number, operator: opText, operatorcode: opCode, amount, commission, payable, status: data.status || 'Success', orderid: data.orderid || '', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
       msg.innerText = 'Recharge ' + (data.status || 'Success');
       document.getElementById('amt').value = '';
       showComm(); await loadWallet(); await loadHist();
@@ -207,6 +168,9 @@ async function loadHist(){
     document.getElementById('hist').innerHTML = h || '<tr><td colspan="4">No records</td></tr>';
   }catch(e){ document.getElementById('hist').innerHTML = '<tr><td colspan="4">Unable to load history</td></tr>'; }
 }
+
+loadWallet();
+loadHist();
 </script>
 </body>
 </html>
