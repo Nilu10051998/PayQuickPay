@@ -1,14 +1,41 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<html><head><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+</style><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PayQuickPay - Distributor</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <style>*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,Arial}body{background:#f1f5f9} .header{background:#0f172a;color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center} .wrap{max-width:600px;margin:0 auto;padding:16px} .card{background:#fff;padding:18px;border-radius:12px;border:1px solid #e2e8f0;margin-bottom:14px} input,select{width:100%;padding:12px;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:10px;outline:none} .btn{width:100%;padding:13px;background:#0f172a;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer} .logout{background:#fff;color:#0f172a;border:none;padding:8px 14px;border-radius:8px;font-weight:600} table{width:100%;border-collapse:collapse;font-size:13px} th,td{padding:10px;border-bottom:1px solid #f1f5f9;text-align:left} .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 </style></head><body>
 <div class="header"><div><b id="uName">DISTRIBUTOR</b><br><small style="color:#94a3b8">Wallet: ₹ <span id="uWallet">0</span></small></div><button class="logout" onclick="logout()">Logout</button></div>
-<div class="wrap">
+<div class="wrap"><div class="card"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><div><div style="font-size:12px;color:#64748b">Wallet Balance</div><div style="font-size:22px;font-weight:800">Rs <span id="uWalletTop">0</span></div></div><div style="background:#eef6ff;border-radius:8px;padding:8px 12px;text-align:right"><div style="font-size:12px;color:#64748b">Total Earned</div><div style="font-weight:800">Rs <span id="distTotalEarned">0.00</span></div><div style="font-size:12px;color:#64748b">Today: Rs <span id="distTodayEarned">0.00</span></div></div><div style="background:#f8fafc;border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:12px;color:#64748b">Total Retailers</div><div style="font-weight:800;font-size:18px" id="totalRetailersCount">0</div></div><button class="btn" style="width:auto;padding:10px 14px;font-size:13px" onclick="openAdminModal()">Request to Admin</button></div></div><div class="card"><h3>Search Retailer</h3><input id="retSearch" placeholder="Search by Name / Mobile" oninput="filterRetailers()"></div>
 <div class="card"><h3 style="margin-bottom:12px">Add Retailer</h3><div class="grid2"><input id="rName" placeholder="Full Name"><input id="rMobile" placeholder="Mobile"></div><div class="grid2"><input id="rUser" placeholder="Username"><input id="rPass" type="password" placeholder="Password"></div><button class="btn" onclick="addRet()">Add Retailer</button></div>
-<div class="card"><h3 style="margin-bottom:10px">My Retailers</h3><table><thead><tr><th>Name</th><th>Mobile</th><th>Wallet</th></tr></thead><tbody id="retList"></tbody></table></div>
+<div class="card"><h3 style="margin-bottom:10px">My Retailers</h3><table><thead><tr><th>Name</th><th>Mobile</th><th>Wallet</th></tr></thead><tbody id="retList"></tbody></table><div id="retDebug" style="font-size:11px;color:#64748b;margin-top:8px"></div></div>
+<div class="card"><h3 style="margin-bottom:10px">Wallet Requests - Retailer</h3><table><thead><tr><th>Retailer</th><th>Amount</th><th>Action</th></tr></thead><tbody id="reqList"></tbody></table></div>
+<div class="card"><h3>Wallet Request History</h3><table><thead><tr><th>Retailer</th><th>Amount</th><th>Status</th></tr></thead><tbody id="reqHistory"></tbody></table></div>
+<div class="card"><h3>Recharge History - My Retailers</h3><div style="font-size:12px;color:#64748b">Today Commission: Rs <b id="todayCommDist">0.00</b></div><table><thead><tr><th>Retailer / Number</th><th>Amount</th><th>Commission</th><th>Status</th></tr></thead><tbody id="rechargeHist"></tbody></table></div>
+<div class="card"><h3>Customer Support</h3><div style="font-size:13px;line-height:1.8">Phone: <b>+91 79088 24917</b><br>Mail: <b>payquickpayofficial@gmail.com</b></div><a href="tel:+917908824917" class="btn" style="display:block;text-align:center;text-decoration:none;margin-top:10px;padding:10px;font-size:13px">Call Support</a><a href="mailto:payquickpayofficial@gmail.com" class="btn" style="display:block;text-align:center;text-decoration:none;margin-top:8px;padding:10px;font-size:13px;background:#fff;color:#0f172a;border:1px solid #0f172a">Mail Support</a></div>
+<div class="card"><div style="display:flex;justify-content:space-between"><b>Settings</b><input type="checkbox" id="settingSwitch" onchange="toggleSettings()"></div><div id="settingsBox" style="display:none;margin-top:12px"><div><b>Profile Details</b><div style="font-size:12px;color:#64748b">Name: <b id="profileName"></b><br>User ID: <span id="profileId"></span><br>Role: <span id="profileRole"></span></div></div><input id="newLoginPass" type="password" placeholder="Enter new login password" style="margin-top:10px"><button class="btn" style="margin-top:8px;padding:10px;font-size:13px" onclick="changeLoginPassword()">Change Password</button><div id="passMsg" style="font-size:12px;color:#64748b"></div></div></div>
+<div class="card" id="adminModal" style="display:none"><h3>Request to Admin</h3><input id="reqAmtAdmin" type="number" placeholder="Enter Amount"><button class="btn" onclick="sendAdminRequest()">Send Request</button><button class="btn" style="background:#eee;color:#333;margin-top:8px" onclick="closeAdminModal()">Close</button><div id="reqAdminMsg" style="font-size:12px;color:#64748b"></div></div>
 </div>
 <script>
 const firebaseConfig={apiKey:"AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",authDomain:"payquickpay-487ef.firebaseapp.com",projectId:"payquickpay-487ef",storageBucket:"payquickpay-487ef.firebasestorage.app",messagingSenderId:"368108778411",appId:"1:368108778411:web:03dcbc47e46568d51b58ee"};
@@ -17,12 +44,66 @@ let userId=localStorage.getItem('userId'); let userName=localStorage.getItem('us
 if(!userId){ location.href='../index.html'; }
 document.getElementById('uName').innerText=userName||'DISTRIBUTOR';
 function logout(){ localStorage.clear(); location.href='../index.html'; }
+function filterRetailers(){let q=(document.getElementById('retSearch').value||'').toLowerCase();document.querySelectorAll('#retList tr').forEach(r=>{r.style.display=r.innerText.toLowerCase().includes(q)?'':'none';});}
+function toggleSettings(){let on=document.getElementById('settingSwitch').checked;document.getElementById('settingsBox').style.display=on?'block':'none';if(on){document.getElementById('profileName').innerText=localStorage.getItem('userName')||'';document.getElementById('profileId').innerText=localStorage.getItem('userId')||'';document.getElementById('profileRole').innerText=localStorage.getItem('userRole')||'distributor';}}
+async function changeLoginPassword(){let np=document.getElementById('newLoginPass').value.trim();if(np.length<4){document.getElementById('passMsg').innerText='Password at least 4 characters';return;}try{await db.collection('distributors').doc(userId).update({password:np});document.getElementById('passMsg').innerText='Password change heigala';document.getElementById('newLoginPass').value='';}catch(e){document.getElementById('passMsg').innerText='Failed';}}
+function openAdminModal(){document.getElementById('adminModal').style.display='block';}
+function closeAdminModal(){document.getElementById('adminModal').style.display='none';}
+async function sendAdminRequest(){let amt=parseFloat(document.getElementById('reqAmtAdmin').value||0);if(amt<=0){document.getElementById('reqAdminMsg').innerText='Enter valid amount';return;}try{await db.collection('wallet_requests').add({userId,userName,amount:amt,type:'ADD_MONEY',role:'distributor',status:'Pending',distributorId:userId,distributorName:userName,createdAt:firebase.firestore.FieldValue.serverTimestamp()});document.getElementById('reqAdminMsg').innerText='Request sent to Admin';document.getElementById('reqAmtAdmin').value='';}catch(e){document.getElementById('reqAdminMsg').innerText='Failed';}}
 async function loadAll(){
  let d=await db.collection('distributors').doc(userId).get(); if(d.exists){ document.getElementById('uWallet').innerText=d.data().wallet||0; }
- let s=await db.collection('retailers').where('distributorName','==',userName).get(); let h='';
- s.forEach(doc=>{let x=doc.data(); h+=`<tr><td>${x.name}</td><td>${x.mobile||''}</td><td>₹ ${x.wallet||0}</td></tr>`;});
+ // FIXED: Aga khali distributorName == userName ku dekhuthila. Puruna Retailer re distributorName nathile / nama alaga thile show karuni thila.
+ // Ebe distributorId + distributorName duita ku dekhuchi, case-insensitive.
+ let s=await db.collection('retailers').get(); let h=''; let total=0, matched=0;
+ s.forEach(doc=>{let x=doc.data(); total++;
+   let byId = (x.distributorId||'')===userId;
+   let byName = (x.distributorName||'').toString().toLowerCase().trim()===(userName||'').toLowerCase().trim();
+   let byName2 = (x.distributor||'').toString().toLowerCase().trim()===(userName||'').toLowerCase().trim();
+   if(byId||byName||byName2){ matched++; h+= '<tr><td>'+x.name+'<br><small>'+(x.username||'')+'</small></td><td>'+(x.mobile||'')+'</td><td>Rs '+(x.wallet||0)+'<br><button onclick="addMoneyToRetailer(\''+doc.id+'\',\''+x.name+'\')" style="background:#0b3d91;color:#fff;border:0;padding:4px 8px;border-radius:6px;font-size:11px">+ Add Money</button></td></tr>'; }
+ });
  document.getElementById('retList').innerHTML=h||'<tr><td colspan=3>No Retailers</td></tr>';
+ document.getElementById('totalRetailersCount').innerText=matched; document.getElementById('uWalletTop').innerText=document.getElementById('uWallet').innerText; document.getElementById('retDebug').innerText='Total Retailers in DB: '+total+' | My Retailers: '+matched+' | Distributor: '+userName;
+ // Wallet Requests - show pending requests from my retailers
+ try{
+   let rq=await db.collection('wallet_requests').where('status','==','Pending').get();
+   let rh='';
+   // Need retailer IDs of my retailers to filter
+   let myIds=new Set();
+   s.forEach(doc=>{let x=doc.data(); let byId=(x.distributorId||'')===userId; let byName=(x.distributorName||'').toString().toLowerCase().trim()===(userName||'').toLowerCase().trim(); if(byId||byName) myIds.add(doc.id); });
+   rq.forEach(doc=>{let r=doc.data(); if(myIds.has(r.userId) || (r.distributorId||'')===userId || (r.distributorName||'').toString().toLowerCase().trim()===(userName||'').toLowerCase().trim()){ rh+=`<tr><td>${r.userName||r.userId}</td><td>₹ ${r.amount}</td><td><button onclick="approveReq('${doc.id}','${r.userId}',${r.amount})" style="background:#0a7a2e;color:#fff;border:0;padding:6px 10px;border-radius:6px;cursor:pointer">Approve</button> <button onclick="rejectReq('${doc.id}')" style="background:#c00;color:#fff;border:0;padding:6px 10px;border-radius:6px;cursor:pointer">Reject</button></td></tr>`; }});
+   document.getElementById('reqList').innerHTML=rh||'<tr><td colspan=3>No Pending Requests</td></tr>';
+ }catch(e){ document.getElementById('reqList').innerHTML='<tr><td colspan=3>Unable to load requests</td></tr>'; }
 }
-async function addRet(){ let n=rName.value.trim(),m=rMobile.value.trim(),u=rUser.value.trim(),p=rPass.value.trim(); if(!n||!u||!p) return alert('Fill all'); await db.collection('retailers').add({name:n,mobile:m,username:u,password:u,pass:p,user:u,distributorName:userName,wallet:0,createdAt:new Date()}); location.reload(); }
-loadAll();
-</script></body></html>
+async function addMoneyToRetailer(retId, retName){let amt=parseFloat(prompt(retName+' ku kete paisa deba?')||0);if(!amt||amt<=0)return;if(!confirm(retName+' ku Rs '+amt+' deba?'))return;try{let d=await db.collection('distributors').doc(userId).get();let bal=parseFloat(d.data().wallet||0);if(bal<amt){alert('Insufficient wallet');return;}await db.collection('retailers').doc(retId).update({wallet:firebase.firestore.FieldValue.increment(amt)});await db.collection('distributors').doc(userId).update({wallet:firebase.firestore.FieldValue.increment(-amt)});alert('Rs '+amt+' deigala');loadAll(); setTimeout(loadExtra, 800);}catch(e){alert('Failed');}}
+async function loadExtra(){
+ try{
+  let s=await db.collection('retailers').get(); let myIds=new Set(); s.forEach(doc=>{let x=doc.data(); let byId=(x.distributorId||'')===userId; let byName=(x.distributorName||'').toString().toLowerCase().trim()===(userName||'').toLowerCase().trim(); if(byId||byName) myIds.add(doc.id);});
+  let allRec=await db.collection('recharges').get(); let arr=[]; allRec.forEach(doc=>{let d=doc.data(); if(myIds.has(d.userId)) arr.push(d);});
+  arr.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+  let tot=0, tod=0; let today=new Date(); today.setHours(0,0,0,0); let rh='';
+  arr.slice(0,20).forEach(d=>{ tot+=(d.commission||0); let dd=d.createdAt?new Date(d.createdAt.seconds*1000):null; if(dd&&dd>=today&&d.status==='Success') tod+=(d.commission||0); rh+='<tr><td>'+(d.userName||'')+'<br><small>'+(d.number||'')+'</small></td><td>Rs '+d.amount+'</td><td>Rs '+(d.commission||0).toFixed(2)+'</td><td>'+(d.status||'')+'</td></tr>';});
+  document.getElementById('rechargeHist').innerHTML=rh||'<tr><td colspan=4>No History</td></tr>';
+  document.getElementById('distTotalEarned').innerText=tot.toFixed(2); document.getElementById('distTodayEarned').innerText=tod.toFixed(2); document.getElementById('todayCommDist').innerText=tod.toFixed(2);
+  let hist=await db.collection('wallet_requests').get(); let hh=''; hist.forEach(doc=>{let r=doc.data(); if(myIds.has(r.userId)||(r.distributorId||'')===userId){ if(r.status!=='Pending'){ hh+='<tr><td>'+(r.userName||r.userId)+'</td><td>Rs '+r.amount+'</td><td>'+r.status+'</td></tr>'; } }});
+  document.getElementById('reqHistory').innerHTML=hh||'<tr><td colspan=3>No History</td></tr>';
+ }catch(e){}
+}
+async function approveReq(reqId, retailerId, amt){
+ if(!confirm('Approve ₹'+amt+' ?')) return;
+ try{
+   await db.collection('retailers').doc(retailerId).update({ wallet: firebase.firestore.FieldValue.increment(amt) });
+   await db.collection('wallet_requests').doc(reqId).update({ status:'Approved' });
+   // Distributor wallet ru kata
+   await db.collection('distributors').doc(userId).update({ wallet: firebase.firestore.FieldValue.increment(-amt) });
+   alert('Approved'); loadAll(); setTimeout(loadExtra, 800);
+ }catch(e){ alert('Approve failed'); }
+}
+async function rejectReq(reqId){
+ await db.collection('wallet_requests').doc(reqId).update({ status:'Rejected' }); alert('Rejected'); loadAll(); setTimeout(loadExtra, 800);
+}
+async function addRet(){ let n=rName.value.trim(),m=rMobile.value.trim(),u=rUser.value.trim(),p=rPass.value.trim(); if(!n||!u||!p) return alert('Fill all');
+ // FIXED: Aga password:u (username) save heuthila, seithipain Retailer sei password re login kariparuni thila. Ebe password:p thik heigala.
+ // Aau distributorId bhi save heba, jate Distributor Login kale Retailer show kare.
+ await db.collection('retailers').add({name:n,mobile:m,username:u,password:p,pass:p,user:u,distributorId:userId,distributorName:userName,distributor:userName,wallet:0,createdAt:new Date()}); location.reload(); }
+loadAll(); setTimeout(loadExtra, 800);
+</script><script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body></html>
