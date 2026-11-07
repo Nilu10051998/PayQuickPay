@@ -1,185 +1,211 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PayQuickPay - Retailer</title>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retailer Panel</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,Arial}
-body{background:#f1f5f9}
-.header{background:#0f172a;color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
-.wrap{max-width:500px;margin:0 auto;padding:16px}
-.card{background:#fff;padding:18px;border-radius:12px;border:1px solid #e2e8f0;margin-bottom:14px}
-input,select{width:100%;padding:12px;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:10px;outline:none}
-.btn{width:100%;padding:13px;background:#0f172a;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer}
-.logout{background:#fff;color:#0f172a;border:none;padding:8px 14px;border-radius:8px;font-weight:600;cursor:pointer}
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f1f4f8}
+.top{background:#0b3d91;color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+.top b{font-size:18px}
+.card{background:#fff;margin:12px;border-radius:10px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+label{font-size:13px;color:#555;display:block;margin:12px 0 5px}
+input,select{width:100%;padding:11px;border:1px solid #ddd;border-radius:8px;font-size:15px;outline:none}
+input:focus,select:focus{border-color:#0b3d91}
+.btn{width:100%;padding:12px;background:#0b3d91;color:#fff;border:0;border-radius:8px;font-size:16px;font-weight:700;margin-top:16px;cursor:pointer}
+.btn:disabled{opacity:.6}
+.comm{background:#eef6ff;border:1px solid #cfe3ff;padding:10px;border-radius:8px;font-size:14px;margin-top:12px}
 table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{padding:10px;border-bottom:1px solid #f1f5f9;text-align:left}
-label{font-size:12px;color:#64748b;font-weight:600;display:block;margin-bottom:4px}
-.commBox{background:#f0fdf4;border:1px solid #bbf7d0;padding:10px;border-radius:10px;margin-bottom:10px;font-size:13px;color:#166534}
-</style></head><body>
-<div class="header"><div><b id="uName">RETAILER</b><br><small>Wallet: ₹ <span id="uWallet">0</span> | Commission: ₹ <span id="uComm">0</span></small></div><button class="logout" onclick="logout()">Logout</button></div>
+th,td{padding:9px 6px;border-bottom:1px solid #eee;text-align:left}
+th{color:#666;font-size:12px}
+.badge{padding:3px 8px;border-radius:20px;font-size:11px;font-weight:700}
+.success{background:#e6f9ec;color:#0a7a2e}
+.failed{background:#fdecea;color:#c00}
+.pending{background:#fff3cd;color:#856404}
+.wallet{font-size:22px;font-weight:800}
+.small{font-size:12px;color:#777}
+</style>
+</head>
+<body>
 
-<div class="wrap">
+<div class="top"><b>PayQuickPay</b><span id="userEmail" class="small" style="color:#fff"></span></div>
+
 <div class="card">
-<h3 style="margin-bottom:12px">Mobile Recharge</h3>
+<div class="small">Wallet Balance</div>
+<div class="wallet">₹ <span id="wallet">0.00</span></div>
+</div>
+
+<div class="card">
+<h3 style="margin:0">Mobile Recharge</h3>
+
 <label>Mobile Number</label>
-<input id="num" placeholder="10 Digit Number" maxlength="10" inputmode="numeric" oninput="autoDetect()">
-<p id="detectMsg" style="font-size:12px;color:#16a34a;margin:-6px 0 10px;min-height:16px"></p>
+<input id="num" type="tel" maxlength="10" placeholder="10 Digit Mobile Number" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
 
-<label>Operator - Auto Detect</label>
+<label>Operator</label>
 <select id="op" onchange="showComm()">
-<option value="1">Jio Prepaid</option>
-<option value="2">Airtel Prepaid</option>
-<option value="3">Vi Prepaid</option>
-<option value="4">BSNL Prepaid</option>
-<option value="5">Jio Postpaid</option>
-<option value="6">Airtel Postpaid</option>
-</select>
-
-<label>Circle</label>
-<select id="circle">
-<option value="15">Odisha</option><option value="1">Andhra Pradesh</option><option value="2">Assam</option><option value="3">Bihar</option><option value="4">Chennai</option><option value="5">Delhi</option><option value="6">Gujarat</option><option value="7">Haryana</option><option value="8">Himachal Pradesh</option><option value="9">Jammu Kashmir</option><option value="10">Karnataka</option><option value="11">Kerala</option><option value="12">Kolkata</option><option value="13">Madhya Pradesh</option><option value="14">Maharashtra</option><option value="16">Punjab</option><option value="17">Rajasthan</option><option value="18">Tamil Nadu</option><option value="19">UP East</option><option value="20">UP West</option><option value="21">West Bengal</option><option value="22">North East</option>
+<option value="RC">Jio Prepaid</option>
+<option value="A">Airtel Prepaid</option>
+<option value="V">Vi Prepaid</option>
+<option value="BR">BSNL Prepaid - STV</option>
+<option value="BT">BSNL Prepaid - Topup</option>
+<option value="RC">Jio Postpaid</option>
+<option value="A">Airtel Postpaid</option>
 </select>
 
 <label>Amount</label>
-<input id="amt" type="number" placeholder="Amount - Ex: 149" oninput="showComm()">
-<div class="commBox" id="commBox">Commission dekhiba pai Amount lekha</div>
-<button class="btn" onclick="doRecharge()">Recharge Now</button>
-<p id="msg" style="font-size:13px;margin-top:10px;word-break:break-all"></p>
+<input id="amt" type="number" placeholder="Enter Amount" oninput="showComm()">
+
+<div id="commBox" class="comm" style="display:none"></div>
+
+<button class="btn" id="rechargeBtn" onclick="doRecharge()">Recharge Now</button>
+<div id="msg" class="small" style="margin-top:10px"></div>
 </div>
 
-<div class="card"><h3>My History</h3><table><thead><tr><th>Number</th><th>Amount</th><th>Comm.</th><th>Status</th></tr></thead><tbody id="hist"></tbody></table></div>
+<div class="card">
+<h3 style="margin:0 0 10px">Recent History</h3>
+<table>
+<thead><tr><th>Number</th><th>Amount</th><th>Commission</th><th>Status</th></tr></thead>
+<tbody id="hist"><tr><td colspan="4">Loading...</td></tr></tbody>
+</table>
 </div>
 
 <script>
-const API="https://payquickpay-api.vercel.app";
-const firebaseConfig={apiKey:"AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",authDomain:"payquickpay-487ef.firebaseapp.com",projectId:"payquickpay-487ef",storageBucket:"payquickpay-487ef.firebasestorage.app",messagingSenderId:"368108778411",appId:"1:368108778411:web:03dcbc47e46568d51b58ee"};
-firebase.initializeApp(firebaseConfig); const db=firebase.firestore();
-let userId=localStorage.getItem('userId'); let userName=localStorage.getItem('userName');
-if(!userId){ location.href='../index.html'; }
-document.getElementById('uName').innerText=userName||'RETAILER';
-function logout(){ localStorage.clear(); location.href='../index.html'; }
+// ---------- FIREBASE CONFIG - Replace with your config ----------
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-// ===== FIX 1: Firebase commission_settings > setup ru aniba =====
-// Tume set karithila: mobile_retailer=0.5, mobile_distributor=0.2, mobile_admin=0.1
-// Eta % hisab re: 0.5% = 0.005
-let SETUP = { retailer: 0.5, distributor: 0.2, admin: 0.1 };
-let OPERATOR_COMM = { '1':0.80, '2':1.30, '3':3.00, '4':3.40, '5':0, '6':0 };
-
-async function loadSetup(){
-  try{
-    let s = await db.collection('commission_settings').doc('setup').get();
-    if(s.exists){
-      let d = s.data();
-      // String hele bhi Number kariba
-      if(d.mobile_retailer) SETUP.retailer = parseFloat(d.mobile_retailer);
-      if(d.mobile_distributor) SETUP.distributor = parseFloat(d.mobile_distributor);
-      if(d.mobile_admin) SETUP.admin = parseFloat(d.mobile_admin);
-      // Jadi operator-wise setting achhi, seta use kariba
-      if(d.jio) OPERATOR_COMM['1'] = parseFloat(d.jio);
-      if(d.airtel) OPERATOR_COMM['2'] = parseFloat(d.airtel);
-      if(d.vi) OPERATOR_COMM['3'] = parseFloat(d.vi);
-      if(d.bsnl) OPERATOR_COMM['4'] = parseFloat(d.bsnl);
-    }
-  }catch(e){ console.log("Setup default use heba:", e.message); }
-  showComm();
-}
-
+// ---------- RETAILER COMMISSION RATES - A1 Topup ----------
 function getRetailerRate(opCode){
-  // Operator rate achhi ta seta, nahale Firebase setup ra mobile_retailer
-  let r = OPERATOR_COMM[opCode];
-  if(r === undefined || r === null) r = SETUP.retailer;
-  return r / 100; // % ru decimal
+  if(opCode === 'RC') return 0.008;   // Jio 0.80%
+  if(opCode === 'A') return 0.013;    // Airtel 1.30%
+  if(opCode === 'V') return 0.03;     // Vi 3.00%
+  if(opCode === 'BR' || opCode === 'BT') return 0.034; // BSNL 3.40%
+  return 0;
 }
 
-function showComm(){
-  let amount=parseFloat(document.getElementById('amt').value||0);
-  let opCode=document.getElementById('op').value;
-  let rate=getRetailerRate(opCode);
-  let comm=amount*rate;
-  if(amount>0){
-    document.getElementById('commBox').innerHTML=`💰 Commission: <b>₹ ${comm.toFixed(2)}</b> (${(rate*100).toFixed(2)}%) | Wallet ru katiba: <b>₹ ${(amount-comm).toFixed(2)}</b> | Distributor: ₹ ${(amount*SETUP.distributor/100).toFixed(2)} | Admin: ₹ ${(amount*SETUP.admin/100).toFixed(2)}`;
-  }
-}
+let userId = null;
+let walletBalance = 0;
+
+auth.onAuthStateChanged(async (user)=>{
+  if(!user){ window.location.href='login.html'; return; }
+  userId = user.uid;
+  document.getElementById('userEmail').innerText = user.email || '';
+  await loadWallet();
+  await loadHist();
+});
 
 async function loadWallet(){
+  let doc = await db.collection('users').doc(userId).get();
+  if(doc.exists){
+    walletBalance = doc.data().wallet || 0;
+    document.getElementById('wallet').innerText = walletBalance.toFixed(2);
+  }
+}
+
+// ---------- COMMISSION DISPLAY - Only Retailer Commission ----------
+function showComm(){
+  let amount = parseFloat(document.getElementById('amt').value || 0);
+  let opCode = document.getElementById('op').value;
+  let box = document.getElementById('commBox');
+  if(amount > 0){
+    let rate = getRetailerRate(opCode);
+    let comm = amount * rate;
+    let payable = amount - comm;
+    box.style.display = 'block';
+    box.innerHTML = `Your Commission: <b>₹ ${comm.toFixed(2)}</b> | Payable: <b>₹ ${payable.toFixed(2)}</b>`;
+  } else {
+    box.style.display = 'none';
+  }
+}
+
+// ---------- RECHARGE ----------
+async function doRecharge(){
+  let number = document.getElementById('num').value.trim();
+  let opCode = document.getElementById('op').value;
+  let opText = document.getElementById('op').options[document.getElementById('op').selectedIndex].text;
+  let amount = parseFloat(document.getElementById('amt').value || 0);
+  let msg = document.getElementById('msg');
+  let btn = document.getElementById('rechargeBtn');
+
+  if(number.length !== 10){ msg.innerText = 'Enter valid 10 digit number'; return; }
+  if(amount <= 0){ msg.innerText = 'Enter valid amount'; return; }
+
+  let rate = getRetailerRate(opCode);
+  let commission = amount * rate;
+  let payable = amount - commission;
+
+  if(walletBalance < payable){ msg.innerText = 'Insufficient wallet balance'; return; }
+
+  btn.disabled = true;
+  btn.innerText = 'Processing...';
+  msg.innerText = '';
+
   try{
-    let d=await db.collection('retailers').doc(userId).get();
-    if(d.exists){ 
-      document.getElementById('uWallet').innerText=parseFloat(d.data().wallet||0).toFixed(2); 
-      document.getElementById('uComm').innerText=parseFloat(d.data().totalCommission||0).toFixed(2); 
+    // Vercel API - A1 operator code already mapped (RC, A, V, BR, BT)
+    let res = await fetch('https://payquickpay-api.vercel.app/api/recharge', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ number, operatorcode: opCode, amount, orderid: 'PQ' + Date.now() })
+    });
+    let data = await res.json();
+
+    if(data.status === 'Success' || data.status === 'Pending' || data.success === true){
+      // Deduct payable only, commission already adjusted
+      await db.collection('users').doc(userId).update({
+        wallet: firebase.firestore.FieldValue.increment(-payable)
+      });
+      await db.collection('recharges').add({
+        userId, number, operator: opText, operatorcode: opCode,
+        amount, commission, payable,
+        status: data.status || 'Success',
+        orderid: data.orderid || '',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      msg.innerText = 'Recharge ' + (data.status || 'Success');
+      document.getElementById('amt').value = '';
+      showComm();
+      await loadWallet();
+      await loadHist();
+    } else {
+      msg.innerText = 'Failed: ' + (data.message || 'Try again');
     }
   }catch(e){
-    // FIX 2: Permission Error hele sahaj message
-    if(e.message.includes("permissions") || e.code==='permission-denied'){
-      document.getElementById('msg').innerText='⚠️ Firebase Rules tala lagichi! Firebase > Firestore > Rules re "allow read, write: if true;" kari Publish kara.';
-    } else {
-      document.getElementById('msg').innerText='Wallet load heini: '+e.message;
-    }
+    msg.innerText = 'Network error. Try again.';
   }
+  btn.disabled = false;
+  btn.innerText = 'Recharge Now';
 }
+
+// ---------- HISTORY - No orderBy, No Index Required ----------
 async function loadHist(){
   try{
-    let s=await db.collection('recharges').where('userId','==',userId).orderBy('createdAt','desc').limit(20).get();
-    let h=''; s.forEach(doc=>{let d=doc.data(); h+=`<tr><td>${d.number}<br><small>${d.operator||''}</small></td><td>₹ ${d.amount}</td><td>₹ ${(d.commission||0).toFixed(2)}</td><td>${d.status||'Success'}</td></tr>`;});
-    document.getElementById('hist').innerHTML=h||'<tr><td colspan=4>No records</td></tr>';
-  }catch(e){ document.getElementById('hist').innerHTML='<tr><td colspan=4>History load heini - Rules check kara</td></tr>'; }
-}
-
-function autoDetect(){
-  let n=document.getElementById('num').value.replace(/[^0-9]/g,'');
-  document.getElementById('num').value=n;
-  if(n.length<3) return;
-  if(n.startsWith('8018')||n.startsWith('9437')||n.startsWith('9438')||n.startsWith('9439')){ document.getElementById('op').value='4'; document.getElementById('circle').value='15'; document.getElementById('detectMsg').innerText='✅ Detected: BSNL - Odisha'; showComm(); }
-  else if(/^70[0-9]|^71[0-9]|^72[0-9]|^73[0-9]|^74[0-9]|^75[0-9]|^76[0-9]|^77[0-9]|^78[0-9]|^79[0-9]/.test(n)){ document.getElementById('op').value='1'; document.getElementById('circle').value='15'; document.getElementById('detectMsg').innerText='✅ Detected: Jio - Odisha (Ported hele change kara)'; showComm(); }
-  else if(n.startsWith('720')||n.startsWith('721')||n.startsWith('722')||n.startsWith('723')||n.startsWith('993')){ document.getElementById('op').value='2'; document.getElementById('circle').value='15'; document.getElementById('detectMsg').innerText='✅ Detected: Airtel - Odisha'; showComm(); }
-  else if(n.startsWith('730')||n.startsWith('731')||n.startsWith('732')||n.startsWith('977')){ document.getElementById('op').value='3'; document.getElementById('circle').value='15'; document.getElementById('detectMsg').innerText='✅ Detected: Vi - Odisha'; showComm(); }
-}
-
-async function doRecharge(){
- let number=document.getElementById('num').value.trim(), amount=parseFloat(document.getElementById('amt').value), opCode=document.getElementById('op').value, circleCode=document.getElementById('circle').value, opName=document.getElementById('op').options[document.getElementById('op').selectedIndex].text;
- if(number.length!==10||!amount) return alert('Fill correct number & amount');
- let rate=getRetailerRate(opCode);
- let commission=Math.round(amount*rate*100)/100;
- let dComm=Math.round(amount*SETUP.distributor/100*100)/100;
- let aComm=Math.round(amount*SETUP.admin/100*100)/100;
- let netDeduct=amount-commission;
- let wallet=parseFloat(document.getElementById('uWallet').innerText||0);
- if(netDeduct>wallet) return alert('Wallet low! Wallet: ₹ '+wallet.toFixed(2)+' | Need: ₹ '+netDeduct.toFixed(2));
- if(!confirm(`Recharge ₹${amount}\nTuma Comm ₹${commission.toFixed(2)}\nWallet ru katiba ₹${netDeduct.toFixed(2)}\nOK?`)) return;
- document.getElementById('msg').innerText='Processing... Please wait';
- let orderid='PQ'+Date.now();
- try{
-  let url=`${API}/api/recharge?number=${number}&amount=${amount}&operatorcode=${opCode}&circlecode=${circleCode}&orderid=${orderid}`;
-  let r=await fetch(url); let txt=await r.text();
-  document.getElementById('msg').innerText='API Reply: '+txt;
-  let j={}; try{j=JSON.parse(txt);}catch(e){}
-  if(txt.toLowerCase().includes('success') || j.status==1 || j.status=='1' || j.status=='Success'){
-    // FIX 3: Wallet update - Transaction bhali, parseFloat
-    let docRef=await db.collection('retailers').doc(userId).get();
-    let curWallet=parseFloat(docRef.data().wallet||0); let curComm=parseFloat(docRef.data().totalCommission||0);
-    let distributorId = docRef.data().distributorId || "";
-    await db.collection('recharges').add({number,amount,commission,distributorCommission:dComm,adminCommission:aComm,operator:opName,userId,userName,orderid,status:'Success',createdAt:new Date()});
-    await db.collection('retailers').doc(userId).update({wallet: curWallet - netDeduct, totalCommission: curComm + commission});
-    // FIX 4: Distributor ku deba
-    if(distributorId){
-      try{
-        let dDoc = await db.collection('distributors').doc(distributorId).get();
-        if(dDoc.exists) await db.collection('distributors').doc(distributorId).update({wallet: parseFloat(dDoc.data().wallet||0) + dComm, totalCommission: parseFloat(dDoc.data().totalCommission||0) + dComm});
-      }catch(e){ console.log("Distributor comm fail", e.message); }
-    }
-    // Admin Commission - admin_commissions collection re save (Admin Panel re dekhhiba)
-    try{ await db.collection('admin_commissions').add({retailerId:userId, retailerName:userName, amount, commission:aComm, orderid, createdAt:new Date()}); }catch(e){}
-    document.getElementById('msg').innerText=`✅ Recharge Success - Comm ₹ ${commission.toFixed(2)} milila! Distributor ₹${dComm.toFixed(2)}, Admin ₹${aComm.toFixed(2)}`;
-    setTimeout(()=>location.reload(),1500);
-  } else {
-    await db.collection('recharges').add({number,amount,commission:0,operator:opName,userId,userName,orderid,status:'Failed - '+txt,createdAt:new Date()});
-    document.getElementById('msg').innerText='❌ Failed: '+txt+' - Taka kata nahi';
+    let s = await db.collection('recharges').where('userId','==',userId).limit(20).get();
+    let arr = [];
+    s.forEach(doc => arr.push(doc.data()));
+    arr.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+    let h = '';
+    arr.forEach(d => {
+      let cls = d.status === 'Success' ? 'success' : (d.status === 'Failed' ? 'failed' : 'pending');
+      h += `<tr><td>${d.number}<br><small>${d.operator || ''}</small></td><td>₹ ${d.amount}</td><td>₹ ${(d.commission || 0).toFixed(2)}</td><td><span class="badge ${cls}">${d.status || 'Success'}</span></td></tr>`;
+    });
+    document.getElementById('hist').innerHTML = h || '<tr><td colspan="4">No records</td></tr>';
+  }catch(e){
+    document.getElementById('hist').innerHTML = '<tr><td colspan="4">Unable to load history</td></tr>';
   }
- }catch(e){ 
-   if(e.message.includes("permissions")) document.getElementById('msg').innerText='❌ Failed: Missing permissions - Firebase Rules re allow read, write: if true; kara.';
-   else document.getElementById('msg').innerText='Failed: '+e.message; 
- }
 }
-loadSetup(); loadWallet(); loadHist();
-</script></body></html>
+</script>
+</body>
+</html>
