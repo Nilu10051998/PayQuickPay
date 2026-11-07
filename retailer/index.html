@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Retailer Panel</title>
+<title>PayQuickPay - Retailer</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -28,23 +28,38 @@ th{color:#666;font-size:12px}
 .pending{background:#fff3cd;color:#856404}
 .wallet{font-size:22px;font-weight:800}
 .small{font-size:12px;color:#777}
+.loginWrap{display:flex;justify-content:center;align-items:center;min-height:90vh;padding:16px}
+.loginCard{background:#fff;width:100%;max-width:380px;border-radius:12px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.08)}
+.logout{font-size:12px;background:#fff;color:#0b3d91;border:0;padding:6px 10px;border-radius:6px;cursor:pointer;font-weight:700}
 </style>
 </head>
 <body>
 
-<div class="top"><b>PayQuickPay</b><span id="userEmail" class="small" style="color:#fff"></span></div>
+<!-- LOGIN PART -->
+<div id="loginBox" class="loginWrap" style="display:none">
+<div class="loginCard">
+<h2 style="margin:0;text-align:center;color:#0b3d91">PayQuickPay</h2>
+<p style="text-align:center;color:#777;font-size:13px">Retailer Login</p>
+<label>Email</label>
+<input id="email" type="email" placeholder="Enter Email">
+<label>Password</label>
+<input id="pass" type="password" placeholder="Enter Password">
+<button class="btn" id="loginBtn" onclick="doLogin()">Login</button>
+<div id="loginMsg" class="small" style="color:#c00;text-align:center;margin-top:10px"></div>
+</div>
+</div>
 
+<!-- PANEL PART -->
+<div id="panelBox" style="display:none">
+<div class="top"><b>PayQuickPay</b><span><span id="userEmail" class="small" style="color:#fff"></span> <button class="logout" onclick="doLogout()">Logout</button></span></div>
 <div class="card">
 <div class="small">Wallet Balance</div>
 <div class="wallet">₹ <span id="wallet">0.00</span></div>
 </div>
-
 <div class="card">
 <h3 style="margin:0">Mobile Recharge</h3>
-
 <label>Mobile Number</label>
 <input id="num" type="tel" maxlength="10" placeholder="10 Digit Mobile Number" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-
 <label>Operator</label>
 <select id="op" onchange="showComm()">
 <option value="RC">Jio Prepaid</option>
@@ -52,19 +67,15 @@ th{color:#666;font-size:12px}
 <option value="V">Vi Prepaid</option>
 <option value="BR">BSNL Prepaid - STV</option>
 <option value="BT">BSNL Prepaid - Topup</option>
-<option value="RC">Jio Postpaid</option>
-<option value="A">Airtel Postpaid</option>
+<option value="RCP">Jio Postpaid</option>
+<option value="AP">Airtel Postpaid</option>
 </select>
-
 <label>Amount</label>
 <input id="amt" type="number" placeholder="Enter Amount" oninput="showComm()">
-
 <div id="commBox" class="comm" style="display:none"></div>
-
 <button class="btn" id="rechargeBtn" onclick="doRecharge()">Recharge Now</button>
 <div id="msg" class="small" style="margin-top:10px"></div>
 </div>
-
 <div class="card">
 <h3 style="margin:0 0 10px">Recent History</h3>
 <table>
@@ -72,27 +83,27 @@ th{color:#666;font-size:12px}
 <tbody id="hist"><tr><td colspan="4">Loading...</td></tr></tbody>
 </table>
 </div>
+</div>
 
 <script>
-// ---------- FIREBASE CONFIG - Replace with your config ----------
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",
+  authDomain: "payquickpay-487ef.firebaseapp.com",
+  projectId: "payquickpay-487ef",
+  storageBucket: "payquickpay-487ef.firebasestorage.app",
+  messagingSenderId: "368108778411",
+  appId: "1:368108778411:web:03dcbc47e46568d51b58ee",
+  measurementId: "G-9SLWLCMK8P"
 };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// ---------- RETAILER COMMISSION RATES - A1 Topup ----------
 function getRetailerRate(opCode){
-  if(opCode === 'RC') return 0.008;   // Jio 0.80%
-  if(opCode === 'A') return 0.013;    // Airtel 1.30%
-  if(opCode === 'V') return 0.03;     // Vi 3.00%
-  if(opCode === 'BR' || opCode === 'BT') return 0.034; // BSNL 3.40%
+  if(opCode === 'RC' || opCode === 'RCP') return 0.008;
+  if(opCode === 'A' || opCode === 'AP') return 0.013;
+  if(opCode === 'V') return 0.03;
+  if(opCode === 'BR' || opCode === 'BT') return 0.034;
   return 0;
 }
 
@@ -100,12 +111,35 @@ let userId = null;
 let walletBalance = 0;
 
 auth.onAuthStateChanged(async (user)=>{
-  if(!user){ window.location.href='login.html'; return; }
+  if(!user){
+    document.getElementById('loginBox').style.display='flex';
+    document.getElementById('panelBox').style.display='none';
+    return;
+  }
   userId = user.uid;
+  document.getElementById('loginBox').style.display='none';
+  document.getElementById('panelBox').style.display='block';
   document.getElementById('userEmail').innerText = user.email || '';
   await loadWallet();
   await loadHist();
 });
+
+async function doLogin(){
+  let email = document.getElementById('email').value.trim();
+  let pass = document.getElementById('pass').value;
+  let msg = document.getElementById('loginMsg');
+  let btn = document.getElementById('loginBtn');
+  if(!email || !pass){ msg.innerText='Email ar Password dia'; return; }
+  btn.disabled=true; btn.innerText='Logging in...'; msg.innerText='';
+  try{
+    await auth.signInWithEmailAndPassword(email, pass);
+  }catch(e){
+    msg.innerText = e.message;
+    btn.disabled=false; btn.innerText='Login';
+  }
+}
+
+async function doLogout(){ await auth.signOut(); location.reload(); }
 
 async function loadWallet(){
   let doc = await db.collection('users').doc(userId).get();
@@ -115,7 +149,6 @@ async function loadWallet(){
   }
 }
 
-// ---------- COMMISSION DISPLAY - Only Retailer Commission ----------
 function showComm(){
   let amount = parseFloat(document.getElementById('amt').value || 0);
   let opCode = document.getElementById('op').value;
@@ -126,12 +159,9 @@ function showComm(){
     let payable = amount - comm;
     box.style.display = 'block';
     box.innerHTML = `Your Commission: <b>₹ ${comm.toFixed(2)}</b> | Payable: <b>₹ ${payable.toFixed(2)}</b>`;
-  } else {
-    box.style.display = 'none';
-  }
+  } else { box.style.display = 'none'; }
 }
 
-// ---------- RECHARGE ----------
 async function doRecharge(){
   let number = document.getElementById('num').value.trim();
   let opCode = document.getElementById('op').value;
@@ -139,62 +169,35 @@ async function doRecharge(){
   let amount = parseFloat(document.getElementById('amt').value || 0);
   let msg = document.getElementById('msg');
   let btn = document.getElementById('rechargeBtn');
-
   if(number.length !== 10){ msg.innerText = 'Enter valid 10 digit number'; return; }
   if(amount <= 0){ msg.innerText = 'Enter valid amount'; return; }
-
   let rate = getRetailerRate(opCode);
   let commission = amount * rate;
   let payable = amount - commission;
-
   if(walletBalance < payable){ msg.innerText = 'Insufficient wallet balance'; return; }
-
-  btn.disabled = true;
-  btn.innerText = 'Processing...';
-  msg.innerText = '';
-
+  btn.disabled = true; btn.innerText = 'Processing...'; msg.innerText = '';
   try{
-    // Vercel API - A1 operator code already mapped (RC, A, V, BR, BT)
-    let res = await fetch('https://payquickpay-api.vercel.app/api/recharge', {
+    let res = await fetch('https://payquickpay.in/api/recharge', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ number, operatorcode: opCode, amount, orderid: 'PQ' + Date.now() })
     });
     let data = await res.json();
-
     if(data.status === 'Success' || data.status === 'Pending' || data.success === true){
-      // Deduct payable only, commission already adjusted
-      await db.collection('users').doc(userId).update({
-        wallet: firebase.firestore.FieldValue.increment(-payable)
-      });
-      await db.collection('recharges').add({
-        userId, number, operator: opText, operatorcode: opCode,
-        amount, commission, payable,
-        status: data.status || 'Success',
-        orderid: data.orderid || '',
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
+      await db.collection('users').doc(userId).update({ wallet: firebase.firestore.FieldValue.increment(-payable) });
+      await db.collection('recharges').add({ userId, number, operator: opText, operatorcode: opCode, amount, commission, payable, status: data.status || 'Success', orderid: data.orderid || '', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
       msg.innerText = 'Recharge ' + (data.status || 'Success');
       document.getElementById('amt').value = '';
-      showComm();
-      await loadWallet();
-      await loadHist();
-    } else {
-      msg.innerText = 'Failed: ' + (data.message || 'Try again');
-    }
-  }catch(e){
-    msg.innerText = 'Network error. Try again.';
-  }
-  btn.disabled = false;
-  btn.innerText = 'Recharge Now';
+      showComm(); await loadWallet(); await loadHist();
+    } else { msg.innerText = 'Failed: ' + (data.message || 'Try again'); }
+  }catch(e){ msg.innerText = 'Network error. Try again.'; }
+  btn.disabled = false; btn.innerText = 'Recharge Now';
 }
 
-// ---------- HISTORY - No orderBy, No Index Required ----------
 async function loadHist(){
   try{
     let s = await db.collection('recharges').where('userId','==',userId).limit(20).get();
-    let arr = [];
-    s.forEach(doc => arr.push(doc.data()));
+    let arr = []; s.forEach(doc => arr.push(doc.data()));
     arr.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
     let h = '';
     arr.forEach(d => {
@@ -202,9 +205,7 @@ async function loadHist(){
       h += `<tr><td>${d.number}<br><small>${d.operator || ''}</small></td><td>₹ ${d.amount}</td><td>₹ ${(d.commission || 0).toFixed(2)}</td><td><span class="badge ${cls}">${d.status || 'Success'}</span></td></tr>`;
     });
     document.getElementById('hist').innerHTML = h || '<tr><td colspan="4">No records</td></tr>';
-  }catch(e){
-    document.getElementById('hist').innerHTML = '<tr><td colspan="4">Unable to load history</td></tr>';
-  }
+  }catch(e){ document.getElementById('hist').innerHTML = '<tr><td colspan="4">Unable to load history</td></tr>'; }
 }
 </script>
 </body>
