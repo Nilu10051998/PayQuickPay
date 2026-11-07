@@ -76,6 +76,9 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+// *** THIK HEICHHI - API LINK ***
+const API_URL = 'https://payquickpay-api.vercel.app/api/recharge';
+
 function getRetailerRate(opCode){
   if(opCode === 'RC' || opCode === 'RCP') return 0.008;
   if(opCode === 'A' || opCode === 'AP') return 0.013;
@@ -84,7 +87,6 @@ function getRetailerRate(opCode){
   return 0;
 }
 
-// Tuma Login Page ra system - localStorage
 let userId = localStorage.getItem('userId');
 let userRole = localStorage.getItem('userRole');
 let userName = localStorage.getItem('userName');
@@ -138,7 +140,7 @@ async function doRecharge(){
   if(walletBalance < payable){ msg.innerText = 'Insufficient wallet balance'; return; }
   btn.disabled = true; btn.innerText = 'Processing...'; msg.innerText = '';
   try{
-    let res = await fetch('https://payquickpay.in/api/recharge', {
+    let res = await fetch(API_URL, {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ number, operatorcode: opCode, amount, orderid: 'PQ' + Date.now() })
@@ -150,8 +152,13 @@ async function doRecharge(){
       msg.innerText = 'Recharge ' + (data.status || 'Success');
       document.getElementById('amt').value = '';
       showComm(); await loadWallet(); await loadHist();
-    } else { msg.innerText = 'Failed: ' + (data.message || 'Try again'); }
-  }catch(e){ msg.innerText = 'Network error. Try again.'; }
+    } else {
+      // Failed bi history re save heba, jemit tume dekh pariba
+      await db.collection('recharges').add({ userId, userName, number, operator: opText, operatorcode: opCode, amount, commission, payable, status: 'Failed', orderid: '', raw: data.message || '', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      msg.innerText = 'Failed: ' + (data.message || 'Try again');
+      await loadHist();
+    }
+  }catch(e){ msg.innerText = 'Network error. Try again.'; console.log(e); }
   btn.disabled = false; btn.innerText = 'Recharge Now';
 }
 
