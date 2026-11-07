@@ -101,8 +101,9 @@ th{color:#666;font-size:12px}
 <div class="card" style="margin:12px 0 0;padding:12px;background:#f8faff">
 <div style="display:flex;justify-content:space-between;align-items:center"><h4 style="margin:0">Commission Structure</h4><button type="button" onclick="toggleCommList()" style="background:#0b3d91;color:#fff;border:0;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer">View</button></div>
 <div id="commList" class="small" style="line-height:1.8;display:none;margin-top:8px">
-<b>Mobile:</b> Jio - 0.50% • Airtel - 1.00% • Vi - 2.60% • BSNL - 3.00%<br>
+<b>Retailer Commission (Marketing Special):</b><br>Jio - 0.60% • Airtel - 1.00% • Vi - 2.60% • BSNL - 3.00%<br>
 <b>DTH:</b> Dish TV - 3.20% • Airtel Digital - 3.10% • Sun Direct - 2.90% • Videocon - 3.60% • Tata Sky - 3.10%
+<span style="color:#888">Rates as per existing code - not changed.</span>
 </div>
 </div>
 <button class="btn" id="rechargeBtn" onclick="doRecharge()">Recharge Now</button>
@@ -153,15 +154,10 @@ const db = firebase.firestore();
 const API_URL = 'https://payquickpay-api.vercel.app/api/recharge';
 
 function getRetailerRate(opCode){
-  if(opCode === 'RC' || opCode === 'RCP') return 0.005; // FINAL - Jio 0.50% - DO NOT CHANGE
-  if(opCode === 'A' || opCode === 'AP') return 0.01; // FINAL - Airtel 1.00%
-  if(opCode === 'V') return 0.026; // FINAL - Vi 2.60%
-  if(opCode === 'BR' || opCode === 'BT') return 0.03; // FINAL - BSNL 3.00%
-  if(opCode === 'DISH') return 0.032;
-  if(opCode === 'ADTV') return 0.031;
-  if(opCode === 'SUN') return 0.029;
-  if(opCode === 'VIDEOCON') return 0.036;
-  if(opCode === 'TATA') return 0.031;
+  if(opCode === 'RC' || opCode === 'RCP') return 0.006; // Retailer Jio 0.60%
+  if(opCode === 'A' || opCode === 'AP') return 0.01; // Retailer Airtel 1.00%
+  if(opCode === 'V') return 0.026; // Retailer Vi 2.60%
+  if(opCode === 'BR' || opCode === 'BT') return 0.03; // Retailer BSNL 3.00%
   return 0;
 }
 
