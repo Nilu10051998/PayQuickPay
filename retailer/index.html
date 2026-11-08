@@ -187,7 +187,7 @@ async function doLogout(){
 
 async function loadWallet(){
   try{
-    let doc = await db.collection('retailers').doc(userId).get();
+    let doc = await Promise.race([db.collection('retailers').doc(userId).get(), new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')), 8000))]);
     if(doc.exists){
       walletBalance = parseFloat(doc.data().wallet || 0);
       document.getElementById('wallet').innerText = walletBalance.toFixed(2);
@@ -320,7 +320,16 @@ async function doRecharge(){
 
 async function loadHist(){
   try{
-    let s = await db.collection('recharges').where('userId','==',userId).limit(20).get();
+    // Timeout: Firestore hang hele Loading re atki jiba ni
+    let q = db.collection('recharges').where('userId','==',userId).limit(20).get();
+    let s = await Promise.race([q, new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')), 8000)]);
+    if(s.empty){
+      // Fallback: userId mismatch hele - userName hisab re khojiba
+      try{
+        let s2 = await db.collection('recharges').where('userName','==',userName).limit(20).get();
+        if(!s2.empty) s = s2;
+      }catch(e){}
+    }
     let arr = []; s.forEach(doc => arr.push(doc.data()));
     arr.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
     let h = '';
@@ -342,7 +351,7 @@ async function loadHist(){
       let rq = await db.collection('wallet_requests').where('userId','==',userId).where('status','==','Pending').limit(1).get();
       if(!rq.empty) document.getElementById('noticeText').innerText = 'Wallet Request Pending - Distributor ku request patha heichi. Approve hele balance add heba.';
     }catch(e){}
-  }catch(e){ document.getElementById('hist').innerHTML = '<tr><td colspan="4">Unable to load history</td></tr>'; }
+  }catch(e){ console.log('loadHist error',e); document.getElementById('hist').innerHTML = '<tr><td colspan="4">History load heini - Net / Firebase Rule check kara. Error: '+(e.message||'')+'</td></tr>'; }
 }
 
 loadWallet();
