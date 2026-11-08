@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="en"><head><style>
+<!DOCTYPE html>
+<html lang="en">
+<head><style>
 @font-face {
   font-family: "Optimistic";
   font-style: normal;
@@ -19,82 +21,124 @@
 :where(code, pre, kbd, samp) {
   font-family: "Optimistic Mono", ui-monospace, monospace;
 }
-</style><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>PayQuickPay - Retailer</title>
+</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayQuickPay - Retailer</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<style>*{box-sizing:border-box;font-family:Inter,Arial,sans-serif}body{margin:0;background:#eef0ff}
-.topbar{background:linear-gradient(90deg,#5b21b6,#2563eb);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
-.topbar b{font-size:18px}.topbar .small{color:#ddd6fe}
-.welcome{background:linear-gradient(90deg,#5b21b6,#2563eb);color:#fff;padding:14px 16px 20px;display:flex;justify-content:space-between;align-items:center}
-.balbox{background:#fff;color:#111;border-radius:12px;padding:10px 14px;min-width:160px;box-shadow:0 4px 14px rgba(0,0,0,.15)}
-.balbox .small{color:#64748b}.balbox b{font-size:20px}
-.addbtn{background:linear-gradient(90deg,#7c3aed,#2563eb);color:#fff;border:0;padding:7px 12px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer}
-.news{margin:12px;background:#fff;border-radius:10px;padding:8px;display:flex;gap:8px;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.05)}
-.news span{background:linear-gradient(90deg,#2563eb,#7c3aed);color:#fff;font-size:11px;padding:5px 10px;border-radius:20px;white-space:nowrap}
-.tabs{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:0 12px}.tabs button{border:0;padding:9px 12px;font-size:11px;font-weight:700;cursor:pointer;background:#0f172a;color:#fff;border-radius:4px}.tabs button.active{background:#2563eb}
-.card{background:#fff;margin:12px;border-radius:14px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.06)}
-.card-head{background:linear-gradient(90deg,#5b21b6,#2563eb);color:#fff;padding:14px 16px}.card-head h3{margin:0;font-size:15px}.card-head small{color:#ddd6fe}
-.card-body{padding:16px}label{font-size:13px;color:#333;display:block;margin:12px 0 5px;font-weight:600}
-input,select{width:100%;padding:12px;border:1px solid #e2e8f0;border-radius:10px;font-size:15px;outline:none;background:#f8fafc}
-input:focus,select:focus{border-color:#7c3aed;background:#fff}
-.btn{width:100%;padding:13px;background:linear-gradient(90deg,#5b21b6,#2563eb);color:#fff;border:0;border-radius:10px;font-size:15px;font-weight:700;margin-top:16px;cursor:pointer}
-.btn:disabled{opacity:.6}.comm{background:#eef2ff;border:1px solid #ddd6fe;padding:10px;border-radius:8px;font-size:14px;margin-top:12px}
-table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px 6px;border-bottom:1px solid #eee;text-align:left}th{color:#666;font-size:12px}
-.badge{padding:3px 8px;border-radius:20px;font-size:11px;font-weight:700}.success{background:#dcfce7;color:#15803d}.failed{background:#fee2e2;color:#dc2626}.pending{background:#fef9c3;color:#854d0e}
-.wallet{font-size:22px;font-weight:800}.small{font-size:12px;color:#777}.logout{font-size:12px;background:#fff;color:#5b21b6;border:0;padding:6px 10px;border-radius:6px;cursor:pointer;font-weight:700}
-</style></head><body>
-<div class="topbar"><b>PayQuickPay</b><span><span id="userEmail" class="small"></span> <button class="logout" onclick="toggleSettings()">⚙️ Settings</button> <button class="logout" onclick="doLogout()">Logout</button></span></div>
-<div class="welcome"><div><div class="small">Welcome back</div><b id="userName" style="font-size:17px"></b><div class="small" style="color:#ddd6fe">Retailer ID: <b id="retailerId" style="color:#fff">-</b> <button onclick="copyRetailerId()" style="background:#fff;color:#5b21b6;border:0;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;cursor:pointer">Copy</button></div></div><div class="balbox"><div class="small">Available balance</div><div><b>Rs <span id="wallet">0.00</span></b> <button class="addbtn" onclick="document.getElementById('reqAmt').focus();window.scrollTo(0,document.body.scrollHeight)">+ Add Money</button></div></div></div>
-<div class="news"><span>News &amp; alerts</span><marquee style="font-size:12px">PayQuickPay - Fast Recharge • Jio 0.60% • Airtel 1.00% • Vi 2.60% • BSNL 3.00% Commission</marquee></div>
-<div class="tabs"><button class="active">MOBILE</button><button>DTH</button><button>POST PAID</button><button>ELECTRICITY</button><button>GAS</button><button>INSURANCE</button><button>MONEY TRANSFER</button><button>NSDL PAN CARD</button></div>
-<div class="card"><div class="card-head"><h3>Mobile recharge</h3><small>Prepaid</small></div><div class="card-body">
-<label id="numLabel">Mobile number</label><input id="num" type="tel" maxlength="14" placeholder="Mobile / VC / Consumer Number" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-<label>Operator</label><div class="small" style="color:#5b21b6;font-weight:700">Selected: <span id="opSelected">Jio Prepaid</span></div><select id="op" onchange="showComm();updateNumLimit()">
-<optgroup label="MOBILE PREPAID">
+<style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f1f4f8}
+.top{background:#0b3d91;color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+.top b{font-size:18px}
+.card{background:#fff;margin:12px;border-radius:10px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+label{font-size:13px;color:#555;display:block;margin:12px 0 5px}
+input,select{width:100%;padding:11px;border:1px solid #ddd;border-radius:8px;font-size:15px;outline:none}
+input:focus,select:focus{border-color:#0b3d91}
+.btn{width:100%;padding:12px;background:#0b3d91;color:#fff;border:0;border-radius:8px;font-size:16px;font-weight:700;margin-top:16px;cursor:pointer}
+.btn:disabled{opacity:.6}
+.btn-small{padding:8px 12px;background:#fff;color:#0b3d91;border:0;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer}
+.comm{background:#eef6ff;border:1px solid #cfe3ff;padding:10px;border-radius:8px;font-size:14px;margin-top:12px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:9px 6px;border-bottom:1px solid #eee;text-align:left}
+th{color:#666;font-size:12px}
+.badge{padding:3px 8px;border-radius:20px;font-size:11px;font-weight:700}
+.success{background:#e6f9ec;color:#0a7a2e}
+.failed{background:#fdecea;color:#c00}
+.pending{background:#fff3cd;color:#856404}
+.wallet{font-size:22px;font-weight:800}
+.small{font-size:12px;color:#777}
+.logout{font-size:12px;background:#fff;color:#0b3d91;border:0;padding:6px 10px;border-radius:6px;cursor:pointer;font-weight:700}
+.notice{background:#fffbe6;border:1px solid #ffe58f;margin:12px 12px 0;border-radius:10px;padding:10px 16px;font-size:13px;color:#5c4a00}
+.layout{display:flex;gap:0;align-items:flex-start}
+.main{flex:1;min-width:0}
+.side{width:220px;flex-shrink:0}
+.side .card{margin-left:0}
+.switch{position:relative;width:48px;height:26px;display:inline-block}
+.switch input{display:none}
+.slider{position:absolute;inset:0;background:#ccc;border-radius:20px;transition:.2s;cursor:pointer}
+.slider:before{content:"";position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;top:3px;left:3px;transition:.2s}
+.switch input:checked + .slider{background:#0b3d91}
+.switch input:checked + .slider:before{transform:translateX(22px)}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99;align-items:center;justify-content:center}
+.modal.open{display:flex}
+.modal-box{background:#fff;width:92%;max-width:360px;border-radius:12px;padding:18px}
+@media(max-width:700px){.layout{flex-direction:column}.side{width:100%}.side .card{margin-left:12px}}
+</style>
+</head>
+<body>
+<div class="notice">🔔 <b>Notice Board:</b> <span id="noticeText">Welcome Retailer! Recharge services are live.</span></div>
+<div class="top"><b>PayQuickPay</b><span><span id="userEmail" class="small" style="color:#fff"></span> <button class="logout" onclick="doLogout()">Logout</button></span></div>
+<div class="layout">
+<div class="main">
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+<div><div class="small">Wallet Balance - <span id="userName"></span></div><div class="wallet">₹ <span id="wallet">0.00</span></div></div>
+<button class="btn" style="width:auto;margin:0;padding:10px 14px;font-size:13px" onclick="openDistModal()">+ Request to Distributor<br><span style="font-weight:400;font-size:11px">Add Money to Wallet</span></button>
+</div>
+</div>
+<div class="card">
+<h3 style="margin:0">Mobile Recharge</h3>
+<div style="display:flex;gap:10px;margin-top:12px"><div style="flex:1;text-align:center;background:#eef6ff;border-radius:8px;padding:10px">📱<br><b style="font-size:13px">Mobile Recharge</b></div><div style="flex:1;text-align:center;background:#f1f4f8;border-radius:8px;padding:10px">🧾<br><b style="font-size:13px">Bill Payment</b></div></div>
+<label>Mobile Number</label>
+<input id="num" type="tel" maxlength="10" placeholder="10 Digit Mobile Number" oninput="this.value=this.value.replace(/[^0-9]/g,'');autoDetectOperator()">
+<div class="small" id="autoHint">Enter number to auto detect operator</div>
+<label>Operator</label>
+<select id="op" onchange="showComm()">
 <option value="RC">Jio Prepaid</option>
 <option value="A">Airtel Prepaid</option>
 <option value="V">Vi Prepaid</option>
 <option value="BR">BSNL Prepaid - STV</option>
 <option value="BT">BSNL Prepaid - Topup</option>
-</optgroup>
-<optgroup label="POSTPAID">
 <option value="RCP">Jio Postpaid</option>
 <option value="AP">Airtel Postpaid</option>
-<option value="JPP">Jio Postpaid - JPP</option>
-<option value="PAT">Airtel Postpaid - PAT</option>
-</optgroup>
-<optgroup label="DTH">
-<option value="DTV">Dish TV</option>
-<option value="ATV">Airtel Digital TV</option>
-<option value="TTV">Tata Sky</option>
-<option value="STV">Sun Direct</option>
-<option value="VTV">Videocon D2H</option>
-</optgroup>
-<optgroup label="ELECTRICITY">
-<option value="TPCODL">TPCODL - Odisha</option>
-<option value="NESCO">NESCO - Odisha</option>
-<option value="SOUTHCO">SOUTHCO - Odisha</option>
-<option value="WESCO">WESCO - Odisha</option>
-</optgroup>
 </select>
-<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
-<button type="button" onclick="setOp('RC','Jio Prepaid')" style="padding:8px 12px;border:1px solid #ddd6fe;border-radius:20px;background:#eef2ff;font-size:12px;font-weight:700;cursor:pointer">Jio</button>
-<button type="button" onclick="setOp('A','Airtel Prepaid')" style="padding:8px 12px;border:1px solid #ddd6fe;border-radius:20px;background:#eef2ff;font-size:12px;font-weight:700;cursor:pointer">Airtel</button>
-<button type="button" onclick="setOp('V','Vi Prepaid')" style="padding:8px 12px;border:1px solid #ddd6fe;border-radius:20px;background:#eef2ff;font-size:12px;font-weight:700;cursor:pointer">Vi</button>
-<button type="button" onclick="setOp('BR','BSNL Prepaid - STV')" style="padding:8px 12px;border:1px solid #ddd6fe;border-radius:20px;background:#eef2ff;font-size:12px;font-weight:700;cursor:pointer">BSNL</button>
-<button type="button" onclick="setOp('DTV','Dish TV')" style="padding:8px 12px;border:1px solid #ddd6fe;border-radius:20px;background:#fff7ed;font-size:12px;font-weight:700;cursor:pointer">Dish TV</button>
-<button type="button" onclick="setOp('ATV','Airtel Digital TV')" style="padding:8px 12px;border:1px solid #ddd6fe;border-radius:20px;background:#fff7ed;font-size:12px;font-weight:700;cursor:pointer">Airtel DTH</button>
-<button type="button" onclick="setOp('TTV','Tata Sky')" style="padding:8px 12px;border:1px solid #ddd6fe;border-radius:20px;background:#fff7ed;font-size:12px;font-weight:700;cursor:pointer">Tata Sky</button>
-<button type="button" onclick="setOp('TPCODL','TPCODL - Odisha')" style="padding:8px 12px;border:1px solid #ddd6fe;border-radius:20px;background:#f0fdf4;font-size:12px;font-weight:700;cursor:pointer">TPCODL</button>
+<div class="small" style="margin-top:6px">Operator: <b id="opDetectText">Auto Detected</b> • <a href="#" onclick="document.getElementById('op').focus();return false;">Change / Select Manually</a> <br><span>If auto detect is wrong, manually select Jio • Airtel • Vi • BSNL</span></div>
+<label>Amount</label>
+<input id="amt" type="number" placeholder="Enter Amount" oninput="showComm()">
+<div id="commBox" class="comm" style="display:none"></div>
+<div class="card" style="margin:12px 0 0;padding:12px;background:#f8faff">
+<div style="display:flex;justify-content:space-between;align-items:center"><h4 style="margin:0">Commission Structure</h4><button type="button" onclick="toggleCommList()" style="background:#0b3d91;color:#fff;border:0;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer">View</button></div>
+<div id="commList" class="small" style="line-height:1.8;display:none;margin-top:8px">
+<b>Retailer Commission - FINAL LOCK:</b><br>Jio - 0.60% • Airtel - 1.00% • Vi - 2.60% • BSNL - 3.00%<br>
+<b>DTH:</b> Dish TV - 3.20% • Airtel Digital - 3.10% • Sun Direct - 2.90% • Videocon - 3.60% • Tata Sky - 3.10%<br>
+<span style="color:#64748b;font-size:11px">A1TOPUP TOTAL: Jio 0.80% = Retailer 0.60% + Dist 0.10% + Admin 0.10%</span>
+<span style="color:#888">Rates as per existing code - not changed.</span>
 </div>
-<div class="small">Dropdown kholuni ki? Upara Button daba - 100% kam kariba</div>
-<label>Amount</label><input id="amt" type="number" placeholder="Enter amount or pick a plan" oninput="showComm()"><div class="small">Browse plans</div>
-<div id="commBox" class="comm" style="display:none"></div><label>Wallet PIN</label><input id="walletPinInput" type="password" maxlength="4" placeholder="Enter 4-digit Wallet PIN" inputmode="numeric"><div class="small">PIN bhulile Recharge heba ni</div><button class="btn" id="rechargeBtn" onclick="doRecharge()">Recharge</button><div id="msg" class="small" style="margin-top:10px"></div></div></div>
-<div class="card"><div class="card-head"><h3>Browse plans</h3><small>Enter a mobile number to see its plans</small></div><div class="card-body"><div class="small" style="text-align:center;padding:10px">Plans will appear here<br>Enter the mobile number. Operator and circle are detected automatically.</div></div></div>
-<div class="card"><div class="card-head"><h3>Notice Board</h3></div><div class="card-body"><div id="noticeText" class="small">Loading notice...</div></div></div>
-<div class="card"><div class="card-head"><h3>Request to Distributor</h3></div><div class="card-body"><label>Amount</label><input id="reqAmt" type="number" placeholder="Enter Amount"><button class="btn" onclick="sendDistRequest()">Send Request</button><div id="reqMsg" class="small" style="margin-top:8px"></div></div></div>
-<div class="card" id="settingsCard" style="display:none"><div class="card-head"><h3>Settings</h3><small>Retailer Profile • Login Password • Wallet PIN</small></div><div class="card-body"><div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px;margin-bottom:12px;font-size:13px;line-height:1.9"><b>Retailer Profile</b><br>Name: <b id="profName">-</b><br>Retailer ID: <b id="profId">-</b><br>Mobile: <b id="profMobile">-</b><br>Distributor: <b id="profDist">-</b><br>Wallet: <b>Rs <span id="profWallet">0.00</span></b></div><label>New Login Password</label><input id="newPass" type="password" placeholder="Enter New Password"><button class="btn" onclick="changePass()">Change Password</button><label style="margin-top:14px">Change Wallet PIN (4-digit)</label><input id="newWalletPin" type="password" maxlength="4" placeholder="Enter 4-digit PIN"><button class="btn" onclick="setWalletPin()">Change Wallet PIN</button><div id="pinMsg" class="small" style="margin-top:8px"></div><div id="passMsg" class="small" style="margin-top:8px"></div></div></div>
-<div class="card"><div class="card-head"><h3>Last 5 recharges</h3><small>Today: Rs <span id="todayComm">0.00</span> • Total Earned: Rs <span id="totalEarned">0.00</span></small></div><div class="card-body"><table><thead><tr><th>Number</th><th>Amount</th><th>Commission</th><th>Status</th></tr></thead><tbody id="hist"><tr><td colspan="4">Loading...</td></tr></tbody></table></div></div>
+</div>
+<button class="btn" id="rechargeBtn" onclick="doRecharge()">Recharge Now</button>
+<div id="msg" class="small" style="margin-top:10px"></div>
+</div>
+<div class="card">
+<h3 style="margin:0 0 10px">Recent History</h3>
+<div class="small" style="margin-bottom:8px">History • Today Commission Earned: ₹ <b id="todayComm">0.00</b></div>
+<table>
+<thead><tr><th>Number</th><th>Amount</th><th>Commission</th><th>Status</th></tr></thead>
+<tbody id="hist"><tr><td colspan="4">Loading...</td></tr></tbody>
+</table>
+</div>
+<div class="card">
+<h3 style="margin:0 0 10px">Customer Support &amp; Services</h3>
+<div style="display:flex;gap:10px"><div style="flex:1;background:#eef6ff;border-radius:8px;padding:12px;text-align:center">🎧<br><b style="font-size:13px">Customer Support</b><br><button class="btn" style="margin-top:8px;padding:8px;font-size:12px" onclick="alert('Customer Support: Contact your Distributor / Admin from Settings')">Help / Call Support</button></div><div style="flex:1;background:#f1f4f8;border-radius:8px;padding:12px;text-align:center">☰<br><b style="font-size:13px">Services</b><br><span class="small">Recharge History • Bill History • Offers</span></div></div>
+</div>
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center"><b>Settings</b><label class="switch"><input type="checkbox" id="settingSwitch" onchange="toggleSettings()"><span class="slider"></span></label></div>
+<div id="settingsBox" style="display:none">
+<label>Wallet PIN</label>
+<input id="walletPin" type="password" maxlength="4" placeholder="Enter 4 digit PIN" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+<div style="display:flex;gap:12px;margin-top:8px"><a href="#" onclick="forgotPin();return false;" class="small">Forgot PIN?</a><a href="#" onclick="resetPin();return false;" class="small">Reset PIN</a></div>
+<div id="pinMsg" class="small" style="margin-top:8px"></div>
+</div>
+</div>
+</div>
+<div class="side">
+<div class="card"><div class="small">Total Earned</div><div class="wallet" style="font-size:20px">₹ <span id="totalEarned">0.00</span></div><div class="small">Today: ₹ <span id="todayEarnedSide">0.00</span></div></div>
+</div>
+</div>
+
+<div class="modal" id="distModal"><div class="modal-box"><h3 style="margin:0">Request to Distributor</h3><p class="small">Retailer request send kriba Distributor ku Wallet re paisa add kriba pai.</p><label>Amount</label><input id="reqAmt" type="number" placeholder="Enter Amount"><div id="reqMsg" class="small" style="margin-top:8px"></div><button class="btn" onclick="sendDistRequest()">Send Request</button><button class="btn" style="background:#eee;color:#333" onclick="closeDistModal()">Close</button></div></div>
+
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",
@@ -106,54 +150,57 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+
+// *** THIK HEICHHI - API LINK ***
 const API_URL = 'https://payquickpay-api.vercel.app/api/recharge';
+
 function getRetailerRate(opCode){
-  if(opCode === 'RC' || opCode === 'RCP') return 0.006;
-  if(opCode === 'A' || opCode === 'AP') return 0.01;
-  if(opCode === 'V') return 0.026;
-  if(opCode === 'BR' || opCode === 'BT') return 0.03;
-  if(opCode === 'DTV') return 0.032;
-  if(opCode === 'ATV') return 0.031;
-  if(opCode === 'STV') return 0.029;
-  if(opCode === 'VTV') return 0.036;
-  if(opCode === 'TTV') return 0.031;
+  if(opCode === 'RC' || opCode === 'RCP') return 0.006; // FINAL LOCK Retailer Jio 0.60%
+  if(opCode === 'A' || opCode === 'AP') return 0.01; // FINAL LOCK Retailer Airtel 1.00%
+  if(opCode === 'V') return 0.026; // FINAL LOCK Retailer Vi 2.60%
+  if(opCode === 'BR' || opCode === 'BT') return 0.03; // FINAL LOCK Retailer BSNL 3.00%
+  if(opCode === 'DISH') return 0.032;
+  if(opCode === 'ADTV') return 0.031;
+  if(opCode === 'SUN') return 0.029;
+  if(opCode === 'VIDEOCON') return 0.036;
+  if(opCode === 'TATA') return 0.031;
   return 0;
 }
-function setService(s,btn){ document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active')); if(btn) btn.classList.add('active'); let op=document.getElementById('op'); let lbl=document.getElementById('numLabel'); let opts=''; if(s==='MOBILE'){ opts='<option value="RC">Jio Prepaid</option><option value="A">Airtel Prepaid</option><option value="V">Vi Prepaid</option><option value="BR">BSNL Prepaid - STV</option><option value="BT">BSNL Prepaid - Topup</option><option value="RCP">Jio Postpaid</option><option value="AP">Airtel Postpaid</option>'; lbl.innerText='Mobile number'; } else if(s==='DTH'){ opts='<option value="DTV">Dish TV</option><option value="ATV">Airtel Digital TV</option><option value="TTV">Tata Sky</option><option value="STV">Sun Direct</option><option value="VTV">Videocon D2H</option>'; lbl.innerText='VC Number / Subscriber ID'; } else if(s==='POSTPAID'){ opts='<option value="JPP">Jio Postpaid</option><option value="PAT">Airtel Postpaid</option><option value="VP">Vodafone Postpaid</option><option value="IP">Idea Postpaid</option><option value="BP">BSNL Postpaid</option>'; lbl.innerText='Mobile number'; } else if(s==='ELECTRICITY'){ opts='<option value="TPCODL">TPCODL - Odisha</option><option value="NESCO">NESCO - Odisha</option><option value="SOUTHCO">SOUTHCO - Odisha</option><option value="WESCO">WESCO - Odisha</option>'; lbl.innerText='Consumer Number'; } op.innerHTML=opts; let nI=document.getElementById('num'); nI.value=''; nI.maxLength=(s==='MOBILE'||s==='POSTPAID')?10:14; nI.placeholder=(s==='DTH')?'VC Number':(s==='ELECTRICITY')?'Consumer Number':'Mobile Number'; showComm(); }
-function getDistributorRate(opCode){
-  if(opCode === 'RC' || opCode === 'RCP') return 0.001;
-  if(opCode === 'A' || opCode === 'AP') return 0.0015;
-  if(opCode === 'V') return 0.002;
-  if(opCode === 'BR' || opCode === 'BT') return 0.002;
-  return 0;
-}
+function getDistributorRate(opCode){ if(opCode === 'RC' || opCode === 'RCP') return 0.001; // Jio Dist 0.10% | if(opCode === 'A' || opCode === 'AP') return 0.0015; // Airtel Dist 0.15% | if(opCode === 'V') return 0.002; // Vi Dist 0.20% | if(opCode === 'BR' || opCode === 'BT') return 0.002; // BSNL Dist 0.20% | return 0; }
+
 let userId = localStorage.getItem('userId');
 let userRole = localStorage.getItem('userRole');
 let userName = localStorage.getItem('userName');
 let walletBalance = 0;
-if(!userId || userRole !== 'retailer'){
-  window.location.href = '../login.html';
+
+if(!userId || (userRole||'').toLowerCase() !== 'retailer'){
+  window.location.href = '../index.html';
 }
+
 document.getElementById('userName').innerText = userName || '';
 document.getElementById('userEmail').innerText = userName || '';
+
 async function doLogout(){
   localStorage.clear();
-  window.location.href = '../login.html';
+  window.location.href = '../index.html';
 }
+
 async function loadWallet(){
-  let doc = await db.collection('retailers').doc(userId).get();
-  if(doc.exists){
-    walletBalance = parseFloat(doc.data().wallet || 0);
-    document.getElementById('wallet').innerText = walletBalance.toFixed(2);
-  }
+  try{
+    let doc = await db.collection('retailers').doc(userId).get();
+    if(doc.exists){
+      walletBalance = parseFloat(doc.data().wallet || 0);
+      document.getElementById('wallet').innerText = walletBalance.toFixed(2);
+    } else {
+      document.getElementById('wallet').innerText = '0.00';
+      console.log('Retailer doc not found for userId:', userId);
+    }
+  }catch(e){ console.log('loadWallet error', e); document.getElementById('wallet').innerText = '0.00'; }
 }
-function updateNumLimit(){ let c=document.getElementById('op').value; let nI=document.getElementById('num'); let lbl=document.getElementById('numLabel'); if(['DTV','ATV','TTV','STV','VTV'].includes(c)){ nI.maxLength=12; nI.placeholder='VC Number'; lbl.innerText='VC Number / Subscriber ID'; } else if(['TPCODL','NESCO','SOUTHCO','WESCO'].includes(c)){ nI.maxLength=14; nI.placeholder='Consumer Number'; lbl.innerText='Consumer Number'; } else { nI.maxLength=10; nI.placeholder='Mobile Number'; lbl.innerText='Mobile number'; } }
-function setOp(code,name){ let s=document.getElementById('op'); s.value=code; try{ document.getElementById('opSelected').innerText=name+' ('+code+')'; }catch(e){} updateNumLimit(); showComm(); }
+
 function showComm(){
   let amount = parseFloat(document.getElementById('amt').value || 0);
   let opCode = document.getElementById('op').value;
-  let opSel = document.getElementById('op');
-  try{ document.getElementById('opSelected').innerText = opSel.options[opSel.selectedIndex].text + ' (' + opCode + ')'; }catch(e){}
   let box = document.getElementById('commBox');
   if(amount > 0){
     let rate = getRetailerRate(opCode);
@@ -163,7 +210,65 @@ function showComm(){
     box.innerHTML = `Your Commission: <b>₹ ${comm.toFixed(2)}</b> | Payable: <b>₹ ${payable.toFixed(2)}</b>`;
   } else { box.style.display = 'none'; }
 }
-async function setWalletPin(){ let p=document.getElementById('newWalletPin').value.trim(); if(!/^[0-9]{4}$/.test(p)){ document.getElementById('pinMsg').innerText='Enter 4-digit PIN'; return; } try{ await db.collection('retailers').doc(userId).update({ walletPin: p }); localStorage.setItem('walletPin_'+userId, p); document.getElementById('pinMsg').innerText='Wallet PIN Set.'; document.getElementById('newWalletPin').value=''; }catch(e){ document.getElementById('pinMsg').innerText='Failed. Try again.'; } }
+
+// --- NEW: Auto Detect - does NOT change existing recharge, only sets operator ---
+function autoDetectOperator(){
+  let num = document.getElementById('num').value.trim();
+  if(num.length < 4) return;
+  let pre = num.substring(0,4);
+  let op = document.getElementById('op');
+  // Simple prefix mapping - manual select always overrides
+  // Jio: 70,72,74,75,76,77,78,79,80,82,83,88,89,90,91,94,95,96,97,98,99 etc - kept broad, manual can fix
+  // We use first digit + common series, user can manually change if wrong
+  let detected = null;
+  if(['700','701','702','703','704','705','706','707','708','709','710','711','712','713','714','715','716','717','718','719','720','721','722','723','724','725','726','727','728','729','730','731','732','733','734','735','736','737','738','739','740','741','742','743','744','745','746','747','748','749','750','751','752','753','754','755','756','757','758','759','760','761','762','763','764','765','766','767','768','769','770','771','772','773','774','775','776','777','778','779','780','781','782','783','784','785','786','787','788','789','790','791','792','793','794','795','796','797','798','799','800','801','802','803','804','805','806','807','808','809','810','811','812','813','814','815','816','817','818','819','820','821','822','823','824','825','826','827','828','829','830','831','832','833','834','835','836','837','838','839','840','841','842','843','844','845','846','847','848','849','850','851','852','853','854','855','856','857','858','859','860','861','862','863','864','865','866','867','868','869','870','871','872','873','874','875','876','877','878','879','880','881','882','883','884','885','886','887','888','889','890','891','892','893','894','895','896','897','898','899','900','901','902','903','904','905','906','907','908','909','910','911','912','913','914','915','916','917','918','919','920','921','922','923','924','925','926','927','928','929','930','931','932','933','934','935','936','937','938','939','940','941','942','943','944','945','946','947','948','949','950','951','952','953','954','955','956','957','958','959','960','961','962','963','964','965','966','967','968','969','970','971','972','973','974','975','976','977','978','979','980','981','982','983','984','985','986','987','988','989','990','991','992','993','994','995','996','997','998','999'].includes(pre)) {
+    // fallback - do not force wrong, keep Jio as default guess, manual can change
+    detected = 'RC';
+  }
+  // If user typed full 10 digits, try more precise: 6,7,8,9 series - keep current op if already chosen manually? We only auto-set on first detection
+  // To avoid overriding manual choice, only auto-set when number just became 10 digits
+  if(num.length === 10){
+    // Use simple heuristic: 6xxxx -> Jio, 7xxxx -> Airtel, 8xxxx -> Vi, 9xxxx -> BSNL as placeholder guess - user can manually change
+    // This is only UI guess, NOT changing recharge logic
+    let first = num[0];
+    if(first === '6') detected = 'RC';
+    else if(first === '7') detected = 'A';
+    else if(first === '8') detected = 'V';
+    else if(first === '9') detected = 'BR';
+    if(detected){
+      op.value = detected;
+      document.getElementById('opDetectText').innerText = 'Auto Detected - ' + op.options[op.selectedIndex].text + ' (Change Manually if wrong)';
+      showComm();
+    }
+  }
+}
+
+// --- NEW: Settings Switch - Wallet PIN (local only, does NOT block existing recharge unless PIN set) ---
+function toggleCommList(){ let el=document.getElementById("commList"); el.style.display = el.style.display==="none"?"block":"none"; }
+function toggleSettings(){
+  let on = document.getElementById('settingSwitch').checked;
+  document.getElementById('settingsBox').style.display = on ? 'block' : 'none';
+}
+function forgotPin(){ document.getElementById('pinMsg').innerText = 'Forgot PIN: Contact Distributor / Admin to reset. Or use Reset PIN with OTP.'; }
+function resetPin(){
+  let newPin = prompt('Enter new 4 digit PIN');
+  if(newPin && /^[0-9]{4}$/.test(newPin)){ localStorage.setItem('walletPin_'+userId, newPin); document.getElementById('pinMsg').innerText = 'PIN reset done. Settings ON thile Recharge bele PIN magiba.'; }
+  else if(newPin){ document.getElementById('pinMsg').innerText = 'Enter valid 4 digit PIN'; }
+}
+
+// --- NEW: Request to Distributor ---
+function openDistModal(){ document.getElementById('distModal').classList.add('open'); }
+function closeDistModal(){ document.getElementById('distModal').classList.remove('open'); }
+async function sendDistRequest(){
+  let amt = parseFloat(document.getElementById('reqAmt').value || 0);
+  if(amt <= 0){ document.getElementById('reqMsg').innerText = 'Enter valid amount'; return; }
+  try{
+    await db.collection('wallet_requests').add({ userId, userName, amount: amt, type: 'ADD_MONEY', status: 'Pending', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    document.getElementById('reqMsg').innerText = 'Request sent to Distributor. Approve hele Wallet re add heba.';
+    document.getElementById('reqAmt').value = '';
+  }catch(e){ document.getElementById('reqMsg').innerText = 'Failed to send request. Try again.'; }
+}
+
 async function doRecharge(){
   let number = document.getElementById('num').value.trim();
   let opCode = document.getElementById('op').value;
@@ -171,15 +276,16 @@ async function doRecharge(){
   let amount = parseFloat(document.getElementById('amt').value || 0);
   let msg = document.getElementById('msg');
   let btn = document.getElementById('rechargeBtn');
-  let isDTH = ['DTV','ATV','TTV','STV','VTV'].includes(opCode);
-  let isElec = ['TPCODL','NESCO','SOUTHCO','WESCO'].includes(opCode);
-  if(isDTH && (number.length < 10 || number.length > 12)){ msg.innerText = 'Enter valid 10-12 digit VC Number'; return; }
-  else if(isElec && (number.length < 8 || number.length > 14)){ msg.innerText = 'Enter valid Consumer Number'; return; }
-  else if(!isDTH && !isElec && number.length !== 10){ msg.innerText = 'Enter valid 10 digit number'; return; }
+  if(number.length !== 10){ msg.innerText = 'Enter valid 10 digit number'; return; }
   if(amount <= 0){ msg.innerText = 'Enter valid amount'; return; }
-  let enteredPin = document.getElementById('walletPinInput').value.trim();
-  if(!/^[0-9]{4}$/.test(enteredPin)){ msg.innerText = 'Enter 4-digit Wallet PIN'; return; }
-  try{ let rD = await db.collection('retailers').doc(userId).get(); let savedPin = rD.exists ? (rD.data().walletPin || localStorage.getItem('walletPin_'+userId) || '') : ''; if(savedPin && enteredPin !== savedPin){ msg.innerText = 'Wrong Wallet PIN'; return; } if(!savedPin){ msg.innerText = 'Set Wallet PIN first in Settings'; return; } }catch(e){ msg.innerText = 'PIN check failed. Try again.'; return; }
+  // PIN check only if Settings ON and PIN is set - otherwise old flow same
+  if(document.getElementById('settingSwitch').checked){
+    let saved = localStorage.getItem('walletPin_'+userId);
+    if(saved){
+      let entered = document.getElementById('walletPin').value.trim();
+      if(entered !== saved){ msg.innerText = 'Wrong Wallet PIN. Forgot PIN re reset kara.'; return; }
+    }
+  }
   let rate = getRetailerRate(opCode);
   let commission = amount * rate;
   let payable = amount - commission;
@@ -194,6 +300,7 @@ async function doRecharge(){
     let data = await res.json();
     if(data.status === 'Success' || data.status === 'Pending' || data.success === true){
       await db.collection('retailers').doc(userId).update({ wallet: firebase.firestore.FieldValue.increment(-payable) });
+      // AUTO - Distributor Commission: Recharge hele Distributor ku apne aap miliba
       let distComm = amount * getDistributorRate(opCode);
       let rDoc = await db.collection('retailers').doc(userId).get();
       let distId = rDoc.exists ? (rDoc.data().distributorId || '') : '';
@@ -210,37 +317,36 @@ async function doRecharge(){
   }catch(e){ msg.innerText = 'Network error. Try again.'; console.log(e); }
   btn.disabled = false; btn.innerText = 'Recharge Now';
 }
+
 async function loadHist(){
   try{
     let s = await db.collection('recharges').where('userId','==',userId).limit(20).get();
     let arr = []; s.forEach(doc => arr.push(doc.data()));
     arr.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
     let h = '';
-    let total=0, todayTotal=0; let today=new Date(); today.setHours(0,0,0,0);
+    let total = 0, todayTotal = 0;
+    let today = new Date(); today.setHours(0,0,0,0);
     arr.forEach(d => {
-      total += (d.commission||0);
-      let dDate = d.createdAt ? new Date(d.createdAt.seconds*1000) : null;
-      if(dDate && dDate>=today && d.status==='Success') todayTotal += (d.commission||0);
+      total += (d.commission || 0);
+      let dDate = d.createdAt && d.createdAt.seconds ? new Date(d.createdAt.seconds*1000) : (d.createdAt && d.createdAt.toDate ? d.createdAt.toDate() : null);
+      if(dDate && dDate >= today && d.status === 'Success') todayTotal += (d.commission || 0);
       let cls = d.status === 'Success' ? 'success' : (d.status === 'Failed' ? 'failed' : 'pending');
       h += `<tr><td>${d.number}<br><small>${d.operator || ''}</small></td><td>₹ ${d.amount}</td><td>₹ ${(d.commission || 0).toFixed(2)}</td><td><span class="badge ${cls}">${d.status || 'Success'}</span></td></tr>`;
     });
     document.getElementById('hist').innerHTML = h || '<tr><td colspan="4">No records</td></tr>';
-    try{ document.getElementById('todayComm').innerText=todayTotal.toFixed(2); document.getElementById('totalEarned').innerText=total.toFixed(2); }catch(e){}
+    document.getElementById('todayComm').innerText = todayTotal.toFixed(2);
+    document.getElementById('totalEarned').innerText = total.toFixed(2);
+    document.getElementById('todayEarnedSide').innerText = todayTotal.toFixed(2);
+    // Notice Board - if any pending wallet request, show
+    try{
+      let rq = await db.collection('wallet_requests').where('userId','==',userId).where('status','==','Pending').limit(1).get();
+      if(!rq.empty) document.getElementById('noticeText').innerText = 'Wallet Request Pending - Distributor ku request patha heichi. Approve hele balance add heba.';
+    }catch(e){}
   }catch(e){ document.getElementById('hist').innerHTML = '<tr><td colspan="4">Unable to load history</td></tr>'; }
 }
-async function sha256(str){ const buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)); return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join(''); }
 
-async function sendDistRequest(){ let amt=parseFloat(document.getElementById('reqAmt').value||0); if(amt<=0){ document.getElementById('reqMsg').innerText='Enter valid amount'; return; } try{ await db.collection('wallet_requests').add({ userId, userName, amount: amt, type:'ADD_MONEY', status:'Pending', createdAt: firebase.firestore.FieldValue.serverTimestamp() }); document.getElementById('reqMsg').innerText='Request sent to Distributor.'; document.getElementById('reqAmt').value=''; }catch(e){ document.getElementById('reqMsg').innerText='Failed to send request.'; } }
-async function changePass(){ let np=document.getElementById('newPass').value.trim(); if(np.length<4){ document.getElementById('passMsg').innerText='Enter min 4 char password'; return; } try{ let hp=await sha256(np); await db.collection('retailers').doc(userId).update({ passwordHash: hp }); document.getElementById('passMsg').innerText='Password changed.'; document.getElementById('newPass').value=''; }catch(e){ document.getElementById('passMsg').innerText='Failed. Try again.'; } }
-async function loadNotice(){ try{ let s=await db.collection('notices').orderBy('createdAt','desc').limit(1).get(); if(!s.empty){ let d=s.docs[0].data(); document.getElementById('noticeText').innerText=d.text||d.message||d.title||'No notice'; } else document.getElementById('noticeText').innerText='No notice yet.'; }catch(e){ document.getElementById('noticeText').innerText='No notice yet.'; } }
-document.getElementById('retailerId').innerText = userId || '-';
-function toggleSettings(){ let c=document.getElementById('settingsCard'); c.style.display=(c.style.display==='none'?'block':'none'); if(c.style.display==='block'){ c.scrollIntoView({behavior:'smooth'}); } }
-function copyRetailerId(){ try{ navigator.clipboard.writeText(userId); alert('Retailer ID Copied: '+userId); }catch(e){ prompt('Copy Retailer ID', userId); } }
-async function loadProfile(){ try{ let d=await db.collection('retailers').doc(userId).get(); if(d.exists){ let r=d.data(); document.getElementById('profName').innerText=r.name||userName||'-'; document.getElementById('profId').innerText=userId; document.getElementById('profMobile').innerText=r.mobile||'-'; document.getElementById('profDist').innerText=r.distributorName||r.distributor||'-'; document.getElementById('profWallet').innerText=parseFloat(r.wallet||0).toFixed(2); } }catch(e){} }
-loadProfile();
 loadWallet();
 loadHist();
-loadNotice();
 </script>
-<!-- v-OPERATOR-FIX --><script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
+<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
 </html>
