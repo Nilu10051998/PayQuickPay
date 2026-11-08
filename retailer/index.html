@@ -28,15 +28,15 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f1f4f8}
-.top{background:#0b3d91;color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
-.top b{font-size:18px}
-.card{background:#fff;margin:12px;border-radius:10px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+*{box-sizing:border-box;font-family:Inter,Arial,sans-serif}
+body{margin:0;background:#eef2f7}
+.top{background:linear-gradient(135deg,#0b3d91,#1e6fd9);color:#fff;padding:16px 16px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 10px rgba(11,61,145,.25)}
+.top b{font-size:19px;letter-spacing:.5px}
+.card{background:#fff;margin:12px;border-radius:14px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.05);border:1px solid #eef2f7}
 label{font-size:13px;color:#555;display:block;margin:12px 0 5px}
 input,select{width:100%;padding:11px;border:1px solid #ddd;border-radius:8px;font-size:15px;outline:none}
 input:focus,select:focus{border-color:#0b3d91}
-.btn{width:100%;padding:12px;background:#0b3d91;color:#fff;border:0;border-radius:8px;font-size:16px;font-weight:700;margin-top:16px;cursor:pointer}
+.btn{width:100%;padding:13px;background:linear-gradient(135deg,#0b3d91,#1e6fd9);color:#fff;border:0;border-radius:8px;font-size:16px;font-weight:700;margin-top:16px;cursor:pointer}
 .btn:disabled{opacity:.6}
 .comm{background:#eef6ff;border:1px solid #cfe3ff;padding:10px;border-radius:8px;font-size:14px;margin-top:12px}
 table{width:100%;border-collapse:collapse;font-size:13px}
@@ -46,7 +46,7 @@ th{color:#666;font-size:12px}
 .success{background:#e6f9ec;color:#0a7a2e}
 .failed{background:#fdecea;color:#c00}
 .pending{background:#fff3cd;color:#856404}
-.wallet{font-size:22px;font-weight:800}
+.wallet{font-size:24px;font-weight:800;color:#0b3d91}
 .small{font-size:12px;color:#777}
 .logout{font-size:12px;background:#fff;color:#0b3d91;border:0;padding:6px 10px;border-radius:6px;cursor:pointer;font-weight:700}
 </style>
@@ -60,7 +60,7 @@ th{color:#666;font-size:12px}
 <div class="card">
 <h3 style="margin:0">Mobile Recharge</h3>
 <label>Mobile Number</label>
-<input id="num" type="tel" maxlength="10" placeholder="10 Digit Mobile Number" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+<input id="num" type="tel" maxlength="10" placeholder="10 Digit Mobile Number" oninput="this.value=this.value.replace(/[^0-9]/g,'');autoDetectOperator()"><div id="opDetectText" class="small"></div>
 <label>Operator</label>
 <select id="op" onchange="showComm()">
 <option value="RC">Jio Prepaid</option>
@@ -83,7 +83,11 @@ th{color:#666;font-size:12px}
 <thead><tr><th>Number</th><th>Amount</th><th>Commission</th><th>Status</th></tr></thead>
 <tbody id="hist"><tr><td colspan="4">Loading...</td></tr></tbody>
 </table>
+<div class="small" style="margin-top:10px">Today Commission: Rs <b id="todayComm">0.00</b> | Total Earned: Rs <b id="totalEarned">0.00</b></div>
 </div>
+<div class="card"><h3 style="margin:0 0 8px">Notice Board</h3><div id="noticeText" class="small">Loading notice...</div></div>
+<div class="card"><h3 style="margin:0 0 10px">Request to Distributor</h3><label>Amount</label><input id="reqAmt" type="number" placeholder="Enter Amount"><button class="btn" onclick="sendDistRequest()">Send Request</button><div id="reqMsg" class="small" style="margin-top:8px"></div></div>
+<div class="card"><h3 style="margin:0 0 10px">Settings - Change Login Password</h3><label>New Password</label><input id="newPass" type="password" placeholder="Enter New Password"><button class="btn" onclick="changePass()">Change Password</button><div id="passMsg" class="small" style="margin-top:8px"></div></div>
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",
@@ -187,15 +191,26 @@ async function loadHist(){
     let arr = []; s.forEach(doc => arr.push(doc.data()));
     arr.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
     let h = '';
+    let total=0, todayTotal=0; let today=new Date(); today.setHours(0,0,0,0);
     arr.forEach(d => {
+      total += (d.commission||0);
+      let dDate = d.createdAt ? new Date(d.createdAt.seconds*1000) : null;
+      if(dDate && dDate>=today && d.status==='Success') todayTotal += (d.commission||0);
       let cls = d.status === 'Success' ? 'success' : (d.status === 'Failed' ? 'failed' : 'pending');
       h += `<tr><td>${d.number}<br><small>${d.operator || ''}</small></td><td>₹ ${d.amount}</td><td>₹ ${(d.commission || 0).toFixed(2)}</td><td><span class="badge ${cls}">${d.status || 'Success'}</span></td></tr>`;
     });
     document.getElementById('hist').innerHTML = h || '<tr><td colspan="4">No records</td></tr>';
+    try{ document.getElementById('todayComm').innerText=todayTotal.toFixed(2); document.getElementById('totalEarned').innerText=total.toFixed(2); }catch(e){}
   }catch(e){ document.getElementById('hist').innerHTML = '<tr><td colspan="4">Unable to load history</td></tr>'; }
 }
+async function sha256(str){ const buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)); return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join(''); }
+function autoDetectOperator(){ let num=document.getElementById('num').value.trim(); if(num.length!==10) return; let f=num[0]; let op=document.getElementById('op'); let d=null; if(f==='6') d='RC'; else if(f==='7') d='A'; else if(f==='8') d='V'; else if(f==='9') d='BR'; if(d){ op.value=d; document.getElementById('opDetectText').innerText='Auto Detected - '+op.options[op.selectedIndex].text+' (Change Manually if wrong)'; showComm(); } }
+async function sendDistRequest(){ let amt=parseFloat(document.getElementById('reqAmt').value||0); if(amt<=0){ document.getElementById('reqMsg').innerText='Enter valid amount'; return; } try{ await db.collection('wallet_requests').add({ userId, userName, amount: amt, type:'ADD_MONEY', status:'Pending', createdAt: firebase.firestore.FieldValue.serverTimestamp() }); document.getElementById('reqMsg').innerText='Request sent to Distributor.'; document.getElementById('reqAmt').value=''; }catch(e){ document.getElementById('reqMsg').innerText='Failed to send request.'; } }
+async function changePass(){ let np=document.getElementById('newPass').value.trim(); if(np.length<4){ document.getElementById('passMsg').innerText='Enter min 4 char password'; return; } try{ let hp=await sha256(np); await db.collection('retailers').doc(userId).update({ passwordHash: hp }); document.getElementById('passMsg').innerText='Password changed.'; document.getElementById('newPass').value=''; }catch(e){ document.getElementById('passMsg').innerText='Failed. Try again.'; } }
+async function loadNotice(){ try{ let s=await db.collection('notices').orderBy('createdAt','desc').limit(1).get(); if(!s.empty){ let d=s.docs[0].data(); document.getElementById('noticeText').innerText=d.text||d.message||d.title||'No notice'; } else document.getElementById('noticeText').innerText='No notice yet.'; }catch(e){ document.getElementById('noticeText').innerText='No notice yet.'; } }
 loadWallet();
 loadHist();
+loadNotice();
 </script>
 <script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
 </html>
