@@ -99,11 +99,11 @@ th{color:#666;font-size:12px}
 <input id="amt" type="number" placeholder="Enter Amount" oninput="showComm()">
 <div id="commBox" class="comm" style="display:none"></div>
 <div class="card" style="margin:12px 0 0;padding:12px;background:#f8faff">
-<h4 style="margin:0 0 8px">Commission Structure</h4>
-<div class="small" style="line-height:1.8">
-Jio Prepaid - 0.80% • Jio Postpaid - 0.80%<br>
-Airtel Prepaid - 1.30% • Airtel Postpaid - 1.30%<br>
-Vi Prepaid - 3.00% • BSNL STV / Topup - 3.40%<br>
+<div style="display:flex;justify-content:space-between;align-items:center"><h4 style="margin:0">Commission Structure</h4><button type="button" onclick="toggleCommList()" style="background:#0b3d91;color:#fff;border:0;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer">View</button></div>
+<div id="commList" class="small" style="line-height:1.8;display:none;margin-top:8px">
+<b>Retailer Commission - FINAL LOCK:</b><br>Jio - 0.60% • Airtel - 1.00% • Vi - 2.60% • BSNL - 3.00%<br>
+<b>DTH:</b> Dish TV - 3.20% • Airtel Digital - 3.10% • Sun Direct - 2.90% • Videocon - 3.60% • Tata Sky - 3.10%<br>
+<span style="color:#64748b;font-size:11px">A1TOPUP TOTAL: Jio 0.80% = Retailer 0.60% + Dist 0.10% + Admin 0.10%</span>
 <span style="color:#888">Rates as per existing code - not changed.</span>
 </div>
 </div>
@@ -155,12 +155,18 @@ const db = firebase.firestore();
 const API_URL = 'https://payquickpay-api.vercel.app/api/recharge';
 
 function getRetailerRate(opCode){
-  if(opCode === 'RC' || opCode === 'RCP') return 0.008;
-  if(opCode === 'A' || opCode === 'AP') return 0.013;
-  if(opCode === 'V') return 0.03;
-  if(opCode === 'BR' || opCode === 'BT') return 0.034;
+  if(opCode === 'RC' || opCode === 'RCP') return 0.006; // FINAL LOCK Retailer Jio 0.60%
+  if(opCode === 'A' || opCode === 'AP') return 0.01; // FINAL LOCK Retailer Airtel 1.00%
+  if(opCode === 'V') return 0.026; // FINAL LOCK Retailer Vi 2.60%
+  if(opCode === 'BR' || opCode === 'BT') return 0.03; // FINAL LOCK Retailer BSNL 3.00%
+  if(opCode === 'DISH') return 0.032;
+  if(opCode === 'ADTV') return 0.031;
+  if(opCode === 'SUN') return 0.029;
+  if(opCode === 'VIDEOCON') return 0.036;
+  if(opCode === 'TATA') return 0.031;
   return 0;
 }
+function getDistributorRate(opCode){ if(opCode === 'RC' || opCode === 'RCP') return 0.001; // Jio Dist 0.10% | if(opCode === 'A' || opCode === 'AP') return 0.0015; // Airtel Dist 0.15% | if(opCode === 'V') return 0.002; // Vi Dist 0.20% | if(opCode === 'BR' || opCode === 'BT') return 0.002; // BSNL Dist 0.20% | return 0; }
 
 let userId = localStorage.getItem('userId');
 let userRole = localStorage.getItem('userRole');
@@ -233,6 +239,7 @@ function autoDetectOperator(){
 }
 
 // --- NEW: Settings Switch - Wallet PIN (local only, does NOT block existing recharge unless PIN set) ---
+function toggleCommList(){ let el=document.getElementById("commList"); el.style.display = el.style.display==="none"?"block":"none"; }
 function toggleSettings(){
   let on = document.getElementById('settingSwitch').checked;
   document.getElementById('settingsBox').style.display = on ? 'block' : 'none';
@@ -288,7 +295,12 @@ async function doRecharge(){
     let data = await res.json();
     if(data.status === 'Success' || data.status === 'Pending' || data.success === true){
       await db.collection('retailers').doc(userId).update({ wallet: firebase.firestore.FieldValue.increment(-payable) });
-      await db.collection('recharges').add({ userId, userName, number, operator: opText, operatorcode: opCode, amount, commission, payable, status: data.status || 'Success', orderid: data.orderid || '', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      // AUTO - Distributor Commission: Recharge hele Distributor ku apne aap miliba
+      let distComm = amount * getDistributorRate(opCode);
+      let rDoc = await db.collection('retailers').doc(userId).get();
+      let distId = rDoc.exists ? (rDoc.data().distributorId || '') : '';
+      if(distId && distComm > 0){ await db.collection('distributors').doc(distId).update({ wallet: firebase.firestore.FieldValue.increment(distComm) }); }
+      await db.collection('recharges').add({ userId, userName, number, operator: opText, operatorcode: opCode, amount, commission, distributorCommission: distComm, distributorId: distId, payable, status: data.status || 'Success', orderid: data.orderid || '', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
       msg.innerText = 'Recharge ' + (data.status || 'Success');
       document.getElementById('amt').value = '';
       showComm(); await loadWallet(); await loadHist();
