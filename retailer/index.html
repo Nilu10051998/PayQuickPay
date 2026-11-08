@@ -173,8 +173,8 @@ let userRole = localStorage.getItem('userRole');
 let userName = localStorage.getItem('userName');
 let walletBalance = 0;
 
-if(!userId || userRole !== 'retailer'){
-  window.location.href = '../login.html';
+if(!userId || (userRole||'').toLowerCase() !== 'retailer'){
+  window.location.href = '../index.html';
 }
 
 document.getElementById('userName').innerText = userName || '';
@@ -182,15 +182,20 @@ document.getElementById('userEmail').innerText = userName || '';
 
 async function doLogout(){
   localStorage.clear();
-  window.location.href = '../login.html';
+  window.location.href = '../index.html';
 }
 
 async function loadWallet(){
-  let doc = await db.collection('retailers').doc(userId).get();
-  if(doc.exists){
-    walletBalance = parseFloat(doc.data().wallet || 0);
-    document.getElementById('wallet').innerText = walletBalance.toFixed(2);
-  }
+  try{
+    let doc = await db.collection('retailers').doc(userId).get();
+    if(doc.exists){
+      walletBalance = parseFloat(doc.data().wallet || 0);
+      document.getElementById('wallet').innerText = walletBalance.toFixed(2);
+    } else {
+      document.getElementById('wallet').innerText = '0.00';
+      console.log('Retailer doc not found for userId:', userId);
+    }
+  }catch(e){ console.log('loadWallet error', e); document.getElementById('wallet').innerText = '0.00'; }
 }
 
 function showComm(){
@@ -323,7 +328,7 @@ async function loadHist(){
     let today = new Date(); today.setHours(0,0,0,0);
     arr.forEach(d => {
       total += (d.commission || 0);
-      let dDate = d.createdAt ? new Date(d.createdAt.seconds*1000) : null;
+      let dDate = d.createdAt && d.createdAt.seconds ? new Date(d.createdAt.seconds*1000) : (d.createdAt && d.createdAt.toDate ? d.createdAt.toDate() : null);
       if(dDate && dDate >= today && d.status === 'Success') todayTotal += (d.commission || 0);
       let cls = d.status === 'Success' ? 'success' : (d.status === 'Failed' ? 'failed' : 'pending');
       h += `<tr><td>${d.number}<br><small>${d.operator || ''}</small></td><td>₹ ${d.amount}</td><td>₹ ${(d.commission || 0).toFixed(2)}</td><td><span class="badge ${cls}">${d.status || 'Success'}</span></td></tr>`;
