@@ -1,4 +1,25 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>PayQuickPay - Retailer</title>
+<!DOCTYPE html><html lang="en"><head><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+</style><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>PayQuickPay - Retailer</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
 function updateNumLimit(){ var c=document.getElementById('op').value; var nI=document.getElementById('num'); var lbl=document.getElementById('numLabel'); if(!nI) return; if(['DTV','ATV','TTV','STV','VTV'].includes(c)){ nI.maxLength=12; nI.placeholder='VC Number'; if(lbl) lbl.innerText='VC Number / Subscriber ID'; } else if(['TPCODL','NESCO','SOUTHCO','WESCO'].includes(c)){ nI.maxLength=14; nI.placeholder='Consumer Number'; if(lbl) lbl.innerText='Consumer Number'; } else { nI.maxLength=10; nI.placeholder='Mobile Number'; if(lbl) lbl.innerText='Mobile number'; } }
 </script>
@@ -58,7 +79,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:11px 6px;
 </div>
 <label>Amount</label><input id="amt" type="number" placeholder="Enter amount" oninput="showComm()">
 <div id="commBox" class="comm"></div><label>Wallet PIN</label><input id="walletPinInput" type="password" maxlength="4" placeholder="Enter 4-digit Wallet PIN" inputmode="numeric"><button class="btn" id="rechargeBtn" onclick="doRecharge()">Recharge Now</button><div id="msg" class="small" style="margin-top:10px"></div></div></div>
-<div class="card"><div class="card-head"><h3>Commission Structure</h3><small>Tap to View</small></div><div class="card-body"><button class="btn" onclick="toggleCommView()" style="margin-top:0">View Commission Structure</button><div id="commView" style="display:none;margin-top:12px;font-size:13px;line-height:2"><b>MOBILE PREPAID</b><br>Jio Prepaid: <b>0.60%</b><br>Airtel Prepaid: <b>1.00%</b><br>Vi Prepaid: <b>2.60%</b><br>BSNL Prepaid: <b>3.00%</b><br><br><b>DTH</b><br>Dish TV: <b>3.20%</b><br>Airtel Digital TV: <b>3.10%</b><br>Tata Sky: <b>3.10%</b><br>Sun Direct: <b>2.90%</b><br>Videocon D2H: <b>3.60%</b></div></div></div>
+<div class="card"><div class="card-head"><h3>Commission Structure</h3><small>Tap to View</small></div><div class="card-body"><button class="btn" onclick="toggleCommView()" style="margin-top:0">Commission Structure - Tale Dekha</button><div id="commView" style="display:none;margin-top:12px;font-size:13px;line-height:2"><b>MOBILE PREPAID</b><br>Jio Prepaid: <b>0.60%</b><br>Airtel Prepaid: <b>1.00%</b><br>Vi Prepaid: <b>2.60%</b><br>BSNL Prepaid: <b>3.00%</b><br><br><b>DTH</b><br>Dish TV: <b>3.20%</b><br>Airtel Digital TV: <b>3.10%</b><br>Tata Sky: <b>3.10%</b><br>Sun Direct: <b>2.90%</b><br>Videocon D2H: <b>3.60%</b></div></div></div>
 <div class="card"><div class="card-head"><h3>Notice Board</h3></div><div class="card-body"><div id="noticeText" class="small">Loading notice...</div></div></div>
 <div class="card" id="addMoneyCard" style="display:none"><div class="card-head"><h3>Request to Distributor</h3> <button onclick="hideAddMoney()" style="background:#fee2e2;color:#dc2626;border:0;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:900;cursor:pointer;margin-left:8px">Close</button></div><div class="card-body">
 <div style="text-align:center;background:#fff7ed;border:1.5px solid #ffedd5;border-radius:16px;padding:14px;margin-bottom:6px"><div style="font-weight:900;color:#ff2d55;font-size:16px">PayQuickPay - Scan & Pay</div><div class="small">Kono UPI App re Scan kara</div><img src="payquickpay-qr.png" style="width:210px;max-width:100%;margin:10px 0;border-radius:12px"><div style="font-weight:800;font-size:13px">UPI ID: Q931947909@ybl</div><button onclick="navigator.clipboard.writeText('Q931947909@ybl');alert('UPI ID Copied: Q931947909@ybl')" style="background:#111827;color:#fff;border:0;padding:9px 16px;border-radius:20px;font-size:12px;font-weight:800;cursor:pointer;margin-top:8px">Copy UPI ID</button><div style="font-size:12px;color:#777;margin-top:6px">PAYQUICKPAY</div><div class="small" style="margin-top:6px">Same Phone re thile - UPI ID Copy kariki Pay kara<br>Alaga Phone thile - QR Scan kara<br>Payment kariki UTR lekha - Send Request daba</div></div>
@@ -96,9 +117,13 @@ function getRetailerRate(opCode){
 }
 function getDistributorRate(opCode){ if(opCode === 'RC' || opCode === 'RCP') return 0.001; // Jio Dist 0.10% | if(opCode === 'A' || opCode === 'AP') return 0.0015; // Airtel Dist 0.15% | if(opCode === 'V') return 0.002; // Vi Dist 0.20% | if(opCode === 'BR' || opCode === 'BT') return 0.002; // BSNL Dist 0.20% | return 0; }
 
-let userId = localStorage.getItem('userId');
-let userRole = localStorage.getItem('userRole');
-let userName = localStorage.getItem('userName');
+function _getLS(keys){ for(var i=0;i<keys.length;i++){ try{ var v=localStorage.getItem(keys[i]); if(v && v!=='null' && v!=='undefined' && v!=='') return v; }catch(e){} } return ''; }
+function _getJSON(keys){ for(var i=0;i<keys.length;i++){ try{ var v=localStorage.getItem(keys[i]); if(!v) continue; var o=JSON.parse(v); if(o && typeof o==='object') return o; }catch(e){} } return null; }
+var _u = _getJSON(['user','retailer','loggedInUser','payquickpay_user','currentUser','loginUser']);
+let userId = _getLS(['userId','retailerId','retailer_id','uid','id','user_id']) || (_u && (_u.userId||_u.retailerId||_u.id||_u.uid||'')) || '';
+let userRole = _getLS(['userRole','role','type','userType']) || (_u && (_u.role||_u.userRole||_u.type||'')) || 'retailer';
+let userName = _getLS(['userName','username','retailerName','name','retailer_id','retailerId']) || (_u && (_u.userName||_u.username||_u.retailerName||_u.name||_u.retailerId||'')) || userId || '';
+try{ if(userId) localStorage.setItem('userId', userId); if(userName) localStorage.setItem('userName', userName); if(userRole) localStorage.setItem('userRole', userRole); }catch(e){}
 let walletBalance = 0;
 
 if(!userId || (userRole||'').toLowerCase() !== 'retailer'){
@@ -185,13 +210,7 @@ function autoDetectOperator(){
 
 // --- NEW: Settings Switch - Wallet PIN (local only, does NOT block existing recharge unless PIN set) ---
 function toggleCommList(){ let el=document.getElementById("commList"); if(!el) return; el.style.display = el.style.display==="none"?"block":"none"; }
-function toggleSettings(){ var c=document.getElementById('settingsCard'); if(!c) return; c.style.display=(c.style.display==='none'||c.style.display===''?'block':'none'); if(c.style.display==='block'){ try{loadProfile();}catch(e){} c.scrollIntoView({behavior:'smooth'}); } }
-function forgotPin(){ document.getElementById('pinMsg').innerText = 'Forgot PIN: Contact Distributor / Admin to reset. Or use Reset PIN with OTP.'; }
-function resetPin(){
-  let newPin = prompt('Enter new 4 digit PIN');
-  if(newPin && /^[0-9]{4}$/.test(newPin)){ localStorage.setItem('walletPin_'+userId, newPin); document.getElementById('pinMsg').innerText = 'PIN reset done. Settings ON thile Recharge bele PIN magiba.'; }
-  else if(newPin){ document.getElementById('pinMsg').innerText = 'Enter valid 4 digit PIN'; }
-}
+function toggleSettings(){ var c=document.getElementById('settingsCard'); if(!c) return; c.style.display='block'; try{loadProfile();}catch(e){} c.scrollIntoView({behavior:'smooth',block:'start'}); }
 
 // --- NEW: Request to Distributor ---
 function openDistModal(){ document.getElementById('distModal').classList.add('open'); }
@@ -294,7 +313,7 @@ loadHist();
 
 function setOp(code,name){ var s=document.getElementById('op'); if(s) s.value=code; try{showComm();}catch(e){} try{updateNumLimit();}catch(e){} }
 
-function toggleCommView(){ var c=document.getElementById('commView'); if(!c) return; c.style.display=(c.style.display==='none'||c.style.display===''?'block':'none'); }
+function toggleCommView(){ var c=document.getElementById('commView'); if(!c) return; c.style.display='block'; c.scrollIntoView({behavior:'smooth',block:'start'}); }
 function changePass(){ var np=document.getElementById('newPass'); if(!np) return; var v=np.value.trim(); if(v.length<4){ document.getElementById('passMsg').innerText='Enter 4+ char password'; return; } db.collection('retailers').doc(userId).update({password:v}).then(function(){ document.getElementById('passMsg').innerText='Password Changed.'; np.value=''; }).catch(function(){ document.getElementById('passMsg').innerText='Failed. Try again.'; }); }
 
 function copyRetailerId(){ var rid=userName||userId||''; try{ navigator.clipboard.writeText(rid); alert('Retailer ID Copied: '+rid); }catch(e){ prompt('Copy Retailer ID', rid); } }
@@ -305,4 +324,4 @@ function hideAddMoney(){ var c=document.getElementById('addMoneyCard'); if(c) c.
 }
 
 function updateNumLimit(){ var c=document.getElementById('op').value; var nI=document.getElementById('num'); var lbl=document.getElementById('numLabel'); if(!nI) return; if(['DTV','ATV','TTV','STV','VTV'].includes(c)){ nI.maxLength=12; nI.placeholder='VC Number'; if(lbl) lbl.innerText='VC Number / Subscriber ID'; } else if(['TPCODL','NESCO','SOUTHCO','WESCO'].includes(c)){ nI.maxLength=14; nI.placeholder='Consumer Number'; if(lbl) lbl.innerText='Consumer Number'; } else { nI.maxLength=10; nI.placeholder='Mobile Number'; if(lbl) lbl.innerText='Mobile number'; } }
-</script></body></html>
+</script><script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body></html>
