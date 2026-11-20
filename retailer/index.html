@@ -1,6 +1,10 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>PayQuickPay - Retailer</title>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
+function updateNumLimit(){ var c=document.getElementById('op').value; var nI=document.getElementById('num'); var lbl=document.getElementById('numLabel'); if(!nI) return; if(['DTV','ATV','TTV','STV','VTV'].includes(c)){ nI.maxLength=12; nI.placeholder='VC Number'; if(lbl) lbl.innerText='VC Number / Subscriber ID'; } else if(['TPCODL','NESCO','SOUTHCO','WESCO'].includes(c)){ nI.maxLength=14; nI.placeholder='Consumer Number'; if(lbl) lbl.innerText='Consumer Number'; } else { nI.maxLength=10; nI.placeholder='Mobile Number'; if(lbl) lbl.innerText='Mobile number'; } }
+</script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js">
+function updateNumLimit(){ var c=document.getElementById('op').value; var nI=document.getElementById('num'); var lbl=document.getElementById('numLabel'); if(!nI) return; if(['DTV','ATV','TTV','STV','VTV'].includes(c)){ nI.maxLength=12; nI.placeholder='VC Number'; if(lbl) lbl.innerText='VC Number / Subscriber ID'; } else if(['TPCODL','NESCO','SOUTHCO','WESCO'].includes(c)){ nI.maxLength=14; nI.placeholder='Consumer Number'; if(lbl) lbl.innerText='Consumer Number'; } else { nI.maxLength=10; nI.placeholder='Mobile Number'; if(lbl) lbl.innerText='Mobile number'; } }
+</script>
 <style>
 *{box-sizing:border-box;font-family:'Segoe UI',Inter,Arial,sans-serif}
 body{margin:0;background:#f0f2ff;color:#111827;min-height:100vh}
@@ -113,7 +117,7 @@ async function loadWallet(){
   // Cache ru sanga sanga dekhha - Loading lagiba ni
   try{ var cached=localStorage.getItem('wallet_'+userId); if(cached) document.getElementById('wallet').innerText=parseFloat(cached).toFixed(2); }catch(e){}
   try{
-    let doc = await Promise.race([db.collection('retailers').doc(userId).get(), new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')), 8000))]);
+    let doc = await db.collection('retailers').doc(userId).get();
     if(doc.exists){
       walletBalance = parseFloat(doc.data().wallet || 0);
       document.getElementById('wallet').innerText = walletBalance.toFixed(2);
@@ -173,7 +177,7 @@ function autoDetectOperator(){
     else if(first === '9') detected = 'BR';
     if(detected){
       op.value = detected;
-      try{document.getElementById('opDetectText').innerText}catch(e){} = 'Auto Detected - ' + op.options[op.selectedIndex].text + ' (Change Manually if wrong)';
+      var _od=document.getElementById('opDetectText'); if(_od) _od.innerText='Auto Detected';
       showComm();
     }
   }
@@ -248,7 +252,7 @@ async function loadHist(){
   try{
     // Timeout: Firestore hang hele Loading re atki jiba ni
     let q = db.collection('recharges').where('userId','==',userId).limit(20).get();
-    let s = await Promise.race([q, new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')), 8000)]);
+    let s = await q;
     if(s.empty){
       // Fallback: userId mismatch hele - userName hisab re khojiba
       try{
@@ -298,4 +302,7 @@ function setWalletPin(){ var el=document.getElementById('newWalletPin'); if(!el)
 
 function showAddMoney(){ var c=document.getElementById('addMoneyCard'); if(!c) return; c.style.display='block'; c.scrollIntoView({behavior:'smooth'}); setTimeout(function(){ var a=document.getElementById('reqAmt'); if(a) a.focus(); },400); }
 function hideAddMoney(){ var c=document.getElementById('addMoneyCard'); if(c) c.style.display='none'; }
+}
+
+function updateNumLimit(){ var c=document.getElementById('op').value; var nI=document.getElementById('num'); var lbl=document.getElementById('numLabel'); if(!nI) return; if(['DTV','ATV','TTV','STV','VTV'].includes(c)){ nI.maxLength=12; nI.placeholder='VC Number'; if(lbl) lbl.innerText='VC Number / Subscriber ID'; } else if(['TPCODL','NESCO','SOUTHCO','WESCO'].includes(c)){ nI.maxLength=14; nI.placeholder='Consumer Number'; if(lbl) lbl.innerText='Consumer Number'; } else { nI.maxLength=10; nI.placeholder='Mobile Number'; if(lbl) lbl.innerText='Mobile number'; } }
 </script></body></html>
