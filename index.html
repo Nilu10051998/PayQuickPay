@@ -89,7 +89,7 @@ function backLogin(){
   document.getElementById('forgotBox').style.display='none';
   document.getElementById('loginBox').style.display='block';
 }
-async function findUser(col, val){
+async function findInCol(col, val){
   var v = String(val).trim().toLowerCase();
   try{
     var d = await db.collection(col).doc(val).get();
@@ -109,26 +109,29 @@ async function findUser(col, val){
         if(vdigits.length>=10 && digits.slice(-10)===vdigits.slice(-10) && vdigits.length>0) return {doc: doc, col: col};
       }
     }
-  }catch(e){ throw e; }
+  }catch(e){}
   return null;
 }
-async function findAdmin(val){
-  // 1. admins collection
-  var r = await findUser('admins', val);
-  if(r) return r;
-  // 2. settings/admin doc
-  try{
-    var d = await db.collection('settings').doc('admin').get();
-    if(d.exists){
-      var data = d.data();
-      var v = String(val).trim().toLowerCase();
-      for(var k in data){
-        if(String(data[k]).trim().toLowerCase()===v) return {doc: d, col: 'settings/admin'};
+async function findUserForRole(role, val){
+  var cols = role==='admin' ? ['admins','admin','Admin','users','settings'] : (role==='distributor' ? ['distributors','distributor'] : ['retailers','retailer']);
+  for(var i=0;i<cols.length;i++){
+    var r = await findInCol(cols[i], val);
+    if(r) return r;
+  }
+  // settings/admin doc
+  if(role==='admin'){
+    try{
+      var d = await db.collection('settings').doc('admin').get();
+      if(d.exists){
+        var data = d.data();
+        var v = String(val).trim().toLowerCase();
+        for(var k in data){
+          if(String(data[k]).trim().toLowerCase()===v) return {doc: d, col: 'settings/admin'};
+        }
+        if(data.username || data.password || data.passwordHash) return {doc: d, col: 'settings/admin', isAdminDoc: true};
       }
-      // Admin doc thile - username check na hele bi return - password check kariba
-      if(data.username || data.password || data.passwordHash || data.adminPassword) return {doc: d, col: 'settings/admin', isAdminDoc: true};
-    }
-  }catch(e){}
+    }catch(e){}
+  }
   return null;
 }
 async function sendRequest(){
@@ -136,13 +139,7 @@ async function sendRequest(){
   var msg=document.getElementById('fpMsg');
   if(!input){ msg.innerText='Enter Username / Mobile / Email'; return; }
   try{
-    var res;
-    if(fpRole==='admin') res = await findAdmin(input);
-    else {
-      var col = fpRole==='distributor' ? 'distributors' : 'retailers';
-      var r = await findUser(col, input);
-      if(r) res = r;
-    }
+    var res = await findUserForRole(fpRole, input);
     if(!res){ msg.innerText='Not Found - '+input; return; }
     fpUserDocId = res.doc.id; fpCol = res.col;
     var data = res.doc.data();
@@ -191,18 +188,11 @@ async function doLogin(){
   if(!username || !password){ msg.innerText='Fill All'; return; }
   btn.disabled=true; btn.innerText='Login...'; msg.innerText='';
   try{
-    var res;
-    if(role==='admin') res = await findAdmin(username);
-    else {
-      var col = role==='distributor' ? 'distributors' : 'retailers';
-      var r = await findUser(col, username);
-      if(r) res = r;
-    }
+    var res = await findUserForRole(role, username);
     if(!res){ msg.innerText='User not found - '+username; btn.disabled=false; btn.innerText='Login'; return; }
     var data = res.doc.data();
     var savedPass = data.password || data.adminPassword || data.pass || '';
-    // passwordHash thile - plain password compare heba ni - admin ke kahiba
-    if(!savedPass && data.passwordHash){ msg.innerText='Admin Password Hash - Reset Needed'; btn.disabled=false; btn.innerText='Login'; return; }
+    if(!savedPass && data.passwordHash){ msg.innerText='Password Hash - Reset Needed'; btn.disabled=false; btn.innerText='Login'; return; }
     if(savedPass !== password){ msg.innerText='Wrong Password'; btn.disabled=false; btn.innerText='Login'; return; }
     if(data.status==='blocked' || data.blocked===true){ msg.innerText='Blocked'; btn.disabled=false; btn.innerText='Login'; return; }
     localStorage.setItem('userId', res.doc.id);
