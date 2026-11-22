@@ -50,6 +50,9 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 .wallet{font-size:26px;font-weight:800;color:#0F2A5C}
 .small{font-size:12px;color:#6B7A90}
 .logout{font-size:12px;background:#fff;color:#0F2A5C;border:0;padding:7px 12px;border-radius:20px;cursor:pointer;font-weight:700}
+.tab-row{display:flex;gap:10px;margin:0 0 14px}
+.tab-btn{flex:1;padding:12px;border:1.5px solid #D0D9E6;border-radius:12px;background:#F8FAFC;font-size:14px;font-weight:700;cursor:pointer;text-align:center}
+.tab-btn.on{background:#0F2A5C;color:#fff;border-color:#0F2A5C}
 </style>
 </head>
 <body>
@@ -59,6 +62,11 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 <div class="wallet">₹ <span id="wallet">0.00</span></div>
 </div>
 <div class="card">
+<div class="tab-row">
+<button class="tab-btn on" id="tabMobile" onclick="showService('mobile')">📱 Mobile Recharge</button>
+<button class="tab-btn" id="tabDTH" onclick="showService('dth')">📺 DTH</button>
+</div>
+<div id="mobileBox">
 <h3 style="margin:0">Mobile Recharge</h3>
 <label>Mobile Number</label>
 <input id="num" type="tel" maxlength="10" placeholder="10 Digit Mobile Number" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
@@ -78,6 +86,26 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 <div id="commBox" class="comm" style="display:none"></div>
 <button class="btn" id="rechargeBtn" onclick="doRecharge()">Recharge Now</button>
 <div id="msg" class="small" style="margin-top:10px"></div>
+</div>
+<div id="dthBox" style="display:none">
+<h3 style="margin:0">DTH Recharge</h3>
+<label>VC / Subscriber ID</label>
+<input id="dthNum" type="tel" placeholder="VC Number / Subscriber ID" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+<label>Operator</label>
+<select id="dthOp" onchange="showDTHComm()">
+<option value="" disabled selected>Choose DTH Operator</option>
+<option value="DTV">Dish TV</option>
+<option value="ATV">Airtel DTH</option>
+<option value="TTV">Tata Sky</option>
+<option value="STV">Sun Direct</option>
+<option value="VTV">Videocon D2H</option>
+</select>
+<label>Amount</label>
+<input id="dthAmt" type="number" placeholder="Enter Amount" oninput="showDTHComm()">
+<div id="dthCommBox" class="comm" style="display:none"></div>
+<button class="btn" id="dthBtn" onclick="doDTHRecharge()">Recharge DTH Now</button>
+<div id="dthMsg" class="small" style="margin-top:10px"></div>
+</div>
 </div>
 <div class="card">
 <h3 style="margin:0 0 10px">Recent History</h3>
@@ -175,7 +203,58 @@ async function doRecharge(){
       await db.collection('recharges').add({ userId, userName, number, operator: opText, operatorcode: opCode, amount, commission, payable, status: data.status || 'Success', orderid: data.orderid || '', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
       msg.innerText = 'Recharge ' + (data.status || 'Success');
       document.getElementById('amt').value = '';
-      showComm(); await loadWallet(); await loadHist();
+      showComm(); await 
+function showService(type){
+  var m=document.getElementById('mobileBox'); var d=document.getElementById('dthBox');
+  var tm=document.getElementById('tabMobile'); var td=document.getElementById('tabDTH');
+  if(type==='dth'){ if(m) m.style.display='none'; if(d) d.style.display='block'; if(tm) tm.classList.remove('on'); if(td) td.classList.add('on'); }
+  else { if(m) m.style.display='block'; if(d) d.style.display='none'; if(tm) tm.classList.add('on'); if(td) td.classList.remove('on'); }
+}
+function getDTHRate(opCode){
+  if(opCode==='DTV') return 0.032;
+  if(opCode==='ATV') return 0.031;
+  if(opCode==='TTV') return 0.031;
+  if(opCode==='STV') return 0.029;
+  if(opCode==='VTV') return 0.036;
+  return 0;
+}
+function showDTHComm(){
+  var amount=parseFloat(document.getElementById('dthAmt').value||0);
+  var opCode=document.getElementById('dthOp').value;
+  var box=document.getElementById('dthCommBox');
+  if(amount>0 && opCode){
+    var rate=getDTHRate(opCode); var comm=amount*rate; var payable=amount-comm;
+    box.style.display='block'; box.innerHTML=`Your Commission: <b>₹ ${comm.toFixed(2)}</b> | Payable: <b>₹ ${payable.toFixed(2)}</b>`;
+  } else { box.style.display='none'; }
+}
+async function doDTHRecharge(){
+  var number=document.getElementById('dthNum').value.trim();
+  var opCode=document.getElementById('dthOp').value;
+  var opText=document.getElementById('dthOp').options[document.getElementById('dthOp').selectedIndex].text;
+  var amount=parseFloat(document.getElementById('dthAmt').value||0);
+  var msg=document.getElementById('dthMsg'); var btn=document.getElementById('dthBtn');
+  if(number.length<10){ msg.innerText='Enter valid VC / Subscriber ID'; return; }
+  if(!opCode){ msg.innerText='Select DTH Operator'; return; }
+  if(amount<=0){ msg.innerText='Enter valid amount'; return; }
+  var rate=getDTHRate(opCode); var commission=amount*rate; var payable=amount-commission;
+  if(walletBalance<payable){ msg.innerText='Insufficient wallet balance'; return; }
+  btn.disabled=true; btn.innerText='Processing...'; msg.innerText='';
+  try{
+    var res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({number,operatorcode:opCode,amount,orderid:'PQ'+Date.now()})});
+    var data=await res.json();
+    if(data.status==='Success'||data.status==='Pending'||data.success===true){
+      await db.collection('retailers').doc(userId).update({wallet: firebase.firestore.FieldValue.increment(-payable)});
+      await db.collection('recharges').add({userId,userName,number,operator:opText,operatorcode:opCode,amount,commission,payable,status:data.status||'Success',orderid:data.orderid||'',createdAt: firebase.firestore.FieldValue.serverTimestamp()});
+      msg.innerText='DTH Recharge '+(data.status||'Success'); document.getElementById('dthAmt').value=''; showDTHComm(); await loadWallet(); await loadHist();
+    } else {
+      await db.collection('recharges').add({userId,userName,number,operator:opText,operatorcode:opCode,amount,commission,payable,status:'Failed',orderid:'',raw:data.message||'',createdAt: firebase.firestore.FieldValue.serverTimestamp()});
+      msg.innerText='Failed: '+(data.message||'Try again'); await loadHist();
+    }
+  }catch(e){ msg.innerText='Network error. Try again.'; console.log(e); }
+  btn.disabled=false; btn.innerText='Recharge DTH Now';
+}
+
+loadWallet(); await loadHist();
     } else {
       await db.collection('recharges').add({ userId, userName, number, operator: opText, operatorcode: opCode, amount, commission, payable, status: 'Failed', orderid: '', raw: data.message || '', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
       msg.innerText = 'Failed: ' + (data.message || 'Try again');
