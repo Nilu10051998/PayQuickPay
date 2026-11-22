@@ -11,6 +11,9 @@
 body{margin:0;background:#EEF2F7;color:#1A2332;padding-bottom:20px}
 .top{background:linear-gradient(135deg,#0F2A5C 0%,#1A4A9A 60%,#2563EB 100%);color:#fff;padding:18px 16px;display:flex;justify-content:space-between;align-items:center;border-radius:0 0 20px 20px;box-shadow:0 6px 20px rgba(15,42,92,.25)}
 .top b{font-size:20px;font-weight:800;letter-spacing:.3px}
+.notice-bar{background:#FFF7ED;border-bottom:1px solid #FDBA74;overflow:hidden;white-space:nowrap;padding:9px 0}
+.notice-text{display:inline-block;padding-left:100%;animation:scrollNotice 18s linear infinite;font-size:13px;font-weight:600;color:#9A3412}
+@keyframes scrollNotice{from{transform:translateX(0)}to{transform:translateX(-100%)}}
 .card{background:#fff;margin:14px;border-radius:16px;padding:18px;box-shadow:0 4px 16px rgba(0,0,0,.06)}
 .card h3{font-size:16px;color:#0F2A5C}
 label{font-size:13px;font-weight:600;color:#344054;display:block;margin:14px 0 6px}
@@ -38,6 +41,7 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 </head>
 <body>
 <div class="top"><b>PayQuickPay</b><span><span id="userEmail" class="small" style="color:#fff"></span> <button class="logout" onclick="doLogout()">Logout</button></span></div>
+<div class="notice-bar"><div class="notice-text" id="noticeText">Welcome to PayQuickPay • Recharge Available</div></div>
 <div class="card">
 <div class="small">Wallet Balance - <span id="userName"></span></div>
 <div class="wallet">₹ <span id="wallet">0.00</span></div>
@@ -169,6 +173,14 @@ if(!userId || userRole !== 'retailer'){ window.location.href = '/'; }
 document.getElementById('userName').innerText = userName || '';
 document.getElementById('userEmail').innerText = userName || '';
 async function doLogout(){ localStorage.clear(); window.location.href = '/'; }
+async function loadNotice(){
+  try{
+    let s = await db.collection('notices').orderBy('createdAt','desc').limit(5).get();
+    let arr = [];
+    s.forEach(doc=>{ let d=doc.data(); arr.push((d.title||'') + (d.message ? ' - ' + d.message : '')); });
+    if(arr.length>0) document.getElementById('noticeText').innerText = arr.join('  •  ');
+  }catch(e){}
+}
 function showCommissionTable(){
   var t=document.getElementById('commTable');
   if(t.style.display==='none'){ t.style.display='block'; } else { t.style.display='none'; }
@@ -316,6 +328,7 @@ async function doDTHRecharge(){
 }
 loadWallet();
 loadHist();
+loadNotice();
 </script>
 </body>
 </html>
