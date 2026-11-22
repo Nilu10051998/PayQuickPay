@@ -23,7 +23,7 @@ input:focus,select:focus{border-color:#0B5ED7;background:#fff;box-shadow:0 0 0 3
 .btn:disabled{opacity:.6}
 .btn2{width:100%;padding:12px;background:#F1F5F9;color:#0B3D91;border:1px solid #E2E8F0;border-radius:11px;font-size:14px;font-weight:700;margin-top:10px;cursor:pointer}
 .forgot{text-align:right;font-size:13px;color:#0B5ED7;margin-top:10px;cursor:pointer;font-weight:600}
-.care{text-align:center;font-size:12px;color:#64748B;padding:0 0 20px}
+.care{text-align:center;font-size:12px;color:#64748B;padding:0 0 20px;line-height:1.7}
 .care b{color:#0F172A}
 .small{font-size:12px;color:#DC2626;text-align:center;margin-top:10px;min-height:16px}
 </style>
@@ -50,8 +50,8 @@ input:focus,select:focus{border-color:#0B5ED7;background:#fff;box-shadow:0 0 0 3
 <div id="msg" class="small"></div>
 </div>
 <div class="box" id="forgotBox" style="display:none">
-<label>Mobile</label>
-<input id="fpMobile" type="tel" maxlength="10" placeholder="Mobile" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+<label>Username / Mobile / Email</label>
+<input id="fpMobile" type="text" placeholder="Username / Mobile / Email">
 <div id="recaptcha" style="display:none"></div>
 <button class="btn2" onclick="sendOtp()">Send OTP</button>
 <div id="otpArea" style="display:none">
@@ -67,7 +67,7 @@ input:focus,select:focus{border-color:#0B5ED7;background:#fff;box-shadow:0 0 0 3
 <div id="fpMsg" class="small"></div>
 <button class="btn2" onclick="backLogin()">Back</button>
 </div>
-<div class="care">Helpline • <b>8847889824</b></div>
+<div class="care">Helpline • <b>8847889824</b><br>Email • <b>Payquickpayofficial@gmail.com</b></div>
 </div>
 <script>
 const firebaseConfig = {
@@ -92,7 +92,7 @@ function backLogin(){
   document.getElementById('loginBox').style.display='block';
 }
 async function findUser(col, val){
-  var fields = ['username','mobile','name','userId','id'];
+  var fields = ['username','mobile','name','userId','id','phone','phoneNumber','email','mail'];
   for(var i=0;i<fields.length;i++){
     try{
       var s = await db.collection(col).where(fields[i],'==',val).limit(1).get();
@@ -106,16 +106,25 @@ async function findUser(col, val){
   return null;
 }
 async function sendOtp(){
-  var mobile=document.getElementById('fpMobile').value.trim();
+  var input=document.getElementById('fpMobile').value.trim();
   var msg=document.getElementById('fpMsg');
-  if(mobile.length!==10){ msg.innerText='Enter Mobile'; return; }
+  if(!input){ msg.innerText='Enter Username / Mobile / Email'; return; }
   var col = fpRole==='admin' ? 'admins' : (fpRole==='distributor' ? 'distributors' : 'retailers');
-  var doc = await findUser(col, mobile);
+  var doc = await findUser(col, input);
+  if(!doc){
+    var doc2 = await findUser(col, input.toLowerCase());
+    if(doc2) doc = doc2;
+    else { var doc3 = await findUser(col, input.toUpperCase()); if(doc3) doc = doc3; }
+  }
   if(!doc){ msg.innerText='Not Found'; return; }
   fpUserDocId = doc.id;
-  msg.innerText='Sending...';
+  var data = doc.data();
+  var realMobile = data.mobile || data.phone || data.phoneNumber || data.username;
+  if(!realMobile || String(realMobile).replace(/[^0-9]/g,'').length < 10){ msg.innerText='Mobile Not Saved'; return; }
+  realMobile = String(realMobile).replace(/[^0-9]/g,'').slice(-10);
+  msg.innerText='Sending OTP to '+realMobile;
   try{
-    confirmResult = await auth.signInWithPhoneNumber('+91'+mobile, window.recaptchaVerifier);
+    confirmResult = await auth.signInWithPhoneNumber('+91'+realMobile, window.recaptchaVerifier);
     msg.innerText='OTP Sent';
     document.getElementById('otpArea').style.display='block';
   }catch(e){ msg.innerText=e.message; }
