@@ -97,10 +97,8 @@ const firebaseConfig = {
   messagingSenderId: "368108778411",
   appId: "1:368108778411:web:03dcbc47e46568d51b58ee"
 };
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-// *** THIK HEICHHI - API LINK ***
+var db = null;
+try{ if(typeof firebase!=='undefined' && firebase.initializeApp){ firebase.initializeApp(firebaseConfig); db = firebase.firestore(); } }catch(e){ console.log('Firebase init failed', e); db=null; }
 const API_URL = 'https://payquickpay-api.vercel.app/api/recharge';
 
 function getRetailerRate(opCode){
@@ -123,7 +121,9 @@ var _u = _getJSON(['user','retailer','loggedInUser','payquickpay_user','currentU
 let userId = _getLS(['userId','retailerId','retailer_id','uid','id','user_id']) || (_u && (_u.userId||_u.retailerId||_u.id||_u.uid||'')) || '';
 let userRole = _getLS(['userRole','role','type','userType']) || (_u && (_u.role||_u.userRole||_u.type||'')) || 'retailer';
 let userName = _getLS(['userName','username','retailerName','name','retailer_id','retailerId']) || (_u && (_u.userName||_u.username||_u.retailerName||_u.name||_u.retailerId||'')) || userId || '';
+try{ var _ss=function(k){ try{ return sessionStorage.getItem(k)||''; }catch(e){ return ''; } }; if(!userId) userId=_ss('userId')||_ss('retailerId')||_ss('uid')||''; if(!userName) userName=_ss('userName')||_ss('username')||_ss('retailerName')||''; if(!userId || !userName){ try{ var _q=new URLSearchParams(location.search); if(!userId) userId=_q.get('id')||_q.get('retailerId')||_q.get('userId')||''; if(!userName) userName=_q.get('username')||_q.get('name')||userId||''; }catch(e){} } }catch(e){}
 try{ if(userId) localStorage.setItem('userId', userId); if(userName) localStorage.setItem('userName', userName); if(userRole) localStorage.setItem('userRole', userRole); }catch(e){}
+if(!userId){ try{ var _entered=prompt('Enter Retailer ID:'); if(_entered){ userId=_entered.trim(); userName=userId; localStorage.setItem('userId', userId); localStorage.setItem('userName', userName); } }catch(e){} }
 let walletBalance = 0;
 
 if(!userId || (userRole||'').toLowerCase() !== 'retailer'){
@@ -138,7 +138,7 @@ async function doLogout(){
   window.location.href = '../index.html';
 }
 
-async function loadWallet(){
+async function loadWallet(){ if(!db){ document.getElementById("wallet").innerText="0.00"; return; }
   // Cache ru sanga sanga dekhha - Loading lagiba ni
   try{ var cached=localStorage.getItem('wallet_'+userId); if(cached) document.getElementById('wallet').innerText=parseFloat(cached).toFixed(2); }catch(e){}
   try{
@@ -267,7 +267,7 @@ async function doRecharge(){
   btn.disabled = false; btn.innerText = 'Recharge Now';
 }
 
-async function loadHist(){
+async function loadHist(){ if(!db) return;
   try{
     // Timeout: Firestore hang hele Loading re atki jiba ni
     let q = db.collection('recharges').where('userId','==',userId).limit(20).get();
