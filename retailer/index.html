@@ -18,6 +18,7 @@ input,select{width:100%;padding:12px 13px;border:1.5px solid #D0D9E6;border-radi
 input:focus,select:focus{border-color:#2563EB;background:#fff}
 .btn{width:100%;padding:13px;background:linear-gradient(135deg,#FF7A00,#FF3D00);color:#fff;border:0;border-radius:10px;font-size:16px;font-weight:700;margin-top:16px;cursor:pointer;box-shadow:0 4px 14px rgba(255,61,0,.25)}
 .btn:disabled{opacity:.6}
+.btn2{width:100%;padding:11px;background:#EEF2F7;color:#0F2A5C;border:1.5px solid #D0D9E6;border-radius:10px;font-size:14px;font-weight:700;margin-top:10px;cursor:pointer}
 .comm{background:#E8F0FE;border:1px solid #BFDBFE;padding:11px 12px;border-radius:10px;font-size:14px;margin-top:12px;color:#0F2A5C}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th,td{padding:10px 8px;border-bottom:1px solid #EEF2F7;text-align:left}
@@ -39,6 +40,23 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 <div class="card">
 <div class="small">Wallet Balance - <span id="userName"></span></div>
 <div class="wallet">₹ <span id="wallet">0.00</span></div>
+<button class="btn2" onclick="showCommissionTable()">View Commission Structure</button>
+<div id="commTable" style="display:none;margin-top:12px">
+<table>
+<thead><tr><th>Operator</th><th>Your Commission</th></tr></thead>
+<tbody>
+<tr><td>【entity-Jio¦canonical_name=Jio】 Prepaid / Postpaid</td><td><b>0.40%</b></td></tr>
+<tr><td>【entity-Airtel¦canonical_name=Airtel】 Prepaid / Postpaid</td><td><b>0.80%</b></td></tr>
+<tr><td>Vi Prepaid</td><td><b>2.40%</b></td></tr>
+<tr><td>BSNL Prepaid</td><td><b>2.80%</b></td></tr>
+<tr><td>Dish TV</td><td><b>3.00%</b></td></tr>
+<tr><td>【entity-Airtel¦canonical_name=Airtel】 DTH</td><td><b>2.90%</b></td></tr>
+<tr><td>【entity-Tata Sky¦canonical_name=Tata Sky】</td><td><b>2.90%</b></td></tr>
+<tr><td>Sun Direct</td><td><b>2.70%</b></td></tr>
+<tr><td>Videocon D2H</td><td><b>3.40%</b></td></tr>
+</tbody>
+</table>
+</div>
 </div>
 <div class="card">
 <div class="tab-row">
@@ -52,13 +70,13 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 <label>Operator</label>
 <select id="op" onchange="showComm()">
 <option value="" disabled selected>Choose Operator</option>
-<option value="RC">Jio Prepaid</option>
-<option value="A">Airtel Prepaid</option>
+<option value="RC">【entity-Jio¦canonical_name=Jio】 Prepaid</option>
+<option value="A">【entity-Airtel¦canonical_name=Airtel】 Prepaid</option>
 <option value="V">Vi Prepaid</option>
 <option value="BR">BSNL Prepaid - STV</option>
 <option value="BT">BSNL Prepaid - Topup</option>
-<option value="RCP">Jio Postpaid</option>
-<option value="AP">Airtel Postpaid</option>
+<option value="RCP">【entity-Jio¦canonical_name=Jio】 Postpaid</option>
+<option value="AP">【entity-Airtel¦canonical_name=Airtel】 Postpaid</option>
 </select>
 <label>Amount</label>
 <input id="amt" type="number" placeholder="Enter Amount" oninput="showComm()">
@@ -74,8 +92,8 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 <select id="dthOp" onchange="showDTHComm()">
 <option value="" disabled selected>Choose DTH Operator</option>
 <option value="DTV">Dish TV</option>
-<option value="ATV">Airtel DTH</option>
-<option value="TTV">【entity-Tata Sky¦canonical_name=Tata Sky】</option>
+<option value="ATV">【entity-Airtel¦canonical_name=Airtel】 DTH</option>
+<option value="TTV"> 【entity-Tata Sky¦canonical_name=Tata Sky】</option>
 <option value="STV">Sun Direct</option>
 <option value="VTV">Videocon D2H</option>
 </select>
@@ -103,46 +121,62 @@ const firebaseConfig = {
   appId: "1:368108778411:web:03dcbc47e46568d51b58ee"
 };
 var db = null;
-try{ if(typeof firebase!=='undefined' && firebase.initializeApp){ firebase.initializeApp(firebaseConfig); db = firebase.firestore(); } }catch(e){ console.log('Firebase init failed', e); db=null; }
+try{ if(typeof firebase!=='undefined' && firebase.initializeApp){ firebase.initializeApp(firebaseConfig); db = firebase.firestore(); } }catch(e){ db=null; }
 const API_URL = 'https://payquickpay-api.vercel.app/api/recharge';
-function getRetailerRate(opCode){
-  if(opCode === 'RC' || opCode === 'RCP') return 0.008;
-  if(opCode === 'A' || opCode === 'AP') return 0.013;
-  if(opCode === 'V') return 0.03;
-  if(opCode === 'BR' || opCode === 'BT') return 0.034;
+function getTotalRate(opCode){
+  if(opCode==='RC'||opCode==='RCP') return 0.006;
+  if(opCode==='A'||opCode==='AP') return 0.010;
+  if(opCode==='V') return 0.026;
+  if(opCode==='BR'||opCode==='BT') return 0.030;
+  if(opCode==='DTV') return 0.032;
+  if(opCode==='ATV') return 0.031;
+  if(opCode==='TTV') return 0.031;
+  if(opCode==='STV') return 0.029;
+  if(opCode==='VTV') return 0.036;
   return 0;
 }
+function getRetailerRate(opCode){ return Math.max(0, getTotalRate(opCode) - 0.002); }
+function getDistRate(){ return 0.001; }
+function getAdminRate(){ return 0.001; }
 let userId = localStorage.getItem('userId');
 let userRole = localStorage.getItem('userRole');
 let userName = localStorage.getItem('userName');
 let walletBalance = 0;
-if(!userId || userRole !== 'retailer'){
-  window.location.href = '/';
-}
+if(!userId || userRole !== 'retailer'){ window.location.href = '/'; }
 document.getElementById('userName').innerText = userName || '';
 document.getElementById('userEmail').innerText = userName || '';
-async function doLogout(){
-  localStorage.clear();
-  window.location.href = '/';
+async function doLogout(){ localStorage.clear(); window.location.href = '/'; }
+function showCommissionTable(){
+  var t=document.getElementById('commTable');
+  if(t.style.display==='none'){ t.style.display='block'; } else { t.style.display='none'; }
 }
 async function loadWallet(){ if(!db) return;
   let doc = await db.collection('retailers').doc(userId).get();
-  if(doc.exists){
-    walletBalance = parseFloat(doc.data().wallet || 0);
-    document.getElementById('wallet').innerText = walletBalance.toFixed(2);
-  }
+  if(doc.exists){ walletBalance = parseFloat(doc.data().wallet || 0); document.getElementById('wallet').innerText = walletBalance.toFixed(2); }
 }
 function showComm(){
   let amount = parseFloat(document.getElementById('amt').value || 0);
   let opCode = document.getElementById('op').value;
   let box = document.getElementById('commBox');
-  if(amount > 0){
-    let rate = getRetailerRate(opCode);
-    let comm = amount * rate;
+  if(amount > 0 && opCode){
+    let comm = amount * getRetailerRate(opCode);
     let payable = amount - comm;
     box.style.display = 'block';
     box.innerHTML = `Your Commission: <b>₹ ${comm.toFixed(2)}</b> | Payable: <b>₹ ${payable.toFixed(2)}</b>`;
   } else { box.style.display = 'none'; }
+}
+async function splitCommission(amount, opCode, number, opText, status, orderid, raw){
+  let retailerComm = amount * getRetailerRate(opCode);
+  let distComm = amount * getDistRate();
+  let adminComm = amount * getAdminRate();
+  let payable = amount - retailerComm;
+  let distId = null;
+  try{
+    let rDoc = await db.collection('retailers').doc(userId).get();
+    if(rDoc.exists && rDoc.data().distributorId) distId = rDoc.data().distributorId;
+  }catch(e){}
+  await db.collection('recharges').add({ userId, userName, number, operator: opText, operatorcode: opCode, amount, commission: retailerComm, distributorCommission: distComm, adminCommission: adminComm, distributorId: distId || '', payable, status, orderid: orderid || '', raw: raw || '', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+  return { retailerComm, distComm, adminComm, payable, distId };
 }
 async function doRecharge(){
   let number = document.getElementById('num').value.trim();
@@ -154,30 +188,24 @@ async function doRecharge(){
   if(!opCode){ msg.innerText = 'Select Operator'; return; }
   if(number.length !== 10){ msg.innerText = 'Enter valid 10 digit number'; return; }
   if(amount <= 0){ msg.innerText = 'Enter valid amount'; return; }
-  let rate = getRetailerRate(opCode);
-  let commission = amount * rate;
-  let payable = amount - commission;
+  let retailerComm = amount * getRetailerRate(opCode);
+  let payable = amount - retailerComm;
   if(walletBalance < payable){ msg.innerText = 'Insufficient wallet balance'; return; }
   btn.disabled = true; btn.innerText = 'Processing...'; msg.innerText = '';
   try{
-    let res = await fetch(API_URL, {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ number, operatorcode: opCode, amount, orderid: 'PQ' + Date.now() })
-    });
+    let res = await fetch(API_URL, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ number, operatorcode: opCode, amount, orderid: 'PQ' + Date.now() }) });
     let data = await res.json();
     if(data.status === 'Success' || data.status === 'Pending' || data.success === true){
-      await db.collection('retailers').doc(userId).update({ wallet: firebase.firestore.FieldValue.increment(-payable) });
-      await db.collection('recharges').add({ userId, userName, number, operator: opText, operatorcode: opCode, amount, commission, payable, status: data.status || 'Success', orderid: data.orderid || '', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      let s = await splitCommission(amount, opCode, number, opText, data.status || 'Success', data.orderid || '', '');
+      await db.collection('retailers').doc(userId).update({ wallet: firebase.firestore.FieldValue.increment(-s.payable) });
+      if(s.distId && s.distComm > 0){ await db.collection('distributors').doc(s.distId).update({ wallet: firebase.firestore.FieldValue.increment(s.distComm) }).catch(()=>{}); }
       msg.innerText = 'Recharge ' + (data.status || 'Success');
-      document.getElementById('amt').value = '';
-      showComm(); await loadWallet(); await loadHist();
+      document.getElementById('amt').value = ''; showComm(); await loadWallet(); await loadHist();
     } else {
-      await db.collection('recharges').add({ userId, userName, number, operator: opText, operatorcode: opCode, amount, commission, payable, status: 'Failed', orderid: '', raw: data.message || '', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-      msg.innerText = 'Failed: ' + (data.message || 'Try again');
-      await loadHist();
+      await splitCommission(amount, opCode, number, opText, 'Failed', '', data.message || '');
+      msg.innerText = 'Failed: ' + (data.message || 'Try again'); await loadHist();
     }
-  }catch(e){ msg.innerText = 'Network error. Try again.'; console.log(e); }
+  }catch(e){ msg.innerText = 'Network error. Try again.'; }
   btn.disabled = false; btn.innerText = 'Recharge Now';
 }
 async function loadHist(){ if(!db) return;
@@ -199,20 +227,13 @@ function showService(type){
   if(type==='dth'){ if(m) m.style.display='none'; if(d) d.style.display='block'; if(tm) tm.classList.remove('on'); if(td) td.classList.add('on'); }
   else { if(m) m.style.display='block'; if(d) d.style.display='none'; if(tm) tm.classList.add('on'); if(td) td.classList.remove('on'); }
 }
-function getDTHRate(opCode){
-  if(opCode==='DTV') return 0.032;
-  if(opCode==='ATV') return 0.031;
-  if(opCode==='TTV') return 0.031;
-  if(opCode==='STV') return 0.029;
-  if(opCode==='VTV') return 0.036;
-  return 0;
-}
+function getDTHRate(opCode){ return getRetailerRate(opCode); }
 function showDTHComm(){
   var amount=parseFloat(document.getElementById('dthAmt').value||0);
   var opCode=document.getElementById('dthOp').value;
   var box=document.getElementById('dthCommBox');
   if(amount>0 && opCode){
-    var rate=getDTHRate(opCode); var comm=amount*rate; var payable=amount-comm;
+    var comm=amount*getRetailerRate(opCode); var payable=amount-comm;
     box.style.display='block'; box.innerHTML=`Your Commission: <b>₹ ${comm.toFixed(2)}</b> | Payable: <b>₹ ${payable.toFixed(2)}</b>`;
   } else { box.style.display='none'; }
 }
@@ -225,21 +246,22 @@ async function doDTHRecharge(){
   if(number.length<10){ msg.innerText='Enter valid VC / Subscriber ID'; return; }
   if(!opCode){ msg.innerText='Select DTH Operator'; return; }
   if(amount<=0){ msg.innerText='Enter valid amount'; return; }
-  var rate=getDTHRate(opCode); var commission=amount*rate; var payable=amount-commission;
+  var retailerComm=amount*getRetailerRate(opCode); var payable=amount-retailerComm;
   if(walletBalance<payable){ msg.innerText='Insufficient wallet balance'; return; }
   btn.disabled=true; btn.innerText='Processing...'; msg.innerText='';
   try{
     var res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({number,operatorcode:opCode,amount,orderid:'PQ'+Date.now()})});
     var data=await res.json();
     if(data.status==='Success'||data.status==='Pending'||data.success===true){
-      await db.collection('retailers').doc(userId).update({wallet: firebase.firestore.FieldValue.increment(-payable)});
-      await db.collection('recharges').add({userId,userName,number,operator:opText,operatorcode:opCode,amount,commission,payable,status:data.status||'Success',orderid:data.orderid||'',createdAt: firebase.firestore.FieldValue.serverTimestamp()});
+      var s=await splitCommission(amount, opCode, number, opText, data.status||'Success', data.orderid||'', '');
+      await db.collection('retailers').doc(userId).update({wallet: firebase.firestore.FieldValue.increment(-s.payable)});
+      if(s.distId && s.distComm > 0){ await db.collection('distributors').doc(s.distId).update({wallet: firebase.firestore.FieldValue.increment(s.distComm)}).catch(()=>{}); }
       msg.innerText='DTH Recharge '+(data.status||'Success'); document.getElementById('dthAmt').value=''; showDTHComm(); await loadWallet(); await loadHist();
     } else {
-      await db.collection('recharges').add({userId,userName,number,operator:opText,operatorcode:opCode,amount,commission,payable,status:'Failed',orderid:'',raw:data.message||'',createdAt: firebase.firestore.FieldValue.serverTimestamp()});
+      await splitCommission(amount, opCode, number, opText, 'Failed', '', data.message||'');
       msg.innerText='Failed: '+(data.message||'Try again'); await loadHist();
     }
-  }catch(e){ msg.innerText='Network error. Try again.'; console.log(e); }
+  }catch(e){ msg.innerText='Network error. Try again.'; }
   btn.disabled=false; btn.innerText='Recharge DTH Now';
 }
 loadWallet();
