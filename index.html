@@ -20,7 +20,6 @@ label{font-size:12px;font-weight:700;color:#334155;display:block;margin:16px 0 7
 input,select{width:100%;padding:13px 14px;border:1.5px solid #E2E8F0;border-radius:12px;font-size:14px;outline:none;background:#F8FAFC;color:#0F172A}
 input:focus,select:focus{border-color:#0B5ED7;background:#fff;box-shadow:0 0 0 3px rgba(11,94,215,.12)}
 .btn{width:100%;padding:14px;background:#0B5ED7;color:#fff;border:0;border-radius:12px;font-size:15px;font-weight:700;margin-top:22px;cursor:pointer}
-.btn:active{transform:scale(.98)}
 .btn:disabled{opacity:.6}
 .btn2{width:100%;padding:12px;background:#F1F5F9;color:#0B3D91;border:1px solid #E2E8F0;border-radius:11px;font-size:14px;font-weight:700;margin-top:10px;cursor:pointer}
 .forgot{text-align:right;font-size:13px;color:#0B5ED7;margin-top:10px;cursor:pointer;font-weight:600}
@@ -53,7 +52,7 @@ input:focus,select:focus{border-color:#0B5ED7;background:#fff;box-shadow:0 0 0 3
 <div class="box" id="forgotBox" style="display:none">
 <label>Mobile</label>
 <input id="fpMobile" type="tel" maxlength="10" placeholder="Mobile" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-<div id="recaptcha" style="margin-top:12px"></div>
+<div id="recaptcha" style="display:none"></div>
 <button class="btn2" onclick="sendOtp()">Send OTP</button>
 <div id="otpArea" style="display:none">
 <label>OTP</label>
@@ -86,7 +85,7 @@ function showForgot(){
   document.getElementById('forgotBox').style.display='block';
   fpRole = document.getElementById('role').value;
   if(window.recaptchaVerifier){ try{ window.recaptchaVerifier.clear(); }catch(e){} }
-  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha', { size: 'normal' });
+  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha', { size: 'invisible' });
 }
 function backLogin(){
   document.getElementById('forgotBox').style.display='none';
@@ -119,7 +118,7 @@ async function sendOtp(){
     confirmResult = await auth.signInWithPhoneNumber('+91'+mobile, window.recaptchaVerifier);
     msg.innerText='OTP Sent';
     document.getElementById('otpArea').style.display='block';
-  }catch(e){ msg.innerText='Try Again'; }
+  }catch(e){ msg.innerText=e.message; }
 }
 async function verifyOtp(){
   var code=document.getElementById('otpCode').value.trim();
