@@ -64,6 +64,7 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 <input id="num" type="tel" maxlength="10" placeholder="10 Digit Mobile Number" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
 <label>Operator</label>
 <select id="op" onchange="showComm()">
+<option value="" disabled selected>Choose Operator</option>
 <option value="RC">Jio Prepaid</option>
 <option value="A">Airtel Prepaid</option>
 <option value="V">Vi Prepaid</option>
@@ -152,6 +153,7 @@ async function doRecharge(){
   let opCode = document.getElementById('op').value;
   let opText = document.getElementById('op').options[document.getElementById('op').selectedIndex].text;
   let amount = parseFloat(document.getElementById('amt').value || 0);
+  if(!opCode){ msg.innerText = 'Select Operator'; return; }
   let msg = document.getElementById('msg');
   let btn = document.getElementById('rechargeBtn');
   if(number.length !== 10){ msg.innerText = 'Enter valid 10 digit number'; return; }
