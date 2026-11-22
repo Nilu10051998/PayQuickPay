@@ -45,15 +45,15 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 <table>
 <thead><tr><th>Operator</th><th>Your Commission</th></tr></thead>
 <tbody>
-<tr><td>J&#105;o Prepaid / Postpaid</td><td><b>0.40%</b></td></tr>
-<tr><td>A&#105;rtel Prepaid / Postpaid</td><td><b>0.80%</b></td></tr>
-<tr><td>V&#105; Prepaid</td><td><b>2.40%</b></td></tr>
+<tr><td>J&#105;o Prepaid / Postpaid</td><td><b>0.60%</b></td></tr>
+<tr><td>A&#105;rtel Prepaid / Postpaid</td><td><b>1.10%</b></td></tr>
+<tr><td>V&#105; Prepaid</td><td><b>2.80%</b></td></tr>
 <tr><td>BSNL Prepaid</td><td><b>2.80%</b></td></tr>
-<tr><td>Dish TV</td><td><b>3.00%</b></td></tr>
-<tr><td>A&#105;rtel DTH</td><td><b>2.90%</b></td></tr>
-<tr><td>T&#97;ta Sky</td><td><b>2.90%</b></td></tr>
-<tr><td>Sun Direct</td><td><b>2.70%</b></td></tr>
-<tr><td>Videocon D2H</td><td><b>3.40%</b></td></tr>
+<tr><td>Dish TV</td><td><b>3.40%</b></td></tr>
+<tr><td>A&#105;rtel DTH</td><td><b>3.30%</b></td></tr>
+<tr><td>T&#97;ta Sky</td><td><b>3.30%</b></td></tr>
+<tr><td>Sun Direct</td><td><b>3.10%</b></td></tr>
+<tr><td>Videocon D2H</td><td><b>3.90%</b></td></tr>
 </tbody>
 </table>
 </div>
@@ -124,15 +124,15 @@ var db = null;
 try{ if(typeof firebase!=='undefined' && firebase.initializeApp){ firebase.initializeApp(firebaseConfig); db = firebase.firestore(); } }catch(e){ db=null; }
 const API_URL = 'https://payquickpay-api.vercel.app/api/recharge';
 function getTotalRate(opCode){
-  if(opCode==='RC'||opCode==='RCP') return 0.006;
-  if(opCode==='A'||opCode==='AP') return 0.010;
-  if(opCode==='V') return 0.026;
+  if(opCode==='RC'||opCode==='RCP') return 0.008;
+  if(opCode==='A'||opCode==='AP') return 0.013;
+  if(opCode==='V') return 0.030;
   if(opCode==='BR'||opCode==='BT') return 0.030;
-  if(opCode==='DTV') return 0.032;
-  if(opCode==='ATV') return 0.031;
-  if(opCode==='TTV') return 0.031;
-  if(opCode==='STV') return 0.029;
-  if(opCode==='VTV') return 0.036;
+  if(opCode==='DTV') return 0.036;
+  if(opCode==='ATV') return 0.035;
+  if(opCode==='TTV') return 0.035;
+  if(opCode==='STV') return 0.033;
+  if(opCode==='VTV') return 0.041;
   return 0;
 }
 function getRetailerRate(opCode){ return Math.max(0, getTotalRate(opCode) - 0.002); }
