@@ -6,7 +6,6 @@
 <title>PayQuickPay - Login</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <style>
 *{box-sizing:border-box;font-family:'Segoe UI',system-ui,Arial,sans-serif}
 body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:linear-gradient(180deg,#EAF2FA,#D6E6F5)}
@@ -26,6 +25,7 @@ input:focus,select:focus{border-color:#0B5ED7;background:#fff;box-shadow:0 0 0 3
 .care{text-align:center;font-size:12px;color:#64748B;padding:0 0 20px;line-height:1.7}
 .care b{color:#0F172A}
 .small{font-size:12px;color:#DC2626;text-align:center;margin-top:10px;min-height:16px}
+.green{color:#16A34A !important}
 </style>
 </head>
 <body>
@@ -52,12 +52,12 @@ input:focus,select:focus{border-color:#0B5ED7;background:#fff;box-shadow:0 0 0 3
 <div class="box" id="forgotBox" style="display:none">
 <label>Username / Mobile / Email</label>
 <input id="fpMobile" type="text" placeholder="Username / Mobile / Email">
-<div id="recaptcha" style="display:none"></div>
-<button class="btn2" onclick="sendOtp()">Send OTP</button>
-<div id="otpArea" style="display:none">
-<label>OTP</label>
-<input id="otpCode" type="tel" maxlength="6" placeholder="OTP">
-<button class="btn2" onclick="verifyOtp()">Verify</button>
+<button class="btn2" onclick="sendRequest()">Send Request</button>
+<div id="codeArea" style="display:none">
+<label>Admin Code</label>
+<input id="adminCode" type="tel" maxlength="4" placeholder="4 Digit Code">
+<button class="btn2" onclick="verifyCode()">Verify Code</button>
+<div class="small green">Admin ku Call kara - Code Magiba</div>
 </div>
 <div id="newPassArea" style="display:none">
 <label>New Password</label>
@@ -78,14 +78,12 @@ const firebaseConfig = {
   messagingSenderId: "368108778411",
   appId: "1:368108778411:web:03dcbc47e46568d51b58ee"
 };
-var db = null; var auth = null; var confirmResult = null; var fpUserDocId = null; var fpRole = 'retailer';
-try{ if(typeof firebase!=='undefined' && firebase.initializeApp){ firebase.initializeApp(firebaseConfig); db = firebase.firestore(); auth = firebase.auth(); } }catch(e){ db=null; }
+var db = null; var fpUserDocId = null; var fpRole = 'retailer'; var fpReqId = null;
+try{ if(typeof firebase!=='undefined' && firebase.initializeApp){ firebase.initializeApp(firebaseConfig); db = firebase.firestore(); } }catch(e){ db=null; }
 function showForgot(){
   document.getElementById('loginBox').style.display='none';
   document.getElementById('forgotBox').style.display='block';
   fpRole = document.getElementById('role').value;
-  if(window.recaptchaVerifier){ try{ window.recaptchaVerifier.clear(); }catch(e){} }
-  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha', { size: 'invisible' });
 }
 function backLogin(){
   document.getElementById('forgotBox').style.display='none';
@@ -105,7 +103,7 @@ async function findUser(col, val){
   }catch(e){}
   return null;
 }
-async function sendOtp(){
+async function sendRequest(){
   var input=document.getElementById('fpMobile').value.trim();
   var msg=document.getElementById('fpMsg');
   if(!input){ msg.innerText='Enter Username / Mobile / Email'; return; }
@@ -119,25 +117,27 @@ async function sendOtp(){
   if(!doc){ msg.innerText='Not Found'; return; }
   fpUserDocId = doc.id;
   var data = doc.data();
-  var realMobile = data.mobile || data.phone || data.phoneNumber || data.username;
-  if(!realMobile || String(realMobile).replace(/[^0-9]/g,'').length < 10){ msg.innerText='Mobile Not Saved'; return; }
-  realMobile = String(realMobile).replace(/[^0-9]/g,'').slice(-10);
-  msg.innerText='Sending OTP to '+realMobile;
-  try{
-    confirmResult = await auth.signInWithPhoneNumber('+91'+realMobile, window.recaptchaVerifier);
-    msg.innerText='OTP Sent';
-    document.getElementById('otpArea').style.display='block';
-  }catch(e){ msg.innerText=e.message; }
+  var code = String(Math.floor(1000 + Math.random()*9000));
+  var req = await db.collection('passwordRequests').add({
+    role: fpRole, userId: doc.id, name: data.name || data.username || input,
+    mobile: data.mobile || data.phone || '', email: data.email || '',
+    code: code, status: 'pending', time: new Date().toISOString()
+  });
+  fpReqId = req.id;
+  msg.innerText='';
+  document.getElementById('codeArea').style.display='block';
 }
-async function verifyOtp(){
-  var code=document.getElementById('otpCode').value.trim();
+async function verifyCode(){
+  var code=document.getElementById('adminCode').value.trim();
   var msg=document.getElementById('fpMsg');
-  if(code.length!==6){ msg.innerText='Enter OTP'; return; }
-  try{
-    await confirmResult.confirm(code);
+  if(code.length!==4){ msg.innerText='Enter 4 Digit Code'; return; }
+  var d = await db.collection('passwordRequests').doc(fpReqId).get();
+  if(d.exists && d.data().code===code){
     msg.innerText='Verified';
     document.getElementById('newPassArea').style.display='block';
-  }catch(e){ msg.innerText='Wrong OTP'; }
+  } else {
+    msg.innerText='Wrong Code';
+  }
 }
 async function resetPass(){
   var np=document.getElementById('fpNewPass').value;
@@ -145,6 +145,7 @@ async function resetPass(){
   if(np.length<4){ msg.innerText='Min 4'; return; }
   var col = fpRole==='admin' ? 'admins' : (fpRole==='distributor' ? 'distributors' : 'retailers');
   await db.collection(col).doc(fpUserDocId).update({ password: np });
+  if(fpReqId) await db.collection('passwordRequests').doc(fpReqId).update({ status: 'done' });
   msg.innerText='Updated';
   setTimeout(backLogin, 1500);
 }
