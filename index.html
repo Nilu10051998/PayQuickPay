@@ -90,16 +90,30 @@ function backLogin(){
   document.getElementById('loginBox').style.display='block';
 }
 async function findUser(col, val){
-  var fields = ['username','mobile','name','userId','id','phone','phoneNumber','email','mail'];
-  for(var i=0;i<fields.length;i++){
-    try{
-      var s = await db.collection(col).where(fields[i],'==',val).limit(1).get();
-      if(!s.empty) return s.docs[0];
-    }catch(e){}
-  }
+  var v = String(val).trim().toLowerCase();
+  // 1. Doc ID direct
   try{
     var d = await db.collection(col).doc(val).get();
     if(d.exists) return d;
+  }catch(e){}
+  // 2. Sabu Doc Aniki - Sabu Field Check
+  try{
+    var snap = await db.collection(col).get();
+    for(var i=0;i<snap.docs.length;i++){
+      var doc = snap.docs[i];
+      var data = doc.data();
+      // Doc ID
+      if(doc.id.toLowerCase()===v) return doc;
+      // Sabu Field
+      for(var k in data){
+        var fv = String(data[k] == null ? '' : data[k]).trim().toLowerCase();
+        if(fv===v) return doc;
+        // Mobile last 10 digit
+        var digits = fv.replace(/[^0-9]/g,'');
+        var vdigits = v.replace(/[^0-9]/g,'');
+        if(vdigits.length>=10 && digits.slice(-10)===vdigits.slice(-10) && vdigits.length>0) return doc;
+      }
+    }
   }catch(e){}
   return null;
 }
@@ -109,18 +123,13 @@ async function sendRequest(){
   if(!input){ msg.innerText='Enter Username / Mobile / Email'; return; }
   var col = fpRole==='admin' ? 'admins' : (fpRole==='distributor' ? 'distributors' : 'retailers');
   var doc = await findUser(col, input);
-  if(!doc){
-    var doc2 = await findUser(col, input.toLowerCase());
-    if(doc2) doc = doc2;
-    else { var doc3 = await findUser(col, input.toUpperCase()); if(doc3) doc = doc3; }
-  }
   if(!doc){ msg.innerText='Not Found'; return; }
   fpUserDocId = doc.id;
   var data = doc.data();
   var code = String(Math.floor(1000 + Math.random()*9000));
   var req = await db.collection('passwordRequests').add({
-    role: fpRole, userId: doc.id, name: data.name || data.username || input,
-    mobile: data.mobile || data.phone || '', email: data.email || '',
+    role: fpRole, userId: doc.id, name: data.name || data.username || data.retailerName || data.shopName || input,
+    mobile: data.mobile || data.phone || data.phoneNumber || '', email: data.email || '',
     code: code, status: 'pending', time: new Date().toISOString()
   });
   fpReqId = req.id;
@@ -160,18 +169,13 @@ async function doLogin(){
   try{
     var col = role==='admin' ? 'admins' : (role==='distributor' ? 'distributors' : 'retailers');
     var doc = await findUser(col, username);
-    if(!doc){
-      var doc2 = await findUser(col, username.toLowerCase());
-      if(doc2) doc = doc2;
-      else { var doc3 = await findUser(col, username.toUpperCase()); if(doc3) doc = doc3; }
-    }
     if(!doc){ msg.innerText='User not found'; btn.disabled=false; btn.innerText='Login'; return; }
     var data = doc.data();
     if(data.password !== password){ msg.innerText='Wrong Password'; btn.disabled=false; btn.innerText='Login'; return; }
     if(data.status==='blocked' || data.blocked===true){ msg.innerText='Blocked'; btn.disabled=false; btn.innerText='Login'; return; }
     localStorage.setItem('userId', doc.id);
     localStorage.setItem('userRole', role);
-    localStorage.setItem('userName', data.name || data.username || username);
+    localStorage.setItem('userName', data.name || data.username || data.retailerName || username);
     if(role==='retailer') window.location.href='/retailer/';
     else if(role==='distributor') window.location.href='/distributor/';
     else window.location.href='/admin/';
