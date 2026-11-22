@@ -8,33 +8,34 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <style>
-*{box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
-body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:#D6E6F5}
-.card{background:#EAF2FA;width:100%;max-width:390px;border-radius:28px;padding:22px 20px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
-.header{background:linear-gradient(135deg,#007BFF,#4AA3FF);border-radius:16px;padding:20px;display:flex;align-items:center;gap:12px;color:#fff}
-.logo{width:52px;height:52px;background:#1E7BFF;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;flex-shrink:0}
-.header h1{font-size:22px;margin:0;letter-spacing:.3px}
-.box{background:#fff;border-radius:18px;padding:20px;margin-top:16px}
-.box h2{font-size:20px;color:#0B3D91;margin:0 0 16px;display:flex;align-items:center;gap:8px}
-label{font-size:13px;font-weight:700;color:#3A5A8C;display:block;margin:14px 0 6px}
-input,select{width:100%;padding:13px 14px;border:1.5px solid #D6E6F5;border-radius:12px;font-size:14px;outline:none;background:#F2F7FF}
-input:focus,select:focus{border-color:#007BFF;background:#fff}
-.btn{width:100%;padding:14px;background:linear-gradient(135deg,#007BFF,#4AA3FF);color:#fff;border:0;border-radius:12px;font-size:18px;font-weight:700;margin-top:20px;cursor:pointer;box-shadow:0 6px 16px rgba(0,123,255,.3)}
+*{box-sizing:border-box;font-family:'Segoe UI',system-ui,Arial,sans-serif}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:linear-gradient(180deg,#EAF2FA,#D6E6F5)}
+.card{width:100%;max-width:380px;background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 20px 40px rgba(11,61,145,.14)}
+.header{background:linear-gradient(135deg,#0B5ED7,#2E8BFF);padding:26px 24px;display:flex;align-items:center;gap:14px;color:#fff}
+.logo{width:48px;height:48px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800}
+.header h1{font-size:21px;margin:0;letter-spacing:.5px;font-weight:800}
+.header p{margin:3px 0 0;font-size:12px;opacity:.85;letter-spacing:.4px}
+.box{padding:24px}
+label{font-size:12px;font-weight:700;color:#334155;display:block;margin:16px 0 7px;letter-spacing:.3px;text-transform:uppercase}
+input,select{width:100%;padding:13px 14px;border:1.5px solid #E2E8F0;border-radius:12px;font-size:14px;outline:none;background:#F8FAFC;color:#0F172A}
+input:focus,select:focus{border-color:#0B5ED7;background:#fff;box-shadow:0 0 0 3px rgba(11,94,215,.12)}
+.btn{width:100%;padding:14px;background:#0B5ED7;color:#fff;border:0;border-radius:12px;font-size:15px;font-weight:700;margin-top:22px;cursor:pointer}
+.btn:active{transform:scale(.98)}
 .btn:disabled{opacity:.6}
-.btn2{width:100%;padding:11px;background:#EEF2F7;color:#0B3D91;border:1.5px solid #D6E6F5;border-radius:10px;font-size:14px;font-weight:700;margin-top:10px;cursor:pointer}
-.forgot{text-align:right;font-size:13px;color:#007BFF;margin-top:10px;cursor:pointer}
-.care{text-align:center;font-size:12px;color:#3A5A8C;margin-top:18px}
-.small{font-size:12px;color:#E11D48;text-align:center;margin-top:10px}
+.btn2{width:100%;padding:12px;background:#F1F5F9;color:#0B3D91;border:1px solid #E2E8F0;border-radius:11px;font-size:14px;font-weight:700;margin-top:10px;cursor:pointer}
+.forgot{text-align:right;font-size:13px;color:#0B5ED7;margin-top:10px;cursor:pointer;font-weight:600}
+.care{text-align:center;font-size:12px;color:#64748B;padding:0 0 20px}
+.care b{color:#0F172A}
+.small{font-size:12px;color:#DC2626;text-align:center;margin-top:10px;min-height:16px}
 </style>
 </head>
 <body>
 <div class="card">
 <div class="header">
 <div class="logo">P</div>
-<h1>PAYQUICKPAY</h1>
+<div><h1>PAYQUICKPAY</h1><p>Recharge • DTH • Bill Payment</p></div>
 </div>
 <div class="box" id="loginBox">
-<h2>🔒 SECURE LOGIN</h2>
 <label>Role</label>
 <select id="role">
 <option value="retailer">Retailer</option>
@@ -42,33 +43,32 @@ input:focus,select:focus{border-color:#007BFF;background:#fff}
 <option value="admin">Admin</option>
 </select>
 <label>Username / Mobile</label>
-<input id="username" type="text" placeholder="Enter your mobile number">
+<input id="username" type="text" placeholder="Username">
 <label>Password</label>
-<input id="password" type="password" placeholder="••••••••••">
+<input id="password" type="password" placeholder="Password">
 <div class="forgot" onclick="showForgot()">Forgot Password?</div>
 <button class="btn" id="loginBtn" onclick="doLogin()">Login</button>
 <div id="msg" class="small"></div>
 </div>
 <div class="box" id="forgotBox" style="display:none">
-<h2>🔑 Forgot Password</h2>
-<label>Mobile Number</label>
-<input id="fpMobile" type="tel" maxlength="10" placeholder="10 Digit Mobile Number" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-<div id="recaptcha"></div>
-<button class="btn2" id="sendOtpBtn" onclick="sendOtp()">Send OTP</button>
+<label>Mobile</label>
+<input id="fpMobile" type="tel" maxlength="10" placeholder="Mobile" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+<div id="recaptcha" style="margin-top:12px"></div>
+<button class="btn2" onclick="sendOtp()">Send OTP</button>
 <div id="otpArea" style="display:none">
-<label>Enter OTP</label>
-<input id="otpCode" type="tel" maxlength="6" placeholder="6 Digit OTP">
-<button class="btn2" onclick="verifyOtp()">Verify OTP</button>
+<label>OTP</label>
+<input id="otpCode" type="tel" maxlength="6" placeholder="OTP">
+<button class="btn2" onclick="verifyOtp()">Verify</button>
 </div>
 <div id="newPassArea" style="display:none">
 <label>New Password</label>
 <input id="fpNewPass" type="password" placeholder="New Password">
-<button class="btn" onclick="resetPass()">Update Password</button>
+<button class="btn" onclick="resetPass()">Update</button>
 </div>
 <div id="fpMsg" class="small"></div>
-<button class="btn2" onclick="backLogin()">Back to Login</button>
+<button class="btn2" onclick="backLogin()">Back</button>
 </div>
-<div class="care">📞 Customer Care • Phone <b>8847889824</b><br>Email: Payquickpayofficial@gmail.com</div>
+<div class="care">Helpline • <b>8847889824</b></div>
 </div>
 <script>
 const firebaseConfig = {
@@ -92,38 +92,52 @@ function backLogin(){
   document.getElementById('forgotBox').style.display='none';
   document.getElementById('loginBox').style.display='block';
 }
+async function findUser(col, val){
+  var fields = ['username','mobile','name','userId','id'];
+  for(var i=0;i<fields.length;i++){
+    try{
+      var s = await db.collection(col).where(fields[i],'==',val).limit(1).get();
+      if(!s.empty) return s.docs[0];
+    }catch(e){}
+  }
+  try{
+    var d = await db.collection(col).doc(val).get();
+    if(d.exists) return d;
+  }catch(e){}
+  return null;
+}
 async function sendOtp(){
   var mobile=document.getElementById('fpMobile').value.trim();
   var msg=document.getElementById('fpMsg');
-  if(mobile.length!==10){ msg.innerText='10 Digit Mobile Number dia'; return; }
+  if(mobile.length!==10){ msg.innerText='Enter Mobile'; return; }
   var col = fpRole==='admin' ? 'admins' : (fpRole==='distributor' ? 'distributors' : 'retailers');
-  var snap = await db.collection(col).where('mobile','==',mobile).limit(1).get();
-  if(snap.empty){ msg.innerText='Mobile Number not found'; return; }
-  fpUserDocId = snap.docs[0].id;
-  msg.innerText='OTP pathauchhi...';
+  var doc = await findUser(col, mobile);
+  if(!doc){ msg.innerText='Not Found'; return; }
+  fpUserDocId = doc.id;
+  msg.innerText='Sending...';
   try{
     confirmResult = await auth.signInWithPhoneNumber('+91'+mobile, window.recaptchaVerifier);
-    msg.innerText='OTP Mobile ku gala';
+    msg.innerText='OTP Sent';
     document.getElementById('otpArea').style.display='block';
-  }catch(e){ msg.innerText='OTP pathaila ni. Thare au try kara. '+e.message; }
+  }catch(e){ msg.innerText='Try Again'; }
 }
 async function verifyOtp(){
   var code=document.getElementById('otpCode').value.trim();
   var msg=document.getElementById('fpMsg');
-  if(code.length!==6){ msg.innerText='6 Digit OTP dia'; return; }
+  if(code.length!==6){ msg.innerText='Enter OTP'; return; }
   try{
     await confirmResult.confirm(code);
-    msg.innerText='OTP Verified';
+    msg.innerText='Verified';
     document.getElementById('newPassArea').style.display='block';
   }catch(e){ msg.innerText='Wrong OTP'; }
 }
 async function resetPass(){
   var np=document.getElementById('fpNewPass').value;
   var msg=document.getElementById('fpMsg');
-  if(np.length<4){ msg.innerText='Password minimum 4 character'; return; }
+  if(np.length<4){ msg.innerText='Min 4'; return; }
   var col = fpRole==='admin' ? 'admins' : (fpRole==='distributor' ? 'distributors' : 'retailers');
   await db.collection(col).doc(fpUserDocId).update({ password: np });
-  msg.innerText='Password Updated. Login kara.';
+  msg.innerText='Updated';
   setTimeout(backLogin, 1500);
 }
 async function doLogin(){
@@ -132,24 +146,27 @@ async function doLogin(){
   var password=document.getElementById('password').value;
   var msg=document.getElementById('msg');
   var btn=document.getElementById('loginBtn');
-  if(!username || !password){ msg.innerText='Username and Password dia'; return; }
-  btn.disabled=true; btn.innerText='Logging in...'; msg.innerText='';
+  if(!username || !password){ msg.innerText='Fill All'; return; }
+  btn.disabled=true; btn.innerText='Login...'; msg.innerText='';
   try{
     var col = role==='admin' ? 'admins' : (role==='distributor' ? 'distributors' : 'retailers');
-    var snap = await db.collection(col).where('username','==',username).limit(1).get();
-    if(snap.empty){ snap = await db.collection(col).where('mobile','==',username).limit(1).get(); }
-    if(snap.empty){ msg.innerText='User not found'; btn.disabled=false; btn.innerText='Login'; return; }
-    var doc = snap.docs[0];
+    var doc = await findUser(col, username);
+    if(!doc){
+      var doc2 = await findUser(col, username.toLowerCase());
+      if(doc2) doc = doc2;
+      else { var doc3 = await findUser(col, username.toUpperCase()); if(doc3) doc = doc3; }
+    }
+    if(!doc){ msg.innerText='User not found'; btn.disabled=false; btn.innerText='Login'; return; }
     var data = doc.data();
     if(data.password !== password){ msg.innerText='Wrong Password'; btn.disabled=false; btn.innerText='Login'; return; }
-    if(data.status==='blocked' || data.blocked===true){ msg.innerText='Account Blocked. Contact Admin'; btn.disabled=false; btn.innerText='Login'; return; }
+    if(data.status==='blocked' || data.blocked===true){ msg.innerText='Blocked'; btn.disabled=false; btn.innerText='Login'; return; }
     localStorage.setItem('userId', doc.id);
     localStorage.setItem('userRole', role);
     localStorage.setItem('userName', data.name || data.username || username);
     if(role==='retailer') window.location.href='/retailer/';
     else if(role==='distributor') window.location.href='/distributor/';
     else window.location.href='/admin/';
-  }catch(e){ msg.innerText='Login failed. Try again.'; btn.disabled=false; btn.innerText='Login'; }
+  }catch(e){ msg.innerText='Try Again'; btn.disabled=false; btn.innerText='Login'; }
 }
 </script>
 </body>
