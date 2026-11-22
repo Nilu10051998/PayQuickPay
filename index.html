@@ -1,40 +1,156 @@
-<!DOCTYPE html><html><head><style>
-@font-face {
-  font-family: "Optimistic";
-  font-style: normal;
-  font-weight: 400 600;
-  font-display: swap;
-  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Optimistic Mono";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
-}
-:where(html) {
-  font-family: "Optimistic", system-ui, sans-serif;
-}
-:where(code, pre, kbd, samp) {
-  font-family: "Optimistic Mono", ui-monospace, monospace;
-}
-</style><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>PayQuickPay - Secure Login</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayQuickPay - Login</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<style>*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,Arial}body{background:linear-gradient(135deg,#0f172a,#1e3a8a);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}.box{background:#fff;width:100%;max-width:380px;border-radius:16px;padding:28px;box-shadow:0 10px 30px rgba(0,0,0,.25)}.logo{width:56px;height:56px;background:#0f172a;color:#fff;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;margin:0 auto 10px}.box h2{text-align:center} .box p{text-align:center;color:#64748b;font-size:13px;margin:6px 0 18px} label{font-size:12px;color:#475569;font-weight:600} input,select{width:100%;padding:12px;border:1px solid #e2e8f0;border-radius:10px;margin:6px 0 12px;outline:none} .btn{width:100%;padding:13px;background:#0f172a;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer}.care{text-align:center;font-size:12px;color:#64748b;margin-top:16px;line-height:1.6}</style></head><body>
-<div class="box"><div class="logo">P</div><h2>PAYQUICKPAY</h2><p>SECURE LOGIN</p>
-<label>Role</label><select id="role"><option value="retailer">Retailer</option><option value="distributor">Distributor</option><option value="admin">Admin</option></select>
-<label>Username / Mobile</label><input id="user" placeholder="Username / Mobile">
-<label>Password</label><input id="pass" type="password" placeholder="Password">
-<button class="btn" onclick="doLogin()">Login</button><div id="msg" style="font-size:12px;color:#dc2626;text-align:center;margin-top:10px"></div>
-<div class="care">Customer Care<br>Phone: 7908824917<br>Email: payquickpayofficial@gmail.com</div></div>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:#D6E6F5}
+.card{background:#EAF2FA;width:100%;max-width:390px;border-radius:28px;padding:22px 20px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+.header{background:linear-gradient(135deg,#007BFF,#4AA3FF);border-radius:16px;padding:20px;display:flex;align-items:center;gap:12px;color:#fff}
+.logo{width:52px;height:52px;background:#1E7BFF;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;flex-shrink:0}
+.header h1{font-size:22px;margin:0;letter-spacing:.3px}
+.box{background:#fff;border-radius:18px;padding:20px;margin-top:16px}
+.box h2{font-size:20px;color:#0B3D91;margin:0 0 16px;display:flex;align-items:center;gap:8px}
+label{font-size:13px;font-weight:700;color:#3A5A8C;display:block;margin:14px 0 6px}
+input,select{width:100%;padding:13px 14px;border:1.5px solid #D6E6F5;border-radius:12px;font-size:14px;outline:none;background:#F2F7FF}
+input:focus,select:focus{border-color:#007BFF;background:#fff}
+.btn{width:100%;padding:14px;background:linear-gradient(135deg,#007BFF,#4AA3FF);color:#fff;border:0;border-radius:12px;font-size:18px;font-weight:700;margin-top:20px;cursor:pointer;box-shadow:0 6px 16px rgba(0,123,255,.3)}
+.btn:disabled{opacity:.6}
+.btn2{width:100%;padding:11px;background:#EEF2F7;color:#0B3D91;border:1.5px solid #D6E6F5;border-radius:10px;font-size:14px;font-weight:700;margin-top:10px;cursor:pointer}
+.forgot{text-align:right;font-size:13px;color:#007BFF;margin-top:10px;cursor:pointer}
+.care{text-align:center;font-size:12px;color:#3A5A8C;margin-top:18px}
+.small{font-size:12px;color:#E11D48;text-align:center;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="card">
+<div class="header">
+<div class="logo">P</div>
+<h1>PAYQUICKPAY</h1>
+</div>
+<div class="box" id="loginBox">
+<h2>🔒 SECURE LOGIN</h2>
+<label>Role</label>
+<select id="role">
+<option value="retailer">Retailer</option>
+<option value="distributor">Distributor</option>
+<option value="admin">Admin</option>
+</select>
+<label>Username / Mobile</label>
+<input id="username" type="text" placeholder="Enter your mobile number">
+<label>Password</label>
+<input id="password" type="password" placeholder="••••••••••">
+<div class="forgot" onclick="showForgot()">Forgot Password?</div>
+<button class="btn" id="loginBtn" onclick="doLogin()">Login</button>
+<div id="msg" class="small"></div>
+</div>
+<div class="box" id="forgotBox" style="display:none">
+<h2>🔑 Forgot Password</h2>
+<label>Mobile Number</label>
+<input id="fpMobile" type="tel" maxlength="10" placeholder="10 Digit Mobile Number" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+<div id="recaptcha"></div>
+<button class="btn2" id="sendOtpBtn" onclick="sendOtp()">Send OTP</button>
+<div id="otpArea" style="display:none">
+<label>Enter OTP</label>
+<input id="otpCode" type="tel" maxlength="6" placeholder="6 Digit OTP">
+<button class="btn2" onclick="verifyOtp()">Verify OTP</button>
+</div>
+<div id="newPassArea" style="display:none">
+<label>New Password</label>
+<input id="fpNewPass" type="password" placeholder="New Password">
+<button class="btn" onclick="resetPass()">Update Password</button>
+</div>
+<div id="fpMsg" class="small"></div>
+<button class="btn2" onclick="backLogin()">Back to Login</button>
+</div>
+<div class="care">📞 Customer Care • Phone <b>8847889824</b><br>Email: Payquickpayofficial@gmail.com</div>
+</div>
 <script>
-const firebaseConfig={apiKey:"AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",authDomain:"payquickpay-487ef.firebaseapp.com",projectId:"payquickpay-487ef",storageBucket:"payquickpay-487ef.firebasestorage.app",messagingSenderId:"368108778411",appId:"1:368108778411:web:03dcbc47e46568d51b58ee"};
-firebase.initializeApp(firebaseConfig); const db=firebase.firestore();
-async function sha256(str){ const buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)); return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join(''); }
-async function doLogin(){ let role=roleEl(), u=document.getElementById('user').value.trim(), p=document.getElementById('pass').value.trim(); if(!u||!p) return msg('Fill all fields'); let hash=await sha256(p);
- if(role==='admin'){ let doc=await db.collection('settings').doc('admin').get(); let adminPassHash = doc.exists && doc.data().passwordHash ? doc.data().passwordHash : await sha256('admin123'); if(u==='admin' && hash===adminPassHash){ localStorage.setItem('adminAuth','true'); localStorage.setItem('userRole','admin'); location.href='admin/index.html'; } else msg('Invalid Admin Login'); return; }
- let col = role==='distributor' ? 'distributors' : 'retailers'; let snap=await db.collection(col).get(); let found=null; snap.forEach(d=>{ let data=d.data(); if((data.username===u || data.user===u || data.mobile===u || data.name===u) && !found) found={id:d.id, data}; }); if(!found) return msg('User not found'); if(found.data.blocked) return msg('Account Blocked. Contact Admin.'); let stored = found.data.passwordHash || ''; if(stored && hash!==stored){ if(found.data.password && found.data.password===p){ await db.collection(col).doc(found.id).update({passwordHash:hash, password:''}); } else return msg('Wrong password'); } if(!stored && found.data.password && found.data.password!==p) return msg('Wrong password'); localStorage.setItem('userRole', role); localStorage.setItem('userId', found.id); localStorage.setItem('userName', found.data.name||u); location.href = role==='distributor' ? 'distributor/index.html' : 'retailer/index.html'; }
-function roleEl(){ return document.getElementById('role').value; } function msg(m){ document.getElementById('msg').innerText=m; }
-</script><script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body></html>
+const firebaseConfig = {
+  apiKey: "AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",
+  authDomain: "payquickpay-487ef.firebaseapp.com",
+  projectId: "payquickpay-487ef",
+  storageBucket: "payquickpay-487ef.firebasestorage.app",
+  messagingSenderId: "368108778411",
+  appId: "1:368108778411:web:03dcbc47e46568d51b58ee"
+};
+var db = null; var auth = null; var confirmResult = null; var fpUserDocId = null; var fpRole = 'retailer';
+try{ if(typeof firebase!=='undefined' && firebase.initializeApp){ firebase.initializeApp(firebaseConfig); db = firebase.firestore(); auth = firebase.auth(); } }catch(e){ db=null; }
+function showForgot(){
+  document.getElementById('loginBox').style.display='none';
+  document.getElementById('forgotBox').style.display='block';
+  fpRole = document.getElementById('role').value;
+  if(window.recaptchaVerifier){ try{ window.recaptchaVerifier.clear(); }catch(e){} }
+  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha', { size: 'normal' });
+}
+function backLogin(){
+  document.getElementById('forgotBox').style.display='none';
+  document.getElementById('loginBox').style.display='block';
+}
+async function sendOtp(){
+  var mobile=document.getElementById('fpMobile').value.trim();
+  var msg=document.getElementById('fpMsg');
+  if(mobile.length!==10){ msg.innerText='10 Digit Mobile Number dia'; return; }
+  var col = fpRole==='admin' ? 'admins' : (fpRole==='distributor' ? 'distributors' : 'retailers');
+  var snap = await db.collection(col).where('mobile','==',mobile).limit(1).get();
+  if(snap.empty){ msg.innerText='Mobile Number not found'; return; }
+  fpUserDocId = snap.docs[0].id;
+  msg.innerText='OTP pathauchhi...';
+  try{
+    confirmResult = await auth.signInWithPhoneNumber('+91'+mobile, window.recaptchaVerifier);
+    msg.innerText='OTP Mobile ku gala';
+    document.getElementById('otpArea').style.display='block';
+  }catch(e){ msg.innerText='OTP pathaila ni. Thare au try kara. '+e.message; }
+}
+async function verifyOtp(){
+  var code=document.getElementById('otpCode').value.trim();
+  var msg=document.getElementById('fpMsg');
+  if(code.length!==6){ msg.innerText='6 Digit OTP dia'; return; }
+  try{
+    await confirmResult.confirm(code);
+    msg.innerText='OTP Verified';
+    document.getElementById('newPassArea').style.display='block';
+  }catch(e){ msg.innerText='Wrong OTP'; }
+}
+async function resetPass(){
+  var np=document.getElementById('fpNewPass').value;
+  var msg=document.getElementById('fpMsg');
+  if(np.length<4){ msg.innerText='Password minimum 4 character'; return; }
+  var col = fpRole==='admin' ? 'admins' : (fpRole==='distributor' ? 'distributors' : 'retailers');
+  await db.collection(col).doc(fpUserDocId).update({ password: np });
+  msg.innerText='Password Updated. Login kara.';
+  setTimeout(backLogin, 1500);
+}
+async function doLogin(){
+  var role=document.getElementById('role').value;
+  var username=document.getElementById('username').value.trim();
+  var password=document.getElementById('password').value;
+  var msg=document.getElementById('msg');
+  var btn=document.getElementById('loginBtn');
+  if(!username || !password){ msg.innerText='Username and Password dia'; return; }
+  btn.disabled=true; btn.innerText='Logging in...'; msg.innerText='';
+  try{
+    var col = role==='admin' ? 'admins' : (role==='distributor' ? 'distributors' : 'retailers');
+    var snap = await db.collection(col).where('username','==',username).limit(1).get();
+    if(snap.empty){ snap = await db.collection(col).where('mobile','==',username).limit(1).get(); }
+    if(snap.empty){ msg.innerText='User not found'; btn.disabled=false; btn.innerText='Login'; return; }
+    var doc = snap.docs[0];
+    var data = doc.data();
+    if(data.password !== password){ msg.innerText='Wrong Password'; btn.disabled=false; btn.innerText='Login'; return; }
+    if(data.status==='blocked' || data.blocked===true){ msg.innerText='Account Blocked. Contact Admin'; btn.disabled=false; btn.innerText='Login'; return; }
+    localStorage.setItem('userId', doc.id);
+    localStorage.setItem('userRole', role);
+    localStorage.setItem('userName', data.name || data.username || username);
+    if(role==='retailer') window.location.href='/retailer/';
+    else if(role==='distributor') window.location.href='/distributor/';
+    else window.location.href='/admin/';
+  }catch(e){ msg.innerText='Login failed. Try again.'; btn.disabled=false; btn.innerText='Login'; }
+}
+</script>
+</body>
+</html>
