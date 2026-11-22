@@ -110,11 +110,12 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 </div>
 </div>
 <div class="card">
-<h3 style="margin:0 0 10px">Recent History</h3>
+<div style="display:flex;justify-content:space-between;align-items:center"><h3 style="margin:0">Recent History</h3><span class="small" id="histCount"></span></div>
 <table>
 <thead><tr><th>Number</th><th>Amount</th><th>Commission</th><th>Status</th></tr></thead>
 <tbody id="hist"><tr><td colspan="4">Loading...</td></tr></tbody>
 </table>
+<button class="btn2" id="histBtn" onclick="toggleHist()">📜 Recharge History - View All</button>
 </div>
 <div class="card">
 <button class="btn2" onclick="toggleSetting()">⚙️ Settings</button>
@@ -169,6 +170,8 @@ let userId = localStorage.getItem('userId');
 let userRole = localStorage.getItem('userRole');
 let userName = localStorage.getItem('userName');
 let walletBalance = 0;
+let allHist = [];
+let showAllHist = false;
 if(!userId || userRole !== 'retailer'){ window.location.href = '/'; }
 document.getElementById('userName').innerText = userName || '';
 document.getElementById('userEmail').innerText = userName || '';
@@ -270,17 +273,27 @@ async function doRecharge(){
   }catch(e){ msg.innerText = 'Network error. Try again.'; }
   btn.disabled = false; btn.innerText = 'Recharge Now';
 }
+function renderHist(){
+  let list = showAllHist ? allHist : allHist.slice(0,5);
+  let h = '';
+  list.forEach(d => {
+    let cls = d.status === 'Success' ? 'success' : (d.status === 'Failed' ? 'failed' : 'pending');
+    let st = d.status || 'Success';
+    if(st.length>12) st = 'Failed';
+    h += `<tr><td>${d.number}<br><small>${d.operator || ''}</small></td><td>₹ ${d.amount}</td><td>₹ ${(d.commission || 0).toFixed(2)}</td><td><span class="badge ${cls}">${st}</span></td></tr>`;
+  });
+  document.getElementById('hist').innerHTML = h || '<tr><td colspan="4">No records</td></tr>';
+  document.getElementById('histCount').innerText = showAllHist ? 'Showing All ('+allHist.length+')' : 'Last 5';
+  document.getElementById('histBtn').innerText = showAllHist ? '▲ Show Less - Last 5' : '📜 Recharge History - View All ('+allHist.length+')';
+}
+function toggleHist(){ showAllHist = !showAllHist; renderHist(); }
 async function loadHist(){ if(!db) return;
   try{
-    let s = await db.collection('recharges').where('userId','==',userId).limit(20).get();
+    let s = await db.collection('recharges').where('userId','==',userId).limit(100).get();
     let arr = []; s.forEach(doc => arr.push(doc.data()));
     arr.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-    let h = '';
-    arr.forEach(d => {
-      let cls = d.status === 'Success' ? 'success' : (d.status === 'Failed' ? 'failed' : 'pending');
-      h += `<tr><td>${d.number}<br><small>${d.operator || ''}</small></td><td>₹ ${d.amount}</td><td>₹ ${(d.commission || 0).toFixed(2)}</td><td><span class="badge ${cls}">${d.status || 'Success'}</span></td></tr>`;
-    });
-    document.getElementById('hist').innerHTML = h || '<tr><td colspan="4">No records</td></tr>';
+    allHist = arr;
+    renderHist();
   }catch(e){ document.getElementById('hist').innerHTML = '<tr><td colspan="4">Unable to load history</td></tr>'; }
 }
 function showService(type){
