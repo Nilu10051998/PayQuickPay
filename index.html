@@ -78,7 +78,7 @@ const firebaseConfig = {
   messagingSenderId: "368108778411",
   appId: "1:368108778411:web:03dcbc47e46568d51b58ee"
 };
-var db = null; var fpUserDocId = null; var fpRole = 'retailer'; var fpReqId = null;
+var db = null; var fpUserDocId = null; var fpRole = 'retailer'; var fpReqId = null; var fpCol = 'retailers';
 try{ if(typeof firebase!=='undefined' && firebase.initializeApp){ firebase.initializeApp(firebaseConfig); db = firebase.firestore(); } }catch(e){ db=null; }
 function showForgot(){
   document.getElementById('loginBox').style.display='none';
@@ -93,38 +93,62 @@ async function findUser(col, val){
   var v = String(val).trim().toLowerCase();
   try{
     var d = await db.collection(col).doc(val).get();
-    if(d.exists) return d;
-  }catch(e){ throw e; }
+    if(d.exists) return {doc: d, col: col};
+  }catch(e){}
   try{
     var snap = await db.collection(col).get();
-    if(snap.empty) throw new Error('Collection '+col+' Empty - Total 0');
     for(var i=0;i<snap.docs.length;i++){
       var doc = snap.docs[i];
       var data = doc.data();
-      if(doc.id.toLowerCase()===v) return doc;
+      if(doc.id.toLowerCase()===v) return {doc: doc, col: col};
       for(var k in data){
         var fv = String(data[k] == null ? '' : data[k]).trim().toLowerCase();
-        if(fv===v) return doc;
+        if(fv===v) return {doc: doc, col: col};
         var digits = fv.replace(/[^0-9]/g,'');
         var vdigits = v.replace(/[^0-9]/g,'');
-        if(vdigits.length>=10 && digits.slice(-10)===vdigits.slice(-10) && vdigits.length>0) return doc;
+        if(vdigits.length>=10 && digits.slice(-10)===vdigits.slice(-10) && vdigits.length>0) return {doc: doc, col: col};
       }
     }
-    throw new Error('Total '+snap.size+' Found - SINU Nahi - Collection: '+col);
   }catch(e){ throw e; }
+  return null;
+}
+async function findAdmin(val){
+  // 1. admins collection
+  var r = await findUser('admins', val);
+  if(r) return r;
+  // 2. settings/admin doc
+  try{
+    var d = await db.collection('settings').doc('admin').get();
+    if(d.exists){
+      var data = d.data();
+      var v = String(val).trim().toLowerCase();
+      for(var k in data){
+        if(String(data[k]).trim().toLowerCase()===v) return {doc: d, col: 'settings/admin'};
+      }
+      // Admin doc thile - username check na hele bi return - password check kariba
+      if(data.username || data.password || data.passwordHash || data.adminPassword) return {doc: d, col: 'settings/admin', isAdminDoc: true};
+    }
+  }catch(e){}
+  return null;
 }
 async function sendRequest(){
   var input=document.getElementById('fpMobile').value.trim();
   var msg=document.getElementById('fpMsg');
   if(!input){ msg.innerText='Enter Username / Mobile / Email'; return; }
-  var col = fpRole==='admin' ? 'admins' : (fpRole==='distributor' ? 'distributors' : 'retailers');
   try{
-    var doc = await findUser(col, input);
-    fpUserDocId = doc.id;
-    var data = doc.data();
+    var res;
+    if(fpRole==='admin') res = await findAdmin(input);
+    else {
+      var col = fpRole==='distributor' ? 'distributors' : 'retailers';
+      var r = await findUser(col, input);
+      if(r) res = r;
+    }
+    if(!res){ msg.innerText='Not Found - '+input; return; }
+    fpUserDocId = res.doc.id; fpCol = res.col;
+    var data = res.doc.data();
     var code = String(Math.floor(1000 + Math.random()*9000));
     var req = await db.collection('passwordRequests').add({
-      role: fpRole, userId: doc.id, name: data.name || data.username || data.retailerName || data.shopName || input,
+      role: fpRole, userId: res.doc.id, name: data.name || data.username || data.retailerName || data.shopName || input,
       mobile: data.mobile || data.phone || data.phoneNumber || '', email: data.email || '',
       code: code, status: 'pending', time: new Date().toISOString()
     });
@@ -149,8 +173,11 @@ async function resetPass(){
   var np=document.getElementById('fpNewPass').value;
   var msg=document.getElementById('fpMsg');
   if(np.length<4){ msg.innerText='Min 4'; return; }
-  var col = fpRole==='admin' ? 'admins' : (fpRole==='distributor' ? 'distributors' : 'retailers');
-  await db.collection(col).doc(fpUserDocId).update({ password: np });
+  if(fpCol==='settings/admin'){
+    await db.collection('settings').doc('admin').update({ password: np });
+  } else {
+    await db.collection(fpCol).doc(fpUserDocId).update({ password: np });
+  }
   if(fpReqId) await db.collection('passwordRequests').doc(fpReqId).update({ status: 'done' });
   msg.innerText='Updated';
   setTimeout(backLogin, 1500);
@@ -164,12 +191,21 @@ async function doLogin(){
   if(!username || !password){ msg.innerText='Fill All'; return; }
   btn.disabled=true; btn.innerText='Login...'; msg.innerText='';
   try{
-    var col = role==='admin' ? 'admins' : (role==='distributor' ? 'distributors' : 'retailers');
-    var doc = await findUser(col, username);
-    var data = doc.data();
-    if(data.password !== password){ msg.innerText='Wrong Password'; btn.disabled=false; btn.innerText='Login'; return; }
+    var res;
+    if(role==='admin') res = await findAdmin(username);
+    else {
+      var col = role==='distributor' ? 'distributors' : 'retailers';
+      var r = await findUser(col, username);
+      if(r) res = r;
+    }
+    if(!res){ msg.innerText='User not found - '+username; btn.disabled=false; btn.innerText='Login'; return; }
+    var data = res.doc.data();
+    var savedPass = data.password || data.adminPassword || data.pass || '';
+    // passwordHash thile - plain password compare heba ni - admin ke kahiba
+    if(!savedPass && data.passwordHash){ msg.innerText='Admin Password Hash - Reset Needed'; btn.disabled=false; btn.innerText='Login'; return; }
+    if(savedPass !== password){ msg.innerText='Wrong Password'; btn.disabled=false; btn.innerText='Login'; return; }
     if(data.status==='blocked' || data.blocked===true){ msg.innerText='Blocked'; btn.disabled=false; btn.innerText='Login'; return; }
-    localStorage.setItem('userId', doc.id);
+    localStorage.setItem('userId', res.doc.id);
     localStorage.setItem('userRole', role);
     localStorage.setItem('userName', data.name || data.username || data.retailerName || username);
     if(role==='retailer') window.location.href='/retailer/';
