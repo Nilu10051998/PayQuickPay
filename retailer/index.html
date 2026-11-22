@@ -52,13 +52,13 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 <label>Operator</label>
 <select id="op" onchange="showComm()">
 <option value="" disabled selected>Choose Operator</option>
-<option value="RC">【entity-Jio¦canonical_name=Jio】 Prepaid</option>
-<option value="A">【entity-Airtel¦canonical_name=Airtel】 Prepaid</option>
+<option value="RC">Jio Prepaid</option>
+<option value="A">Airtel Prepaid</option>
 <option value="V">Vi Prepaid</option>
 <option value="BR">BSNL Prepaid - STV</option>
 <option value="BT">BSNL Prepaid - Topup</option>
-<option value="RCP">【entity-Jio¦canonical_name=Jio】 Postpaid</option>
-<option value="AP">【entity-Airtel¦canonical_name=Airtel】 Postpaid</option>
+<option value="RCP">Jio Postpaid</option>
+<option value="AP">Airtel Postpaid</option>
 </select>
 <label>Amount</label>
 <input id="amt" type="number" placeholder="Enter Amount" oninput="showComm()">
@@ -74,7 +74,7 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 <select id="dthOp" onchange="showDTHComm()">
 <option value="" disabled selected>Choose DTH Operator</option>
 <option value="DTV">Dish TV</option>
-<option value="ATV">【entity-Airtel¦canonical_name=Airtel】 DTH</option>
+<option value="ATV">Airtel DTH</option>
 <option value="TTV">【entity-Tata Sky¦canonical_name=Tata Sky】</option>
 <option value="STV">Sun Direct</option>
 <option value="VTV">Videocon D2H</option>
@@ -117,13 +117,13 @@ let userRole = localStorage.getItem('userRole');
 let userName = localStorage.getItem('userName');
 let walletBalance = 0;
 if(!userId || userRole !== 'retailer'){
-  window.location.href = '../login.html';
+  window.location.href = '/';
 }
 document.getElementById('userName').innerText = userName || '';
 document.getElementById('userEmail').innerText = userName || '';
 async function doLogout(){
   localStorage.clear();
-  window.location.href = '../login.html';
+  window.location.href = '/';
 }
 async function loadWallet(){ if(!db) return;
   let doc = await db.collection('retailers').doc(userId).get();
@@ -149,9 +149,9 @@ async function doRecharge(){
   let opCode = document.getElementById('op').value;
   let opText = document.getElementById('op').options[document.getElementById('op').selectedIndex].text;
   let amount = parseFloat(document.getElementById('amt').value || 0);
-  if(!opCode){ msg.innerText = 'Select Operator'; return; }
   let msg = document.getElementById('msg');
   let btn = document.getElementById('rechargeBtn');
+  if(!opCode){ msg.innerText = 'Select Operator'; return; }
   if(number.length !== 10){ msg.innerText = 'Enter valid 10 digit number'; return; }
   if(amount <= 0){ msg.innerText = 'Enter valid amount'; return; }
   let rate = getRetailerRate(opCode);
