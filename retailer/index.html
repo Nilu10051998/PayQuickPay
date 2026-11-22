@@ -1,27 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><style>
-@font-face {
-  font-family: "Optimistic";
-  font-style: normal;
-  font-weight: 400 600;
-  font-display: swap;
-  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Optimistic Mono";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
-}
-:where(html) {
-  font-family: "Optimistic", system-ui, sans-serif;
-}
-:where(code, pre, kbd, samp) {
-  font-family: "Optimistic Mono", ui-monospace, monospace;
-}
-</style>
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PayQuickPay - Retailer</title>
@@ -73,13 +52,13 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 <label>Operator</label>
 <select id="op" onchange="showComm()">
 <option value="" disabled selected>Choose Operator</option>
-<option value="RC">Jio Prepaid</option>
-<option value="A">Airtel Prepaid</option>
+<option value="RC">【entity-Jio¦canonical_name=Jio】 Prepaid</option>
+<option value="A">【entity-Airtel¦canonical_name=Airtel】 Prepaid</option>
 <option value="V">Vi Prepaid</option>
 <option value="BR">BSNL Prepaid - STV</option>
 <option value="BT">BSNL Prepaid - Topup</option>
-<option value="RCP">Jio Postpaid</option>
-<option value="AP">Airtel Postpaid</option>
+<option value="RCP">【entity-Jio¦canonical_name=Jio】 Postpaid</option>
+<option value="AP">【entity-Airtel¦canonical_name=Airtel】 Postpaid</option>
 </select>
 <label>Amount</label>
 <input id="amt" type="number" placeholder="Enter Amount" oninput="showComm()">
@@ -95,8 +74,8 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 <select id="dthOp" onchange="showDTHComm()">
 <option value="" disabled selected>Choose DTH Operator</option>
 <option value="DTV">Dish TV</option>
-<option value="ATV">Airtel DTH</option>
-<option value="TTV">Tata Sky</option>
+<option value="ATV">【entity-Airtel¦canonical_name=Airtel】 DTH</option>
+<option value="TTV">【entity-Tata Sky¦canonical_name=Tata Sky】</option>
 <option value="STV">Sun Direct</option>
 <option value="VTV">Videocon D2H</option>
 </select>
@@ -114,7 +93,6 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 <tbody id="hist"><tr><td colspan="4">Loading...</td></tr></tbody>
 </table>
 </div>
-
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",
@@ -124,12 +102,9 @@ const firebaseConfig = {
   messagingSenderId: "368108778411",
   appId: "1:368108778411:web:03dcbc47e46568d51b58ee"
 };
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-// *** THIK HEICHHI - API LINK ***
+var db = null;
+try{ if(typeof firebase!=='undefined' && firebase.initializeApp){ firebase.initializeApp(firebaseConfig); db = firebase.firestore(); } }catch(e){ console.log('Firebase init failed', e); db=null; }
 const API_URL = 'https://payquickpay-api.vercel.app/api/recharge';
-
 function getRetailerRate(opCode){
   if(opCode === 'RC' || opCode === 'RCP') return 0.008;
   if(opCode === 'A' || opCode === 'AP') return 0.013;
@@ -137,32 +112,26 @@ function getRetailerRate(opCode){
   if(opCode === 'BR' || opCode === 'BT') return 0.034;
   return 0;
 }
-
 let userId = localStorage.getItem('userId');
 let userRole = localStorage.getItem('userRole');
 let userName = localStorage.getItem('userName');
 let walletBalance = 0;
-
 if(!userId || userRole !== 'retailer'){
   window.location.href = '../login.html';
 }
-
 document.getElementById('userName').innerText = userName || '';
 document.getElementById('userEmail').innerText = userName || '';
-
 async function doLogout(){
   localStorage.clear();
   window.location.href = '../login.html';
 }
-
-async function loadWallet(){
+async function loadWallet(){ if(!db) return;
   let doc = await db.collection('retailers').doc(userId).get();
   if(doc.exists){
     walletBalance = parseFloat(doc.data().wallet || 0);
     document.getElementById('wallet').innerText = walletBalance.toFixed(2);
   }
 }
-
 function showComm(){
   let amount = parseFloat(document.getElementById('amt').value || 0);
   let opCode = document.getElementById('op').value;
@@ -175,7 +144,6 @@ function showComm(){
     box.innerHTML = `Your Commission: <b>₹ ${comm.toFixed(2)}</b> | Payable: <b>₹ ${payable.toFixed(2)}</b>`;
   } else { box.style.display = 'none'; }
 }
-
 async function doRecharge(){
   let number = document.getElementById('num').value.trim();
   let opCode = document.getElementById('op').value;
@@ -203,7 +171,28 @@ async function doRecharge(){
       await db.collection('recharges').add({ userId, userName, number, operator: opText, operatorcode: opCode, amount, commission, payable, status: data.status || 'Success', orderid: data.orderid || '', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
       msg.innerText = 'Recharge ' + (data.status || 'Success');
       document.getElementById('amt').value = '';
-      showComm(); await 
+      showComm(); await loadWallet(); await loadHist();
+    } else {
+      await db.collection('recharges').add({ userId, userName, number, operator: opText, operatorcode: opCode, amount, commission, payable, status: 'Failed', orderid: '', raw: data.message || '', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      msg.innerText = 'Failed: ' + (data.message || 'Try again');
+      await loadHist();
+    }
+  }catch(e){ msg.innerText = 'Network error. Try again.'; console.log(e); }
+  btn.disabled = false; btn.innerText = 'Recharge Now';
+}
+async function loadHist(){ if(!db) return;
+  try{
+    let s = await db.collection('recharges').where('userId','==',userId).limit(20).get();
+    let arr = []; s.forEach(doc => arr.push(doc.data()));
+    arr.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+    let h = '';
+    arr.forEach(d => {
+      let cls = d.status === 'Success' ? 'success' : (d.status === 'Failed' ? 'failed' : 'pending');
+      h += `<tr><td>${d.number}<br><small>${d.operator || ''}</small></td><td>₹ ${d.amount}</td><td>₹ ${(d.commission || 0).toFixed(2)}</td><td><span class="badge ${cls}">${d.status || 'Success'}</span></td></tr>`;
+    });
+    document.getElementById('hist').innerHTML = h || '<tr><td colspan="4">No records</td></tr>';
+  }catch(e){ document.getElementById('hist').innerHTML = '<tr><td colspan="4">Unable to load history</td></tr>'; }
+}
 function showService(type){
   var m=document.getElementById('mobileBox'); var d=document.getElementById('dthBox');
   var tm=document.getElementById('tabMobile'); var td=document.getElementById('tabDTH');
@@ -253,33 +242,8 @@ async function doDTHRecharge(){
   }catch(e){ msg.innerText='Network error. Try again.'; console.log(e); }
   btn.disabled=false; btn.innerText='Recharge DTH Now';
 }
-
-loadWallet(); await loadHist();
-    } else {
-      await db.collection('recharges').add({ userId, userName, number, operator: opText, operatorcode: opCode, amount, commission, payable, status: 'Failed', orderid: '', raw: data.message || '', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-      msg.innerText = 'Failed: ' + (data.message || 'Try again');
-      await loadHist();
-    }
-  }catch(e){ msg.innerText = 'Network error. Try again.'; console.log(e); }
-  btn.disabled = false; btn.innerText = 'Recharge Now';
-}
-
-async function loadHist(){
-  try{
-    let s = await db.collection('recharges').where('userId','==',userId).limit(20).get();
-    let arr = []; s.forEach(doc => arr.push(doc.data()));
-    arr.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-    let h = '';
-    arr.forEach(d => {
-      let cls = d.status === 'Success' ? 'success' : (d.status === 'Failed' ? 'failed' : 'pending');
-      h += `<tr><td>${d.number}<br><small>${d.operator || ''}</small></td><td>₹ ${d.amount}</td><td>₹ ${(d.commission || 0).toFixed(2)}</td><td><span class="badge ${cls}">${d.status || 'Success'}</span></td></tr>`;
-    });
-    document.getElementById('hist').innerHTML = h || '<tr><td colspan="4">No records</td></tr>';
-  }catch(e){ document.getElementById('hist').innerHTML = '<tr><td colspan="4">Unable to load history</td></tr>'; }
-}
-
 loadWallet();
 loadHist();
 </script>
-<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
+</body>
 </html>
