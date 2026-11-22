@@ -19,6 +19,7 @@ input:focus,select:focus{border-color:#2563EB;background:#fff}
 .btn{width:100%;padding:13px;background:linear-gradient(135deg,#FF7A00,#FF3D00);color:#fff;border:0;border-radius:10px;font-size:16px;font-weight:700;margin-top:16px;cursor:pointer;box-shadow:0 4px 14px rgba(255,61,0,.25)}
 .btn:disabled{opacity:.6}
 .btn2{width:100%;padding:11px;background:#EEF2F7;color:#0F2A5C;border:1.5px solid #D0D9E6;border-radius:10px;font-size:14px;font-weight:700;margin-top:10px;cursor:pointer}
+.btn3{width:100%;padding:12px;background:#fff;color:#0F2A5C;border:1.5px solid #D0D9E6;border-radius:10px;font-size:14px;font-weight:600;margin-top:8px;cursor:pointer;text-align:left}
 .comm{background:#E8F0FE;border:1px solid #BFDBFE;padding:11px 12px;border-radius:10px;font-size:14px;margin-top:12px;color:#0F2A5C}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th,td{padding:10px 8px;border-bottom:1px solid #EEF2F7;text-align:left}
@@ -111,6 +112,28 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 <tbody id="hist"><tr><td colspan="4">Loading...</td></tr></tbody>
 </table>
 </div>
+<div class="card">
+<button class="btn2" onclick="toggleSetting()">⚙️ Settings</button>
+<div id="settingBox" style="display:none;margin-top:10px">
+<button class="btn3" onclick="showSet('pwd')">🔑 Change Password</button>
+<button class="btn3" onclick="showSet('profile')">👤 My Profile</button>
+<button class="btn3" onclick="showSet('help')">📞 Customer Care / Help</button>
+<div id="setPwd" style="display:none;margin-top:12px">
+<label>New Password</label>
+<input id="newPass" type="password" placeholder="New Password">
+<label>Confirm Password</label>
+<input id="confirmPass" type="password" placeholder="Confirm Password">
+<button class="btn" onclick="changePassword()">Update Password</button>
+<div id="pwdMsg" class="small" style="margin-top:10px"></div>
+</div>
+<div id="setProfile" style="display:none;margin-top:12px">
+<div class="comm">Name: <b><span id="pName"></span></b><br>ID: <span id="pId"></span><br>Wallet: ₹ <b><span id="pWallet"></span></b></div>
+</div>
+<div id="setHelp" style="display:none;margin-top:12px">
+<div class="comm">Customer Care: <b>8847889824</b><br>Mail: <b>Payquickpayofficial@gmail.com</b></div>
+</div>
+</div>
+</div>
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",
@@ -149,6 +172,33 @@ async function doLogout(){ localStorage.clear(); window.location.href = '/'; }
 function showCommissionTable(){
   var t=document.getElementById('commTable');
   if(t.style.display==='none'){ t.style.display='block'; } else { t.style.display='none'; }
+}
+function toggleSetting(){
+  var s=document.getElementById('settingBox');
+  if(s.style.display==='none'){ s.style.display='block'; } else { s.style.display='none'; }
+}
+function showSet(type){
+  document.getElementById('setPwd').style.display = type==='pwd' ? 'block' : 'none';
+  document.getElementById('setProfile').style.display = type==='profile' ? 'block' : 'none';
+  document.getElementById('setHelp').style.display = type==='help' ? 'block' : 'none';
+  if(type==='profile'){
+    document.getElementById('pName').innerText = userName || '';
+    document.getElementById('pId').innerText = userId || '';
+    document.getElementById('pWallet').innerText = walletBalance.toFixed(2);
+  }
+}
+async function changePassword(){
+  var np=document.getElementById('newPass').value;
+  var cp=document.getElementById('confirmPass').value;
+  var msg=document.getElementById('pwdMsg');
+  if(np.length < 4){ msg.innerText='Password minimum 4 character'; return; }
+  if(np!==cp){ msg.innerText='Password match heuni'; return; }
+  if(!db){ msg.innerText='Try again'; return; }
+  try{
+    await db.collection('retailers').doc(userId).update({ password: np });
+    msg.innerText='Password Updated Successfully';
+    document.getElementById('newPass').value=''; document.getElementById('confirmPass').value='';
+  }catch(e){ msg.innerText='Update failed. Try again.'; }
 }
 async function loadWallet(){ if(!db) return;
   let doc = await db.collection('retailers').doc(userId).get();
