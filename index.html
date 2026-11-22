@@ -113,23 +113,15 @@ async function findInCol(col, val){
   return null;
 }
 async function findUserForRole(role, val){
-  var cols = role==='admin' ? ['admins','admin','Admin','users','settings'] : (role==='distributor' ? ['distributors','distributor'] : ['retailers','retailer']);
+  var cols = role==='admin' ? ['admins','admin'] : (role==='distributor' ? ['distributors','distributor'] : ['retailers','retailer']);
   for(var i=0;i<cols.length;i++){
     var r = await findInCol(cols[i], val);
     if(r) return r;
   }
-  // settings/admin doc
   if(role==='admin'){
     try{
       var d = await db.collection('settings').doc('admin').get();
-      if(d.exists){
-        var data = d.data();
-        var v = String(val).trim().toLowerCase();
-        for(var k in data){
-          if(String(data[k]).trim().toLowerCase()===v) return {doc: d, col: 'settings/admin'};
-        }
-        if(data.username || data.password || data.passwordHash) return {doc: d, col: 'settings/admin', isAdminDoc: true};
-      }
+      if(d.exists) return {doc: d, col: 'settings/admin'};
     }catch(e){}
   }
   return null;
@@ -145,8 +137,8 @@ async function sendRequest(){
     var data = res.doc.data();
     var code = String(Math.floor(1000 + Math.random()*9000));
     var req = await db.collection('passwordRequests').add({
-      role: fpRole, userId: res.doc.id, name: data.name || data.username || data.retailerName || data.shopName || input,
-      mobile: data.mobile || data.phone || data.phoneNumber || '', email: data.email || '',
+      role: fpRole, userId: res.doc.id, name: data.name || data.username || input,
+      mobile: data.mobile || data.phone || '', email: data.email || '',
       code: code, status: 'pending', time: new Date().toISOString()
     });
     fpReqId = req.id;
@@ -188,16 +180,23 @@ async function doLogin(){
   if(!username || !password){ msg.innerText='Fill All'; return; }
   btn.disabled=true; btn.innerText='Login...'; msg.innerText='';
   try{
+    // Hardcoded Admin - 1430
+    if(role==='admin' && username.toLowerCase()==='admin' && password==='1430'){
+      localStorage.setItem('userId', 'admin');
+      localStorage.setItem('userRole', 'admin');
+      localStorage.setItem('userName', 'Admin');
+      window.location.href='/admin/';
+      return;
+    }
     var res = await findUserForRole(role, username);
     if(!res){ msg.innerText='User not found - '+username; btn.disabled=false; btn.innerText='Login'; return; }
     var data = res.doc.data();
-    var savedPass = data.password || data.adminPassword || data.pass || '';
-    if(!savedPass && data.passwordHash){ msg.innerText='Password Hash - Reset Needed'; btn.disabled=false; btn.innerText='Login'; return; }
+    var savedPass = data.password || data.adminPassword || '';
     if(savedPass !== password){ msg.innerText='Wrong Password'; btn.disabled=false; btn.innerText='Login'; return; }
     if(data.status==='blocked' || data.blocked===true){ msg.innerText='Blocked'; btn.disabled=false; btn.innerText='Login'; return; }
     localStorage.setItem('userId', res.doc.id);
     localStorage.setItem('userRole', role);
-    localStorage.setItem('userName', data.name || data.username || data.retailerName || username);
+    localStorage.setItem('userName', data.name || data.username || username);
     if(role==='retailer') window.location.href='/retailer/';
     else if(role==='distributor') window.location.href='/distributor/';
     else window.location.href='/admin/';
