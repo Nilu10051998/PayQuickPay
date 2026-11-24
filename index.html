@@ -89,6 +89,7 @@ function backLogin(){
   document.getElementById('forgotBox').style.display='none';
   document.getElementById('loginBox').style.display='block';
 }
+async function sha256(str){ const buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)); return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join(''); }
 async function findInCol(col, val){
   var v = String(val).trim().toLowerCase();
   try{
@@ -117,12 +118,6 @@ async function findUserForRole(role, val){
   for(var i=0;i<cols.length;i++){
     var r = await findInCol(cols[i], val);
     if(r) return r;
-  }
-  if(role==='admin'){
-    try{
-      var d = await db.collection('settings').doc('admin').get();
-      if(d.exists) return {doc: d, col: 'settings/admin'};
-    }catch(e){}
   }
   return null;
 }
@@ -162,11 +157,8 @@ async function resetPass(){
   var np=document.getElementById('fpNewPass').value;
   var msg=document.getElementById('fpMsg');
   if(np.length<4){ msg.innerText='Min 4'; return; }
-  if(fpCol==='settings/admin'){
-    await db.collection('settings').doc('admin').update({ password: np });
-  } else {
-    await db.collection(fpCol).doc(fpUserDocId).update({ password: np });
-  }
+  var hp = await sha256(np);
+  await db.collection(fpCol).doc(fpUserDocId).update({ password: hp, passwordHash: hp });
   if(fpReqId) await db.collection('passwordRequests').doc(fpReqId).update({ status: 'done' });
   msg.innerText='Updated';
   setTimeout(backLogin, 1500);
@@ -180,23 +172,23 @@ async function doLogin(){
   if(!username || !password){ msg.innerText='Fill All'; return; }
   btn.disabled=true; btn.innerText='Login...'; msg.innerText='';
   try{
-    // Hardcoded Admin - 1430
-    if(role==='admin' && username.toLowerCase()==='admin' && password==='1430'){
-      localStorage.setItem('userId', 'admin');
-      localStorage.setItem('userRole', 'admin');
-      localStorage.setItem('userName', 'Admin');
-      window.location.href='/admin/';
-      return;
-    }
     var res = await findUserForRole(role, username);
     if(!res){ msg.innerText='User not found - '+username; btn.disabled=false; btn.innerText='Login'; return; }
     var data = res.doc.data();
-    var savedPass = data.password || data.adminPassword || '';
-    if(savedPass !== password){ msg.innerText='Wrong Password'; btn.disabled=false; btn.innerText='Login'; return; }
+    var savedPass = data.passwordHash || data.password || '';
+    var inputHash = await sha256(password);
+    // Old plain password bi allow - pore hash heijiba
+    var ok = (savedPass === inputHash || savedPass === password);
+    if(!ok){ msg.innerText='Wrong Password'; btn.disabled=false; btn.innerText='Login'; return; }
+    // Old plain password thile - hash re convert karideba - Secure
+    if(savedPass === password && savedPass !== inputHash){
+      await db.collection(res.col).doc(res.doc.id).update({ password: inputHash, passwordHash: inputHash }).catch(()=>{});
+    }
     if(data.status==='blocked' || data.blocked===true){ msg.innerText='Blocked'; btn.disabled=false; btn.innerText='Login'; return; }
     localStorage.setItem('userId', res.doc.id);
     localStorage.setItem('userRole', role);
     localStorage.setItem('userName', data.name || data.username || username);
+    localStorage.setItem('adminAuth', role==='admin' ? 'true' : '');
     if(role==='retailer') window.location.href='/retailer/';
     else if(role==='distributor') window.location.href='/distributor/';
     else window.location.href='/admin/';
