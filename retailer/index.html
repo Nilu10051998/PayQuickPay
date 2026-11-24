@@ -202,6 +202,7 @@ function showSet(type){
     document.getElementById('pWallet').innerText = walletBalance.toFixed(2);
   }
 }
+async function sha256(str){ const buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)); return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join(''); }
 async function changePassword(){
   var np=document.getElementById('newPass').value;
   var cp=document.getElementById('confirmPass').value;
@@ -210,7 +211,8 @@ async function changePassword(){
   if(np!==cp){ msg.innerText='Password match heuni'; return; }
   if(!db){ msg.innerText='Try again'; return; }
   try{
-    await db.collection('retailers').doc(userId).update({ password: np });
+    var hp = await sha256(np);
+    await db.collection('retailers').doc(userId).update({ password: hp, passwordHash: hp });
     msg.innerText='Password Updated Successfully';
     document.getElementById('newPass').value=''; document.getElementById('confirmPass').value='';
   }catch(e){ msg.innerText='Update failed. Try again.'; }
