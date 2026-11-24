@@ -55,7 +55,7 @@ table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}th{colo
 <div class="card" id="tab-support"><h3 style="margin-bottom:10px">Support</h3><table><thead><tr><th>Who</th><th>Message</th><th>Status</th><th>Date</th><th></th></tr></thead><tbody id="supportList"></tbody></table></div>
 <div class="card" id="tab-report"><h3 style="margin-bottom:10px">Profit Report</h3><div class="stats"><div class="stat"><span>Today Recharges</span><h2 id="repTodayCount">0</h2></div><div class="stat"><span>Today Amount</span><h2 id="repTodayAmt">₹ 0</h2></div><div class="stat"><span>Today Retailer Commission Dela</span><h2 id="repTodayComm">₹ 0</h2></div><div class="stat"><span>Today Tuma Profit (Approx)</span><h2 id="repTodayProfit">₹ 0</h2></div></div></div>
 <div class="card" id="tab-service"><h3 style="margin-bottom:12px">Service Control</h3><div style="font-size:13px;color:#64748b;margin-bottom:12px">Off kale Retailer sei service dekhEipariba ni / Recharge karipariba ni.</div><div id="serviceList"></div><button class="btn" onclick="saveServices()" style="margin-top:12px">Save Services</button></div>
-<div class="card" id="tab-settings"><h3 style="margin-bottom:10px">Settings - Change Password - Tuma Echa re</h3><input id="oldAdminPass" type="password" placeholder="Puruna Password"><input id="adminNewPass" type="password" placeholder="Nua Password - Tuma Echa re"><input id="adminConfirmPass" type="password" placeholder="Confirm Nua Password"><button class="btn" onclick="changeAdminPass()">Change Admin Password - Secure</button><div id="adminPassMsg" style="font-size:12px;color:#64748b;margin-top:8px"></div></div>
+<div class="card" id="tab-settings"><h3 style="margin-bottom:10px">Change Password</h3><input id="oldAdminPass" type="password" placeholder="Old Password"><input id="adminNewPass" type="password" placeholder="New Password"><input id="adminConfirmPass" type="password" placeholder="Confirm Password"><button class="btn" onclick="changeAdminPass()">Change Password</button><div id="adminPassMsg" style="font-size:12px;color:#64748b;margin-top:8px"></div></div>
 <div class="card" id="tab-history"><table><thead><tr><th>Number</th><th>Operator</th><th>Amount</th><th>Status</th></tr></thead><tbody id="histList"></tbody></table></div>
 <div class="card" id="tab-comm"><h3 style="margin-bottom:10px">Retailer Commission</h3><div class="grid2"><input id="cJioR" value="0.60" placeholder="【entity-Jio¦canonical_name=Jio】 Retailer %"><input id="cAirR" value="1.00" placeholder="【entity-Airtel¦canonical_name=Airtel】 Retailer %"></div><div class="grid2"><input id="cViR" value="2.60" placeholder="Vi Retailer %"><input id="cBsnlR" value="3.00" placeholder="BSNL Retailer %"></div><h3 style="margin:12px 0 10px">DTH Commission - Retailer</h3><div class="grid2"><input id="cDishR" value="3.20" placeholder="Dish TV %"><input id="cAdtvR" value="3.10" placeholder="【entity-Airtel¦canonical_name=Airtel】 Digital %"></div><div class="grid2"><input id="cSunR" value="2.90" placeholder="Sun Direct %"><input id="cVideoR" value="3.60" placeholder="Videocon %"></div><input id="cTataR" value="3.10" placeholder="【entity-Tata Sky¦canonical_name=Tata Sky】 %"><div style="font-size:12px;color:#334155;background:#f8fafc;border:1px solid #e2e8f0;padding:10px;border-radius:10px;margin-bottom:10px;line-height:1.7">【entity-Jio¦canonical_name=Jio】 0.80% = Retailer 0.60% + Distributor 0.10% + Admin 0.10% &nbsp;|&nbsp; 【entity-Airtel¦canonical_name=Airtel】 1.30% = 1.00% + 0.15% + 0.15% &nbsp;|&nbsp; Vi 3.00% = 2.60% + 0.20% + 0.20% &nbsp;|&nbsp; BSNL 3.40% = 3.00% + 0.20% + 0.20%</div><button class="btn" onclick="saveComm()">Save Commission</button><div id="commMsg" style="font-size:12px;color:#64748b;margin-top:8px"></div></div>
 </div>
@@ -82,16 +82,16 @@ async function changeAdminPass(){
   var msg=document.getElementById('adminPassMsg');
   if(!oldP || !np){ msg.innerText='Fill all fields'; return; }
   if(np.length<4){ msg.innerText='Password minimum 4 character'; return; }
-  if(np!==conf){ msg.innerText='Nua Password Match Hauni'; return; }
+  if(np!==conf){ msg.innerText='Password Match Hauni'; return; }
   try{
     var doc=await db.collection('admins').doc('admin').get();
     if(!doc.exists){ msg.innerText='Admin Doc Not Found'; return; }
     var data=doc.data();
     var oldHash=await sha256(oldP);
-    if(data.passwordHash!==oldHash){ msg.innerText='Puruna Password Bhul Achhi'; return; }
+    if(data.passwordHash!==oldHash){ msg.innerText='Old Password Wrong'; return; }
     var newHash=await sha256(np);
     await db.collection('admins').doc('admin').update({passwordHash:newHash});
-    msg.innerText='Password Changed Successfully - Ebe Nua Password re Login Kara';
+    msg.innerText='Password Changed';
     document.getElementById('oldAdminPass').value=''; document.getElementById('adminNewPass').value=''; document.getElementById('adminConfirmPass').value='';
   }catch(e){ msg.innerText='Failed - Try Again'; }
 }
