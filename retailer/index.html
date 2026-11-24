@@ -2,47 +2,62 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>PayQuickPay - Retailer</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <style>
 *{box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
-body{margin:0;background:#EEF2F7;color:#1A2332;padding-bottom:20px}
-.top{background:linear-gradient(135deg,#0F2A5C 0%,#1A4A9A 60%,#2563EB 100%);color:#fff;padding:18px 16px;display:flex;justify-content:space-between;align-items:center;border-radius:0 0 20px 20px;box-shadow:0 6px 20px rgba(15,42,92,.25)}
-.top b{font-size:20px;font-weight:800;letter-spacing:.3px}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:#EEF2F7;color:#1A2332;padding-bottom:88px}
+.top{background:linear-gradient(135deg,#0F2A5C 0%,#1A4A9A 60%,#2563EB 100%);color:#fff;padding:14px 14px;padding-top:calc(14px + env(safe-area-inset-top));display:flex;justify-content:space-between;align-items:center;gap:10px;border-radius:0 0 20px 20px;box-shadow:0 6px 20px rgba(15,42,92,.25);min-width:0}
+.top b{font-size:clamp(17px,5.2vw,20px);font-weight:800;letter-spacing:.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:1;min-width:0}
+.top-user{display:flex;align-items:center;flex-shrink:0;min-width:0;max-width:45%}
+#userEmail{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px;max-width:100%}
 .notice-bar{background:#FFF7ED;border-bottom:1px solid #FDBA74;overflow:hidden;white-space:nowrap;padding:9px 0}
 .notice-text{display:inline-block;padding-left:100%;animation:scrollNotice 18s linear infinite;font-size:13px;font-weight:600;color:#9A3412}
 @keyframes scrollNotice{from{transform:translateX(0)}to{transform:translateX(-100%)}}
-.card{background:#fff;margin:14px;border-radius:16px;padding:18px;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.card{background:#fff;margin:14px auto;border-radius:16px;padding:18px;box-shadow:0 4px 16px rgba(0,0,0,.06);max-width:480px;width:calc(100% - 28px)}
 .card h3{font-size:16px;color:#0F2A5C}
 label{font-size:13px;font-weight:600;color:#344054;display:block;margin:14px 0 6px}
-input,select{width:100%;padding:12px 13px;border:1.5px solid #D0D9E6;border-radius:10px;font-size:14px;outline:none;background:#F8FAFC}
+input,select{width:100%;padding:12px 13px;border:1.5px solid #D0D9E6;border-radius:10px;font-size:16px;outline:none;background:#F8FAFC}
 input:focus,select:focus{border-color:#2563EB;background:#fff}
 .btn{width:100%;padding:13px;background:linear-gradient(135deg,#FF7A00,#FF3D00);color:#fff;border:0;border-radius:10px;font-size:16px;font-weight:700;margin-top:16px;cursor:pointer;box-shadow:0 4px 14px rgba(255,61,0,.25)}
 .btn:disabled{opacity:.6}
 .btn2{width:100%;padding:11px;background:#EEF2F7;color:#0F2A5C;border:1.5px solid #D0D9E6;border-radius:10px;font-size:14px;font-weight:700;margin-top:10px;cursor:pointer}
 .btn3{width:100%;padding:12px;background:#fff;color:#0F2A5C;border:1.5px solid #D0D9E6;border-radius:10px;font-size:14px;font-weight:600;margin-top:8px;cursor:pointer;text-align:left}
-.comm{background:#E8F0FE;border:1px solid #BFDBFE;padding:11px 12px;border-radius:10px;font-size:14px;margin-top:12px;color:#0F2A5C}
-table{width:100%;border-collapse:collapse;font-size:13px}
+.comm{background:#E8F0FE;border:1px solid #BFDBFE;padding:11px 12px;border-radius:10px;font-size:14px;margin-top:12px;color:#0F2A5C;word-break:break-word}
+.table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:320px}
 th,td{padding:10px 8px;border-bottom:1px solid #EEF2F7;text-align:left}
 th{color:#6B7A90;font-size:11px;text-transform:uppercase}
-.badge{padding:4px 9px;border-radius:20px;font-size:11px;font-weight:700}
+.badge{padding:4px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
 .success{background:#D1FAE5;color:#065F46}
 .failed{background:#FEE2E2;color:#991B1B}
 .pending{background:#FEF3C7;color:#92400E}
 .wallet{font-size:26px;font-weight:800;color:#0F2A5C}
 .small{font-size:12px;color:#6B7A90}
-.logout{font-size:12px;background:#fff;color:#0F2A5C;border:0;padding:7px 12px;border-radius:20px;cursor:pointer;font-weight:700}
 .tab-row{display:flex;gap:10px;margin:0 0 14px}
-.tab-btn{flex:1;padding:12px;border:1.5px solid #D0D9E6;border-radius:12px;background:#F8FAFC;font-size:14px;font-weight:700;cursor:pointer;text-align:center}
+.tab-btn{flex:1;padding:12px;border:1.5px solid #D0D9E6;border-radius:12px;background:#F8FAFC;font-size:14px;font-weight:700;cursor:pointer;text-align:center;min-width:0;white-space:nowrap}
 .tab-btn.on{background:#0F2A5C;color:#fff;border-color:#0F2A5C}
 .qr-box{background:#fff;border:1.5px dashed #94A3B8;border-radius:14px;padding:10px;text-align:center;margin-top:12px}
 .qr-box b{font-size:15px;color:#0F2A5C}
+.bottom-bar{position:fixed;left:0;right:0;bottom:0;background:#fff;padding:12px 14px calc(12px + env(safe-area-inset-bottom));box-shadow:0 -2px 14px rgba(0,0,0,.12);z-index:9999}
+.logout-btn{width:100%;max-width:480px;margin:0 auto;display:block;padding:13px;border:0;border-radius:12px;background:#0F2A5C;color:#fff;font-size:16px;font-weight:700;cursor:pointer}
+@media (max-width:380px){
+.card{padding:14px;width:calc(100% - 16px);margin:10px auto}
+.wallet{font-size:22px}
+.tab-btn{font-size:13px;padding:11px 6px}
+th,td{padding:8px 5px;font-size:12px}
+.btn{font-size:15px}
+}
+@media (min-width:481px){
+body{background:#E5EAF1}
+}
 </style>
 </head>
 <body>
-<div class="top"><b>PayQuickPay</b><span><span id="userEmail" class="small" style="color:#fff"></span> <button class="logout" onclick="doLogout()">Logout</button></span></div>
+<div class="top"><b>PayQuickPay</b><span class="top-user"><span id="userEmail" class="small" style="color:#fff"></span></span></div>
 <div class="notice-bar"><div class="notice-text" id="noticeText">Welcome to PayQuickPay</div></div>
 <div class="card">
 <div class="small">Wallet Balance - <span id="userName"></span></div>
@@ -63,6 +78,7 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 </div>
 <button class="btn2" onclick="showCommissionTable()">Commission</button>
 <div id="commTable" style="display:none;margin-top:12px">
+<div class="table-wrap">
 <table>
 <thead><tr><th>Operator</th><th>Commission</th></tr></thead>
 <tbody>
@@ -77,6 +93,7 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 <tr><td>Videocon D2H</td><td><b>3.90%</b></td></tr>
 </tbody>
 </table>
+</div>
 </div>
 </div>
 <div class="card">
@@ -126,11 +143,13 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 </div>
 </div>
 <div class="card">
-<div style="display:flex;justify-content:space-between;align-items:center"><h3 style="margin:0">Recent History</h3><span class="small" id="histCount"></span></div>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3 style="margin:0">Recent History</h3><span class="small" id="histCount"></span></div>
+<div class="table-wrap">
 <table>
 <thead><tr><th>Number</th><th>Amount</th><th>Commission</th><th>Status</th></tr></thead>
 <tbody id="hist"><tr><td colspan="4">Loading...</td></tr></tbody>
 </table>
+</div>
 <button class="btn2" id="histBtn" onclick="toggleHist()">Recharge History - View All</button>
 </div>
 <div class="card">
@@ -157,6 +176,7 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 </div>
 </div>
 </div>
+<div class="bottom-bar"><button class="logout-btn" onclick="doLogout()">Logout</button></div>
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyCZCNT1ljpj-IIxDUCEHoAQPJFR2Zd7OOI",
@@ -363,31 +383,32 @@ async function doDTHRecharge(){
   var opCode=document.getElementById('dthOp').value;
   var opText=document.getElementById('dthOp').options[document.getElementById('dthOp').selectedIndex].text;
   var amount=parseFloat(document.getElementById('dthAmt').value||0);
-  var msg=document.getElementById('dthMsg'); var btn=document.getElementById('dthBtn');
-  if(number.length<10){ msg.innerText='Enter valid VC / Subscriber ID'; return; }
-  if(!opCode){ msg.innerText='Select DTH Operator'; return; }
+  var msg=document.getElementById('dthMsg');
+  var btn=document.getElementById('dthBtn');
+  if(!opCode){ msg.innerText='Select Operator'; return; }
+  if(number.length<6){ msg.innerText='Enter valid VC Number'; return; }
   if(amount<=0){ msg.innerText='Enter valid amount'; return; }
-  var retailerComm=amount*getRetailerRate(opCode); var payable=amount-retailerComm;
+  var retailerComm=amount*getRetailerRate(opCode);
+  var payable=amount-retailerComm;
   if(walletBalance<payable){ msg.innerText='Insufficient wallet balance'; return; }
   btn.disabled=true; btn.innerText='Processing...'; msg.innerText='';
   try{
-    var res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({number,operatorcode:opCode,amount,orderid:'PQ'+Date.now()})});
-    var data=await res.json();
+    let res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({number,operatorcode:opCode,amount,orderid:'PQ'+Date.now()})});
+    let data=await res.json();
     if(data.status==='Success'||data.status==='Pending'||data.success===true){
-      var s=await splitCommission(amount, opCode, number, opText, data.status||'Success', data.orderid||'', '');
-      await db.collection('retailers').doc(userId).update({wallet: firebase.firestore.FieldValue.increment(-s.payable)});
-      if(s.distId && s.distComm > 0){ await db.collection('distributors').doc(s.distId).update({wallet: firebase.firestore.FieldValue.increment(s.distComm)}).catch(()=>{}); }
-      msg.innerText='DTH Recharge '+(data.status||'Success'); document.getElementById('dthAmt').value=''; showDTHComm(); await loadWallet(); await loadHist();
+      let s=await splitCommission(amount,opCode,number,opText,data.status||'Success',data.orderid||'','');
+      await db.collection('retailers').doc(userId).update({wallet:firebase.firestore.FieldValue.increment(-s.payable)});
+      if(s.distId && s.distComm>0){ await db.collection('distributors').doc(s.distId).update({wallet:firebase.firestore.FieldValue.increment(s.distComm)}).catch(()=>{}); }
+      msg.innerText='Recharge '+(data.status||'Success');
+      document.getElementById('dthAmt').value=''; showDTHComm(); await loadWallet(); await loadHist();
     } else {
-      await splitCommission(amount, opCode, number, opText, 'Failed', '', data.message||'');
+      await splitCommission(amount,opCode,number,opText,'Failed','',data.message||'');
       msg.innerText='Failed: '+(data.message||'Try again'); await loadHist();
     }
   }catch(e){ msg.innerText='Network error. Try again.'; }
   btn.disabled=false; btn.innerText='Recharge DTH Now';
 }
-loadWallet();
-loadHist();
-loadNotice();
+loadWallet(); loadHist(); loadNotice();
 </script>
 </body>
 </html>
