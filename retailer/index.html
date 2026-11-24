@@ -37,6 +37,8 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 .tab-row{display:flex;gap:10px;margin:0 0 14px}
 .tab-btn{flex:1;padding:12px;border:1.5px solid #D0D9E6;border-radius:12px;background:#F8FAFC;font-size:14px;font-weight:700;cursor:pointer;text-align:center}
 .tab-btn.on{background:#0F2A5C;color:#fff;border-color:#0F2A5C}
+.qr-box{background:#fff;border:1.5px dashed #94A3B8;border-radius:14px;padding:10px;text-align:center;margin-top:12px}
+.qr-box b{font-size:15px;color:#0F2A5C}
 </style>
 </head>
 <body>
@@ -45,6 +47,21 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 <div class="card">
 <div class="small">Wallet Balance - <span id="userName"></span></div>
 <div class="wallet">₹ <span id="wallet">0.00</span></div>
+<button class="btn2" onclick="toggleAddMoney()">💰 Add Money</button>
+<div id="addMoneyBox" style="display:none;margin-top:12px">
+<div class="qr-box">
+<img src="payquickpay-qr.png" style="width:100%;max-width:280px;border-radius:12px" alt="PayQuickPay QR">
+<br><b>Scan & Pay with any UPI App</b><br>
+<span class="small">UPI ID: <b>Q931947909@ybl</b><br>PAYQUICKPAY</span>
+</div>
+<label>Amount</label>
+<input id="addAmt" type="number" placeholder="Enter Amount - Ex: 500">
+<label>UTR / Transaction ID - 12 Digit</label>
+<input id="addUTR" type="tel" maxlength="12" placeholder="UTR Number - Payment Pare Miliba" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+<button class="btn" onclick="sendAddMoney()">Send Add Money Request</button>
+<div id="addMsg" class="small" style="margin-top:10px"></div>
+<div class="small" style="margin-top:8px">Payment kale pare - UTR Deba - Admin Approve kale - Wallet re Paisa Add Heba</div>
+</div>
 <button class="btn2" onclick="showCommissionTable()">View Commission Structure</button>
 <div id="commTable" style="display:none;margin-top:12px">
 <table>
@@ -176,6 +193,26 @@ if(!userId || userRole !== 'retailer'){ window.location.href = '/'; }
 document.getElementById('userName').innerText = userName || '';
 document.getElementById('userEmail').innerText = userName || '';
 async function doLogout(){ localStorage.clear(); window.location.href = '/'; }
+function toggleAddMoney(){
+  var b=document.getElementById('addMoneyBox');
+  b.style.display = b.style.display==='none' ? 'block' : 'none';
+}
+async function sendAddMoney(){
+  var amt = parseFloat(document.getElementById('addAmt').value||0);
+  var utr = document.getElementById('addUTR').value.trim();
+  var msg = document.getElementById('addMsg');
+  if(amt<=0){ msg.innerText='Enter Amount'; return; }
+  if(utr.length<10){ msg.innerText='Enter Valid UTR - 12 Digit'; return; }
+  try{
+    await db.collection('wallet_requests').add({
+      userId: userId, userName: userName, name: userName, role: 'Retailer',
+      amount: amt, utr: utr, note: 'UTR: '+utr, message: 'UTR: '+utr,
+      status: 'Pending', createdAt: new Date()
+    });
+    msg.innerText='Request Sent - Admin Approve kale Wallet Add Heba';
+    document.getElementById('addAmt').value=''; document.getElementById('addUTR').value='';
+  }catch(e){ msg.innerText='Failed - Try Again'; }
+}
 async function loadNotice(){
   try{
     let s = await db.collection('notices').orderBy('createdAt','desc').limit(5).get();
