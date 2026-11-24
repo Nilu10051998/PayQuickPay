@@ -43,29 +43,28 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 </head>
 <body>
 <div class="top"><b>PayQuickPay</b><span><span id="userEmail" class="small" style="color:#fff"></span> <button class="logout" onclick="doLogout()">Logout</button></span></div>
-<div class="notice-bar"><div class="notice-text" id="noticeText">Welcome to PayQuickPay • Recharge Available</div></div>
+<div class="notice-bar"><div class="notice-text" id="noticeText">Welcome to PayQuickPay</div></div>
 <div class="card">
 <div class="small">Wallet Balance - <span id="userName"></span></div>
 <div class="wallet">₹ <span id="wallet">0.00</span></div>
-<button class="btn2" onclick="toggleAddMoney()">💰 Add Money</button>
+<button class="btn2" onclick="toggleAddMoney()">Add Money</button>
 <div id="addMoneyBox" style="display:none;margin-top:12px">
 <div class="qr-box">
 <img src="payquickpay-qr.png" style="width:100%;max-width:280px;border-radius:12px" alt="PayQuickPay QR">
-<br><b>Scan & Pay with any UPI App</b><br>
+<br><b>Scan & Pay</b><br>
 <span class="small">UPI ID: <b>Q931947909@ybl</b><br>PAYQUICKPAY</span>
 </div>
 <label>Amount</label>
-<input id="addAmt" type="number" placeholder="Enter Amount - Ex: 500">
-<label>UTR / Transaction ID - 12 Digit</label>
-<input id="addUTR" type="tel" maxlength="12" placeholder="UTR Number - Payment Pare Miliba" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-<button class="btn" onclick="sendAddMoney()">Send Add Money Request</button>
+<input id="addAmt" type="number" placeholder="Amount">
+<label>UTR Number</label>
+<input id="addUTR" type="tel" maxlength="12" placeholder="UTR Number" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+<button class="btn" onclick="sendAddMoney()">Send Request</button>
 <div id="addMsg" class="small" style="margin-top:10px"></div>
-<div class="small" style="margin-top:8px">Payment kale pare - UTR Deba - Admin Approve kale - Wallet re Paisa Add Heba</div>
 </div>
-<button class="btn2" onclick="showCommissionTable()">View Commission Structure</button>
+<button class="btn2" onclick="showCommissionTable()">Commission</button>
 <div id="commTable" style="display:none;margin-top:12px">
 <table>
-<thead><tr><th>Operator</th><th>Your Commission</th></tr></thead>
+<thead><tr><th>Operator</th><th>Commission</th></tr></thead>
 <tbody>
 <tr><td>J&#105;o Prepaid / Postpaid</td><td><b>0.60%</b></td></tr>
 <tr><td>A&#105;rtel Prepaid / Postpaid</td><td><b>1.10%</b></td></tr>
@@ -82,13 +81,13 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 </div>
 <div class="card">
 <div class="tab-row">
-<button class="tab-btn on" id="tabMobile" onclick="showService('mobile')">📱 Mobile Recharge</button>
-<button class="tab-btn" id="tabDTH" onclick="showService('dth')">📺 DTH</button>
+<button class="tab-btn on" id="tabMobile" onclick="showService('mobile')">Mobile Recharge</button>
+<button class="tab-btn" id="tabDTH" onclick="showService('dth')">DTH</button>
 </div>
 <div id="mobileBox">
 <h3 style="margin:0">Mobile Recharge</h3>
 <label>Mobile Number</label>
-<input id="num" type="tel" maxlength="10" placeholder="10 Digit Mobile Number" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+<input id="num" type="tel" maxlength="10" placeholder="Mobile Number" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
 <label>Operator</label>
 <select id="op" onchange="showComm()">
 <option value="" disabled selected>Choose Operator</option>
@@ -101,7 +100,7 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 <option value="AP">A&#105;rtel Postpaid</option>
 </select>
 <label>Amount</label>
-<input id="amt" type="number" placeholder="Enter Amount" oninput="showComm()">
+<input id="amt" type="number" placeholder="Amount" oninput="showComm()">
 <div id="commBox" class="comm" style="display:none"></div>
 <button class="btn" id="rechargeBtn" onclick="doRecharge()">Recharge Now</button>
 <div id="msg" class="small" style="margin-top:10px"></div>
@@ -109,7 +108,7 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 <div id="dthBox" style="display:none">
 <h3 style="margin:0">DTH Recharge</h3>
 <label>VC / Subscriber ID</label>
-<input id="dthNum" type="tel" placeholder="VC Number / Subscriber ID" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+<input id="dthNum" type="tel" placeholder="VC Number" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
 <label>Operator</label>
 <select id="dthOp" onchange="showDTHComm()">
 <option value="" disabled selected>Choose DTH Operator</option>
@@ -120,7 +119,7 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 <option value="VTV">Videocon D2H</option>
 </select>
 <label>Amount</label>
-<input id="dthAmt" type="number" placeholder="Enter Amount" oninput="showDTHComm()">
+<input id="dthAmt" type="number" placeholder="Amount" oninput="showDTHComm()">
 <div id="dthCommBox" class="comm" style="display:none"></div>
 <button class="btn" id="dthBtn" onclick="doDTHRecharge()">Recharge DTH Now</button>
 <div id="dthMsg" class="small" style="margin-top:10px"></div>
@@ -132,20 +131,22 @@ th{color:#6B7A90;font-size:11px;text-transform:uppercase}
 <thead><tr><th>Number</th><th>Amount</th><th>Commission</th><th>Status</th></tr></thead>
 <tbody id="hist"><tr><td colspan="4">Loading...</td></tr></tbody>
 </table>
-<button class="btn2" id="histBtn" onclick="toggleHist()">📜 Recharge History - View All</button>
+<button class="btn2" id="histBtn" onclick="toggleHist()">Recharge History - View All</button>
 </div>
 <div class="card">
-<button class="btn2" onclick="toggleSetting()">⚙️ Settings</button>
+<button class="btn2" onclick="toggleSetting()">Settings</button>
 <div id="settingBox" style="display:none;margin-top:10px">
-<button class="btn3" onclick="showSet('pwd')">🔑 Change Password</button>
-<button class="btn3" onclick="showSet('profile')">👤 My Profile</button>
-<button class="btn3" onclick="showSet('help')">📞 Customer Care / Help</button>
+<button class="btn3" onclick="showSet('pwd')">Change Password</button>
+<button class="btn3" onclick="showSet('profile')">My Profile</button>
+<button class="btn3" onclick="showSet('help')">Customer Care</button>
 <div id="setPwd" style="display:none;margin-top:12px">
+<label>Old Password</label>
+<input id="oldPass" type="password" placeholder="Old Password">
 <label>New Password</label>
 <input id="newPass" type="password" placeholder="New Password">
 <label>Confirm Password</label>
 <input id="confirmPass" type="password" placeholder="Confirm Password">
-<button class="btn" onclick="changePassword()">Update Password</button>
+<button class="btn" onclick="changePassword()">Change Password</button>
 <div id="pwdMsg" class="small" style="margin-top:10px"></div>
 </div>
 <div id="setProfile" style="display:none;margin-top:12px">
@@ -202,14 +203,14 @@ async function sendAddMoney(){
   var utr = document.getElementById('addUTR').value.trim();
   var msg = document.getElementById('addMsg');
   if(amt<=0){ msg.innerText='Enter Amount'; return; }
-  if(utr.length<10){ msg.innerText='Enter Valid UTR - 12 Digit'; return; }
+  if(utr.length<10){ msg.innerText='Enter Valid UTR'; return; }
   try{
     await db.collection('wallet_requests').add({
       userId: userId, userName: userName, name: userName, role: 'Retailer',
       amount: amt, utr: utr, note: 'UTR: '+utr, message: 'UTR: '+utr,
       status: 'Pending', createdAt: new Date()
     });
-    msg.innerText='Request Sent - Admin Approve kale Wallet Add Heba';
+    msg.innerText='Request Sent';
     document.getElementById('addAmt').value=''; document.getElementById('addUTR').value='';
   }catch(e){ msg.innerText='Failed - Try Again'; }
 }
@@ -241,17 +242,24 @@ function showSet(type){
 }
 async function sha256(str){ const buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)); return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join(''); }
 async function changePassword(){
+  var oldP=document.getElementById('oldPass').value;
   var np=document.getElementById('newPass').value;
   var cp=document.getElementById('confirmPass').value;
   var msg=document.getElementById('pwdMsg');
+  if(!oldP){ msg.innerText='Enter Old Password'; return; }
   if(np.length < 4){ msg.innerText='Password minimum 4 character'; return; }
-  if(np!==cp){ msg.innerText='Password match heuni'; return; }
+  if(np!==cp){ msg.innerText='Password Not Match'; return; }
   if(!db){ msg.innerText='Try again'; return; }
   try{
+    var doc=await db.collection('retailers').doc(userId).get();
+    if(!doc.exists){ msg.innerText='User Not Found'; return; }
+    var data=doc.data();
+    var oldHash=await sha256(oldP);
+    if(data.passwordHash!==oldHash && data.password!==oldHash){ msg.innerText='Old Password Wrong'; return; }
     var hp = await sha256(np);
-    await db.collection('retailers').doc(userId).update({ password: hp, passwordHash: hp });
-    msg.innerText='Password Updated Successfully';
-    document.getElementById('newPass').value=''; document.getElementById('confirmPass').value='';
+    await db.collection('retailers').doc(userId).update({ passwordHash: hp });
+    msg.innerText='Password Changed';
+    document.getElementById('oldPass').value=''; document.getElementById('newPass').value=''; document.getElementById('confirmPass').value='';
   }catch(e){ msg.innerText='Update failed. Try again.'; }
 }
 async function loadWallet(){ if(!db) return;
@@ -266,7 +274,7 @@ function showComm(){
     let comm = amount * getRetailerRate(opCode);
     let payable = amount - comm;
     box.style.display = 'block';
-    box.innerHTML = `Your Commission: <b>₹ ${comm.toFixed(2)}</b> | Payable: <b>₹ ${payable.toFixed(2)}</b>`;
+    box.innerHTML = `Commission: <b>₹ ${comm.toFixed(2)}</b> | Payable: <b>₹ ${payable.toFixed(2)}</b>`;
   } else { box.style.display = 'none'; }
 }
 async function splitCommission(amount, opCode, number, opText, status, orderid, raw){
@@ -323,7 +331,7 @@ function renderHist(){
   });
   document.getElementById('hist').innerHTML = h || '<tr><td colspan="4">No records</td></tr>';
   document.getElementById('histCount').innerText = showAllHist ? 'Showing All ('+allHist.length+')' : 'Last 5';
-  document.getElementById('histBtn').innerText = showAllHist ? '▲ Show Less - Last 5' : '📜 Recharge History - View All ('+allHist.length+')';
+  document.getElementById('histBtn').innerText = showAllHist ? 'Show Less' : 'Recharge History - View All ('+allHist.length+')';
 }
 function toggleHist(){ showAllHist = !showAllHist; renderHist(); }
 async function loadHist(){ if(!db) return;
@@ -341,14 +349,13 @@ function showService(type){
   if(type==='dth'){ if(m) m.style.display='none'; if(d) d.style.display='block'; if(tm) tm.classList.remove('on'); if(td) td.classList.add('on'); }
   else { if(m) m.style.display='block'; if(d) d.style.display='none'; if(tm) tm.classList.add('on'); if(td) td.classList.remove('on'); }
 }
-function getDTHRate(opCode){ return getRetailerRate(opCode); }
 function showDTHComm(){
   var amount=parseFloat(document.getElementById('dthAmt').value||0);
   var opCode=document.getElementById('dthOp').value;
   var box=document.getElementById('dthCommBox');
   if(amount>0 && opCode){
     var comm=amount*getRetailerRate(opCode); var payable=amount-comm;
-    box.style.display='block'; box.innerHTML=`Your Commission: <b>₹ ${comm.toFixed(2)}</b> | Payable: <b>₹ ${payable.toFixed(2)}</b>`;
+    box.style.display='block'; box.innerHTML=`Commission: <b>₹ ${comm.toFixed(2)}</b> | Payable: <b>₹ ${payable.toFixed(2)}</b>`;
   } else { box.style.display='none'; }
 }
 async function doDTHRecharge(){
